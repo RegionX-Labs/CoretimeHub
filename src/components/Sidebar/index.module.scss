@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  gap: 2rem;
+  padding-left: 2rem;
+  padding-top: 1rem;
+}
+
+.menuItem {
+  display: flex;
+  gap: 10px;
+  cursor: pointer;
+  padding: 0;
+  margin: 0.75rem 0;
+  text-transform: capitalize;
+  font-weight: 700;
+}
+
+.active {
+  text-decoration: underline;
+}
+
+.menuItem:hover {
+  opacity: 0.8;
+}

@@ -1,0 +1,52 @@
+.header {
+  display: flex;
+}
+
+.logo {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  margin-left: 32px;
+}
+
+.logo-img {
+  height: 100%;
+  width: 100%;
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-grow: 1;
+  margin-right: 32 px;
+}
+
+.connectWallet {
+  color: #181336;
+  border-radius: 100px;
+  font-weight: 500;
+}
+
+.listWrapper {
+  border-radius: 100px;
+  width: 240px;
+}
+
+.accountsWrapper {
+  background: white;
+  position: absolute;
+  border-radius: 0.5em;
+  top: 0;
+  width: 240px;
+}
+
+.accountsList {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.accountsList::-webkit-scrollbar {
+  display: none;
+}
