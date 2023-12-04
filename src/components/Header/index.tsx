@@ -1,5 +1,12 @@
 import { ExpandMore } from '@mui/icons-material';
-import { Button, Collapse, Divider, List, ListItemButton } from '@mui/material';
+import {
+  Button,
+  Collapse,
+  Divider,
+  Link,
+  List,
+  ListItemButton,
+} from '@mui/material';
 import { useInkathon } from '@scio-labs/use-inkathon';
 import Image from 'next/image';
 import React, { useState } from 'react';
@@ -18,9 +25,9 @@ export const Header = () => {
   return (
     <>
       <div className={styles.header}>
-        <div className={styles.logo}>
-          <Image src={Logo} alt='logo' className={styles.logoImg} />
-        </div>
+        <Link href='/' className={styles.logo}>
+          <Image src={Logo} alt='logo' />
+        </Link>
         <div className={styles.menu}>
           {activeAccount ? (
             <List component='div' className={styles.listWrapper}>
