@@ -25,6 +25,23 @@ let theme = createTheme({
       secondary: '#7e8591',
     },
   },
+  typography: {
+    subtitle1: {
+      fontSize: 27,
+    },
+    subtitle2: {
+      fontSize: 16,
+    },
+    h1: {
+      fontSize: 20,
+      fontWeight: 700,
+    },
+    h2: {
+      fontSize: 14,
+      fontWeight: 700,
+      lineHeight: 1,
+    },
+  },
 });
 
 // add responsive MUI responsiveFontSize
