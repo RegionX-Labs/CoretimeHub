@@ -19,8 +19,8 @@ const Home = () => {
   ];
 
   return (
-    <Box sx={{ display: 'flex', height: '100%' }}>
-      <Box sx={{ maxWidth: 700, flexGrow: 1, overflow: 'auto' }}>
+    <Box sx={{ display: 'flex', height: '100%', gap: '1rem' }}>
+      <Box sx={{ maxWidth: '45rem', flexGrow: 1, overflow: 'auto' }}>
         <Box>
           <Typography
             variant='subtitle2'

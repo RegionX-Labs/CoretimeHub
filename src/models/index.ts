@@ -2,7 +2,7 @@ type U32 = number;
 type U16 = number;
 type Address = string;
 type Balance = U32;
-type Percentage = number;
+type Percentage = number; // Percentage value between 0 and 1
 
 export type TaskIndex = number;
 
