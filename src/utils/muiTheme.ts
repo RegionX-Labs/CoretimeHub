@@ -19,6 +19,7 @@ let theme = createTheme({
     },
     grey: {
       100: '#eeeff4',
+      200: '#8c8c8c',
     },
     text: {
       primary: '#000',
@@ -40,6 +41,15 @@ let theme = createTheme({
       fontSize: 14,
       fontWeight: 700,
       lineHeight: 1,
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          border: `1px solid #e8e9ed`,
+        },
+      },
     },
   },
 });

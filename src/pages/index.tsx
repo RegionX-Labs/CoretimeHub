@@ -1,5 +1,7 @@
 import { Box, Button, Typography, useTheme } from '@mui/material';
 
+import { RegionCard } from '@/components';
+
 import {
   AssignmentIcon,
   InterlaceIcon,
@@ -32,6 +34,30 @@ const Home = () => {
           >
             Regions Dashboard
           </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '2rem',
+            mt: '1rem',
+          }}
+        >
+          {[1, 2].map((_, index) => (
+            <RegionCard
+              key={index}
+              region={{
+                begin: 1000,
+                core: 1000,
+                mask: new Uint8Array([1, 2, 3]),
+                end: 2000,
+                owner: 'REGION OWNER',
+                length: 1000,
+                ownership: 0.652,
+                consumed: 0.558,
+              }}
+            ></RegionCard>
+          ))}
         </Box>
       </Box>
       <Box
