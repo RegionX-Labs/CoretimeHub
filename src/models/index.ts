@@ -25,6 +25,7 @@ export type RegionRecord = {
 
 export type RegionMetadata = RegionId &
   RegionRecord & {
+    id: number;
     length: Timeslice;
     name?: string;
     ownership: Percentage;

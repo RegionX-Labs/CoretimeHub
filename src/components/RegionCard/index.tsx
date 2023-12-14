@@ -18,7 +18,7 @@ interface RegionCardProps {
 }
 
 export const RegionCard = ({ region }: RegionCardProps) => {
-  const { length } = region;
+  const { length, task } = region;
   const theme = useTheme();
   const progress = [
     {
@@ -33,7 +33,7 @@ export const RegionCard = ({ region }: RegionCardProps) => {
     },
     {
       label: 'Current Usage',
-      value: region.task?.usage ?? 0,
+      value: task?.usage ?? 0,
       color: 'primary',
     },
   ];
@@ -51,7 +51,9 @@ export const RegionCard = ({ region }: RegionCardProps) => {
           <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
           {`Duration: ${length}`}
         </div>
-        <Typography variant='subtitle2'>Region 1 </Typography>
+        <Typography variant='subtitle2'>
+          {region.name ?? `Region #${region.id}`}
+        </Typography>
         <Box
           sx={{
             display: 'flex',
@@ -60,8 +62,8 @@ export const RegionCard = ({ region }: RegionCardProps) => {
             color: theme.palette.grey[200],
           }}
         >
-          <Typography variant='h2'>Begin: 5 days ago</Typography>
-          <Typography variant='h2'>End: 15 days later</Typography>
+          <Typography variant='h2'>{region.begin}</Typography>
+          <Typography variant='h2'>{region.end}</Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1rem' }}>
           <Label text='Non-Renewable' color='primary' />
@@ -70,7 +72,13 @@ export const RegionCard = ({ region }: RegionCardProps) => {
       </div>
       <Divider orientation='vertical' flexItem />
       <Box sx={{ color: theme.palette.grey[200] }}>
-        <Typography variant='subtitle2'>Task: DEX chain</Typography>
+        {task !== undefined ? (
+          <Typography variant='subtitle2'>{`Task: ${
+            task.name ?? task.taskId
+          }`}</Typography>
+        ) : (
+          <></>
+        )}
         <Box
           sx={{
             display: 'flex',
