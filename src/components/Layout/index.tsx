@@ -21,6 +21,7 @@ export const Layout = ({ children }: Props) => {
         <Paper
           color='secondary'
           sx={{
+            display: 'flex',
             flexGrow: 1,
             margin: '1rem 0.5rem 0 2rem',
             borderTopLeftRadius: '1rem',

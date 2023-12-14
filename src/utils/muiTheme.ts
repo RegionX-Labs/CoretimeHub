@@ -17,12 +17,58 @@ let theme = createTheme({
     primary: {
       main: '#3868a9',
     },
+    success: {
+      main: '#68a938',
+    },
     grey: {
       100: '#eeeff4',
+      200: '#8c8c8c',
     },
     text: {
       primary: '#000',
       secondary: '#7e8591',
+    },
+    common: {
+      white: '#fff',
+    },
+    warning: {
+      main: '#A93868',
+    },
+  },
+  typography: {
+    subtitle1: {
+      fontSize: 27,
+    },
+    subtitle2: {
+      fontSize: 16,
+    },
+    h1: {
+      fontSize: 20,
+      fontWeight: 700,
+    },
+    h2: {
+      fontSize: 14,
+      fontWeight: 700,
+      lineHeight: 1,
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          border: `1px solid #e8e9ed`,
+        },
+      },
+    },
+    MuiLinearProgress: {
+      styleOverrides: {
+        root: {
+          borderRadius: 5,
+        },
+        bar2Buffer: {
+          background: '#eeeff4',
+        },
+      },
     },
   },
 });
