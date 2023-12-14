@@ -62,8 +62,8 @@ export const RegionCard = ({ region }: RegionCardProps) => {
             color: theme.palette.grey[200],
           }}
         >
-          <Typography variant='h2'>{region.begin}</Typography>
-          <Typography variant='h2'>{region.end}</Typography>
+          <Typography variant='h2'>Begin: {region.begin}</Typography>
+          <Typography variant='h2'>End: {region.end}</Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1rem' }}>
           <Label text='Non-Renewable' color='primary' />
