@@ -47,6 +47,7 @@ const Home = () => {
             <RegionCard
               key={index}
               region={{
+                id: index,
                 begin: 1000,
                 core: 1000,
                 mask: new Uint8Array([1, 2, 3]),
