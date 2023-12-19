@@ -70,6 +70,13 @@ let theme = createTheme({
         },
       },
     },
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          background: 'white',
+        },
+      },
+    },
   },
 });
 
