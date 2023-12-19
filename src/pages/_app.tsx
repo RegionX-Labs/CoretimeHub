@@ -1,7 +1,7 @@
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
-import { shibuya, UseInkathonProvider } from '@scio-labs/use-inkathon';
+import { UseInkathonProvider } from '@scio-labs/use-inkathon';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -12,6 +12,13 @@ import createEmotionCache from '@/utils/createEmotionCache';
 import theme from '@/utils/muiTheme';
 
 import { Layout } from '@/components/Layout';
+
+import {
+  CoretimeApiContextProvider,
+  RelayApiContextProvider,
+} from '@/contexts/apis';
+import { WS_CONTRACTS_CHAIN } from '@/contexts/apis/consts';
+import { ToastProvider } from '@/contexts/Toast';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -35,13 +42,23 @@ export default function MyApp(props: MyAppProps) {
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <UseInkathonProvider
-          appName='Coretime UI'
-          connectOnInit={false}
-          defaultChain={shibuya}
-        >
-          {getLayout(<Component {...pageProps} />)}
-        </UseInkathonProvider>
+        <ToastProvider>
+          <CoretimeApiContextProvider>
+            <RelayApiContextProvider>
+              <UseInkathonProvider
+                appName='Coretime UI'
+                connectOnInit={true}
+                defaultChain={{
+                  network: '',
+                  name: '',
+                  rpcUrls: [WS_CONTRACTS_CHAIN],
+                }}
+              >
+                {getLayout(<Component {...pageProps} />)}
+              </UseInkathonProvider>
+            </RelayApiContextProvider>
+          </CoretimeApiContextProvider>
+        </ToastProvider>
       </ThemeProvider>
     </CacheProvider>
   );
