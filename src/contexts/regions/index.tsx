@@ -95,7 +95,7 @@ const RegionDataProvider = ({ children }: Props) => {
           owner,
           paid: nPaid,
           origin: RegionOrigin.CORETIME_CHAIN,
-          id: `${tsBegin}-${tsEnd}`, // FIXME: unique identifier for each region
+          id: `${parseHNString(begin)}-${core}-${mask.slice(2)}`,
         });
       }
       setRegions(_regions);
