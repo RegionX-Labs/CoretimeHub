@@ -26,6 +26,7 @@ import { Label } from '../elements';
 
 interface RegionCardProps {
   region: RegionMetadata;
+  editable?: boolean;
   active?: boolean;
   updateName: (_newName: string) => void;
 }
@@ -33,6 +34,7 @@ interface RegionCardProps {
 export const RegionCard = ({
   region,
   active = false,
+  editable = false,
   updateName,
 }: RegionCardProps) => {
   TimeAgo.addLocale(en);
@@ -101,7 +103,7 @@ export const RegionCard = ({
             height: '2rem',
           }}
         >
-          {isEdit ? (
+          {editable && isEdit ? (
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -119,12 +121,14 @@ export const RegionCard = ({
                 <CloseOutlinedIcon sx={{ fontSize: '0.7em' }} />
               </IconButton>
             </Box>
-          ) : (
+          ) : editable ? (
             <Box>
               <IconButton onClick={onEdit}>
                 <ModeOutlinedIcon sx={{ fontSize: '0.7em' }} />
               </IconButton>
             </Box>
+          ) : (
+            <></>
           )}
         </Box>
         <Box

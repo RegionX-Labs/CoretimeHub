@@ -70,6 +70,7 @@ const Home = () => {
                   name: region.name ?? `Region #${index + 1}`,
                 }}
                 active={index === currentRegion}
+                editable
                 updateName={(name) => updateRegionName(index, name)}
               />
             </Box>
