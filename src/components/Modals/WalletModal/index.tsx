@@ -15,6 +15,8 @@ import {
 } from '@scio-labs/use-inkathon';
 import Image from 'next/image';
 
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+
 import styles from './index.module.scss';
 
 interface WalletModalProps {
@@ -23,10 +25,14 @@ interface WalletModalProps {
 }
 
 export const WalletModal = (props: WalletModalProps) => {
-  const { connect, activeChain } = useInkathon();
-  const onConnect = (wallet: SubstrateWallet) => {
-    if (!connect) return;
-    connect(activeChain, wallet);
+  const { connect: connectContract, activeChain } = useInkathon();
+  const { connectRelay } = useRelayApi();
+  const { connectCoretime } = useCoretimeApi();
+  const onConnect = async (wallet: SubstrateWallet) => {
+    if (!connectContract) return;
+    connectRelay();
+    connectCoretime();
+    connectContract(activeChain, wallet);
     props.onClose();
   };
   return (
