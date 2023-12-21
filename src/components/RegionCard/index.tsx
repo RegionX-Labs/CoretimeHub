@@ -31,7 +31,7 @@ export const RegionCard = ({ region, active = false }: RegionCardProps) => {
   const timeAgo = new TimeAgo('en-US');
 
   const formatDuration = humanizer();
-  const { begin, end, task, id, consumed, ownership, paid, origin } = region;
+  const { begin, end, task, consumed, ownership, paid, origin, core } = region;
   const theme = useTheme();
   const progress = [
     {
@@ -64,9 +64,9 @@ export const RegionCard = ({ region, active = false }: RegionCardProps) => {
           <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
           {`Duration: ${formatDuration(end - begin)}`}
         </div>
-        <Typography variant='subtitle2'>
-          {region.name ?? `Region #${id}`}
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography variant='subtitle2'>{region.name}</Typography>
+        </Box>
         <Box
           sx={{
             display: 'flex',
@@ -75,6 +75,7 @@ export const RegionCard = ({ region, active = false }: RegionCardProps) => {
             color: theme.palette.grey[200],
           }}
         >
+          <Typography variant='h2'>{`Core Index: #${core}`}</Typography>
           <Typography variant='h2'>Begin: {timeAgo.format(begin)}</Typography>
           <Typography variant='h2'>End: {timeAgo.format(end)}</Typography>
         </Box>

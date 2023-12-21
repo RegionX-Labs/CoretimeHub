@@ -65,7 +65,10 @@ const Home = () => {
           {regions.map((region, index) => (
             <Box key={index} onClick={() => setCurrentRegion(index)}>
               <RegionCard
-                region={{ ...region, id: (index + 1).toString() }}
+                region={{
+                  ...region,
+                  name: region.name ?? `Region #${index + 1}`,
+                }}
                 active={index === currentRegion}
               />
             </Box>
