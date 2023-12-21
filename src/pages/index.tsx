@@ -6,6 +6,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { useState } from 'react';
 
 import { RegionCard } from '@/components';
 
@@ -20,11 +21,17 @@ import {
 const Home = () => {
   const theme = useTheme();
   const { regions, loading } = useRegions();
+
+  const [currentRegion, setCurrentRegion] = useState<number>();
+
+  const renewable =
+    currentRegion !== undefined && regions[currentRegion].paid !== null;
+
   const management = [
-    { label: 'partition', icon: PartitionIcon },
-    { label: 'interlace', icon: InterlaceIcon },
-    { label: 'transfer', icon: TransferIcon },
-    { label: 'assign', icon: AssignmentIcon },
+    { label: 'partition', icon: PartitionIcon, disabled: renewable },
+    { label: 'interlace', icon: InterlaceIcon, disabled: renewable },
+    { label: 'transfer', icon: TransferIcon, disabled: !renewable },
+    { label: 'assign', icon: AssignmentIcon, disabled: renewable },
   ];
 
   return (
@@ -56,10 +63,12 @@ const Home = () => {
             <CircularProgress />
           </Backdrop>
           {regions.map((region, index) => (
-            <RegionCard
-              key={index}
-              region={{ ...region, id: (index + 1).toString() }}
-            />
+            <Box key={index} onClick={() => setCurrentRegion(index)}>
+              <RegionCard
+                region={{ ...region, id: (index + 1).toString() }}
+                active={index === currentRegion}
+              />
+            </Box>
           ))}
         </Box>
       </Box>
@@ -83,7 +92,7 @@ const Home = () => {
             alignItems: 'flex-start',
           }}
         >
-          {management.map(({ label, icon: Icon }, index) => (
+          {management.map(({ label, icon: Icon, disabled }, index) => (
             <Button
               key={index}
               sx={{
@@ -91,6 +100,7 @@ const Home = () => {
                 textTransform: 'capitalize',
               }}
               startIcon={<Icon color={theme.palette.text.secondary} />}
+              disabled={disabled}
             >
               {label}
             </Button>

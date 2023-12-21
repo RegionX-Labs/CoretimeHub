@@ -6,6 +6,20 @@
   padding: 1.5rem 2rem;
 }
 
+.container:hover {
+  border: 1px dashed;
+  transition-duration: 300ms;
+}
+
+.active {
+  border: 1px solid;
+  transition-duration: 300ms;
+}
+
+.active:hover {
+  border: 1px solid;
+}
+
 .duration {
   border-width: 1px;
   border-style: solid;

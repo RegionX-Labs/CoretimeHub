@@ -7,28 +7,30 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { clsx } from 'clsx';
 import { humanizer } from 'humanize-duration';
 import TimeAgo from 'javascript-time-ago';
 // English.
 import en from 'javascript-time-ago/locale/en';
+import React from 'react';
 
 import { RegionMetadata, RegionOrigin } from '@/models';
 
 import styles from './index.module.scss';
 import { Label } from '../elements';
 
-TimeAgo.addDefaultLocale(en);
-
-// Create formatter (English).
-const timeAgo = new TimeAgo('en-US');
-
-const formatDuration = humanizer();
-
 interface RegionCardProps {
   region: RegionMetadata;
+  active?: boolean;
 }
 
-export const RegionCard = ({ region }: RegionCardProps) => {
+export const RegionCard = ({ region, active = false }: RegionCardProps) => {
+  TimeAgo.addLocale(en);
+
+  // Create formatter (English).
+  const timeAgo = new TimeAgo('en-US');
+
+  const formatDuration = humanizer();
   const { begin, end, task, id, consumed, ownership, paid, origin } = region;
   const theme = useTheme();
   const progress = [
@@ -50,7 +52,7 @@ export const RegionCard = ({ region }: RegionCardProps) => {
   ];
 
   return (
-    <Paper className={styles.container}>
+    <Paper className={clsx(styles.container, active ? styles.active : '')}>
       <div className={styles.regionInfo}>
         <div
           className={styles.duration}

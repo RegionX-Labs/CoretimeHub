@@ -38,7 +38,7 @@ const CoretimeApiContextProvider = (props: any) => {
   useEffect(() => {
     state.apiError &&
       toastError(
-        `Failed to connect to Coretime chain: error = ${state.apiError.toString()}`
+        `Failed to connect to Coretime chain: error = ${state.apiError}`
       );
   }, [state.apiError]);
 
