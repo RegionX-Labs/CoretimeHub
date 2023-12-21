@@ -10,6 +10,7 @@ import {
   HumanRegionId,
   HumanRegionRecord,
   RegionMetadata,
+  RegionOrigin,
   RELAY_CHAIN_BLOCK_TIME,
 } from '@/models';
 
@@ -87,6 +88,7 @@ const RegionDataProvider = ({ children }: Props) => {
           end: tsEnd,
           owner,
           paid: nPaid,
+          origin: RegionOrigin.CORETIME_CHAIN,
           id: `${tsBegin}-${tsEnd}`, // FIXME: unique identifier for each region
         });
       }

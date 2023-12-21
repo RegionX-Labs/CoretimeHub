@@ -37,6 +37,13 @@ export type HumanRegionRecord = {
   paid?: string;
 };
 
+export enum RegionOrigin {
+  // eslint-disable-next-line no-unused-vars
+  CORETIME_CHAIN,
+  // eslint-disable-next-line no-unused-vars
+  CONTRACTS_CHAIN,
+}
+
 export type RegionMetadata = {
   begin: Timestamp;
   end: Timestamp;
@@ -44,6 +51,8 @@ export type RegionMetadata = {
   mask: CoreMask;
   paid?: Balance;
   owner: Address;
+
+  origin: RegionOrigin;
 
   id: string;
   name?: string;

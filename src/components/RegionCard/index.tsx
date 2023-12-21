@@ -12,7 +12,7 @@ import TimeAgo from 'javascript-time-ago';
 // English.
 import en from 'javascript-time-ago/locale/en';
 
-import { RegionMetadata } from '@/models';
+import { RegionMetadata, RegionOrigin } from '@/models';
 
 import styles from './index.module.scss';
 import { Label } from '../elements';
@@ -29,7 +29,7 @@ interface RegionCardProps {
 }
 
 export const RegionCard = ({ region }: RegionCardProps) => {
-  const { begin, end, task, id, consumed, ownership } = region;
+  const { begin, end, task, id, consumed, ownership, paid, origin } = region;
   const theme = useTheme();
   const progress = [
     {
@@ -77,8 +77,15 @@ export const RegionCard = ({ region }: RegionCardProps) => {
           <Typography variant='h2'>End: {timeAgo.format(end)}</Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1rem' }}>
-          <Label text='Non-Renewable' color='primary' />
-          <Label text='Coretime Chain' color='success' />
+          <Label text={paid ? 'Renewable' : 'Non-Renewable'} color='primary' />
+          <Label
+            text={
+              origin === RegionOrigin.CORETIME_CHAIN
+                ? 'Coretime Chain'
+                : 'Contracts Chain'
+            }
+            color='success'
+          />
         </Box>
       </div>
       <Divider orientation='vertical' flexItem />
