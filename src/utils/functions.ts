@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 
-import { CoreMaskString, Timestamp } from '@/models';
+import { CoreMask, CoreMaskString, Timestamp } from '@/models';
 
 // decode core mask hex string into a Uint8Array
 export const decodeMaskString = (
@@ -29,4 +29,17 @@ export const getBlockTimestamp = async (
   const apiAt = await api.at(hash);
   const timestamp = Number((await apiAt.query.timestamp.now()).toJSON());
   return timestamp;
+};
+
+export const countOne = (mask: CoreMask): number => {
+  let count = 0;
+  for (let i = 2; i < mask.length; ++i) {
+    let v = parseInt(mask.slice(i, i + 1), 16);
+    while (v > 0) {
+      if (v & 1) ++count;
+      v >>= 1;
+    }
+  }
+  console.log(count);
+  return count;
 };

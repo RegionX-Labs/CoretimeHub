@@ -1,10 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import {
-  decodeMaskString,
-  getBlockTimestamp,
-  parseHNString,
-} from '@/utils/functions';
+import { countOne, getBlockTimestamp, parseHNString } from '@/utils/functions';
 
 import {
   HumanRegionId,
@@ -96,13 +92,14 @@ const RegionDataProvider = ({ children }: Props) => {
         _regions.push({
           begin: tsBegin,
           core,
-          mask: decodeMaskString(mask, Math.floor(timeslicePeriod / 8)),
+          mask,
           end: tsEnd,
           owner,
           paid: nPaid,
           origin: RegionOrigin.CORETIME_CHAIN,
           id,
           name,
+          ownership: countOne(mask) / timeslicePeriod,
         });
       }
       setRegions(_regions);

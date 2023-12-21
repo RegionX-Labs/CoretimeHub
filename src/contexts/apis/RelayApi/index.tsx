@@ -20,10 +20,7 @@ const RelayApiContextProvider = (props: any) => {
   const { toastError, toastSuccess } = useToast();
 
   useEffect(() => {
-    state.apiError &&
-      toastError(
-        `Failed to connect to relay chain: error = ${state.apiError.toString()}`
-      );
+    state.apiError && toastError(`Failed to connect to relay chain`);
   }, [state.apiError]);
 
   useEffect(() => {

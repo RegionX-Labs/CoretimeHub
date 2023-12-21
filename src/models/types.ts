@@ -9,7 +9,7 @@ export type TaskIndex = number;
 
 export type Timeslice = U32;
 export type CoreIndex = U16;
-export type CoreMask = Uint8Array; // 80 bits
+export type CoreMask = '0x' & string; // 80 bits bitmap
 export type CoreMaskString = '0x' & string;
 export type RawRegionId = Uint8Array; // 128 bits
 
