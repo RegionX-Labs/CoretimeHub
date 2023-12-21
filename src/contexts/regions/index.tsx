@@ -22,6 +22,7 @@ interface RegionsData {
   config: {
     timeslicePeriod: number;
   };
+  loading: boolean;
 }
 
 const defaultRegionData: RegionsData = {
@@ -29,6 +30,7 @@ const defaultRegionData: RegionsData = {
   config: {
     timeslicePeriod: 0,
   },
+  loading: false,
 };
 
 const RegionDataContext = createContext<RegionsData>(defaultRegionData);
@@ -40,6 +42,8 @@ interface Props {
 const RegionDataProvider = ({ children }: Props) => {
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
   const [timeslicePeriod, setTimeslicePeriod] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
+
   const {
     state: { api: coretimeApi, apiState: coretimeApiState },
   } = useCoretimeApi();
@@ -61,6 +65,8 @@ const RegionDataProvider = ({ children }: Props) => {
       coretimeApi.consts.broker.timeslicePeriod.toString()
     );
     const fetchRegions = async (): Promise<void> => {
+      setLoading(true);
+
       const _regions: Array<RegionMetadata> = [];
       const res = await coretimeApi.query.broker.regions.entries();
       for await (const [key, value] of res) {
@@ -93,13 +99,15 @@ const RegionDataProvider = ({ children }: Props) => {
         });
       }
       setRegions(_regions);
+
+      setLoading(false);
     };
     setTimeslicePeriod(timeslicePeriod);
     fetchRegions();
   }, [coretimeApi, coretimeApiState, relayApi, relayApiState]);
   return (
     <RegionDataContext.Provider
-      value={{ regions, config: { timeslicePeriod } }}
+      value={{ regions, config: { timeslicePeriod }, loading }}
     >
       {children}
     </RegionDataContext.Provider>

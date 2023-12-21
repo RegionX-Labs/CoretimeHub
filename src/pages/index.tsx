@@ -1,4 +1,11 @@
-import { Box, Button, Typography, useTheme } from '@mui/material';
+import {
+  Backdrop,
+  Box,
+  Button,
+  CircularProgress,
+  Typography,
+  useTheme,
+} from '@mui/material';
 
 import { RegionCard } from '@/components';
 
@@ -12,7 +19,7 @@ import {
 
 const Home = () => {
   const theme = useTheme();
-  const { regions } = useRegions();
+  const { regions, loading } = useRegions();
   const management = [
     { label: 'partition', icon: PartitionIcon },
     { label: 'interlace', icon: InterlaceIcon },
@@ -45,6 +52,9 @@ const Home = () => {
             mt: '1rem',
           }}
         >
+          <Backdrop open={loading}>
+            <CircularProgress />
+          </Backdrop>
           {regions.map((region, index) => (
             <RegionCard
               key={index}
