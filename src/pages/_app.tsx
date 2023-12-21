@@ -47,7 +47,7 @@ export default function MyApp(props: MyAppProps) {
             <RelayApiContextProvider>
               <UseInkathonProvider
                 appName='Coretime UI'
-                connectOnInit={true}
+                connectOnInit={false}
                 defaultChain={{
                   network: '',
                   name: '',

@@ -45,16 +45,13 @@ export const Sidebar = () => {
   const {
     state: { apiState: coretimeApiState },
   } = useCoretimeApi();
-  const { isConnected, isConnecting, isInitializing, error, api } =
-    useInkathon();
+  const { isConnected, isConnecting, error, api } = useInkathon();
 
   const contractsApiState =
     api && isConnected
       ? ApiState.READY
       : isConnecting
       ? ApiState.CONNECTING
-      : isInitializing
-      ? ApiState.CONNECT_INIT
       : error
       ? ApiState.ERROR
       : ApiState.DISCONNECTED;
