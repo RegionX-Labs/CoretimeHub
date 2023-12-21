@@ -18,17 +18,17 @@ interface RegionCardProps {
 }
 
 export const RegionCard = ({ region }: RegionCardProps) => {
-  const { length, task } = region;
+  const { begin, end, task, id, consumed, ownership } = region;
   const theme = useTheme();
   const progress = [
     {
       label: 'Core Ownership',
-      value: region.ownership,
+      value: ownership ?? 0,
       color: 'warning',
     },
     {
       label: 'Consumed',
-      value: region.consumed,
+      value: consumed ?? 0,
       color: 'success',
     },
     {
@@ -49,10 +49,10 @@ export const RegionCard = ({ region }: RegionCardProps) => {
           }}
         >
           <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
-          {`Duration: ${length}`}
+          {`Duration: ${end - begin}`}
         </div>
         <Typography variant='subtitle2'>
-          {region.name ?? `Region #${region.id}`}
+          {region.name ?? `Region #${id}`}
         </Typography>
         <Box
           sx={{
@@ -62,8 +62,8 @@ export const RegionCard = ({ region }: RegionCardProps) => {
             color: theme.palette.grey[200],
           }}
         >
-          <Typography variant='h2'>Begin: {region.begin}</Typography>
-          <Typography variant='h2'>End: {region.end}</Typography>
+          <Typography variant='h2'>Begin: {begin}</Typography>
+          <Typography variant='h2'>End: {end}</Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1rem' }}>
           <Label text='Non-Renewable' color='primary' />

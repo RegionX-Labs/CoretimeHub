@@ -2,6 +2,7 @@ import { Box, Button, Typography, useTheme } from '@mui/material';
 
 import { RegionCard } from '@/components';
 
+import { useRegions } from '@/contexts/regions';
 import {
   AssignmentIcon,
   InterlaceIcon,
@@ -11,6 +12,7 @@ import {
 
 const Home = () => {
   const theme = useTheme();
+  const { regions } = useRegions();
   const management = [
     { label: 'partition', icon: PartitionIcon },
     { label: 'interlace', icon: InterlaceIcon },
@@ -43,21 +45,8 @@ const Home = () => {
             mt: '1rem',
           }}
         >
-          {[1, 2].map((_, index) => (
-            <RegionCard
-              key={index}
-              region={{
-                id: index,
-                begin: 1000,
-                core: 1000,
-                mask: new Uint8Array([1, 2, 3]),
-                end: 2000,
-                owner: 'REGION OWNER',
-                length: 1000,
-                ownership: 0.652,
-                consumed: 0.558,
-              }}
-            ></RegionCard>
+          {regions.map((region, index) => (
+            <RegionCard key={index} region={{ ...region, id: index + 1 }} />
           ))}
         </Box>
       </Box>
