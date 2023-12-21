@@ -22,7 +22,7 @@ import React, { useState } from 'react';
 import { RegionMetadata, RegionOrigin } from '@/models';
 
 import styles from './index.module.scss';
-import { Label } from '../elements';
+import { Label } from '..';
 
 interface RegionCardProps {
   region: RegionMetadata;
