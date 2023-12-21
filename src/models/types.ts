@@ -55,7 +55,7 @@ export type RegionMetadata = {
   origin: RegionOrigin;
 
   id: string;
-  name?: string;
+  name: string | null;
   ownership?: Percentage;
   consumed?: Percentage;
   task?: TaskMetadata;

@@ -23,6 +23,7 @@ interface RegionsData {
     timeslicePeriod: number;
   };
   loading: boolean;
+  updateRegionName: (_index: number, _name: string) => void;
 }
 
 const defaultRegionData: RegionsData = {
@@ -31,6 +32,9 @@ const defaultRegionData: RegionsData = {
     timeslicePeriod: 0,
   },
   loading: false,
+  updateRegionName: () => {
+    /** */
+  },
 };
 
 const RegionDataContext = createContext<RegionsData>(defaultRegionData);
@@ -86,6 +90,8 @@ const RegionDataProvider = ({ children }: Props) => {
           (endBlockHeight - beginBlockHeight) * RELAY_CHAIN_BLOCK_TIME;
 
         const nPaid = paid ? parseHNString(paid) : undefined;
+        const id = `${parseHNString(begin)}-${core}-${mask.slice(2)}`;
+        const name = localStorage.getItem(`region-${id}`);
 
         _regions.push({
           begin: tsBegin,
@@ -95,7 +101,8 @@ const RegionDataProvider = ({ children }: Props) => {
           owner,
           paid: nPaid,
           origin: RegionOrigin.CORETIME_CHAIN,
-          id: `${parseHNString(begin)}-${core}-${mask.slice(2)}`,
+          id,
+          name,
         });
       }
       setRegions(_regions);
@@ -105,9 +112,26 @@ const RegionDataProvider = ({ children }: Props) => {
     setTimeslicePeriod(timeslicePeriod);
     fetchRegions();
   }, [coretimeApi, coretimeApiState, relayApi, relayApiState]);
+
+  const updateRegionName = (index: number, name: string) => {
+    const _regions = [...regions];
+    const region = regions[index];
+    _regions[index] = {
+      ...region,
+      name,
+    };
+    setRegions(_regions);
+    localStorage.setItem(`region-${region.id}`, name);
+  };
+
   return (
     <RegionDataContext.Provider
-      value={{ regions, config: { timeslicePeriod }, loading }}
+      value={{
+        regions,
+        config: { timeslicePeriod },
+        loading,
+        updateRegionName,
+      }}
     >
       {children}
     </RegionDataContext.Provider>

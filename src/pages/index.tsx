@@ -20,7 +20,7 @@ import {
 
 const Home = () => {
   const theme = useTheme();
-  const { regions, loading } = useRegions();
+  const { regions, loading, updateRegionName } = useRegions();
 
   const [currentRegion, setCurrentRegion] = useState<number>();
 
@@ -70,6 +70,7 @@ const Home = () => {
                   name: region.name ?? `Region #${index + 1}`,
                 }}
                 active={index === currentRegion}
+                updateName={(name) => updateRegionName(index, name)}
               />
             </Box>
           ))}

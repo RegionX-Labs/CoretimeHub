@@ -1,7 +1,12 @@
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
 import {
   Box,
   Divider,
+  IconButton,
+  Input,
   LinearProgress,
   Paper,
   Typography,
@@ -12,7 +17,7 @@ import { humanizer } from 'humanize-duration';
 import TimeAgo from 'javascript-time-ago';
 // English.
 import en from 'javascript-time-ago/locale/en';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { RegionMetadata, RegionOrigin } from '@/models';
 
@@ -22,17 +27,25 @@ import { Label } from '../elements';
 interface RegionCardProps {
   region: RegionMetadata;
   active?: boolean;
+  updateName: (_newName: string) => void;
 }
 
-export const RegionCard = ({ region, active = false }: RegionCardProps) => {
+export const RegionCard = ({
+  region,
+  active = false,
+  updateName,
+}: RegionCardProps) => {
   TimeAgo.addLocale(en);
-
   // Create formatter (English).
   const timeAgo = new TimeAgo('en-US');
 
   const formatDuration = humanizer();
   const { begin, end, task, consumed, ownership, paid, origin, core } = region;
   const theme = useTheme();
+
+  const [isEdit, setEdit] = useState(false);
+  const [name, setName] = useState('');
+
   const progress = [
     {
       label: 'Core Ownership',
@@ -51,6 +64,22 @@ export const RegionCard = ({ region, active = false }: RegionCardProps) => {
     },
   ];
 
+  const onEdit = () => {
+    setEdit(true);
+    setName(region.name ?? '');
+  };
+
+  const onSave = () => {
+    setEdit(false);
+    setName('');
+    updateName(name);
+  };
+
+  const onCancel = () => {
+    setEdit(false);
+    setName('');
+  };
+
   return (
     <Paper className={clsx(styles.container, active ? styles.active : '')}>
       <div className={styles.regionInfo}>
@@ -64,8 +93,39 @@ export const RegionCard = ({ region, active = false }: RegionCardProps) => {
           <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
           {`Duration: ${formatDuration(end - begin)}`}
         </div>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant='subtitle2'>{region.name}</Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            height: '2rem',
+          }}
+        >
+          {isEdit ? (
+            <Input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              size='small'
+            />
+          ) : (
+            <Typography variant='subtitle2'>{region.name}</Typography>
+          )}
+          {isEdit ? (
+            <Box style={{ display: 'flex', gap: '0.5rem' }}>
+              <IconButton onClick={onSave} sx={{ px: 0, py: '4px' }}>
+                <CheckOutlinedIcon sx={{ fontSize: '0.7em' }} />
+              </IconButton>
+              <IconButton onClick={onCancel} sx={{ px: 0, py: '4px' }}>
+                <CloseOutlinedIcon sx={{ fontSize: '0.7em' }} />
+              </IconButton>
+            </Box>
+          ) : (
+            <Box>
+              <IconButton onClick={onEdit}>
+                <ModeOutlinedIcon sx={{ fontSize: '0.7em' }} />
+              </IconButton>
+            </Box>
+          )}
         </Box>
         <Box
           sx={{
