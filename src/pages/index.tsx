@@ -46,7 +46,10 @@ const Home = () => {
           }}
         >
           {regions.map((region, index) => (
-            <RegionCard key={index} region={{ ...region, id: index + 1 }} />
+            <RegionCard
+              key={index}
+              region={{ ...region, id: (index + 1).toString() }}
+            />
           ))}
         </Box>
       </Box>

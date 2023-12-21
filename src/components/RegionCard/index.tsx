@@ -7,11 +7,22 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { humanizer } from 'humanize-duration';
+import TimeAgo from 'javascript-time-ago';
+// English.
+import en from 'javascript-time-ago/locale/en';
 
 import { RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 import { Label } from '../elements';
+
+TimeAgo.addDefaultLocale(en);
+
+// Create formatter (English).
+const timeAgo = new TimeAgo('en-US');
+
+const formatDuration = humanizer();
 
 interface RegionCardProps {
   region: RegionMetadata;
@@ -49,7 +60,7 @@ export const RegionCard = ({ region }: RegionCardProps) => {
           }}
         >
           <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
-          {`Duration: ${end - begin}`}
+          {`Duration: ${formatDuration(end - begin)}`}
         </div>
         <Typography variant='subtitle2'>
           {region.name ?? `Region #${id}`}
@@ -62,8 +73,8 @@ export const RegionCard = ({ region }: RegionCardProps) => {
             color: theme.palette.grey[200],
           }}
         >
-          <Typography variant='h2'>Begin: {begin}</Typography>
-          <Typography variant='h2'>End: {end}</Typography>
+          <Typography variant='h2'>Begin: {timeAgo.format(begin)}</Typography>
+          <Typography variant='h2'>End: {timeAgo.format(end)}</Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1rem' }}>
           <Label text='Non-Renewable' color='primary' />

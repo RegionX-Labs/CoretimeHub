@@ -12,7 +12,8 @@ export const decodeMaskString = (
   for (let i = 0; i < len; ++i) {
     res.push(parseInt(mask.slice(i * 2, i * 2 + 2), 16));
   }
-  return new Uint8Array(res.toReversed());
+  res.reverse();
+  return new Uint8Array(res);
 };
 
 // parse human readable number string
