@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useReducer } from 'react';
 
 import { ApiState } from '@/contexts/apis/types';
-import { useToast } from '@/contexts/Toast';
+import { useToast } from '@/contexts/toast';
 
 import { connect, initialState, reducer } from '../common';
 import { WS_RELAY_CHAIN } from '../consts';
@@ -20,10 +20,7 @@ const RelayApiContextProvider = (props: any) => {
   const { toastError, toastSuccess } = useToast();
 
   useEffect(() => {
-    state.apiError &&
-      toastError(
-        `Failed to connect to relay chain: error = ${state.apiError.toString()}`
-      );
+    state.apiError && toastError(`Failed to connect to relay chain`);
   }, [state.apiError]);
 
   useEffect(() => {

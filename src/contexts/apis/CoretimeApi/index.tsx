@@ -1,10 +1,26 @@
 import React, { useContext, useEffect, useReducer } from 'react';
 
 import { ApiState } from '@/contexts/apis/types';
-import { useToast } from '@/contexts/Toast';
+import { useToast } from '@/contexts/toast';
 
 import { connect, initialState, reducer } from '../common';
 import { WS_CORETIME_CHAIN } from '../consts';
+
+const types = {
+  CoreIndex: 'u32',
+  CoreMask: 'Vec<u8>',
+  Timeslice: 'u32',
+  RegionId: {
+    begin: 'Timeslice',
+    core: 'CoreIndex',
+    mask: 'CoreMask',
+  },
+  RegionRecord: {
+    end: 'Timeslice',
+    owner: 'AccountId',
+    paid: 'Option<Balance>',
+  },
+};
 
 const defaultValue = {
   state: { ...initialState },
@@ -20,10 +36,7 @@ const CoretimeApiContextProvider = (props: any) => {
   const { toastError, toastSuccess } = useToast();
 
   useEffect(() => {
-    state.apiError &&
-      toastError(
-        `Failed to connect to Coretime chain: error = ${state.apiError.toString()}`
-      );
+    state.apiError && toastError(`Failed to connect to Coretime chain`);
   }, [state.apiError]);
 
   useEffect(() => {
@@ -31,7 +44,8 @@ const CoretimeApiContextProvider = (props: any) => {
       toastSuccess('Successfully connected to the Coretime chain');
   }, [state.apiState]);
 
-  const connectCoretime = () => connect(state, WS_CORETIME_CHAIN, dispatch);
+  const connectCoretime = () =>
+    connect(state, WS_CORETIME_CHAIN, dispatch, types);
 
   return (
     <CoretimeApiContext.Provider value={{ state, connectCoretime }}>

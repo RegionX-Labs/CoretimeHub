@@ -9,7 +9,7 @@ import { ApiState } from './types';
 
 export type State = {
   jsonrpc: Record<string, Record<string, DefinitionRpcExt>>;
-  api: any;
+  api: ApiPromise | null;
   apiError: any;
   apiState: ApiState;
 };
@@ -43,7 +43,12 @@ export const reducer = (state: any, action: any) => {
 ///
 // Connecting to the Substrate node
 
-export const connect = (state: any, socket: string, dispatch: any) => {
+export const connect = (
+  state: any,
+  socket: string,
+  dispatch: any,
+  types?: any
+) => {
   const { apiState, jsonrpc } = state;
   // We only want this function to be performed once
   if (apiState !== ApiState.DISCONNECTED) return;
@@ -51,7 +56,7 @@ export const connect = (state: any, socket: string, dispatch: any) => {
   dispatch({ type: 'CONNECT_INIT' });
 
   const provider = new WsProvider(socket);
-  const _api = new ApiPromise({ provider, rpc: jsonrpc });
+  const _api = new ApiPromise({ provider, rpc: jsonrpc, types });
 
   // Set listeners for disconnection and reconnection event.
   _api.on('connected', () => {

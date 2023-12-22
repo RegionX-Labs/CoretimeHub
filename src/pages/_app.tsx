@@ -18,7 +18,8 @@ import {
   RelayApiContextProvider,
 } from '@/contexts/apis';
 import { WS_CONTRACTS_CHAIN } from '@/contexts/apis/consts';
-import { ToastProvider } from '@/contexts/Toast';
+import { RegionDataProvider } from '@/contexts/regions';
+import { ToastProvider } from '@/contexts/toast';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -54,7 +55,9 @@ export default function MyApp(props: MyAppProps) {
                   rpcUrls: [WS_CONTRACTS_CHAIN],
                 }}
               >
-                {getLayout(<Component {...pageProps} />)}
+                <RegionDataProvider>
+                  {getLayout(<Component {...pageProps} />)}
+                </RegionDataProvider>
               </UseInkathonProvider>
             </RelayApiContextProvider>
           </CoretimeApiContextProvider>

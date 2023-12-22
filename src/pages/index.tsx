@@ -1,7 +1,16 @@
-import { Box, Button, Typography, useTheme } from '@mui/material';
+import {
+  Backdrop,
+  Box,
+  Button,
+  CircularProgress,
+  Typography,
+  useTheme,
+} from '@mui/material';
+import { useState } from 'react';
 
 import { RegionCard } from '@/components';
 
+import { useRegions } from '@/contexts/regions';
 import {
   AssignmentIcon,
   InterlaceIcon,
@@ -11,11 +20,18 @@ import {
 
 const Home = () => {
   const theme = useTheme();
+  const { regions, loading, updateRegionName } = useRegions();
+
+  const [currentRegion, setCurrentRegion] = useState<number>();
+
+  const renewable =
+    currentRegion !== undefined && regions[currentRegion].paid !== null;
+
   const management = [
-    { label: 'partition', icon: PartitionIcon },
-    { label: 'interlace', icon: InterlaceIcon },
-    { label: 'transfer', icon: TransferIcon },
-    { label: 'assign', icon: AssignmentIcon },
+    { label: 'partition', icon: PartitionIcon, disabled: renewable },
+    { label: 'interlace', icon: InterlaceIcon, disabled: renewable },
+    { label: 'transfer', icon: TransferIcon, disabled: !renewable },
+    { label: 'assign', icon: AssignmentIcon, disabled: renewable },
   ];
 
   return (
@@ -43,21 +59,21 @@ const Home = () => {
             mt: '1rem',
           }}
         >
-          {[1, 2].map((_, index) => (
-            <RegionCard
-              key={index}
-              region={{
-                id: index,
-                begin: 1000,
-                core: 1000,
-                mask: new Uint8Array([1, 2, 3]),
-                end: 2000,
-                owner: 'REGION OWNER',
-                length: 1000,
-                ownership: 0.652,
-                consumed: 0.558,
-              }}
-            ></RegionCard>
+          <Backdrop open={loading}>
+            <CircularProgress />
+          </Backdrop>
+          {regions.map((region, index) => (
+            <Box key={index} onClick={() => setCurrentRegion(index)}>
+              <RegionCard
+                region={{
+                  ...region,
+                  name: region.name ?? `Region #${index + 1}`,
+                }}
+                active={index === currentRegion}
+                editable
+                updateName={(name) => updateRegionName(index, name)}
+              />
+            </Box>
           ))}
         </Box>
       </Box>
@@ -81,7 +97,7 @@ const Home = () => {
             alignItems: 'flex-start',
           }}
         >
-          {management.map(({ label, icon: Icon }, index) => (
+          {management.map(({ label, icon: Icon, disabled }, index) => (
             <Button
               key={index}
               sx={{
@@ -89,6 +105,7 @@ const Home = () => {
                 textTransform: 'capitalize',
               }}
               startIcon={<Icon color={theme.palette.text.secondary} />}
+              disabled={disabled}
             >
               {label}
             </Button>
