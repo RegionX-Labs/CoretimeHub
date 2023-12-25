@@ -1,5 +1,5 @@
-import { Alert, Snackbar } from '@mui/material';
-import { createContext, useContext, useState } from 'react';
+import { SnackbarProvider, useSnackbar } from 'notistack';
+import { createContext, useContext } from 'react';
 
 interface ToastManager {
   toastSuccess: (_msg: string, _duration?: number) => void;
@@ -29,52 +29,34 @@ interface Props {
   children: React.ReactNode;
 }
 
-type ToastParam = {
-  message: string;
-  duration: number;
-  type: 'success' | 'error' | 'warning' | 'info';
-};
-
-const ToastProvider = ({ children }: Props) => {
-  const [toasts, setToasts] = useState<ToastParam[]>([]);
-
-  const addToast = (toast: ToastParam) => {
-    setToasts([...toasts, toast]);
-  };
-
-  const removeToast = (index: number) => {
-    setToasts(toasts.filter((_v, i) => i !== index));
-  };
+const ToastProviderWrapper = ({ children }: Props) => {
+  const { enqueueSnackbar } = useSnackbar();
 
   const toastSuccess = (message: string, duration = 3000) => {
-    addToast({
-      message,
-      duration,
-      type: 'success',
+    enqueueSnackbar(message, {
+      variant: 'success',
+      autoHideDuration: duration,
     });
   };
 
   const toastError = (message: string, duration = 3000) => {
-    addToast({
-      message,
-      duration,
-      type: 'error',
+    enqueueSnackbar(message, {
+      variant: 'error',
+      autoHideDuration: duration,
     });
   };
 
   const toastInfo = (message: string, duration = 3000) => {
-    addToast({
-      message,
-      duration,
-      type: 'info',
+    enqueueSnackbar(message, {
+      variant: 'info',
+      autoHideDuration: duration,
     });
   };
 
   const toastWarning = (message: string, duration = 3000) => {
-    addToast({
-      message,
-      duration,
-      type: 'warning',
+    enqueueSnackbar(message, {
+      variant: 'warning',
+      autoHideDuration: duration,
     });
   };
 
@@ -83,26 +65,15 @@ const ToastProvider = ({ children }: Props) => {
       value={{ toastSuccess, toastError, toastInfo, toastWarning }}
     >
       {children}
-      {toasts.map(({ duration, type, message }, index) => (
-        <Snackbar
-          key={index}
-          open
-          autoHideDuration={duration}
-          onClose={() => removeToast(index)}
-        >
-          <Alert
-            onClose={() => removeToast(index)}
-            severity={type}
-            variant='filled'
-            sx={{ width: '100%' }}
-          >
-            {message}
-          </Alert>
-        </Snackbar>
-      ))}
     </ToastContext.Provider>
   );
 };
+
+const ToastProvider = ({ children }: Props) => (
+  <SnackbarProvider autoHideDuration={3000}>
+    <ToastProviderWrapper>{children}</ToastProviderWrapper>
+  </SnackbarProvider>
+);
 
 const useToast = () => useContext(ToastContext);
 
