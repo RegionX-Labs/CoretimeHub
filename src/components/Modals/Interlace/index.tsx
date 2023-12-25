@@ -49,6 +49,7 @@ export const InterlaceModal = ({
   const currentMask = mask2BinString(region.mask);
   const oneStart = currentMask.indexOf('1');
   const oneEnd = currentMask.lastIndexOf('1');
+  const activeBits = oneEnd - oneStart + 1;
 
   const [working, setWorking] = useState(false);
   const [position, setPosition] = useState(oneStart);
@@ -113,27 +114,31 @@ export const InterlaceModal = ({
             </Typography>
             <Typography>{currentMask}</Typography>
           </Stack>
-          <Stack direction='column' gap={2}>
-            <Typography
-              variant='h2'
-              sx={{ color: theme.palette.text.secondary }}
-            >
-              New Mask
-            </Typography>
-            <Slider
-              min={oneStart}
-              max={oneEnd - 1}
-              step={1}
-              value={position}
-              onChange={(_e, v) => setPosition(Number(v))}
-              valueLabelDisplay='on'
-              valueLabelFormat={(v) =>
-                `${(((v - oneStart + 1) / timeslicePeriod) * 100).toFixed(2)}%`
-              }
-              className={styles.slider}
-            />
-            <Typography>{newMask}</Typography>
-          </Stack>
+          {activeBits > 1 && (
+            <Stack direction='column' gap={2}>
+              <Typography
+                variant='h2'
+                sx={{ color: theme.palette.text.secondary }}
+              >
+                New Mask
+              </Typography>
+              <Slider
+                min={oneStart}
+                max={oneEnd - 1}
+                step={1}
+                value={position}
+                onChange={(_e, v) => setPosition(Number(v))}
+                valueLabelDisplay='on'
+                valueLabelFormat={(v) =>
+                  `${(((v - oneStart + 1) / timeslicePeriod) * 100).toFixed(
+                    2
+                  )}%`
+                }
+                className={styles.slider}
+              />
+              <Typography>{newMask}</Typography>
+            </Stack>
+          )}
         </Stack>
       </DialogContent>
       <DialogActions>
@@ -141,6 +146,7 @@ export const InterlaceModal = ({
           onClick={onInterlace}
           variant='contained'
           loading={working}
+          disabled={activeBits === 1}
         >
           Interlace
         </LoadingButton>
