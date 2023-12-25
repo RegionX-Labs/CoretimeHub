@@ -26,10 +26,9 @@ const Home = () => {
 
   const [partitionModalOpen, openPartitionModal] = useState(false);
 
-  // const renewable =
-  //   currentRegion !== undefined && regions[currentRegion].paid !== null;
-
-  const renewable = false;
+  const renewable =
+    currentRegionIndex !== undefined &&
+    regions[currentRegionIndex].paid !== null;
 
   const management = [
     {
