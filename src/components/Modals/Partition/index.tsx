@@ -127,7 +127,7 @@ export const PartitionModal = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
-      <DialogContent sx={{ width: 'fit-content' }}>
+      <DialogContent>
         <RegionCard region={region} />
         <Box className={styles.unitContainer}>
           <Typography variant='h2' sx={{ color: theme.palette.text.secondary }}>

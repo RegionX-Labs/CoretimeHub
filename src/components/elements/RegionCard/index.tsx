@@ -195,7 +195,7 @@ export const RegionCard = ({
                   fontWeight: 400,
                 }}
               >
-                {`${(value * 100).toFixed(1)}%`}
+                {`${(value * 100).toFixed(2)}%`}
               </Typography>
               <Typography variant='h2' sx={{ fontWeight: 400 }}>
                 {label}
