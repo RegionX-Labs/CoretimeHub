@@ -85,6 +85,8 @@ const Home = () => {
       </Box>
       <Box
         sx={{
+          position: 'fixed',
+          right: '10rem',
           color: theme.palette.text.secondary,
           background: theme.palette.background.default,
           minWidth: 280,
