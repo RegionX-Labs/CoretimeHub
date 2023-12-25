@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
-import { RegionCard } from '@/components';
+import { PartitionModal, RegionCard } from '@/components';
 
 import { useRegions } from '@/contexts/regions';
 import {
@@ -22,13 +22,22 @@ const Home = () => {
   const theme = useTheme();
   const { regions, loading, updateRegionName } = useRegions();
 
-  const [currentRegion, setCurrentRegion] = useState<number>();
+  const [currentRegionIndex, setCurrentRegionIndex] = useState<number>();
 
-  const renewable =
-    currentRegion !== undefined && regions[currentRegion].paid !== null;
+  const [partitionModalOpen, openPartitionModal] = useState(false);
+
+  // const renewable =
+  //   currentRegion !== undefined && regions[currentRegion].paid !== null;
+
+  const renewable = false;
 
   const management = [
-    { label: 'partition', icon: PartitionIcon, disabled: renewable },
+    {
+      label: 'partition',
+      icon: PartitionIcon,
+      disabled: renewable,
+      onClick: () => openPartitionModal(true),
+    },
     { label: 'interlace', icon: InterlaceIcon, disabled: renewable },
     { label: 'transfer', icon: TransferIcon, disabled: !renewable },
     { label: 'assign', icon: AssignmentIcon, disabled: renewable },
@@ -63,13 +72,10 @@ const Home = () => {
             <CircularProgress />
           </Backdrop>
           {regions.map((region, index) => (
-            <Box key={index} onClick={() => setCurrentRegion(index)}>
+            <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
               <RegionCard
-                region={{
-                  ...region,
-                  name: region.name ?? `Region #${index + 1}`,
-                }}
-                active={index === currentRegion}
+                region={region}
+                active={index === currentRegionIndex}
                 editable
                 updateName={(name) => updateRegionName(index, name)}
               />
@@ -97,7 +103,7 @@ const Home = () => {
             alignItems: 'flex-start',
           }}
         >
-          {management.map(({ label, icon: Icon, disabled }, index) => (
+          {management.map(({ label, icon: Icon, disabled, onClick }, index) => (
             <Button
               key={index}
               sx={{
@@ -106,12 +112,22 @@ const Home = () => {
               }}
               startIcon={<Icon color={theme.palette.text.secondary} />}
               disabled={disabled}
+              onClick={onClick}
             >
               {label}
             </Button>
           ))}
         </Box>
       </Box>
+      {currentRegionIndex !== undefined && regions[currentRegionIndex] && (
+        <>
+          <PartitionModal
+            open={partitionModalOpen}
+            onClose={() => openPartitionModal(false)}
+            region={regions[currentRegionIndex]}
+          />
+        </>
+      )}
     </Box>
   );
 };

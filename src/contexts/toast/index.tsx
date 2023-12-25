@@ -4,6 +4,8 @@ import { createContext, useContext, useState } from 'react';
 interface ToastManager {
   toastSuccess: (_msg: string, _duration?: number) => void;
   toastError: (_msg: string, _duration?: number) => void;
+  toastInfo: (_msg: string, _duration?: number) => void;
+  toastWarning: (_msg: string, _duration?: number) => void;
 }
 
 const defaultToastManager = {
@@ -11,6 +13,12 @@ const defaultToastManager = {
     /* */
   },
   toastError: () => {
+    /* */
+  },
+  toastInfo: () => {
+    /* */
+  },
+  toastWarning: () => {
     /* */
   },
 };
@@ -24,7 +32,7 @@ interface Props {
 type ToastParam = {
   message: string;
   duration: number;
-  type: 'success' | 'error' | 'warning';
+  type: 'success' | 'error' | 'warning' | 'info';
 };
 
 const ToastProvider = ({ children }: Props) => {
@@ -54,8 +62,26 @@ const ToastProvider = ({ children }: Props) => {
     });
   };
 
+  const toastInfo = (message: string, duration = 3000) => {
+    addToast({
+      message,
+      duration,
+      type: 'info',
+    });
+  };
+
+  const toastWarning = (message: string, duration = 3000) => {
+    addToast({
+      message,
+      duration,
+      type: 'warning',
+    });
+  };
+
   return (
-    <ToastContext.Provider value={{ toastSuccess, toastError }}>
+    <ToastContext.Provider
+      value={{ toastSuccess, toastError, toastInfo, toastWarning }}
+    >
       {children}
       {toasts.map(({ duration, type, message }, index) => (
         <Snackbar

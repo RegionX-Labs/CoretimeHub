@@ -1,1 +1,2 @@
-export * from './WalletModal';
+export * from './Partition';
+export * from './WalletConnect';

@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 
-import { CoreMask, Timestamp } from '@/models';
+import { CoreMask, OnChainRegionId, Timestamp } from '@/models';
 
 // parse human readable number string
 export const parseHNString = (str: string): number => {
@@ -26,6 +26,19 @@ export const countOne = (mask: CoreMask): number => {
       v >>= 1;
     }
   }
-  console.log(count);
   return count;
+};
+
+export const stringifyOnChainId = (regionId: OnChainRegionId): string => {
+  const { begin, core, mask } = regionId;
+  return `${begin}-${core}-${mask}`;
+};
+
+export const parseOnChainId = (str: string): OnChainRegionId => {
+  const strs = str.split('-');
+  return {
+    begin: Number(strs[0]),
+    core: Number(strs[1]),
+    mask: strs[2],
+  } as OnChainRegionId;
 };

@@ -1,10 +1,16 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import { countOne, getBlockTimestamp, parseHNString } from '@/utils/functions';
+import {
+  countOne,
+  getBlockTimestamp,
+  parseHNString,
+  stringifyOnChainId as stringifyOnChainRegionId,
+} from '@/utils/functions';
 
 import {
   HumanRegionId,
   HumanRegionRecord,
+  OnChainRegionId,
   RegionMetadata,
   RegionOrigin,
   RELAY_CHAIN_BLOCK_TIME,
@@ -20,8 +26,8 @@ interface RegionsData {
   };
   loading: boolean;
   updateRegionName: (_index: number, _name: string) => void;
+  fetchRegions: () => Promise<void>;
 }
-
 const defaultRegionData: RegionsData = {
   regions: [],
   config: {
@@ -29,6 +35,9 @@ const defaultRegionData: RegionsData = {
   },
   loading: false,
   updateRegionName: () => {
+    /** */
+  },
+  fetchRegions: async () => {
     /** */
   },
 };
@@ -51,7 +60,7 @@ const RegionDataProvider = ({ children }: Props) => {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
 
-  useEffect(() => {
+  const fetchRegions = async (): Promise<void> => {
     if (
       !coretimeApi ||
       coretimeApiState !== ApiState.READY ||
@@ -61,51 +70,58 @@ const RegionDataProvider = ({ children }: Props) => {
       setRegions([]);
       return;
     }
+
+    setLoading(true);
+    const _regions: Array<RegionMetadata> = [];
+    const res = await coretimeApi.query.broker.regions.entries();
+    res.forEach(async ([key, value], index) => {
+      const [regionId] = key.toHuman() as [HumanRegionId];
+      const regionData = value.toHuman() as HumanRegionRecord;
+
+      const { begin, core, mask } = regionId;
+      const { end, owner, paid } = regionData;
+
+      const beginBlockHeight = timeslicePeriod * parseHNString(begin);
+      const tsBegin = await getBlockTimestamp(relayApi, beginBlockHeight); // begin block timestamp
+
+      // rough estimation
+      const endBlockHeight = timeslicePeriod * parseHNString(end);
+      const tsEnd =
+        tsBegin + (endBlockHeight - beginBlockHeight) * RELAY_CHAIN_BLOCK_TIME;
+
+      const nPaid = paid ? parseHNString(paid) : undefined;
+      const rawId: OnChainRegionId = {
+        begin: parseHNString(begin),
+        core,
+        mask,
+      };
+      const name = localStorage.getItem(
+        `region-${stringifyOnChainRegionId(rawId)}`
+      );
+
+      _regions.push({
+        begin: tsBegin,
+        core,
+        mask,
+        end: tsEnd,
+        owner,
+        paid: nPaid,
+        origin: RegionOrigin.CORETIME_CHAIN,
+        rawId,
+        name: name ?? `Region # ${index}`,
+        ownership: countOne(mask) / timeslicePeriod,
+      });
+    });
+    setRegions(_regions);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (!coretimeApi || coretimeApiState !== ApiState.READY) return;
+
     const timeslicePeriod = parseHNString(
       coretimeApi.consts.broker.timeslicePeriod.toString()
     );
-    const fetchRegions = async (): Promise<void> => {
-      setLoading(true);
-
-      const _regions: Array<RegionMetadata> = [];
-      const res = await coretimeApi.query.broker.regions.entries();
-      for await (const [key, value] of res) {
-        const [regionId] = key.toHuman() as [HumanRegionId];
-        const regionData = value.toHuman() as HumanRegionRecord;
-
-        const { begin, core, mask } = regionId;
-        const { end, owner, paid } = regionData;
-
-        const beginBlockHeight = timeslicePeriod * parseHNString(begin);
-        const tsBegin = await getBlockTimestamp(relayApi, beginBlockHeight); // begin block timestamp
-
-        // rough estimation
-        const endBlockHeight = timeslicePeriod * parseHNString(end);
-        const tsEnd =
-          tsBegin +
-          (endBlockHeight - beginBlockHeight) * RELAY_CHAIN_BLOCK_TIME;
-
-        const nPaid = paid ? parseHNString(paid) : undefined;
-        const id = `${parseHNString(begin)}-${core}-${mask.slice(2)}`;
-        const name = localStorage.getItem(`region-${id}`);
-
-        _regions.push({
-          begin: tsBegin,
-          core,
-          mask,
-          end: tsEnd,
-          owner,
-          paid: nPaid,
-          origin: RegionOrigin.CORETIME_CHAIN,
-          id,
-          name,
-          ownership: countOne(mask) / timeslicePeriod,
-        });
-      }
-      setRegions(_regions);
-
-      setLoading(false);
-    };
     setTimeslicePeriod(timeslicePeriod);
     fetchRegions();
   }, [coretimeApi, coretimeApiState, relayApi, relayApiState]);
@@ -118,7 +134,10 @@ const RegionDataProvider = ({ children }: Props) => {
       name,
     };
     setRegions(_regions);
-    localStorage.setItem(`region-${region.id}`, name);
+    localStorage.setItem(
+      `region-${stringifyOnChainRegionId(region.rawId)}`,
+      name
+    );
   };
 
   return (
@@ -128,6 +147,7 @@ const RegionDataProvider = ({ children }: Props) => {
         config: { timeslicePeriod },
         loading,
         updateRegionName,
+        fetchRegions,
       }}
     >
       {children}

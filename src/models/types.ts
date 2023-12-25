@@ -54,7 +54,7 @@ export type RegionMetadata = {
 
   origin: RegionOrigin;
 
-  id: string;
+  rawId: OnChainRegionId; // raw region id in pallet storage
   name: string | null;
   ownership?: Percentage;
   consumed?: Percentage;
