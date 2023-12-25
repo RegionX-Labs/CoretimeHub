@@ -26,20 +26,17 @@ const Home = () => {
 
   const [partitionModalOpen, openPartitionModal] = useState(false);
 
-  const renewable =
-    currentRegionIndex !== undefined &&
-    regions[currentRegionIndex].paid !== null;
+  const regionSelected = currentRegionIndex !== undefined;
 
   const management = [
     {
       label: 'partition',
       icon: PartitionIcon,
-      disabled: renewable,
       onClick: () => openPartitionModal(true),
     },
-    { label: 'interlace', icon: InterlaceIcon, disabled: renewable },
-    { label: 'transfer', icon: TransferIcon, disabled: !renewable },
-    { label: 'assign', icon: AssignmentIcon, disabled: renewable },
+    { label: 'interlace', icon: InterlaceIcon },
+    { label: 'transfer', icon: TransferIcon },
+    { label: 'assign', icon: AssignmentIcon },
   ];
 
   return (
@@ -102,7 +99,7 @@ const Home = () => {
             alignItems: 'flex-start',
           }}
         >
-          {management.map(({ label, icon: Icon, disabled, onClick }, index) => (
+          {management.map(({ label, icon: Icon, onClick }, index) => (
             <Button
               key={index}
               sx={{
@@ -110,7 +107,7 @@ const Home = () => {
                 textTransform: 'capitalize',
               }}
               startIcon={<Icon color={theme.palette.text.secondary} />}
-              disabled={disabled}
+              disabled={!regionSelected}
               onClick={onClick}
             >
               {label}
@@ -118,7 +115,7 @@ const Home = () => {
           ))}
         </Box>
       </Box>
-      {currentRegionIndex !== undefined && regions[currentRegionIndex] && (
+      {regionSelected && (
         <>
           <PartitionModal
             open={partitionModalOpen}
