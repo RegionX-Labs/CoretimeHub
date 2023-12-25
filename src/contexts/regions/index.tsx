@@ -49,10 +49,6 @@ interface Props {
 }
 
 const RegionDataProvider = ({ children }: Props) => {
-  const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
-  const [timeslicePeriod, setTimeslicePeriod] = useState<number>(0);
-  const [loading, setLoading] = useState(false);
-
   const {
     state: { api: coretimeApi, apiState: coretimeApiState },
   } = useCoretimeApi();
@@ -60,21 +56,29 @@ const RegionDataProvider = ({ children }: Props) => {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
 
+  const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
+  const [timeslicePeriod, setTimeslicePeriod] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
+
+  const apisConnected =
+    coretimeApi &&
+    coretimeApiState === ApiState.READY &&
+    relayApi &&
+    relayApiState === ApiState.READY;
+
   const fetchRegions = async (): Promise<void> => {
-    if (
-      !coretimeApi ||
-      coretimeApiState !== ApiState.READY ||
-      !relayApi ||
-      relayApiState !== ApiState.READY
-    ) {
+    if (!apisConnected) {
       setRegions([]);
       return;
     }
 
     setLoading(true);
+    const timeslicePeriod = parseHNString(
+      coretimeApi.consts.broker.timeslicePeriod.toString()
+    );
     const _regions: Array<RegionMetadata> = [];
     const res = await coretimeApi.query.broker.regions.entries();
-    res.forEach(async ([key, value], index) => {
+    for await (const [key, value] of res) {
       const [regionId] = key.toHuman() as [HumanRegionId];
       const regionData = value.toHuman() as HumanRegionRecord;
 
@@ -108,23 +112,22 @@ const RegionDataProvider = ({ children }: Props) => {
         paid: nPaid,
         origin: RegionOrigin.CORETIME_CHAIN,
         rawId,
-        name: name ?? `Region # ${index}`,
+        name: name ?? `Region #${_regions.length + 1}`,
         ownership: countOne(mask) / timeslicePeriod,
       });
-    });
-    setRegions(_regions);
+    }
+    setRegions([..._regions]);
     setLoading(false);
   };
 
   useEffect(() => {
-    if (!coretimeApi || coretimeApiState !== ApiState.READY) return;
-
+    if (!apisConnected) return;
     const timeslicePeriod = parseHNString(
       coretimeApi.consts.broker.timeslicePeriod.toString()
     );
     setTimeslicePeriod(timeslicePeriod);
     fetchRegions();
-  }, [coretimeApi, coretimeApiState, relayApi, relayApiState]);
+  }, [apisConnected]);
 
   const updateRegionName = (index: number, name: string) => {
     const _regions = [...regions];
