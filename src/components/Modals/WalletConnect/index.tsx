@@ -36,12 +36,7 @@ export const WalletModal = (props: WalletModalProps) => {
     props.onClose();
   };
   return (
-    <Dialog
-      {...props}
-      fullWidth
-      maxWidth='sm'
-      sx={{ '.MuiDialog-paper': { padding: '0 8px' } }}
-    >
+    <Dialog {...props} fullWidth maxWidth='sm'>
       <DialogTitle>Choose your wallet extension</DialogTitle>
       <DialogContent>
         <List>

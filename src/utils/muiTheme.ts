@@ -54,6 +54,14 @@ let theme = createTheme({
     },
   },
   components: {
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          padding: '0.5rem',
+          width: 'fit-content',
+        },
+      },
+    },
     MuiPaper: {
       styleOverrides: {
         root: {

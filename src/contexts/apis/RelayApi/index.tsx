@@ -25,7 +25,7 @@ const RelayApiContextProvider = (props: any) => {
 
   useEffect(() => {
     state.apiState === ApiState.READY &&
-      toastSuccess('Successfully connected to relay chain');
+      toastSuccess('Successfully connected to the relay chain');
   }, [state.apiState]);
 
   const connectRelay = () => connect(state, WS_RELAY_CHAIN, dispatch);

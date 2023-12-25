@@ -1,10 +1,16 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import { countOne, getBlockTimestamp, parseHNString } from '@/utils/functions';
+import {
+  countOne,
+  getBlockTimestamp,
+  parseHNString,
+  stringifyOnChainId as stringifyOnChainRegionId,
+} from '@/utils/functions';
 
 import {
   HumanRegionId,
   HumanRegionRecord,
+  OnChainRegionId,
   RegionMetadata,
   RegionOrigin,
   RELAY_CHAIN_BLOCK_TIME,
@@ -20,8 +26,8 @@ interface RegionsData {
   };
   loading: boolean;
   updateRegionName: (_index: number, _name: string) => void;
+  fetchRegions: () => Promise<void>;
 }
-
 const defaultRegionData: RegionsData = {
   regions: [],
   config: {
@@ -29,6 +35,9 @@ const defaultRegionData: RegionsData = {
   },
   loading: false,
   updateRegionName: () => {
+    /** */
+  },
+  fetchRegions: async () => {
     /** */
   },
 };
@@ -40,10 +49,6 @@ interface Props {
 }
 
 const RegionDataProvider = ({ children }: Props) => {
-  const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
-  const [timeslicePeriod, setTimeslicePeriod] = useState<number>(0);
-  const [loading, setLoading] = useState(false);
-
   const {
     state: { api: coretimeApi, apiState: coretimeApiState },
   } = useCoretimeApi();
@@ -51,64 +56,78 @@ const RegionDataProvider = ({ children }: Props) => {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
 
-  useEffect(() => {
-    if (
-      !coretimeApi ||
-      coretimeApiState !== ApiState.READY ||
-      !relayApi ||
-      relayApiState !== ApiState.READY
-    ) {
+  const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
+  const [timeslicePeriod, setTimeslicePeriod] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
+
+  const apisConnected =
+    coretimeApi &&
+    coretimeApiState === ApiState.READY &&
+    relayApi &&
+    relayApiState === ApiState.READY;
+
+  const fetchRegions = async (): Promise<void> => {
+    if (!apisConnected) {
       setRegions([]);
       return;
     }
+
+    setLoading(true);
     const timeslicePeriod = parseHNString(
       coretimeApi.consts.broker.timeslicePeriod.toString()
     );
-    const fetchRegions = async (): Promise<void> => {
-      setLoading(true);
+    const _regions: Array<RegionMetadata> = [];
+    const res = await coretimeApi.query.broker.regions.entries();
+    for await (const [key, value] of res) {
+      const [regionId] = key.toHuman() as [HumanRegionId];
+      const regionData = value.toHuman() as HumanRegionRecord;
 
-      const _regions: Array<RegionMetadata> = [];
-      const res = await coretimeApi.query.broker.regions.entries();
-      for await (const [key, value] of res) {
-        const [regionId] = key.toHuman() as [HumanRegionId];
-        const regionData = value.toHuman() as HumanRegionRecord;
+      const { begin, core, mask } = regionId;
+      const { end, owner, paid } = regionData;
 
-        const { begin, core, mask } = regionId;
-        const { end, owner, paid } = regionData;
+      const beginBlockHeight = timeslicePeriod * parseHNString(begin);
+      const tsBegin = await getBlockTimestamp(relayApi, beginBlockHeight); // begin block timestamp
 
-        const beginBlockHeight = timeslicePeriod * parseHNString(begin);
-        const tsBegin = await getBlockTimestamp(relayApi, beginBlockHeight); // begin block timestamp
+      // rough estimation
+      const endBlockHeight = timeslicePeriod * parseHNString(end);
+      const tsEnd =
+        tsBegin + (endBlockHeight - beginBlockHeight) * RELAY_CHAIN_BLOCK_TIME;
 
-        // rough estimation
-        const endBlockHeight = timeslicePeriod * parseHNString(end);
-        const tsEnd =
-          tsBegin +
-          (endBlockHeight - beginBlockHeight) * RELAY_CHAIN_BLOCK_TIME;
+      const nPaid = paid ? parseHNString(paid) : undefined;
+      const rawId: OnChainRegionId = {
+        begin: parseHNString(begin),
+        core,
+        mask,
+      };
+      const name = localStorage.getItem(
+        `region-${stringifyOnChainRegionId(rawId)}`
+      );
 
-        const nPaid = paid ? parseHNString(paid) : undefined;
-        const id = `${parseHNString(begin)}-${core}-${mask.slice(2)}`;
-        const name = localStorage.getItem(`region-${id}`);
+      _regions.push({
+        begin: tsBegin,
+        core,
+        mask,
+        end: tsEnd,
+        owner,
+        paid: nPaid,
+        origin: RegionOrigin.CORETIME_CHAIN,
+        rawId,
+        name: name ?? `Region #${_regions.length + 1}`,
+        ownership: countOne(mask) / timeslicePeriod,
+      });
+    }
+    setRegions([..._regions]);
+    setLoading(false);
+  };
 
-        _regions.push({
-          begin: tsBegin,
-          core,
-          mask,
-          end: tsEnd,
-          owner,
-          paid: nPaid,
-          origin: RegionOrigin.CORETIME_CHAIN,
-          id,
-          name,
-          ownership: countOne(mask) / timeslicePeriod,
-        });
-      }
-      setRegions(_regions);
-
-      setLoading(false);
-    };
+  useEffect(() => {
+    if (!apisConnected) return;
+    const timeslicePeriod = parseHNString(
+      coretimeApi.consts.broker.timeslicePeriod.toString()
+    );
     setTimeslicePeriod(timeslicePeriod);
     fetchRegions();
-  }, [coretimeApi, coretimeApiState, relayApi, relayApiState]);
+  }, [apisConnected]);
 
   const updateRegionName = (index: number, name: string) => {
     const _regions = [...regions];
@@ -118,7 +137,10 @@ const RegionDataProvider = ({ children }: Props) => {
       name,
     };
     setRegions(_regions);
-    localStorage.setItem(`region-${region.id}`, name);
+    localStorage.setItem(
+      `region-${stringifyOnChainRegionId(region.rawId)}`,
+      name
+    );
   };
 
   return (
@@ -128,6 +150,7 @@ const RegionDataProvider = ({ children }: Props) => {
         config: { timeslicePeriod },
         loading,
         updateRegionName,
+        fetchRegions,
       }}
     >
       {children}

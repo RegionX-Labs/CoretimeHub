@@ -14,13 +14,18 @@ import React, { useState } from 'react';
 import Logo from '@/assets/logo.png';
 
 import styles from './index.module.scss';
-import { WalletModal } from '../Modals/WalletModal';
+import { WalletModal } from '../Modals/WalletConnect';
 
 export const Header = () => {
   const { activeAccount, disconnect, accounts, setActiveAccount } =
     useInkathon();
   const [accountsOpen, openAccounts] = useState(false);
   const [walletModalOpen, openWalletModal] = useState(false);
+
+  const onDisconnect = () => {
+    openAccounts(false);
+    disconnect && disconnect();
+  };
 
   return (
     <>
@@ -56,7 +61,9 @@ export const Header = () => {
                   ))}
                 </List>
                 <Divider />
-                <ListItemButton onClick={disconnect}>Disconnect</ListItemButton>
+                <ListItemButton onClick={onDisconnect}>
+                  Disconnect
+                </ListItemButton>
               </Collapse>
             </List>
           ) : (

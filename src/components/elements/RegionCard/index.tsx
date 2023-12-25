@@ -28,7 +28,7 @@ interface RegionCardProps {
   region: RegionMetadata;
   editable?: boolean;
   active?: boolean;
-  updateName: (_newName: string) => void;
+  updateName?: (_newName: string) => void;
 }
 
 export const RegionCard = ({
@@ -74,7 +74,7 @@ export const RegionCard = ({
   const onSave = () => {
     setEdit(false);
     setName('');
-    updateName(name);
+    updateName && updateName(name);
   };
 
   const onCancel = () => {
