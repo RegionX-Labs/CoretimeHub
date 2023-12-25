@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useReducer } from 'react';
 import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
 
-import { connect, initialState, reducer } from '../common';
+import { connect, disconnect, initialState, reducer } from '../common';
 import { WS_CORETIME_CHAIN } from '../consts';
 
 const types = {
@@ -27,6 +27,9 @@ const defaultValue = {
   connectCoretime: (): void => {
     /** */
   },
+  disconnectCoretime: (): void => {
+    /** */
+  },
 };
 
 const CoretimeApiContext = React.createContext(defaultValue);
@@ -47,8 +50,12 @@ const CoretimeApiContextProvider = (props: any) => {
   const connectCoretime = () =>
     connect(state, WS_CORETIME_CHAIN, dispatch, types);
 
+  const disconnectCoretime = () => disconnect(state);
+
   return (
-    <CoretimeApiContext.Provider value={{ state, connectCoretime }}>
+    <CoretimeApiContext.Provider
+      value={{ state, connectCoretime, disconnectCoretime }}
+    >
       {props.children}
     </CoretimeApiContext.Provider>
   );

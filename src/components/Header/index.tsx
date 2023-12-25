@@ -12,6 +12,7 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 
 import Logo from '@/assets/logo.png';
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 
 import styles from './index.module.scss';
 import { WalletModal } from '../Modals/WalletConnect';
@@ -19,12 +20,16 @@ import { WalletModal } from '../Modals/WalletConnect';
 export const Header = () => {
   const { activeAccount, disconnect, accounts, setActiveAccount } =
     useInkathon();
+  const { disconnectRelay } = useRelayApi();
+  const { disconnectCoretime } = useCoretimeApi();
   const [accountsOpen, openAccounts] = useState(false);
   const [walletModalOpen, openWalletModal] = useState(false);
 
   const onDisconnect = () => {
     openAccounts(false);
     disconnect && disconnect();
+    disconnectRelay();
+    disconnectCoretime();
   };
 
   return (
