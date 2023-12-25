@@ -110,6 +110,7 @@ export const PartitionModal = ({
             events.forEach(({ event: { method } }) => {
               if (method === 'ExtrinsicSuccess') {
                 toastSuccess('Transaction successful');
+                onClose();
                 fetchRegions();
               } else if (method === 'ExtrinsicFailed') {
                 toastError(`Failed to partition the region`);
