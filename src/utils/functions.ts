@@ -57,3 +57,23 @@ export const countOne = (mask: CoreMask): number => {
   }
   return count;
 };
+
+export const mask2BinString = (mask: CoreMask): string => {
+  let bin = '';
+  for (let i = 2; i < mask.length; ++i) {
+    const v = parseInt(mask.slice(i, i + 1), 16);
+    for (let j = 3; j >= 0; --j) {
+      bin += v & (1 << j) ? '1' : '0';
+    }
+  }
+  return bin;
+};
+
+export const binMask2Strinng = (mask: string): CoreMask => {
+  let hexMask = '';
+  for (let i = 0; i < mask.length; i += 4) {
+    const v = parseInt(mask.slice(i, i + 4), 2);
+    hexMask += v.toString(16);
+  }
+  return `0x${hexMask}` as CoreMask;
+};

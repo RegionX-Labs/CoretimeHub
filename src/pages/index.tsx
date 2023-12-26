@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
-import { PartitionModal, RegionCard } from '@/components';
+import { InterlaceModal, PartitionModal, RegionCard } from '@/components';
 
 import { useRegions } from '@/contexts/regions';
 import {
@@ -23,8 +23,8 @@ const Home = () => {
   const { regions, loading, updateRegionName } = useRegions();
 
   const [currentRegionIndex, setCurrentRegionIndex] = useState<number>();
-
   const [partitionModalOpen, openPartitionModal] = useState(false);
+  const [interlaceModalOpen, openInterlaceModal] = useState(false);
 
   const regionSelected = currentRegionIndex !== undefined;
 
@@ -34,7 +34,11 @@ const Home = () => {
       icon: PartitionIcon,
       onClick: () => openPartitionModal(true),
     },
-    { label: 'interlace', icon: InterlaceIcon },
+    {
+      label: 'interlace',
+      icon: InterlaceIcon,
+      onClick: () => openInterlaceModal(true),
+    },
     { label: 'transfer', icon: TransferIcon },
     { label: 'assign', icon: AssignmentIcon },
   ];
@@ -81,6 +85,8 @@ const Home = () => {
       </Box>
       <Box
         sx={{
+          position: 'fixed',
+          right: '10rem',
           color: theme.palette.text.secondary,
           background: theme.palette.background.default,
           minWidth: 280,
@@ -120,6 +126,11 @@ const Home = () => {
           <PartitionModal
             open={partitionModalOpen}
             onClose={() => openPartitionModal(false)}
+            region={regions[currentRegionIndex]}
+          />
+          <InterlaceModal
+            open={interlaceModalOpen}
+            onClose={() => openInterlaceModal(false)}
             region={regions[currentRegionIndex]}
           />
         </>
