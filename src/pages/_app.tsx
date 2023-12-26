@@ -19,6 +19,7 @@ import {
 } from '@/contexts/apis';
 import { WS_CONTRACTS_CHAIN } from '@/contexts/apis/consts';
 import { RegionDataProvider } from '@/contexts/regions';
+import { TaskDataProvider } from '@/contexts/tasks';
 import { ToastProvider } from '@/contexts/toast';
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -56,7 +57,9 @@ export default function MyApp(props: MyAppProps) {
                 }}
               >
                 <RegionDataProvider>
-                  {getLayout(<Component {...pageProps} />)}
+                  <TaskDataProvider>
+                    {getLayout(<Component {...pageProps} />)}
+                  </TaskDataProvider>
                 </RegionDataProvider>
               </UseInkathonProvider>
             </RelayApiContextProvider>

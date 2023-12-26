@@ -62,7 +62,7 @@ export type RegionMetadata = {
 };
 
 export type TaskMetadata = {
-  taskId: TaskIndex;
+  id: TaskIndex;
   usage: Percentage;
   name?: string;
 };
