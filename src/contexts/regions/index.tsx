@@ -14,6 +14,7 @@ import {
   RegionMetadata,
   RegionOrigin,
   RELAY_CHAIN_BLOCK_TIME,
+  ScheduleItem,
 } from '@/models';
 
 import { useCoretimeApi, useRelayApi } from '../apis';
@@ -66,6 +67,29 @@ const RegionDataProvider = ({ children }: Props) => {
     relayApi &&
     relayApiState === ApiState.READY;
 
+  const fetchTasks = async () => {
+    if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
+    const res = await coretimeApi.query.broker.workplan.entries();
+    const tasks: Record<string, number> = {};
+
+    for await (const [key, value] of res) {
+      const [[strBegin, strCore]] = key.toHuman() as [[string, string]];
+      const records = value.toHuman() as ScheduleItem[];
+
+      records.forEach((record) => {
+        const begin = parseHNString(strBegin);
+        const core = parseHNString(strCore);
+        const {
+          mask,
+          assignment: { Task: taskId },
+        } = record;
+        const rawId = { begin, core, mask } as OnChainRegionId;
+        tasks[stringifyOnChainRegionId(rawId)] = Number(taskId);
+      });
+    }
+    return tasks;
+  };
+
   const fetchRegions = async (): Promise<void> => {
     if (!apisConnected) {
       setRegions([]);
@@ -76,6 +100,9 @@ const RegionDataProvider = ({ children }: Props) => {
     const timeslicePeriod = parseHNString(
       coretimeApi.consts.broker.timeslicePeriod.toString()
     );
+
+    const tasks = await fetchTasks();
+
     const _regions: Array<RegionMetadata> = [];
     const res = await coretimeApi.query.broker.regions.entries();
     for await (const [key, value] of res) {
@@ -99,9 +126,9 @@ const RegionDataProvider = ({ children }: Props) => {
         core,
         mask,
       };
-      const name = localStorage.getItem(
-        `region-${stringifyOnChainRegionId(rawId)}`
-      );
+      const strRegionId = stringifyOnChainRegionId(rawId);
+      const name = localStorage.getItem(`region-${strRegionId}`);
+      const taskId = tasks[strRegionId];
 
       _regions.push({
         begin: tsBegin,
@@ -114,6 +141,7 @@ const RegionDataProvider = ({ children }: Props) => {
         rawId,
         name: name ?? `Region #${_regions.length + 1}`,
         ownership: countOne(mask) / timeslicePeriod,
+        taskId,
       });
     }
     setRegions([..._regions]);

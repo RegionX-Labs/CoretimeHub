@@ -19,6 +19,7 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import React, { useState } from 'react';
 
+import { useTasks } from '@/contexts/tasks';
 import { RegionMetadata, RegionOrigin } from '@/models';
 
 import styles from './index.module.scss';
@@ -37,12 +38,15 @@ export const RegionCard = ({
   editable = false,
   updateName,
 }: RegionCardProps) => {
+  const { tasks } = useTasks();
+
   TimeAgo.addLocale(en);
   // Create formatter (English).
   const timeAgo = new TimeAgo('en-US');
 
   const formatDuration = humanizer();
-  const { begin, end, task, consumed, ownership, paid, origin, core } = region;
+  const { begin, end, taskId, consumed, ownership, paid, origin, core } =
+    region;
   const theme = useTheme();
 
   const [isEdit, setEdit] = useState(false);
@@ -61,7 +65,7 @@ export const RegionCard = ({
     },
     {
       label: 'Current Usage',
-      value: task?.usage ?? 0,
+      value: 0, // FIXME:
       color: 'primary',
     },
   ];
@@ -80,6 +84,10 @@ export const RegionCard = ({
   const onCancel = () => {
     setEdit(false);
     setName('');
+  };
+
+  const getTaskName = (taskId: number) => {
+    return tasks.find(({ id }) => id === taskId)?.name || '';
   };
 
   return (
@@ -157,10 +165,8 @@ export const RegionCard = ({
       </div>
       <Divider orientation='vertical' flexItem />
       <Box sx={{ color: theme.palette.grey[200] }}>
-        {task !== undefined ? (
-          <Typography variant='subtitle2'>{`Task: ${
-            task.name ?? task.taskId
-          }`}</Typography>
+        {taskId !== undefined ? (
+          <Typography variant='subtitle2'>{getTaskName(taskId)}</Typography>
         ) : (
           <></>
         )}

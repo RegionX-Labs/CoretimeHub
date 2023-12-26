@@ -58,11 +58,18 @@ export type RegionMetadata = {
   name: string | null;
   ownership?: Percentage;
   consumed?: Percentage;
-  task?: TaskMetadata;
+  taskId?: TaskIndex;
 };
 
 export type TaskMetadata = {
   id: TaskIndex;
   usage: Percentage;
   name?: string;
+};
+
+export type ScheduleItem = {
+  mask: CoreMask;
+  assignment: {
+    Task: number;
+  };
 };
