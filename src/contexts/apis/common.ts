@@ -35,6 +35,8 @@ export const reducer = (state: any, action: any) => {
       return { ...state, apiState: ApiState.READY };
     case 'CONNECT_ERROR':
       return { ...state, apiState: ApiState.ERROR, apiError: action.payload };
+    case 'DISCONNECTED':
+      return { ...state, apiState: ApiState.DISCONNECTED };
     default:
       throw new Error(`Unknown type: ${action.type}`);
   }
@@ -66,4 +68,11 @@ export const connect = (
   });
   _api.on('ready', () => dispatch({ type: 'CONNECT_SUCCESS' }));
   _api.on('error', (err) => dispatch({ type: 'CONNECT_ERROR', payload: err }));
+  _api.on('disconnected', () => dispatch({ type: 'DISCONNECTED' }));
+};
+
+export const disconnect = (state: any) => {
+  const { api, apiState } = state;
+  if (apiState === ApiState.DISCONNECTED) return;
+  api.disconnect();
 };

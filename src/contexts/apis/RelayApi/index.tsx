@@ -3,12 +3,15 @@ import React, { useContext, useEffect, useReducer } from 'react';
 import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
 
-import { connect, initialState, reducer } from '../common';
+import { connect, disconnect, initialState, reducer } from '../common';
 import { WS_RELAY_CHAIN } from '../consts';
 
 const defaultValue = {
   state: initialState,
   connectRelay: (): void => {
+    /** */
+  },
+  disconnectRelay: (): void => {
     /** */
   },
 };
@@ -29,9 +32,10 @@ const RelayApiContextProvider = (props: any) => {
   }, [state.apiState]);
 
   const connectRelay = () => connect(state, WS_RELAY_CHAIN, dispatch);
+  const disconnectRelay = () => disconnect(state);
 
   return (
-    <RelayApiContext.Provider value={{ state, connectRelay }}>
+    <RelayApiContext.Provider value={{ state, connectRelay, disconnectRelay }}>
       {props.children}
     </RelayApiContext.Provider>
   );
