@@ -5,6 +5,7 @@ type Balance = U32;
 type Percentage = number; // Percentage value between 0 and 1
 export type Timestamp = number;
 
+export type ParaID = number;
 export type TaskIndex = number;
 
 export type Timeslice = U32;
@@ -58,11 +59,18 @@ export type RegionMetadata = {
   name: string | null;
   ownership?: Percentage;
   consumed?: Percentage;
-  task?: TaskMetadata;
+  taskId?: TaskIndex;
 };
 
 export type TaskMetadata = {
-  taskId: TaskIndex;
+  id: TaskIndex;
   usage: Percentage;
   name?: string;
+};
+
+export type ScheduleItem = {
+  mask: CoreMask;
+  assignment: {
+    Task: string;
+  };
 };

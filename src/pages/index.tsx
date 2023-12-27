@@ -9,6 +9,7 @@ import {
 import { useState } from 'react';
 
 import { InterlaceModal, PartitionModal, RegionCard } from '@/components';
+import { TaskAssignModal } from '@/components/Modals/TaskAssign';
 
 import { useRegions } from '@/contexts/regions';
 import {
@@ -25,6 +26,7 @@ const Home = () => {
   const [currentRegionIndex, setCurrentRegionIndex] = useState<number>();
   const [partitionModalOpen, openPartitionModal] = useState(false);
   const [interlaceModalOpen, openInterlaceModal] = useState(false);
+  const [assignModalOpen, openAssignModal] = useState(false);
 
   const regionSelected = currentRegionIndex !== undefined;
 
@@ -40,7 +42,11 @@ const Home = () => {
       onClick: () => openInterlaceModal(true),
     },
     { label: 'transfer', icon: TransferIcon },
-    { label: 'assign', icon: AssignmentIcon },
+    {
+      label: 'assign',
+      icon: AssignmentIcon,
+      onClick: () => openAssignModal(true),
+    },
   ];
 
   return (
@@ -131,6 +137,11 @@ const Home = () => {
           <InterlaceModal
             open={interlaceModalOpen}
             onClose={() => openInterlaceModal(false)}
+            region={regions[currentRegionIndex]}
+          />
+          <TaskAssignModal
+            open={assignModalOpen}
+            onClose={() => openAssignModal(false)}
             region={regions[currentRegionIndex]}
           />
         </>
