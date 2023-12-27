@@ -8,8 +8,13 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
-import { InterlaceModal, PartitionModal, RegionCard } from '@/components';
-import { TaskAssignModal } from '@/components/Modals/TaskAssign';
+import {
+  InterlaceModal,
+  PartitionModal,
+  RegionCard,
+  TaskAssignModal,
+  TransferModal,
+} from '@/components';
 
 import { useRegions } from '@/contexts/regions';
 import {
@@ -27,6 +32,7 @@ const Home = () => {
   const [partitionModalOpen, openPartitionModal] = useState(false);
   const [interlaceModalOpen, openInterlaceModal] = useState(false);
   const [assignModalOpen, openAssignModal] = useState(false);
+  const [transferModalOpen, openTransferModal] = useState(false);
 
   const regionSelected = currentRegionIndex !== undefined;
 
@@ -41,7 +47,11 @@ const Home = () => {
       icon: InterlaceIcon,
       onClick: () => openInterlaceModal(true),
     },
-    { label: 'transfer', icon: TransferIcon },
+    {
+      label: 'transfer',
+      icon: TransferIcon,
+      onClick: () => openTransferModal(true),
+    },
     {
       label: 'assign',
       icon: AssignmentIcon,
@@ -142,6 +152,11 @@ const Home = () => {
           <TaskAssignModal
             open={assignModalOpen}
             onClose={() => openAssignModal(false)}
+            region={regions[currentRegionIndex]}
+          />
+          <TransferModal
+            open={transferModalOpen}
+            onClose={() => openTransferModal(false)}
             region={regions[currentRegionIndex]}
           />
         </>
