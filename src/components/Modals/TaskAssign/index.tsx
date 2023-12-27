@@ -9,6 +9,7 @@ import {
   Stack,
   TextField,
   Typography,
+  Divider,
 } from '@mui/material';
 import { useInkathon } from '@scio-labs/use-inkathon';
 import { useEffect, useState } from 'react';
@@ -97,7 +98,7 @@ export const TaskAssignModal = ({
   };
 
   useEffect(() => {
-    selectTask(undefined);
+    selectTask(tasks[0].id);
     setWorking(false);
     setTaskId(undefined);
     setTaskName('');
@@ -109,7 +110,7 @@ export const TaskAssignModal = ({
         <Stack direction='column' gap={3}>
           <RegionCard region={region} />
           <Stack direction='column' gap={2}>
-            <Typography>Select a task from:</Typography>
+            <Typography fontWeight={"bold"}>Select a task from:</Typography>
             <Select
               value={taskSelected || ''}
               onChange={(e) => selectTask(Number(e.target.value))}
@@ -121,10 +122,11 @@ export const TaskAssignModal = ({
               ))}
             </Select>
           </Stack>
+          <Divider />
           <Stack direction='column' gap={1}>
-            <Typography>Or add a new task</Typography>
+            <Typography fontWeight={"bold"}>Or add a new task:</Typography>
             <Stack direction='row' gap={1} alignItems='center'>
-              <Typography sx={{ width: '4rem' }}>ID:</Typography>
+              <Typography sx={{ width: '16rem' }}>TaskID / ParaID:</Typography>
               <TextField
                 type='number'
                 value={taskId}
@@ -134,7 +136,7 @@ export const TaskAssignModal = ({
               />
             </Stack>
             <Stack direction='row' gap={1} alignItems='center'>
-              <Typography sx={{ width: '4rem' }}>Name:</Typography>
+              <Typography sx={{ width: '16rem' }}>Name:</Typography>
               <TextField
                 value={taskName}
                 onChange={(e) => setTaskName(e.target.value)}
@@ -143,7 +145,7 @@ export const TaskAssignModal = ({
               />
             </Stack>
             <Button fullWidth variant='contained' onClick={onAdd}>
-              Add
+              Add new task
             </Button>
           </Stack>
         </Stack>
