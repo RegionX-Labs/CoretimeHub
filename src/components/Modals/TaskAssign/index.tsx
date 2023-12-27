@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 
 import { RegionCard } from '@/components/elements';
 
-import { useCoretimeApi } from '@/contexts/apis';
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useTasks } from '@/contexts/tasks';
 import { useToast } from '@/contexts/toast';
@@ -36,6 +36,7 @@ export const TaskAssignModal = ({
 }: TaskAssignModalProps) => {
   const { activeAccount, activeSigner } = useInkathon();
 
+  const { paraIds } = useRelayApi();
   const {
     state: { api: coretimeApi },
   } = useCoretimeApi();
@@ -91,9 +92,19 @@ export const TaskAssignModal = ({
   };
 
   const onAdd = () => {
+    if (taskId === undefined) {
+      toastError('Please input the Para ID');
+      return;
+    }
+    if (!taskName) {
+      toastError('Invalid task name.');
+      return;
+    }
     const existing = tasks.find((task) => task.id === taskId);
     if (existing) {
       toastError('Failed to add task. Duplicated ID');
+    } else if (!paraIds.includes(taskId)) {
+      toastError(`Para ID ${taskId} doesn't exist.`);
     } else {
       addTask({ id: taskId, usage: 0, name: taskName } as TaskMetadata);
       setTaskId(undefined);

@@ -166,7 +166,9 @@ export const RegionCard = ({
       <Divider orientation='vertical' flexItem />
       <Box sx={{ color: theme.palette.grey[200] }}>
         {taskId !== undefined ? (
-          <Typography variant='subtitle2'>{getTaskName(taskId)}</Typography>
+          <Typography variant='subtitle2'>
+            {`Task: ${getTaskName(taskId)}`}
+          </Typography>
         ) : (
           <></>
         )}

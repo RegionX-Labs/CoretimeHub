@@ -5,6 +5,7 @@ type Balance = U32;
 type Percentage = number; // Percentage value between 0 and 1
 export type Timestamp = number;
 
+export type ParaID = number;
 export type TaskIndex = number;
 
 export type Timeslice = U32;
@@ -70,6 +71,6 @@ export type TaskMetadata = {
 export type ScheduleItem = {
   mask: CoreMask;
   assignment: {
-    Task: number;
+    Task: string;
   };
 };

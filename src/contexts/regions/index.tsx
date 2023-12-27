@@ -84,7 +84,7 @@ const RegionDataProvider = ({ children }: Props) => {
           assignment: { Task: taskId },
         } = record;
         const rawId = { begin, core, mask } as OnChainRegionId;
-        tasks[stringifyOnChainRegionId(rawId)] = Number(taskId);
+        tasks[stringifyOnChainRegionId(rawId)] = parseHNString(taskId);
       });
     }
     return tasks;
