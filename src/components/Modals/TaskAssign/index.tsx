@@ -5,6 +5,7 @@ import {
   DialogActions,
   DialogContent,
   Divider,
+  Input,
   MenuItem,
   Select,
   Stack,
@@ -17,6 +18,7 @@ import { useEffect, useState } from 'react';
 import { RegionCard } from '@/components/elements';
 
 import { useCoretimeApi } from '@/contexts/apis';
+import { useRegions } from '@/contexts/regions';
 import { useTasks } from '@/contexts/tasks';
 import { useToast } from '@/contexts/toast';
 import { RegionMetadata, TaskMetadata } from '@/models';
@@ -37,6 +39,7 @@ export const TaskAssignModal = ({
   const {
     state: { api: coretimeApi },
   } = useCoretimeApi();
+  const { fetchRegions } = useRegions();
   const { tasks, addTask } = useTasks();
   const { toastError, toastInfo, toastSuccess } = useToast();
 
@@ -73,6 +76,7 @@ export const TaskAssignModal = ({
               if (method === 'ExtrinsicSuccess') {
                 toastSuccess('Successfully assigned a task');
                 onClose();
+                fetchRegions();
               } else if (method === 'ExtrinsicFailed') {
                 toastError(`Failed to assign a task`);
               }
@@ -98,7 +102,7 @@ export const TaskAssignModal = ({
   };
 
   useEffect(() => {
-    selectTask(tasks[0].id);
+    selectTask(tasks[0]?.id);
     setWorking(false);
     setTaskId(undefined);
     setTaskName('');
@@ -110,7 +114,7 @@ export const TaskAssignModal = ({
         <Stack direction='column' gap={3}>
           <RegionCard region={region} />
           <Stack direction='column' gap={2}>
-            <Typography fontWeight={"bold"}>Select a task from:</Typography>
+            <Typography fontWeight={'bold'}>Select a task from:</Typography>
             <Select
               value={taskSelected || ''}
               onChange={(e) => selectTask(Number(e.target.value))}
@@ -124,15 +128,16 @@ export const TaskAssignModal = ({
           </Stack>
           <Divider />
           <Stack direction='column' gap={1}>
-            <Typography fontWeight={"bold"}>Or add a new task:</Typography>
+            <Typography fontWeight={'bold'}>Or add a new task:</Typography>
             <Stack direction='row' gap={1} alignItems='center'>
               <Typography sx={{ width: '16rem' }}>TaskID / ParaID:</Typography>
-              <TextField
+              <Input
                 type='number'
-                value={taskId}
+                value={taskId || ''}
                 onChange={(e) => setTaskId(Number(e.target.value))}
                 size='small'
                 fullWidth
+                placeholder='Input TaskID / ParaID'
               />
             </Stack>
             <Stack direction='row' gap={1} alignItems='center'>
