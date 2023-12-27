@@ -4,12 +4,12 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  Divider,
   MenuItem,
   Select,
   Stack,
   TextField,
   Typography,
-  Divider,
 } from '@mui/material';
 import { useInkathon } from '@scio-labs/use-inkathon';
 import { useEffect, useState } from 'react';
