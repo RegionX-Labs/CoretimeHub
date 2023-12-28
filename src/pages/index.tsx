@@ -34,7 +34,9 @@ const Home = () => {
   const [assignModalOpen, openAssignModal] = useState(false);
   const [transferModalOpen, openTransferModal] = useState(false);
 
-  const regionSelected = currentRegionIndex !== undefined;
+  const selectedRegion =
+    currentRegionIndex === undefined ? undefined : regions[currentRegionIndex];
+  const regionSelected = selectedRegion !== undefined;
 
   const management = [
     {
@@ -142,22 +144,22 @@ const Home = () => {
           <PartitionModal
             open={partitionModalOpen}
             onClose={() => openPartitionModal(false)}
-            region={regions[currentRegionIndex]}
+            region={selectedRegion}
           />
           <InterlaceModal
             open={interlaceModalOpen}
             onClose={() => openInterlaceModal(false)}
-            region={regions[currentRegionIndex]}
+            region={selectedRegion}
           />
           <TaskAssignModal
             open={assignModalOpen}
             onClose={() => openAssignModal(false)}
-            region={regions[currentRegionIndex]}
+            region={selectedRegion}
           />
           <TransferModal
             open={transferModalOpen}
             onClose={() => openTransferModal(false)}
-            region={regions[currentRegionIndex]}
+            region={selectedRegion}
           />
         </>
       )}
