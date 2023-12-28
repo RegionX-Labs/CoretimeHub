@@ -8,8 +8,13 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
-import { InterlaceModal, PartitionModal, RegionCard } from '@/components';
-import { TaskAssignModal } from '@/components/Modals/TaskAssign';
+import {
+  InterlaceModal,
+  PartitionModal,
+  RegionCard,
+  TaskAssignModal,
+  TransferModal,
+} from '@/components';
 
 import { useRegions } from '@/contexts/regions';
 import {
@@ -27,8 +32,11 @@ const Home = () => {
   const [partitionModalOpen, openPartitionModal] = useState(false);
   const [interlaceModalOpen, openInterlaceModal] = useState(false);
   const [assignModalOpen, openAssignModal] = useState(false);
+  const [transferModalOpen, openTransferModal] = useState(false);
 
-  const regionSelected = currentRegionIndex !== undefined;
+  const selectedRegion =
+    currentRegionIndex === undefined ? undefined : regions[currentRegionIndex];
+  const regionSelected = selectedRegion !== undefined;
 
   const management = [
     {
@@ -41,7 +49,11 @@ const Home = () => {
       icon: InterlaceIcon,
       onClick: () => openInterlaceModal(true),
     },
-    { label: 'transfer', icon: TransferIcon },
+    {
+      label: 'transfer',
+      icon: TransferIcon,
+      onClick: () => openTransferModal(true),
+    },
     {
       label: 'assign',
       icon: AssignmentIcon,
@@ -132,17 +144,22 @@ const Home = () => {
           <PartitionModal
             open={partitionModalOpen}
             onClose={() => openPartitionModal(false)}
-            region={regions[currentRegionIndex]}
+            region={selectedRegion}
           />
           <InterlaceModal
             open={interlaceModalOpen}
             onClose={() => openInterlaceModal(false)}
-            region={regions[currentRegionIndex]}
+            region={selectedRegion}
           />
           <TaskAssignModal
             open={assignModalOpen}
             onClose={() => openAssignModal(false)}
-            region={regions[currentRegionIndex]}
+            region={selectedRegion}
+          />
+          <TransferModal
+            open={transferModalOpen}
+            onClose={() => openTransferModal(false)}
+            region={selectedRegion}
           />
         </>
       )}

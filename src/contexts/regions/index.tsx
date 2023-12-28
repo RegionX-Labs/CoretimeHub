@@ -1,3 +1,4 @@
+import { useInkathon } from '@scio-labs/use-inkathon';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import {
@@ -56,6 +57,7 @@ const RegionDataProvider = ({ children }: Props) => {
   const {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
+  const { activeAccount } = useInkathon();
 
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
   const [timeslicePeriod, setTimeslicePeriod] = useState<number>(0);
@@ -91,7 +93,7 @@ const RegionDataProvider = ({ children }: Props) => {
   };
 
   const fetchRegions = async (): Promise<void> => {
-    if (!apisConnected) {
+    if (!apisConnected || !activeAccount) {
       setRegions([]);
       return;
     }
@@ -144,7 +146,7 @@ const RegionDataProvider = ({ children }: Props) => {
         taskId,
       });
     }
-    setRegions([..._regions]);
+    setRegions(_regions.filter(({owner}) => owner === activeAccount.address));
     setLoading(false);
   };
 
@@ -156,6 +158,10 @@ const RegionDataProvider = ({ children }: Props) => {
     setTimeslicePeriod(timeslicePeriod);
     fetchRegions();
   }, [apisConnected]);
+
+  useEffect(() => {
+    activeAccount && fetchRegions();
+  }, [activeAccount]);
 
   const updateRegionName = (index: number, name: string) => {
     const _regions = [...regions];
