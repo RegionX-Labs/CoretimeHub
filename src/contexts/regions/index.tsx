@@ -1,10 +1,11 @@
-import { useInkathon } from '@scio-labs/use-inkathon';
+import { contractQuery, decodeOutput, useContract, useInkathon } from '@scio-labs/use-inkathon';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import {
   countOne,
   getBlockTimestamp,
   parseHNString,
+  parseHNStringToString,
   stringifyOnChainId as stringifyOnChainRegionId,
 } from '@/utils/functions';
 
@@ -20,6 +21,9 @@ import {
 
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { ApiState } from '../apis/types';
+import { CONTRACT_XC_REGIONS } from '../apis/consts';
+import XcRegionsMetadata from "../../contracts/xc_regions.json";
+import { useToast } from '../toast';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
@@ -57,17 +61,23 @@ const RegionDataProvider = ({ children }: Props) => {
   const {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
-  const { activeAccount } = useInkathon();
+  const { api: contractsApi, isConnected: contractsReady, activeAccount } = useInkathon();
+
+  const { contract } = useContract(XcRegionsMetadata, CONTRACT_XC_REGIONS);
 
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
   const [timeslicePeriod, setTimeslicePeriod] = useState<number>(0);
   const [loading, setLoading] = useState(false);
 
+  const { toastError } = useToast();
+
   const apisConnected =
     coretimeApi &&
     coretimeApiState === ApiState.READY &&
     relayApi &&
-    relayApiState === ApiState.READY;
+    relayApiState === ApiState.READY &&
+    contractsApi &&
+    contractsReady;
 
   const fetchTasks = async () => {
     if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
@@ -104,6 +114,9 @@ const RegionDataProvider = ({ children }: Props) => {
     );
 
     const tasks = await fetchTasks();
+
+    const rawXcRegionIds = await getRawXcRegionIds();
+    const xcRegions = await getXcRegions(rawXcRegionIds);
 
     const _regions: Array<RegionMetadata> = [];
     const res = await coretimeApi.query.broker.regions.entries();
@@ -188,6 +201,48 @@ const RegionDataProvider = ({ children }: Props) => {
       name
     );
   };
+
+  const getRawXcRegionIds = async (): Promise<Array<string>> => {
+    if (!contractsApi || !contract || !activeAccount) {
+      return [];
+    }
+
+    const rawRegionIds = [];
+    let isError = false;
+    let index = 0;
+
+    while (!isError) {
+      const result = await contractQuery(
+        contractsApi,
+        "",
+        contract,
+        "PSP34Enumerable::owners_token_by_index",
+        {},
+        [activeAccount.address, index],
+      );
+
+      const { output, isError: queryError, decodedOutput } = decodeOutput(
+        result,
+        contract,
+        "PSP34Enumerable::owners_token_by_index",
+      );
+
+      if (queryError || decodedOutput === "TokenNotExists") {
+        isError = true;
+      } else {
+        rawRegionIds.push(parseHNStringToString(output.Ok.U128));
+        index++;
+      }
+    }
+
+    return rawRegionIds;
+  };
+
+  const getXcRegions = async (rawRegionIds: Array<string>): Promise<Array<[HumanRegionId, HumanRegionRecord]>> => {
+    console.log(rawRegionIds);
+
+    return [];
+  }
 
   return (
     <RegionDataContext.Provider

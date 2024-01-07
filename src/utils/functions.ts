@@ -9,7 +9,11 @@ import {
 
 // parse human readable number string
 export const parseHNString = (str: string): number => {
-  return parseInt(str.replace(',', ''));
+  return parseInt(parseHNStringToString(str));
+};
+
+export const parseHNStringToString = (str: string): string => {
+  return str.replace(/,/g, '');
 };
 
 export const getBlockTimestamp = async (
