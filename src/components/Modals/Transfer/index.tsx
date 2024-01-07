@@ -12,15 +12,16 @@ import {
 import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
 import { useEffect, useState } from 'react';
 
+import { encodeRegionId } from '@/utils/functions';
+
 import { RegionCard } from '@/components/elements';
 
 import { useCoretimeApi } from '@/contexts/apis';
+import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import { OnChainRegionId, RegionMetadata, RegionOrigin } from '@/models';
-import { encodeRegionId } from '@/utils/functions';
-import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
 import XcRegionsMetadata from "@/contracts/xc_regions.json";
+import { OnChainRegionId, RegionMetadata, RegionOrigin } from '@/models';
 
 interface TransferModalProps {
   open: boolean;

@@ -1,4 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
+import { BN } from '@polkadot/util';
 
 import {
   CoreMask,
@@ -6,7 +7,6 @@ import {
   RELAY_CHAIN_BLOCK_TIME,
   Timestamp,
 } from '@/models';
-import { BN } from '@polkadot/util';
 
 // parse human readable number string
 export const parseHNString = (str: string): number => {
