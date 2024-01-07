@@ -54,7 +54,7 @@ export const RegionCard = ({
 
   const progress = [
     {
-      label: 'Core Ownership',
+      label: 'Coretime Ownership',
       value: ownership ?? 0,
       color: 'warning',
     },

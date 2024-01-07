@@ -10,8 +10,7 @@ export type TaskIndex = number;
 
 export type Timeslice = U32;
 export type CoreIndex = U16;
-export type CoreMask = '0x' & string; // 80 bits bitmap
-export type CoreMaskString = '0x' & string;
+export type CoreMask = string; // 80 bits bitmap
 export type RawRegionId = Uint8Array; // 128 bits
 
 export type OnChainRegionId = {
@@ -23,7 +22,7 @@ export type OnChainRegionId = {
 export type HumanRegionId = {
   begin: string;
   core: CoreIndex;
-  mask: CoreMaskString;
+  mask: CoreMask;
 };
 
 export type OnChainRegionRecord = {
