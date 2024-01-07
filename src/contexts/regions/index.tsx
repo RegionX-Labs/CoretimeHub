@@ -20,8 +20,8 @@ import {
 } from '@/models';
 
 import { useCoretimeApi, useRelayApi } from '../apis';
-import { ApiState } from '../apis/types';
 import { CONTRACT_XC_REGIONS } from '../apis/consts';
+import { ApiState } from '../apis/types';
 import XcRegionsMetadata from "../../contracts/xc_regions.json";
 
 interface RegionsData {
@@ -263,7 +263,7 @@ const RegionDataProvider = ({ children }: Props) => {
       return [];
     }
 
-    let regions: Array<[HumanRegionId, HumanRegionRecord]> = [];
+    const regions: Array<[HumanRegionId, HumanRegionRecord]> = [];
 
     for await (const regionId of rawRegionIds) {
       const result = await contractQuery(
@@ -284,7 +284,8 @@ const RegionDataProvider = ({ children }: Props) => {
       if (!queryError) {
         const versionedRegion = output.Ok;
 
-        // TODO: Ensure metadata is correct
+        // TODO: Once cross-chain region transfers are enabled from the broker pallet ensure 
+        // metadata is correct.
 
         regions.push([{
           begin: versionedRegion.region.begin,
