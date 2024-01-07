@@ -1,4 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
+import { BN } from '@polkadot/util';
 
 import {
   CoreMask,
@@ -81,3 +82,12 @@ export const binMask2Strinng = (mask: string): CoreMask => {
   }
   return `0x${hexMask}` as CoreMask;
 };
+
+export function encodeRegionId(contractsApi: ApiPromise, regionId: OnChainRegionId): BN {
+  const encodedBegin = contractsApi.createType("u32", regionId.begin).toHex().substring(2);
+  const encodedCore = contractsApi.createType("u16", regionId.core).toHex().substring(2);
+
+  const rawRegionId = encodedBegin + encodedCore + regionId.mask.substring(2);
+
+  return new BN(rawRegionId, 16);
+}
