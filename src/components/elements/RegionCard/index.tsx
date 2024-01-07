@@ -44,11 +44,11 @@ export const RegionCard = ({
     <>{
       bordered ?
         <Paper className={clsx(styles.container, active ? styles.active : '')}>
-          <RegionCardInner region={region} active={active} editable={editable} updateName={updateName} />
+          <RegionCardInner region={region} editable={editable} updateName={updateName} />
         </Paper>
         :
         <div className={clsx(styles.container, active ? styles.active : '')}>
-          <RegionCardInner region={region} active={active} editable={editable} updateName={updateName} />
+          <RegionCardInner region={region} editable={editable} updateName={updateName} />
         </div>
     }
     </>
@@ -58,13 +58,11 @@ export const RegionCard = ({
 interface RegionCardInnerProps {
   region: RegionMetadata;
   editable?: boolean;
-  active?: boolean;
   updateName?: (_newName: string) => void;
 }
 
 const RegionCardInner = ({
   region,
-  active = false,
   editable = false,
   updateName,
 }: RegionCardInnerProps) => {
