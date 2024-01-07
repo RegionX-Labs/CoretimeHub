@@ -112,18 +112,12 @@ export const InterlaceModal = ({
               variant='h2'
               sx={{ color: theme.palette.text.secondary }}
             >
-              Current Mask
+              Current Mask:
             </Typography>
             <Typography>{currentMask}</Typography>
           </Stack>
           {activeBits > 1 && (
             <Stack direction='column' gap={2}>
-              <Typography
-                variant='h2'
-                sx={{ color: theme.palette.text.secondary }}
-              >
-                New Mask
-              </Typography>
               <Box display="flex" justifyContent="center">
                 <CoremaskCircularProgress position={position} oneStart={oneStart} oneEnd={oneEnd} />
               </Box>
@@ -141,6 +135,13 @@ export const InterlaceModal = ({
                 }
                 className={styles.slider}
               />
+              <Typography
+                variant='h2'
+                sx={{ color: theme.palette.text.secondary }}
+              >
+                New Mask:
+              </Typography>
+
               <Typography>{newMask}</Typography>
             </Stack>
           )}
