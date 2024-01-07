@@ -128,7 +128,7 @@ export const PartitionModal = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent>
-        <RegionCard region={region} />
+        <RegionCard region={region} bordered={false} />
         <Box className={styles.unitContainer}>
           <Typography variant='h2' sx={{ color: theme.palette.text.secondary }}>
             Time units
@@ -156,7 +156,7 @@ export const PartitionModal = ({
             valueLabelFormat={(v) =>
               `Pivot: ${v} ${timeUnits[unitIdx].strUnit}${v > 1 ? 's' : ''}`
             }
-            size='small'
+            size='medium'
             className={styles.timeSlider}
           />
         </Box>
