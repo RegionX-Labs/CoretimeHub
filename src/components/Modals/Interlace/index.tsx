@@ -1,6 +1,8 @@
 import { LoadingButton } from '@mui/lab';
 import {
+  Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -110,18 +112,15 @@ export const InterlaceModal = ({
               variant='h2'
               sx={{ color: theme.palette.text.secondary }}
             >
-              Current Mask
+              Current Mask:
             </Typography>
             <Typography>{currentMask}</Typography>
           </Stack>
           {activeBits > 1 && (
             <Stack direction='column' gap={2}>
-              <Typography
-                variant='h2'
-                sx={{ color: theme.palette.text.secondary }}
-              >
-                New Mask
-              </Typography>
+              <Box display="flex" justifyContent="center">
+                <CoremaskCircularProgress position={position} oneStart={oneStart} oneEnd={oneEnd} />
+              </Box>
               <Slider
                 min={oneStart}
                 max={oneEnd - 1}
@@ -136,6 +135,13 @@ export const InterlaceModal = ({
                 }
                 className={styles.slider}
               />
+              <Typography
+                variant='h2'
+                sx={{ color: theme.palette.text.secondary }}
+              >
+                New Mask:
+              </Typography>
+
               <Typography>{newMask}</Typography>
             </Stack>
           )}
@@ -157,3 +163,33 @@ export const InterlaceModal = ({
     </Dialog>
   );
 };
+
+interface CoremaskCircularProgressProps {
+  position: number;
+  oneStart: number,
+  oneEnd: number;
+}
+
+const CoremaskCircularProgress = ({ position, oneStart, oneEnd }: CoremaskCircularProgressProps) => {
+  const getCircularProgressValue = (value: number, minValue: number, maxValue: number) => {
+    return ((value - minValue) / (maxValue - minValue)) * 100;
+  };
+
+  return (
+    <Box position="relative" display="inline-flex">
+      <CircularProgress
+        className={styles.circular}
+        size="250px"
+        variant="determinate"
+        value={100}
+        style={{ position: 'absolute', color: '#d3d3d3' }} // Secondary color
+      />
+      <CircularProgress
+        className={styles.circular}
+        size="250px"
+        variant="determinate"
+        value={getCircularProgressValue(position, oneStart, oneEnd)}
+      />
+    </Box>
+  );
+}
