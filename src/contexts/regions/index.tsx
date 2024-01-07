@@ -118,11 +118,25 @@ const RegionDataProvider = ({ children }: Props) => {
     const rawXcRegionIds = await getRawXcRegionIds();
     const xcRegions = await getXcRegions(rawXcRegionIds);
 
+    const brokerEntries = await coretimeApi.query.broker.regions.entries();
+
+    const brokerRegions: Array<[HumanRegionId, HumanRegionRecord]> = brokerEntries
+      .map(([key, value]) => {
+        const keyTuple = key.toHuman();
+
+        // This is defensive.
+        if (keyTuple && Array.isArray(keyTuple) && keyTuple[0] !== undefined) {
+          return [keyTuple[0] as HumanRegionId, value.toHuman() as HumanRegionRecord];
+        }
+        return null;
+      })
+      .filter(entry => entry !== null) as Array<[HumanRegionId, HumanRegionRecord]>;
+
     const _regions: Array<RegionMetadata> = [];
-    const res = await coretimeApi.query.broker.regions.entries();
-    for await (const [key, value] of res) {
-      const [regionId] = key.toHuman() as [HumanRegionId];
-      const regionData = value.toHuman() as HumanRegionRecord;
+
+    for await (const region of [...brokerRegions, ...xcRegions]) {
+      const regionId = region[0];
+      const regionData = region[1];
 
       const { begin, core, mask } = regionId;
       const { end, owner, paid } = regionData;
@@ -239,9 +253,46 @@ const RegionDataProvider = ({ children }: Props) => {
   };
 
   const getXcRegions = async (rawRegionIds: Array<string>): Promise<Array<[HumanRegionId, HumanRegionRecord]>> => {
-    console.log(rawRegionIds);
+    if (!contractsApi || !contract || !activeAccount) {
+      return [];
+    }
 
-    return [];
+    let regions: Array<[HumanRegionId, HumanRegionRecord]> = [];
+
+    for await (const regionId of rawRegionIds) {
+      const result = await contractQuery(
+        contractsApi,
+        "",
+        contract,
+        "RegionMetadata::get_metadata",
+        {},
+        [regionId],
+      );
+
+      const { output, isError: queryError } = decodeOutput(
+        result,
+        contract,
+        "RegionMetadata::get_metadata",
+      );
+
+      if (!queryError) {
+        const versionedRegion = output.Ok;
+
+        // TODO: Ensure metadata is correct
+
+        regions.push([{
+          begin: versionedRegion.region.begin,
+          core: versionedRegion.region.core,
+          mask: versionedRegion.region.mask,
+        }, {
+          end: versionedRegion.region.end,
+          owner: activeAccount.address,
+          paid: undefined
+        }]);
+      }
+    }
+
+    return regions;
   }
 
   return (
