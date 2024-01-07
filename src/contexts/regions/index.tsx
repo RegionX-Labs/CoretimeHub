@@ -1,10 +1,11 @@
-import { useInkathon } from '@scio-labs/use-inkathon';
+import { contractQuery, decodeOutput, useContract, useInkathon } from '@scio-labs/use-inkathon';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import {
   countOne,
   getBlockTimestamp,
   parseHNString,
+  parseHNStringToString,
   stringifyOnChainId as stringifyOnChainRegionId,
 } from '@/utils/functions';
 
@@ -19,7 +20,9 @@ import {
 } from '@/models';
 
 import { useCoretimeApi, useRelayApi } from '../apis';
+import { CONTRACT_XC_REGIONS } from '../apis/consts';
 import { ApiState } from '../apis/types';
+import XcRegionsMetadata from "../../contracts/xc_regions.json";
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
@@ -57,7 +60,9 @@ const RegionDataProvider = ({ children }: Props) => {
   const {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
-  const { activeAccount } = useInkathon();
+  const { api: contractsApi, isConnected: contractsReady, activeAccount } = useInkathon();
+
+  const { contract } = useContract(XcRegionsMetadata, CONTRACT_XC_REGIONS);
 
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
   const [timeslicePeriod, setTimeslicePeriod] = useState<number>(0);
@@ -67,7 +72,9 @@ const RegionDataProvider = ({ children }: Props) => {
     coretimeApi &&
     coretimeApiState === ApiState.READY &&
     relayApi &&
-    relayApiState === ApiState.READY;
+    relayApiState === ApiState.READY &&
+    contractsApi &&
+    contractsReady;
 
   const fetchTasks = async () => {
     if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
@@ -105,14 +112,19 @@ const RegionDataProvider = ({ children }: Props) => {
 
     const tasks = await fetchTasks();
 
+    const rawXcRegionIds = await getOwnedRawXcRegionIds();
+    const xcRegions = await getOwnedXcRegions(rawXcRegionIds);
+
+    const brokerRegions = await getBrokerRegions();
+
     const _regions: Array<RegionMetadata> = [];
-    const res = await coretimeApi.query.broker.regions.entries();
-    for await (const [key, value] of res) {
-      const [regionId] = key.toHuman() as [HumanRegionId];
-      const regionData = value.toHuman() as HumanRegionRecord;
+
+    for await (const region of [...brokerRegions, ...xcRegions]) {
+      const regionId = region[0];
+      const regionData = region[1];
 
       const { begin, core, mask } = regionId;
-      const { end, owner, paid } = regionData;
+      const { end, owner, paid, origin } = regionData;
 
       const beginBlockHeight = timeslicePeriod * parseHNString(begin);
       const beginTimestamp = await getBlockTimestamp(relayApi, beginBlockHeight); // begin block timestamp
@@ -149,7 +161,7 @@ const RegionDataProvider = ({ children }: Props) => {
         end: endTimestamp,
         owner,
         paid: nPaid,
-        origin: RegionOrigin.CORETIME_CHAIN,
+        origin: origin ? origin : RegionOrigin.CORETIME_CHAIN,
         rawId,
         consumed,
         name: name ?? `Region #${_regions.length + 1}`,
@@ -188,6 +200,108 @@ const RegionDataProvider = ({ children }: Props) => {
       name
     );
   };
+
+  const getBrokerRegions = async (): Promise<Array<[HumanRegionId, HumanRegionRecord]>> => {
+    if (!coretimeApi) {
+      return [];
+    }
+    const brokerEntries = await coretimeApi.query.broker.regions.entries();
+
+    const brokerRegions: Array<[HumanRegionId, HumanRegionRecord]> = brokerEntries
+      .map(([key, value]) => {
+        const keyTuple = key.toHuman();
+
+        // This is defensive.
+        if (keyTuple && Array.isArray(keyTuple) && keyTuple[0] !== undefined) {
+          return [keyTuple[0] as HumanRegionId, value.toHuman() as HumanRegionRecord];
+        }
+        return null;
+      })
+      .filter(entry => entry !== null) as Array<[HumanRegionId, HumanRegionRecord]>;
+
+    return brokerRegions;
+  }
+
+  const getOwnedRawXcRegionIds = async (): Promise<Array<string>> => {
+    if (!contractsApi || !contract || !activeAccount) {
+      return [];
+    }
+
+    const rawRegionIds = [];
+    let isError = false;
+    let index = 0;
+
+    while (!isError) {
+      const result = await contractQuery(
+        contractsApi,
+        "",
+        contract,
+        "PSP34Enumerable::owners_token_by_index",
+        {},
+        [activeAccount.address, index],
+      );
+
+      const { output, isError: queryError, decodedOutput } = decodeOutput(
+        result,
+        contract,
+        "PSP34Enumerable::owners_token_by_index",
+      );
+
+      if (queryError || decodedOutput === "TokenNotExists") {
+        isError = true;
+      } else {
+        rawRegionIds.push(parseHNStringToString(output.Ok.U128));
+        index++;
+      }
+    }
+
+    return rawRegionIds;
+  };
+
+  const getOwnedXcRegions = async (rawRegionIds: Array<string>): Promise<Array<[HumanRegionId, HumanRegionRecord]>> => {
+    if (!contractsApi || !contract || !activeAccount) {
+      return [];
+    }
+
+    const regions: Array<[HumanRegionId, HumanRegionRecord]> = [];
+
+    for await (const regionId of rawRegionIds) {
+      const result = await contractQuery(
+        contractsApi,
+        "",
+        contract,
+        "RegionMetadata::get_metadata",
+        {},
+        [regionId],
+      );
+
+      const { output, isError: queryError } = decodeOutput(
+        result,
+        contract,
+        "RegionMetadata::get_metadata",
+      );
+
+      if (!queryError) {
+        const versionedRegion = output.Ok;
+
+        // TODO: Once cross-chain region transfers are enabled from the broker pallet ensure 
+        // metadata is correct.
+
+        regions.push([{
+          begin: versionedRegion.region.begin,
+          core: versionedRegion.region.core,
+          mask: versionedRegion.region.mask,
+        }, {
+          end: versionedRegion.region.end,
+          owner: activeAccount.address,
+          origin: RegionOrigin.CONTRACTS_CHAIN,
+          paid: undefined
+        }]);
+      }
+    }
+
+    return regions;
+  }
 
   return (
     <RegionDataContext.Provider
