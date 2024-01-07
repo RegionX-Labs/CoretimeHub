@@ -29,6 +29,7 @@ interface RegionCardProps {
   region: RegionMetadata;
   editable?: boolean;
   active?: boolean;
+  bordered?: boolean;
   updateName?: (_newName: string) => void;
 }
 
@@ -36,8 +37,35 @@ export const RegionCard = ({
   region,
   active = false,
   editable = false,
+  bordered = true,
   updateName,
 }: RegionCardProps) => {
+  return (
+    <>{
+      bordered ?
+        <Paper className={clsx(styles.container, active ? styles.active : '')}>
+          <RegionCardInner region={region} editable={editable} updateName={updateName} />
+        </Paper>
+        :
+        <div className={clsx(styles.container, active ? styles.active : '')}>
+          <RegionCardInner region={region} editable={editable} updateName={updateName} />
+        </div>
+    }
+    </>
+  )
+};
+
+interface RegionCardInnerProps {
+  region: RegionMetadata;
+  editable?: boolean;
+  updateName?: (_newName: string) => void;
+}
+
+const RegionCardInner = ({
+  region,
+  editable = false,
+  updateName,
+}: RegionCardInnerProps) => {
   const { tasks } = useTasks();
 
   TimeAgo.addLocale(en);
@@ -91,7 +119,7 @@ export const RegionCard = ({
   };
 
   return (
-    <Paper className={clsx(styles.container, active ? styles.active : '')}>
+    <>
       <div className={styles.regionInfo}>
         <div
           className={styles.duration}
@@ -212,6 +240,6 @@ export const RegionCard = ({
           ))}
         </Box>
       </Box>
-    </Paper>
+    </>
   );
-};
+}

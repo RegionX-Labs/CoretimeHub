@@ -91,7 +91,7 @@ export const TransferModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent>
         <Stack direction='column' gap={3}>
-          <RegionCard region={region} />
+          <RegionCard region={region} bordered={false} />
           <Stack direction='column' gap={1} alignItems='center'>
             <Typography>Transfer to</Typography>
             <ArrowDownwardOutlinedIcon />
