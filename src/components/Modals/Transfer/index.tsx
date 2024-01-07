@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useInkathon } from '@scio-labs/use-inkathon';
+import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
 import { useEffect, useState } from 'react';
 
 import { RegionCard } from '@/components/elements';
@@ -18,6 +18,9 @@ import { useCoretimeApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { OnChainRegionId, RegionMetadata, RegionOrigin } from '@/models';
+import { encodeRegionId } from '@/utils/functions';
+import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
+import XcRegionsMetadata from "@/contracts/xc_regions.json";
 
 interface TransferModalProps {
   open: boolean;
@@ -30,7 +33,8 @@ export const TransferModal = ({
   onClose,
   region,
 }: TransferModalProps) => {
-  const { activeAccount, activeSigner } = useInkathon();
+  const { activeAccount, activeSigner, api: contractsApi } = useInkathon();
+  const { contract } = useContract(XcRegionsMetadata, CONTRACT_XC_REGIONS);
 
   const { fetchRegions } = useRegions();
   const { toastError, toastInfo, toastSuccess } = useToast();
@@ -44,6 +48,8 @@ export const TransferModal = ({
   const onTransfer = () => {
     if (region.origin === RegionOrigin.CORETIME_CHAIN) {
       transferCoretimeRegion(region.rawId);
+    } else if (region.origin === RegionOrigin.CONTRACTS_CHAIN) {
+      transferXcRegion(region.rawId);
     }
   };
 
@@ -82,6 +88,39 @@ export const TransferModal = ({
       setWorking(false);
     }
   };
+
+  const transferXcRegion = async (regionId: OnChainRegionId) => {
+    if (!contractsApi || !activeAccount || !contract) {
+      return;
+    }
+
+    try {
+      setWorking(true);
+      const rawRegionId = encodeRegionId(contractsApi, regionId);
+      const id = contractsApi.createType("Id", { U128: rawRegionId });
+
+      await contractTx(
+        contractsApi,
+        activeAccount.address,
+        contract,
+        'PSP34::transfer',
+        {},
+        [newOwner, id, []]
+      );
+
+      toastSuccess(`Successfully transferred the xcRegion.`);
+      onClose();
+      fetchRegions();
+    } catch (e: any) {
+      toastError(
+        `Failed to transfer the region. Error: ${e.errorMessage === 'Error'
+          ? 'Please check your balance.'
+          : e
+        }`
+      );
+      setWorking(false);
+    }
+  }
 
   useEffect(() => {
     setNewOwner('');

@@ -21,6 +21,7 @@ import { WS_CONTRACTS_CHAIN } from '@/contexts/apis/consts';
 import { RegionDataProvider } from '@/contexts/regions';
 import { TaskDataProvider } from '@/contexts/tasks';
 import { ToastProvider } from '@/contexts/toast';
+import { Id } from '@/models';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -55,6 +56,7 @@ export default function MyApp(props: MyAppProps) {
                   name: '',
                   rpcUrls: [WS_CONTRACTS_CHAIN],
                 }}
+                apiOptions={{ types: { Id } }}
               >
                 <RegionDataProvider>
                   <TaskDataProvider>
