@@ -1,6 +1,8 @@
 import { LoadingButton } from '@mui/lab';
 import {
+  Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -122,6 +124,9 @@ export const InterlaceModal = ({
               >
                 New Mask
               </Typography>
+              <Box display="flex" justifyContent="center">
+                <CoremaskCircularProgress position={position} oneStart={oneStart} oneEnd={oneEnd} />
+              </Box>
               <Slider
                 min={oneStart}
                 max={oneEnd - 1}
@@ -157,3 +162,33 @@ export const InterlaceModal = ({
     </Dialog>
   );
 };
+
+interface CoremaskCircularProgressProps {
+  position: number;
+  oneStart: number,
+  oneEnd: number;
+}
+
+const CoremaskCircularProgress = ({ position, oneStart, oneEnd }: CoremaskCircularProgressProps) => {
+  const getCircularProgressValue = (value: number, minValue: number, maxValue: number) => {
+    return ((value - minValue) / (maxValue - minValue)) * 100;
+  };
+
+  return (
+    <Box position="relative" display="inline-flex">
+      <CircularProgress
+        className={styles.circular}
+        size="250px"
+        variant="determinate"
+        value={100}
+        style={{ position: 'absolute', color: '#d3d3d3' }} // Secondary color
+      />
+      <CircularProgress
+        className={styles.circular}
+        size="250px"
+        variant="determinate"
+        value={getCircularProgressValue(position, oneStart, oneEnd)}
+      />
+    </Box>
+  );
+}
