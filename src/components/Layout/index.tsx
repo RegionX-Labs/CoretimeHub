@@ -26,7 +26,7 @@ export const Layout = ({ children }: Props) => {
             margin: '1rem 0.5rem 0 2rem',
             borderTopLeftRadius: '1rem',
             borderBottomLeftRadius: '1rem',
-            paddingTop: '4.5rem',
+            paddingTop: '1rem',
             paddingBottom: '2rem',
           }}
         >

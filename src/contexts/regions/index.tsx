@@ -115,12 +115,12 @@ const RegionDataProvider = ({ children }: Props) => {
       const { end, owner, paid } = regionData;
 
       const beginBlockHeight = timeslicePeriod * parseHNString(begin);
-      const tsBegin = await getBlockTimestamp(relayApi, beginBlockHeight); // begin block timestamp
+      const beginTimestamp = await getBlockTimestamp(relayApi, beginBlockHeight); // begin block timestamp
 
       // rough estimation
       const endBlockHeight = timeslicePeriod * parseHNString(end);
-      const tsEnd =
-        tsBegin + (endBlockHeight - beginBlockHeight) * RELAY_CHAIN_BLOCK_TIME;
+      const endTimestamp =
+        beginTimestamp + (endBlockHeight - beginBlockHeight) * RELAY_CHAIN_BLOCK_TIME;
 
       const nPaid = paid ? parseHNString(paid) : undefined;
       const rawId: OnChainRegionId = {
@@ -132,21 +132,33 @@ const RegionDataProvider = ({ children }: Props) => {
       const name = localStorage.getItem(`region-${strRegionId}`);
       const taskId = tasks[strRegionId];
 
+      const currentBlockHeight = parseHNString((await coretimeApi.query.system.number()).toString());
+
+      const durabtionInBlocks = endBlockHeight - beginBlockHeight;
+
+      let consumed = (currentBlockHeight - beginBlockHeight) / durabtionInBlocks;
+      if (consumed < 0) {
+        // This means that the region hasn't yet started.
+        consumed = 0;
+      }
+
       _regions.push({
-        begin: tsBegin,
+        begin: beginTimestamp,
         core,
         mask,
-        end: tsEnd,
+        end: endTimestamp,
         owner,
         paid: nPaid,
         origin: RegionOrigin.CORETIME_CHAIN,
         rawId,
+        consumed,
         name: name ?? `Region #${_regions.length + 1}`,
         ownership: countOne(mask) / timeslicePeriod,
         taskId,
       });
     }
-    setRegions(_regions.filter(({owner}) => owner === activeAccount.address));
+
+    setRegions(_regions.filter(({ owner }) => owner === activeAccount.address));
     setLoading(false);
   };
 
