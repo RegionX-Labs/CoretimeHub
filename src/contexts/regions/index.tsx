@@ -23,7 +23,6 @@ import { useCoretimeApi, useRelayApi } from '../apis';
 import { ApiState } from '../apis/types';
 import { CONTRACT_XC_REGIONS } from '../apis/consts';
 import XcRegionsMetadata from "../../contracts/xc_regions.json";
-import { useToast } from '../toast';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
@@ -69,8 +68,6 @@ const RegionDataProvider = ({ children }: Props) => {
   const [timeslicePeriod, setTimeslicePeriod] = useState<number>(0);
   const [loading, setLoading] = useState(false);
 
-  const { toastError } = useToast();
-
   const apisConnected =
     coretimeApi &&
     coretimeApiState === ApiState.READY &&
@@ -115,22 +112,10 @@ const RegionDataProvider = ({ children }: Props) => {
 
     const tasks = await fetchTasks();
 
-    const rawXcRegionIds = await getRawXcRegionIds();
-    const xcRegions = await getXcRegions(rawXcRegionIds);
+    const rawXcRegionIds = await getOwnedRawXcRegionIds();
+    const xcRegions = await getOwnedXcRegions(rawXcRegionIds);
 
-    const brokerEntries = await coretimeApi.query.broker.regions.entries();
-
-    const brokerRegions: Array<[HumanRegionId, HumanRegionRecord]> = brokerEntries
-      .map(([key, value]) => {
-        const keyTuple = key.toHuman();
-
-        // This is defensive.
-        if (keyTuple && Array.isArray(keyTuple) && keyTuple[0] !== undefined) {
-          return [keyTuple[0] as HumanRegionId, value.toHuman() as HumanRegionRecord];
-        }
-        return null;
-      })
-      .filter(entry => entry !== null) as Array<[HumanRegionId, HumanRegionRecord]>;
+    const brokerRegions = await getBrokerRegions();
 
     const _regions: Array<RegionMetadata> = [];
 
@@ -139,7 +124,7 @@ const RegionDataProvider = ({ children }: Props) => {
       const regionData = region[1];
 
       const { begin, core, mask } = regionId;
-      const { end, owner, paid } = regionData;
+      const { end, owner, paid, origin } = regionData;
 
       const beginBlockHeight = timeslicePeriod * parseHNString(begin);
       const beginTimestamp = await getBlockTimestamp(relayApi, beginBlockHeight); // begin block timestamp
@@ -176,7 +161,7 @@ const RegionDataProvider = ({ children }: Props) => {
         end: endTimestamp,
         owner,
         paid: nPaid,
-        origin: RegionOrigin.CORETIME_CHAIN,
+        origin: origin ? origin : RegionOrigin.CORETIME_CHAIN,
         rawId,
         consumed,
         name: name ?? `Region #${_regions.length + 1}`,
@@ -216,7 +201,28 @@ const RegionDataProvider = ({ children }: Props) => {
     );
   };
 
-  const getRawXcRegionIds = async (): Promise<Array<string>> => {
+  const getBrokerRegions = async (): Promise<Array<[HumanRegionId, HumanRegionRecord]>> => {
+    if (!coretimeApi) {
+      return [];
+    }
+    const brokerEntries = await coretimeApi.query.broker.regions.entries();
+
+    const brokerRegions: Array<[HumanRegionId, HumanRegionRecord]> = brokerEntries
+      .map(([key, value]) => {
+        const keyTuple = key.toHuman();
+
+        // This is defensive.
+        if (keyTuple && Array.isArray(keyTuple) && keyTuple[0] !== undefined) {
+          return [keyTuple[0] as HumanRegionId, value.toHuman() as HumanRegionRecord];
+        }
+        return null;
+      })
+      .filter(entry => entry !== null) as Array<[HumanRegionId, HumanRegionRecord]>;
+
+    return brokerRegions;
+  }
+
+  const getOwnedRawXcRegionIds = async (): Promise<Array<string>> => {
     if (!contractsApi || !contract || !activeAccount) {
       return [];
     }
@@ -252,7 +258,7 @@ const RegionDataProvider = ({ children }: Props) => {
     return rawRegionIds;
   };
 
-  const getXcRegions = async (rawRegionIds: Array<string>): Promise<Array<[HumanRegionId, HumanRegionRecord]>> => {
+  const getOwnedXcRegions = async (rawRegionIds: Array<string>): Promise<Array<[HumanRegionId, HumanRegionRecord]>> => {
     if (!contractsApi || !contract || !activeAccount) {
       return [];
     }
@@ -287,6 +293,7 @@ const RegionDataProvider = ({ children }: Props) => {
         }, {
           end: versionedRegion.region.end,
           owner: activeAccount.address,
+          origin: RegionOrigin.CONTRACTS_CHAIN,
           paid: undefined
         }]);
       }

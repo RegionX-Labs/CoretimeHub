@@ -35,6 +35,7 @@ export type HumanRegionRecord = {
   end: string;
   owner: Address;
   paid?: string;
+  origin?: RegionOrigin;
 };
 
 export enum RegionOrigin {
