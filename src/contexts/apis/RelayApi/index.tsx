@@ -43,8 +43,8 @@ const RelayApiContextProvider = (props: any) => {
     const { api, apiState } = state;
     if (!api || apiState !== ApiState.READY) return;
     const fetchParaIds = async () => {
-      const paras = await api.query.registrar.paras.keys();
-      const paraIds = paras.map((key: any) => parseHNString(key.toHuman()[0]));
+      const paras = (await api.query.paras.parachains()).toHuman();
+      const paraIds = paras.map((key: any) => parseHNString(key));
       setParaIds(paraIds);
     };
     fetchParaIds();

@@ -23,6 +23,7 @@ import {
   PartitionIcon,
   TransferIcon,
 } from '@/icons';
+import { RegionOrigin } from '@/models';
 
 const Home = () => {
   const theme = useTheme();
@@ -60,6 +61,12 @@ const Home = () => {
       onClick: () => openAssignModal(true),
     },
   ];
+
+  const isDisabled = (action: string): boolean => {
+    if (!selectedRegion) return false;
+    // XcRegions can only be transferred. 
+    return action !== "transfer" && selectedRegion.origin !== RegionOrigin.CORETIME_CHAIN;
+  }
 
   return (
     <Box sx={{ display: 'flex', height: '100%', gap: '1rem' }}>
@@ -131,7 +138,7 @@ const Home = () => {
                 textTransform: 'capitalize',
               }}
               startIcon={<Icon color={theme.palette.text.secondary} />}
-              disabled={!regionSelected}
+              disabled={isDisabled(label)}
               onClick={onClick}
             >
               {label}
