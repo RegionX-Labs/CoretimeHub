@@ -137,16 +137,19 @@ const RegionDataProvider = ({ children }: Props) => {
         consumed = 0;
       }
 
-      _regions.push({
-        region: region,
-        consumed,
-        coretimeOwnership: region.getMask().countOnes() / timeslicePeriod,
-        currentUsage: 0,
-        location: RegionLocation.CORETIME_CHAIN, // FIXME
-        name: name ?? `Region #${_regions.length + 1}`,
-        taskId,
+      const coretimeOwnership = region.getMask().countOnes() / timeslicePeriod;
+      const currentUsage = 0; // FIXME:
+
+      _regions.push(new RegionMetadata(
+        region,
+        RegionLocation.CORETIME_CHAIN, // FIXME
         rawId,
-      });
+        name ?? `Region #${_regions.length + 1}`,
+        coretimeOwnership,
+        currentUsage,
+        consumed,
+        taskId
+      ))
     }
     console.log(_regions);
 
