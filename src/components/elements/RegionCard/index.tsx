@@ -24,7 +24,7 @@ import { timesliceToTimestamp } from '@/utils/functions';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useTasks } from '@/contexts/tasks';
-import { RegionLocation,RegionMetadata } from '@/models';
+import { RegionLocation, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 import { Label } from '..';
@@ -45,18 +45,26 @@ export const RegionCard = ({
   updateName,
 }: RegionCardProps) => {
   return (
-    <>{
-      bordered ?
+    <>
+      {bordered ? (
         <Paper className={clsx(styles.container, active ? styles.active : '')}>
-          <RegionCardInner regionMetadata={regionMetadata} editable={editable} updateName={updateName} />
+          <RegionCardInner
+            regionMetadata={regionMetadata}
+            editable={editable}
+            updateName={updateName}
+          />
         </Paper>
-        :
+      ) : (
         <div className={clsx(styles.container, active ? styles.active : '')}>
-          <RegionCardInner regionMetadata={regionMetadata} editable={editable} updateName={updateName} />
+          <RegionCardInner
+            regionMetadata={regionMetadata}
+            editable={editable}
+            updateName={updateName}
+          />
         </div>
-    }
+      )}
     </>
-  )
+  );
 };
 
 interface RegionCardInnerProps {
@@ -77,8 +85,14 @@ const RegionCardInner = ({
   const timeAgo = new TimeAgo('en-US');
 
   const formatDuration = humanizer();
-  const { region, taskId, consumed, coretimeOwnership, location, currentUsage } =
-    regionMetadata;
+  const {
+    region,
+    taskId,
+    consumed,
+    coretimeOwnership,
+    location,
+    currentUsage,
+  } = regionMetadata;
   const theme = useTheme();
 
   const [isEdit, setEdit] = useState(false);
@@ -97,8 +111,12 @@ const RegionCardInner = ({
 
   useEffect(() => {
     if (api) {
-      timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then((value) => setBeginTimestamp(value));
-      timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then((value) => setEndTimestamp(value));
+      timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then(
+        (value) => setBeginTimestamp(value)
+      );
+      timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then(
+        (value) => setEndTimestamp(value)
+      );
     }
   }, [regionMetadata]);
 
@@ -198,11 +216,18 @@ const RegionCardInner = ({
           }}
         >
           <Typography variant='h2'>{`Core Index: #${region.getCore()}`}</Typography>
-          <Typography variant='h2'>Begin: {timeAgo.format(beginTimestamp)}</Typography>
-          <Typography variant='h2'>End: {timeAgo.format(endTimestamp)}</Typography>
+          <Typography variant='h2'>
+            Begin: {timeAgo.format(beginTimestamp)}
+          </Typography>
+          <Typography variant='h2'>
+            End: {timeAgo.format(endTimestamp)}
+          </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1rem' }}>
-          <Label text={region.getPaid() ? 'Renewable' : 'Non-Renewable'} color='primary' />
+          <Label
+            text={region.getPaid() ? 'Renewable' : 'Non-Renewable'}
+            color='primary'
+          />
           <Label
             text={
               location === RegionLocation.CORETIME_CHAIN
@@ -264,4 +289,4 @@ const RegionCardInner = ({
       </Box>
     </>
   );
-}
+};

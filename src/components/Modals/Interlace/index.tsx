@@ -68,7 +68,10 @@ export const InterlaceModal = ({
 
     const mask = CoreMask.fromBin(newMask).getMask();
 
-    const txInterlace = api.tx.broker.interlace(regionMetadata.region.getOnChainRegionId(), mask);
+    const txInterlace = api.tx.broker.interlace(
+      regionMetadata.region.getOnChainRegionId(),
+      mask
+    );
     try {
       setWorking(true);
       await txInterlace.signAndSend(
@@ -117,8 +120,12 @@ export const InterlaceModal = ({
           </Stack>
           {activeBits > 1 && (
             <Stack direction='column' gap={2}>
-              <Box display="flex" justifyContent="center">
-                <CoremaskCircularProgress position={position} oneStart={oneStart} oneEnd={oneEnd} />
+              <Box display='flex' justifyContent='center'>
+                <CoremaskCircularProgress
+                  position={position}
+                  oneStart={oneStart}
+                  oneEnd={oneEnd}
+                />
               </Box>
               <Slider
                 min={oneStart}
@@ -165,30 +172,38 @@ export const InterlaceModal = ({
 
 interface CoremaskCircularProgressProps {
   position: number;
-  oneStart: number,
+  oneStart: number;
   oneEnd: number;
 }
 
-const CoremaskCircularProgress = ({ position, oneStart, oneEnd }: CoremaskCircularProgressProps) => {
-  const getCircularProgressValue = (value: number, minValue: number, maxValue: number) => {
+const CoremaskCircularProgress = ({
+  position,
+  oneStart,
+  oneEnd,
+}: CoremaskCircularProgressProps) => {
+  const getCircularProgressValue = (
+    value: number,
+    minValue: number,
+    maxValue: number
+  ) => {
     return ((value - minValue) / (maxValue - minValue)) * 100;
   };
 
   return (
-    <Box position="relative" display="inline-flex">
+    <Box position='relative' display='inline-flex'>
       <CircularProgress
         className={styles.circular}
-        size="250px"
-        variant="determinate"
+        size='250px'
+        variant='determinate'
         value={100}
         style={{ position: 'absolute', color: '#d3d3d3' }} // Secondary color
       />
       <CircularProgress
         className={styles.circular}
-        size="250px"
-        variant="determinate"
+        size='250px'
+        variant='determinate'
         value={getCircularProgressValue(position, oneStart, oneEnd)}
       />
     </Box>
   );
-}
+};

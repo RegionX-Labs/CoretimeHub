@@ -64,9 +64,12 @@ const Home = () => {
 
   const isDisabled = (action: string): boolean => {
     if (!selectedRegion) return false;
-    // XcRegions can only be transferred. 
-    return action !== "transfer" && selectedRegion.location !== RegionLocation.CORETIME_CHAIN;
-  }
+    // XcRegions can only be transferred.
+    return (
+      action !== 'transfer' &&
+      selectedRegion.location !== RegionLocation.CORETIME_CHAIN
+    );
+  };
 
   return (
     <Box sx={{ display: 'flex', height: '100%', gap: '1rem' }}>

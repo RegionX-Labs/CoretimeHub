@@ -80,7 +80,8 @@ export const PartitionModal = ({
   const maxSteps = Math.floor(duration / unit) - 1;
 
   useEffect(() => {
-    const diff = regionMetadata.region.getEnd() - regionMetadata.region.getBegin();
+    const diff =
+      regionMetadata.region.getEnd() - regionMetadata.region.getBegin();
     setDuration(diff * timeslicePeriod * RELAY_CHAIN_BLOCK_TIME);
   }, []);
 

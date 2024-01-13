@@ -19,7 +19,7 @@ import { useCoretimeApi } from '@/contexts/apis';
 import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import XcRegionsMetadata from "@/contracts/xc_regions.json";
+import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import { RegionLocation, RegionMetadata } from '@/models';
 
 interface TransferModalProps {
@@ -59,7 +59,10 @@ export const TransferModal = ({
       toastError('Please input the new owner.');
       return;
     }
-    const txTransfer = coretimeApi.tx.broker.transfer(region.getOnChainRegionId(), newOwner);
+    const txTransfer = coretimeApi.tx.broker.transfer(
+      region.getOnChainRegionId(),
+      newOwner
+    );
 
     try {
       setWorking(true);
@@ -97,7 +100,7 @@ export const TransferModal = ({
     try {
       setWorking(true);
       const rawRegionId = region.getEncodedRegionId(contractsApi);
-      const id = contractsApi.createType("Id", { U128: rawRegionId });
+      const id = contractsApi.createType('Id', { U128: rawRegionId });
 
       await contractTx(
         contractsApi,
@@ -113,14 +116,15 @@ export const TransferModal = ({
       fetchRegions();
     } catch (e: any) {
       toastError(
-        `Failed to transfer the region. Error: ${e.errorMessage === 'Error'
-          ? 'Please check your balance.'
-          : e.errorMessage
+        `Failed to transfer the region. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
         }`
       );
       setWorking(false);
     }
-  }
+  };
 
   useEffect(() => {
     setNewOwner('');

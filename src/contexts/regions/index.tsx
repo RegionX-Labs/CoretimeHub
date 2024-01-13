@@ -1,22 +1,20 @@
-import { contractQuery, decodeOutput, useContract, useInkathon } from '@scio-labs/use-inkathon';
+import {
+  contractQuery,
+  decodeOutput,
+  useContract,
+  useInkathon,
+} from '@scio-labs/use-inkathon';
 import { CoreMask, Region, RegionRecord } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import {
-  parseHNString,
-  parseHNStringToString,
-} from '@/utils/functions';
+import { parseHNString, parseHNStringToString } from '@/utils/functions';
 
-import {
-  RegionLocation,
-  RegionMetadata,
-  ScheduleItem,
-} from '@/models';
+import { RegionLocation, RegionMetadata, ScheduleItem } from '@/models';
 
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { CONTRACT_XC_REGIONS } from '../apis/consts';
 import { ApiState } from '../apis/types';
-import XcRegionsMetadata from "../../contracts/xc_regions.json";
+import XcRegionsMetadata from '../../contracts/xc_regions.json';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
@@ -54,7 +52,11 @@ const RegionDataProvider = ({ children }: Props) => {
   const {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
-  const { api: contractsApi, isConnected: contractsReady, activeAccount } = useInkathon();
+  const {
+    api: contractsApi,
+    isConnected: contractsReady,
+    activeAccount,
+  } = useInkathon();
 
   const { contract } = useContract(XcRegionsMetadata, CONTRACT_XC_REGIONS);
 
@@ -85,8 +87,12 @@ const RegionDataProvider = ({ children }: Props) => {
           mask,
         } = record;
 
-        const region = new Region({ begin, core, mask: new CoreMask(mask) }, { end: 0, owner: "", paid: null });
-        tasks[region.getEncodedRegionId(contractsApi).toString()] = parseHNString(taskId);
+        const region = new Region(
+          { begin, core, mask: new CoreMask(mask) },
+          { end: 0, owner: '', paid: null }
+        );
+        tasks[region.getEncodedRegionId(contractsApi).toString()] =
+          parseHNString(taskId);
       });
     }
     return tasks;
@@ -121,7 +127,9 @@ const RegionDataProvider = ({ children }: Props) => {
 
       // rough estimation
       const endBlockHeight = timeslicePeriod * region.getEnd();
-      const currentBlockHeight = parseHNString((await coretimeApi.query.system.number()).toString());
+      const currentBlockHeight = parseHNString(
+        (await coretimeApi.query.system.number()).toString()
+      );
       const durationInBlocks = endBlockHeight - beginBlockHeight;
 
       let consumed = (currentBlockHeight - beginBlockHeight) / durationInBlocks;
@@ -133,19 +141,27 @@ const RegionDataProvider = ({ children }: Props) => {
       const coretimeOwnership = region.getMask().countOnes() / timeslicePeriod;
       const currentUsage = 0; // FIXME:
 
-      _regions.push(new RegionMetadata(
-        region,
-        rawXcRegionIds.indexOf(rawId.toString()) === -1 ? RegionLocation.CORETIME_CHAIN : RegionLocation.CONTRACTS_CHAIN,
-        rawId,
-        name ?? `Region #${_regions.length + 1}`,
-        coretimeOwnership,
-        currentUsage,
-        consumed,
-        taskId
-      ))
+      _regions.push(
+        new RegionMetadata(
+          region,
+          rawXcRegionIds.indexOf(rawId.toString()) === -1
+            ? RegionLocation.CORETIME_CHAIN
+            : RegionLocation.CONTRACTS_CHAIN,
+          rawId,
+          name ?? `Region #${_regions.length + 1}`,
+          coretimeOwnership,
+          currentUsage,
+          consumed,
+          taskId
+        )
+      );
     }
 
-    setRegions(_regions.filter(({ region }) => region.getOwner() === activeAccount.address));
+    setRegions(
+      _regions.filter(
+        ({ region }) => region.getOwner() === activeAccount.address
+      )
+    );
     setLoading(false);
   };
 
@@ -170,10 +186,7 @@ const RegionDataProvider = ({ children }: Props) => {
       name,
     };
     setRegions(_regions);
-    localStorage.setItem(
-      `region-${region.rawId}`,
-      name
-    );
+    localStorage.setItem(`region-${region.rawId}`, name);
   };
 
   const getBrokerRegions = async (): Promise<Array<Region>> => {
@@ -193,10 +206,10 @@ const RegionDataProvider = ({ children }: Props) => {
           return new Region(regionId, value.toHuman() as RegionRecord);
         }
       })
-      .filter(entry => entry !== null) as Array<Region>;
+      .filter((entry) => entry !== null) as Array<Region>;
 
     return brokerRegions;
-  }
+  };
 
   const getOwnedRawXcRegionIds = async (): Promise<Array<string>> => {
     if (!contractsApi || !contract || !activeAccount) {
@@ -210,20 +223,24 @@ const RegionDataProvider = ({ children }: Props) => {
     while (!isError) {
       const result = await contractQuery(
         contractsApi,
-        "",
+        '',
         contract,
-        "PSP34Enumerable::owners_token_by_index",
+        'PSP34Enumerable::owners_token_by_index',
         {},
-        [activeAccount.address, index],
+        [activeAccount.address, index]
       );
 
-      const { output, isError: queryError, decodedOutput } = decodeOutput(
+      const {
+        output,
+        isError: queryError,
+        decodedOutput,
+      } = decodeOutput(
         result,
         contract,
-        "PSP34Enumerable::owners_token_by_index",
+        'PSP34Enumerable::owners_token_by_index'
       );
 
-      if (queryError || decodedOutput === "TokenNotExists") {
+      if (queryError || decodedOutput === 'TokenNotExists') {
         isError = true;
       } else {
         rawRegionIds.push(parseHNStringToString(output.Ok.U128));
@@ -234,7 +251,9 @@ const RegionDataProvider = ({ children }: Props) => {
     return rawRegionIds;
   };
 
-  const getOwnedXcRegions = async (rawRegionIds: Array<string>): Promise<Array<Region>> => {
+  const getOwnedXcRegions = async (
+    rawRegionIds: Array<string>
+  ): Promise<Array<Region>> => {
     if (!contractsApi || !contract || !activeAccount) {
       return [];
     }
@@ -244,39 +263,44 @@ const RegionDataProvider = ({ children }: Props) => {
     for await (const regionId of rawRegionIds) {
       const result = await contractQuery(
         contractsApi,
-        "",
+        '',
         contract,
-        "RegionMetadata::get_metadata",
+        'RegionMetadata::get_metadata',
         {},
-        [regionId],
+        [regionId]
       );
 
       const { output, isError: queryError } = decodeOutput(
         result,
         contract,
-        "RegionMetadata::get_metadata",
+        'RegionMetadata::get_metadata'
       );
 
       if (!queryError) {
         const versionedRegion = output.Ok;
 
-        // TODO: Once cross-chain region transfers are enabled from the broker pallet ensure 
+        // TODO: Once cross-chain region transfers are enabled from the broker pallet ensure
         // metadata is correct.
 
-        regions.push(new Region({
-          begin: versionedRegion.region.begin,
-          core: versionedRegion.region.core,
-          mask: new CoreMask(versionedRegion.region.mask),
-        }, {
-          end: versionedRegion.region.end,
-          owner: activeAccount.address,
-          paid: null
-        }));
+        regions.push(
+          new Region(
+            {
+              begin: versionedRegion.region.begin,
+              core: versionedRegion.region.core,
+              mask: new CoreMask(versionedRegion.region.mask),
+            },
+            {
+              end: versionedRegion.region.end,
+              owner: activeAccount.address,
+              paid: null,
+            }
+          )
+        );
       }
     }
 
     return regions;
-  }
+  };
 
   return (
     <RegionDataContext.Provider
