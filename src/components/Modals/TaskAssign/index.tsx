@@ -26,13 +26,13 @@ import { RegionMetadata, TaskMetadata } from '@/models';
 interface TaskAssignModalProps {
   open: boolean;
   onClose: () => void;
-  region: RegionMetadata;
+  regionMetadata: RegionMetadata;
 }
 
 export const TaskAssignModal = ({
   open,
   onClose,
-  region,
+  regionMetadata,
 }: TaskAssignModalProps) => {
   const { activeAccount, activeSigner } = useInkathon();
 
@@ -58,7 +58,7 @@ export const TaskAssignModal = ({
     }
 
     const txAssign = coretimeApi.tx.broker.assign(
-      region.rawId,
+      regionMetadata.region.getRegionId(),
       taskSelected,
       'Provisional'
     );
@@ -123,7 +123,7 @@ export const TaskAssignModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent>
         <Stack direction='column' gap={3}>
-          <RegionCard region={region} bordered={false} />
+          <RegionCard regionMetadata={regionMetadata} bordered={false} />
           <Stack direction='column' gap={2}>
             <Typography textAlign="center" fontWeight={'bold'}>Select a task from:</Typography>
             <Select

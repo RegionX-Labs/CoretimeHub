@@ -161,12 +161,12 @@ const Home = () => {
           <TaskAssignModal
             open={assignModalOpen}
             onClose={() => openAssignModal(false)}
-            region={selectedRegion}
+            regionMetadata={selectedRegion}
           />
           <TransferModal
             open={transferModalOpen}
             onClose={() => openTransferModal(false)}
-            region={selectedRegion}
+            regionMetadata={selectedRegion}
           />
         </>
       )}

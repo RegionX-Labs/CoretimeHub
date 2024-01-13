@@ -12,8 +12,6 @@ import {
 import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
 import { useEffect, useState } from 'react';
 
-import { encodeRegionId } from '@/utils/functions';
-
 import { RegionCard } from '@/components/elements';
 
 import { useCoretimeApi } from '@/contexts/apis';
@@ -21,18 +19,19 @@ import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import XcRegionsMetadata from "@/contracts/xc_regions.json";
-import { OnChainRegionId, RegionMetadata, RegionLocation } from '@/models';
+import { RegionLocation, RegionMetadata } from '@/models';
+import { Region, RegionId } from 'coretime-utils';
 
 interface TransferModalProps {
   open: boolean;
   onClose: () => void;
-  region: RegionMetadata;
+  regionMetadata: RegionMetadata;
 }
 
 export const TransferModal = ({
   open,
   onClose,
-  region,
+  regionMetadata,
 }: TransferModalProps) => {
   const { activeAccount, activeSigner, api: contractsApi } = useInkathon();
   const { contract } = useContract(XcRegionsMetadata, CONTRACT_XC_REGIONS);
@@ -47,14 +46,14 @@ export const TransferModal = ({
   const [working, setWorking] = useState(false);
 
   const onTransfer = () => {
-    if (region.origin === RegionLocation.CORETIME_CHAIN) {
-      transferCoretimeRegion(region.rawId);
-    } else if (region.origin === RegionLocation.CONTRACTS_CHAIN) {
-      transferXcRegion(region.rawId);
+    if (regionMetadata.location === RegionLocation.CORETIME_CHAIN) {
+      transferCoretimeRegion(regionMetadata.region.getRegionId());
+    } else if (regionMetadata.location === RegionLocation.CONTRACTS_CHAIN) {
+      transferXcRegion(regionMetadata.region);
     }
   };
 
-  const transferCoretimeRegion = async (regionId: OnChainRegionId) => {
+  const transferCoretimeRegion = async (regionId: RegionId) => {
     if (!coretimeApi || !activeAccount || !activeSigner) return;
     if (!newOwner) {
       toastError('Please input the new owner.');
@@ -90,14 +89,14 @@ export const TransferModal = ({
     }
   };
 
-  const transferXcRegion = async (regionId: OnChainRegionId) => {
+  const transferXcRegion = async (region: Region) => {
     if (!contractsApi || !activeAccount || !contract) {
       return;
     }
 
     try {
       setWorking(true);
-      const rawRegionId = encodeRegionId(contractsApi, regionId);
+      const rawRegionId = region.getEncodedRegionId(contractsApi);
       const id = contractsApi.createType("Id", { U128: rawRegionId });
 
       await contractTx(
@@ -131,7 +130,7 @@ export const TransferModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent>
         <Stack direction='column' gap={3}>
-          <RegionCard region={region} bordered={false} />
+          <RegionCard regionMetadata={regionMetadata} bordered={false} />
           <Stack direction='column' gap={1} alignItems='center'>
             <Typography>Transfer to</Typography>
             <ArrowDownwardOutlinedIcon />
