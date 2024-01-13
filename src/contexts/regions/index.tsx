@@ -2,11 +2,8 @@ import { contractQuery, decodeOutput, useContract, useInkathon } from '@scio-lab
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import {
-  countOne,
-  getBlockTimestamp,
   parseHNString,
   parseHNStringToString,
-  stringifyOnChainId as stringifyOnChainRegionId,
 } from '@/utils/functions';
 
 import {
@@ -20,7 +17,7 @@ import { useCoretimeApi, useRelayApi } from '../apis';
 import { CONTRACT_XC_REGIONS } from '../apis/consts';
 import { ApiState } from '../apis/types';
 import XcRegionsMetadata from "../../contracts/xc_regions.json";
-import { CoreMask, Region, RegionId, RegionRecord } from 'coretime-utils';
+import { CoreMask, Region, RegionRecord } from 'coretime-utils';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
@@ -179,7 +176,7 @@ const RegionDataProvider = ({ children }: Props) => {
     };
     setRegions(_regions);
     localStorage.setItem(
-      `region-${stringifyOnChainRegionId(region.rawId)}`,
+      `region-${region.rawId}`,
       name
     );
   };

@@ -14,8 +14,6 @@ import {
 import { useInkathon } from '@scio-labs/use-inkathon';
 import { useEffect, useState } from 'react';
 
-import { binMask2Strinng, mask2BinString } from '@/utils/functions';
-
 import { RegionCard } from '@/components/elements';
 
 import { useCoretimeApi } from '@/contexts/apis';
@@ -24,17 +22,18 @@ import { useToast } from '@/contexts/toast';
 import { RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
+import { CoreMask } from 'coretime-utils';
 
 interface InterlaceModalProps {
   open: boolean;
   onClose: () => void;
-  region: RegionMetadata;
+  regionMetadata: RegionMetadata;
 }
 
 export const InterlaceModal = ({
   open,
   onClose,
-  region,
+  regionMetadata,
 }: InterlaceModalProps) => {
   const theme = useTheme();
   const { activeAccount, activeSigner } = useInkathon();
@@ -48,7 +47,7 @@ export const InterlaceModal = ({
     config: { timeslicePeriod },
   } = useRegions();
 
-  const currentMask = mask2BinString(region.mask);
+  const currentMask = regionMetadata.region.getMask().toBin();
   const oneStart = currentMask.indexOf('1');
   const oneEnd = currentMask.lastIndexOf('1');
   const activeBits = oneEnd - oneStart + 1;
@@ -67,9 +66,9 @@ export const InterlaceModal = ({
   const onInterlace = async () => {
     if (!api || !activeAccount || !activeSigner) return;
 
-    const mask = binMask2Strinng(newMask);
+    const mask = new CoreMask(newMask).getMask();
 
-    const txInterlace = api.tx.broker.interlace(region.rawId, mask);
+    const txInterlace = api.tx.broker.interlace(regionMetadata.region.getRegionId(), mask);
     try {
       setWorking(true);
       await txInterlace.signAndSend(
@@ -106,7 +105,7 @@ export const InterlaceModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent>
         <Stack direction='column' gap={3}>
-          <RegionCard region={region} bordered={false} />
+          <RegionCard regionMetadata={regionMetadata} bordered={false} />
           <Stack direction='column' gap={2}>
             <Typography
               variant='h2'

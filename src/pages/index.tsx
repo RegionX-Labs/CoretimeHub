@@ -156,7 +156,7 @@ const Home = () => {
           <InterlaceModal
             open={interlaceModalOpen}
             onClose={() => openInterlaceModal(false)}
-            region={selectedRegion}
+            regionMetadata={selectedRegion}
           />
           <TaskAssignModal
             open={assignModalOpen}

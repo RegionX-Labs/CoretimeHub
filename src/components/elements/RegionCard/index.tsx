@@ -17,13 +17,16 @@ import { humanizer } from 'humanize-duration';
 import TimeAgo from 'javascript-time-ago';
 // English.
 import en from 'javascript-time-ago/locale/en';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useTasks } from '@/contexts/tasks';
 import { RegionMetadata, RegionLocation } from '@/models';
 
 import styles from './index.module.scss';
 import { Label } from '..';
+import { useCoretimeApi } from '@/contexts/apis';
+import { timesliceToTimestamp } from '@/utils/functions';
+import { useRegions } from '@/contexts/regions';
 
 interface RegionCardProps {
   regionMetadata: RegionMetadata;
@@ -80,6 +83,24 @@ const RegionCardInner = ({
   const [isEdit, setEdit] = useState(false);
   const [name, setName] = useState('');
 
+  const [beginTimestamp, setBeginTimestamp] = useState(0);
+  const [endTimestamp, setEndTimestamp] = useState(0);
+
+  const {
+    state: { api },
+  } = useCoretimeApi();
+
+  const {
+    config: { timeslicePeriod },
+  } = useRegions();
+
+  useEffect(() => {
+    if (api) {
+      timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then((value) => setBeginTimestamp(value));
+      timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then((value) => setEndTimestamp(value));
+    }
+  }, []);
+
   const progress = [
     {
       label: 'Coretime Ownership',
@@ -129,7 +150,7 @@ const RegionCardInner = ({
           }}
         >
           <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
-          {`Duration: ${formatDuration(region.getEnd() - region.getBegin())}`}
+          {`Duration: ${formatDuration(endTimestamp - beginTimestamp)}`}
         </div>
         <Box
           sx={{
@@ -176,8 +197,8 @@ const RegionCardInner = ({
           }}
         >
           <Typography variant='h2'>{`Core Index: #${region.getCore()}`}</Typography>
-          <Typography variant='h2'>Begin: {timeAgo.format(region.getBegin())}</Typography>
-          <Typography variant='h2'>End: {timeAgo.format(region.getEnd())}</Typography>
+          <Typography variant='h2'>Begin: {timeAgo.format(beginTimestamp)}</Typography>
+          <Typography variant='h2'>End: {timeAgo.format(endTimestamp)}</Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1rem' }}>
           <Label text={region.getPaid() ? 'Renewable' : 'Non-Renewable'} color='primary' />
