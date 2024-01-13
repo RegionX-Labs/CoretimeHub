@@ -19,14 +19,15 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import React, { useEffect, useState } from 'react';
 
+import { timesliceToTimestamp } from '@/utils/functions';
+
+import { useCoretimeApi } from '@/contexts/apis';
+import { useRegions } from '@/contexts/regions';
 import { useTasks } from '@/contexts/tasks';
-import { RegionMetadata, RegionLocation } from '@/models';
+import { RegionLocation,RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 import { Label } from '..';
-import { useCoretimeApi } from '@/contexts/apis';
-import { timesliceToTimestamp } from '@/utils/functions';
-import { useRegions } from '@/contexts/regions';
 
 interface RegionCardProps {
   regionMetadata: RegionMetadata;

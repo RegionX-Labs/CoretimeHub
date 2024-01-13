@@ -3,7 +3,6 @@ import { ApiPromise } from '@polkadot/api';
 import {
   RELAY_CHAIN_BLOCK_TIME,
 } from '@/models';
-import { OnChainRegionId } from 'coretime-utils';
 
 // parse human readable number string
 export const parseHNString = (str: string): number => {

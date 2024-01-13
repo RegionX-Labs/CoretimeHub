@@ -1,11 +1,13 @@
-import { CoreMask, RawRegionId, Region, TaskId } from "coretime-utils";
+import { RawRegionId, Region, TaskId } from "coretime-utils";
 
 export type Percentage = number; // Percentage value between 0 and 1
 
 export type ParaId = number;
 
 export enum RegionLocation {
+  // eslint-disable-next-line no-unused-vars
   CORETIME_CHAIN,
+  // eslint-disable-next-line no-unused-vars
   CONTRACTS_CHAIN,
 }
 

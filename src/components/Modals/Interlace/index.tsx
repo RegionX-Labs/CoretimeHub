@@ -12,6 +12,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useInkathon } from '@scio-labs/use-inkathon';
+import { CoreMask } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
 import { RegionCard } from '@/components/elements';
@@ -22,7 +23,6 @@ import { useToast } from '@/contexts/toast';
 import { RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
-import { CoreMask } from 'coretime-utils';
 
 interface InterlaceModalProps {
   open: boolean;

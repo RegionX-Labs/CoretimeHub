@@ -1,4 +1,5 @@
 import { contractQuery, decodeOutput, useContract, useInkathon } from '@scio-labs/use-inkathon';
+import { CoreMask, Region, RegionRecord } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import {
@@ -7,9 +8,8 @@ import {
 } from '@/utils/functions';
 
 import {
-  RegionMetadata,
   RegionLocation,
-  RELAY_CHAIN_BLOCK_TIME,
+  RegionMetadata,
   ScheduleItem,
 } from '@/models';
 
@@ -17,7 +17,6 @@ import { useCoretimeApi, useRelayApi } from '../apis';
 import { CONTRACT_XC_REGIONS } from '../apis/consts';
 import { ApiState } from '../apis/types';
 import XcRegionsMetadata from "../../contracts/xc_regions.json";
-import { CoreMask, Region, RegionRecord } from 'coretime-utils';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
@@ -185,10 +184,14 @@ const RegionDataProvider = ({ children }: Props) => {
 
     const brokerRegions: Array<Region> = brokerEntries
       .map(([key, value]) => {
-        // @ts-ignore
-        const { begin, core, mask } = key.toHuman()[0];
-        const regionId = { begin, core, mask: new CoreMask(mask) };
-        return new Region(regionId, value.toHuman() as RegionRecord);
+        const keyTuple: any = key.toHuman();
+
+        // This is defensive.
+        if (keyTuple && Array.isArray(keyTuple) && keyTuple[0] !== undefined) {
+          const { begin, core, mask } = keyTuple[0];
+          const regionId = { begin, core, mask: new CoreMask(mask) };
+          return new Region(regionId, value.toHuman() as RegionRecord);
+        }
       })
       .filter(entry => entry !== null) as Array<Region>;
 

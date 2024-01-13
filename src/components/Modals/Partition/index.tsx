@@ -28,7 +28,6 @@ import {
 } from '@/models';
 
 import styles from './index.module.scss';
-import { timesliceToTimestamp } from '@/utils/functions';
 
 interface PartitionModalProps {
   open: boolean;
