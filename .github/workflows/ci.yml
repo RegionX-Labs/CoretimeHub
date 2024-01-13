@@ -9,18 +9,27 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x, 18.x]
+
     steps:
-      - uses: actions/checkout@v3.1.0
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v2
+
+      # Setup Node.js environment
+      - name: Use Node.js
+        uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
-      - run: yarn install
-      - run: 'CI=false yarn build'
-      - run: yarn lint
+          node-version: '18'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm i
+
+      # Run linter
+      - name: Run Linter
+        run: npm run lint
+
+      # Check Prettier
+      - name: Check Prettier
+        run: npm run format
 
   all:
     needs: [build]

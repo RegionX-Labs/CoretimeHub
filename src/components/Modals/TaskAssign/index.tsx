@@ -26,13 +26,13 @@ import { RegionMetadata, TaskMetadata } from '@/models';
 interface TaskAssignModalProps {
   open: boolean;
   onClose: () => void;
-  region: RegionMetadata;
+  regionMetadata: RegionMetadata;
 }
 
 export const TaskAssignModal = ({
   open,
   onClose,
-  region,
+  regionMetadata,
 }: TaskAssignModalProps) => {
   const { activeAccount, activeSigner } = useInkathon();
 
@@ -58,7 +58,7 @@ export const TaskAssignModal = ({
     }
 
     const txAssign = coretimeApi.tx.broker.assign(
-      region.rawId,
+      regionMetadata.region.getOnChainRegionId(),
       taskSelected,
       'Provisional'
     );
@@ -123,9 +123,11 @@ export const TaskAssignModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent>
         <Stack direction='column' gap={3}>
-          <RegionCard region={region} bordered={false} />
+          <RegionCard regionMetadata={regionMetadata} bordered={false} />
           <Stack direction='column' gap={2}>
-            <Typography textAlign="center" fontWeight={'bold'}>Select a task from:</Typography>
+            <Typography textAlign='center' fontWeight={'bold'}>
+              Select a task from:
+            </Typography>
             <Select
               value={taskSelected || ''}
               onChange={(e) => selectTask(Number(e.target.value))}
@@ -139,7 +141,13 @@ export const TaskAssignModal = ({
           </Stack>
           <Divider />
           <Stack direction='column' gap={1}>
-            <Typography marginBottom="1em" textAlign="center" fontWeight={'bold'}>Or add a new task:</Typography>
+            <Typography
+              marginBottom='1em'
+              textAlign='center'
+              fontWeight={'bold'}
+            >
+              Or add a new task:
+            </Typography>
             <Stack direction='row' gap={1} alignItems='center'>
               <Typography sx={{ width: '16rem' }}>TaskID / ParaID:</Typography>
               <Input
@@ -160,7 +168,12 @@ export const TaskAssignModal = ({
                 fullWidth
               />
             </Stack>
-            <Button style={{ marginTop: "2rem" }} fullWidth variant='contained' onClick={onAdd}>
+            <Button
+              style={{ marginTop: '2rem' }}
+              fullWidth
+              variant='contained'
+              onClick={onAdd}
+            >
               Add new task
             </Button>
           </Stack>

@@ -10,9 +10,8 @@ import {
   Typography,
 } from '@mui/material';
 import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
+import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
-
-import { encodeRegionId } from '@/utils/functions';
 
 import { RegionCard } from '@/components/elements';
 
@@ -20,19 +19,19 @@ import { useCoretimeApi } from '@/contexts/apis';
 import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import XcRegionsMetadata from "@/contracts/xc_regions.json";
-import { OnChainRegionId, RegionMetadata, RegionOrigin } from '@/models';
+import XcRegionsMetadata from '@/contracts/xc_regions.json';
+import { RegionLocation, RegionMetadata } from '@/models';
 
 interface TransferModalProps {
   open: boolean;
   onClose: () => void;
-  region: RegionMetadata;
+  regionMetadata: RegionMetadata;
 }
 
 export const TransferModal = ({
   open,
   onClose,
-  region,
+  regionMetadata,
 }: TransferModalProps) => {
   const { activeAccount, activeSigner, api: contractsApi } = useInkathon();
   const { contract } = useContract(XcRegionsMetadata, CONTRACT_XC_REGIONS);
@@ -47,20 +46,23 @@ export const TransferModal = ({
   const [working, setWorking] = useState(false);
 
   const onTransfer = () => {
-    if (region.origin === RegionOrigin.CORETIME_CHAIN) {
-      transferCoretimeRegion(region.rawId);
-    } else if (region.origin === RegionOrigin.CONTRACTS_CHAIN) {
-      transferXcRegion(region.rawId);
+    if (regionMetadata.location === RegionLocation.CORETIME_CHAIN) {
+      transferCoretimeRegion(regionMetadata.region);
+    } else if (regionMetadata.location === RegionLocation.CONTRACTS_CHAIN) {
+      transferXcRegion(regionMetadata.region);
     }
   };
 
-  const transferCoretimeRegion = async (regionId: OnChainRegionId) => {
+  const transferCoretimeRegion = async (region: Region) => {
     if (!coretimeApi || !activeAccount || !activeSigner) return;
     if (!newOwner) {
       toastError('Please input the new owner.');
       return;
     }
-    const txTransfer = coretimeApi.tx.broker.transfer(regionId, newOwner);
+    const txTransfer = coretimeApi.tx.broker.transfer(
+      region.getOnChainRegionId(),
+      newOwner
+    );
 
     try {
       setWorking(true);
@@ -90,15 +92,15 @@ export const TransferModal = ({
     }
   };
 
-  const transferXcRegion = async (regionId: OnChainRegionId) => {
+  const transferXcRegion = async (region: Region) => {
     if (!contractsApi || !activeAccount || !contract) {
       return;
     }
 
     try {
       setWorking(true);
-      const rawRegionId = encodeRegionId(contractsApi, regionId);
-      const id = contractsApi.createType("Id", { U128: rawRegionId });
+      const rawRegionId = region.getEncodedRegionId(contractsApi);
+      const id = contractsApi.createType('Id', { U128: rawRegionId });
 
       await contractTx(
         contractsApi,
@@ -114,14 +116,15 @@ export const TransferModal = ({
       fetchRegions();
     } catch (e: any) {
       toastError(
-        `Failed to transfer the region. Error: ${e.errorMessage === 'Error'
-          ? 'Please check your balance.'
-          : e
+        `Failed to transfer the region. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
         }`
       );
       setWorking(false);
     }
-  }
+  };
 
   useEffect(() => {
     setNewOwner('');
@@ -131,7 +134,7 @@ export const TransferModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent>
         <Stack direction='column' gap={3}>
-          <RegionCard region={region} bordered={false} />
+          <RegionCard regionMetadata={regionMetadata} bordered={false} />
           <Stack direction='column' gap={1} alignItems='center'>
             <Typography>Transfer to</Typography>
             <ArrowDownwardOutlinedIcon />

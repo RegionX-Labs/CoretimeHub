@@ -1,12 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
-import { BN } from '@polkadot/util';
 
-import {
-  CoreMask,
-  OnChainRegionId,
-  RELAY_CHAIN_BLOCK_TIME,
-  Timestamp,
-} from '@/models';
+import { RELAY_CHAIN_BLOCK_TIME } from '@/models';
 
 // parse human readable number string
 export const parseHNString = (str: string): number => {
@@ -20,7 +14,7 @@ export const parseHNStringToString = (str: string): string => {
 export const getBlockTimestamp = async (
   api: ApiPromise,
   height: number
-): Promise<Timestamp> => {
+): Promise<number> => {
   const [resHeight, resTimestamp] = await Promise.all([
     api.query.system.number(),
     api.query.timestamp.now(),
@@ -37,57 +31,13 @@ export const getBlockTimestamp = async (
   }
 };
 
-export const stringifyOnChainId = (regionId: OnChainRegionId): string => {
-  const { begin, core, mask } = regionId;
-  return `${begin}-${core}-${mask}`;
+export const timesliceToTimestamp = async (
+  api: ApiPromise,
+  timeslice: number,
+  timeslicePeriod: number
+): Promise<number> => {
+  const blockHeight = timeslice * timeslicePeriod;
+  const timestamp = await getBlockTimestamp(api, blockHeight);
+
+  return timestamp;
 };
-
-export const parseOnChainId = (str: string): OnChainRegionId => {
-  const strs = str.split('-');
-  return {
-    begin: Number(strs[0]),
-    core: Number(strs[1]),
-    mask: strs[2],
-  } as OnChainRegionId;
-};
-
-export const countOne = (mask: CoreMask): number => {
-  let count = 0;
-  for (let i = 2; i < mask.length; ++i) {
-    let v = parseInt(mask.slice(i, i + 1), 16);
-    while (v > 0) {
-      if (v & 1) ++count;
-      v >>= 1;
-    }
-  }
-  return count;
-};
-
-export const mask2BinString = (mask: CoreMask): string => {
-  let bin = '';
-  for (let i = 2; i < mask.length; ++i) {
-    const v = parseInt(mask.slice(i, i + 1), 16);
-    for (let j = 3; j >= 0; --j) {
-      bin += v & (1 << j) ? '1' : '0';
-    }
-  }
-  return bin;
-};
-
-export const binMask2Strinng = (mask: string): CoreMask => {
-  let hexMask = '';
-  for (let i = 0; i < mask.length; i += 4) {
-    const v = parseInt(mask.slice(i, i + 4), 2);
-    hexMask += v.toString(16);
-  }
-  return `0x${hexMask}` as CoreMask;
-};
-
-export function encodeRegionId(contractsApi: ApiPromise, regionId: OnChainRegionId): BN {
-  const encodedBegin = contractsApi.createType("u32", regionId.begin).toHex().substring(2);
-  const encodedCore = contractsApi.createType("u16", regionId.core).toHex().substring(2);
-
-  const rawRegionId = encodedBegin + encodedCore + regionId.mask.substring(2);
-
-  return new BN(rawRegionId, 16);
-}

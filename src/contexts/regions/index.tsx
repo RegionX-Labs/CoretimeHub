@@ -1,28 +1,20 @@
-import { contractQuery, decodeOutput, useContract, useInkathon } from '@scio-labs/use-inkathon';
+import {
+  contractQuery,
+  decodeOutput,
+  useContract,
+  useInkathon,
+} from '@scio-labs/use-inkathon';
+import { CoreMask, Region, RegionRecord } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import {
-  countOne,
-  getBlockTimestamp,
-  parseHNString,
-  parseHNStringToString,
-  stringifyOnChainId as stringifyOnChainRegionId,
-} from '@/utils/functions';
+import { parseHNString, parseHNStringToString } from '@/utils/functions';
 
-import {
-  HumanRegionId,
-  HumanRegionRecord,
-  OnChainRegionId,
-  RegionMetadata,
-  RegionOrigin,
-  RELAY_CHAIN_BLOCK_TIME,
-  ScheduleItem,
-} from '@/models';
+import { RegionLocation, RegionMetadata, ScheduleItem } from '@/models';
 
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { CONTRACT_XC_REGIONS } from '../apis/consts';
 import { ApiState } from '../apis/types';
-import XcRegionsMetadata from "../../contracts/xc_regions.json";
+import XcRegionsMetadata from '../../contracts/xc_regions.json';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
@@ -60,7 +52,11 @@ const RegionDataProvider = ({ children }: Props) => {
   const {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
-  const { api: contractsApi, isConnected: contractsReady, activeAccount } = useInkathon();
+  const {
+    api: contractsApi,
+    isConnected: contractsReady,
+    activeAccount,
+  } = useInkathon();
 
   const { contract } = useContract(XcRegionsMetadata, CONTRACT_XC_REGIONS);
 
@@ -78,22 +74,25 @@ const RegionDataProvider = ({ children }: Props) => {
 
   const fetchTasks = async () => {
     if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
-    const res = await coretimeApi.query.broker.workplan.entries();
+    const workplan = await coretimeApi.query.broker.workplan.entries();
     const tasks: Record<string, number> = {};
 
-    for await (const [key, value] of res) {
-      const [[strBegin, strCore]] = key.toHuman() as [[string, string]];
+    for await (const [key, value] of workplan) {
+      const [[begin, core]] = key.toHuman() as [[number, number]];
       const records = value.toHuman() as ScheduleItem[];
 
       records.forEach((record) => {
-        const begin = parseHNString(strBegin);
-        const core = parseHNString(strCore);
         const {
-          mask,
           assignment: { Task: taskId },
+          mask,
         } = record;
-        const rawId = { begin, core, mask } as OnChainRegionId;
-        tasks[stringifyOnChainRegionId(rawId)] = parseHNString(taskId);
+
+        const region = new Region(
+          { begin, core, mask: new CoreMask(mask) },
+          { end: 0, owner: '', paid: null }
+        );
+        tasks[region.getEncodedRegionId(contractsApi).toString()] =
+          parseHNString(taskId);
       });
     }
     return tasks;
@@ -120,57 +119,49 @@ const RegionDataProvider = ({ children }: Props) => {
     const _regions: Array<RegionMetadata> = [];
 
     for await (const region of [...brokerRegions, ...xcRegions]) {
-      const regionId = region[0];
-      const regionData = region[1];
+      const beginBlockHeight = timeslicePeriod * region.getBegin();
 
-      const { begin, core, mask } = regionId;
-      const { end, owner, paid, origin } = regionData;
-
-      const beginBlockHeight = timeslicePeriod * parseHNString(begin);
-      const beginTimestamp = await getBlockTimestamp(relayApi, beginBlockHeight); // begin block timestamp
+      const rawId = region.getEncodedRegionId(contractsApi);
+      const name = localStorage.getItem(`region-${rawId}`);
+      const taskId = tasks[rawId.toString()];
 
       // rough estimation
-      const endBlockHeight = timeslicePeriod * parseHNString(end);
-      const endTimestamp =
-        beginTimestamp + (endBlockHeight - beginBlockHeight) * RELAY_CHAIN_BLOCK_TIME;
+      const endBlockHeight = timeslicePeriod * region.getEnd();
+      const currentBlockHeight = parseHNString(
+        (await coretimeApi.query.system.number()).toString()
+      );
+      const durationInBlocks = endBlockHeight - beginBlockHeight;
 
-      const nPaid = paid ? parseHNString(paid) : undefined;
-      const rawId: OnChainRegionId = {
-        begin: parseHNString(begin),
-        core,
-        mask,
-      };
-      const strRegionId = stringifyOnChainRegionId(rawId);
-      const name = localStorage.getItem(`region-${strRegionId}`);
-      const taskId = tasks[strRegionId];
-
-      const currentBlockHeight = parseHNString((await coretimeApi.query.system.number()).toString());
-
-      const durabtionInBlocks = endBlockHeight - beginBlockHeight;
-
-      let consumed = (currentBlockHeight - beginBlockHeight) / durabtionInBlocks;
+      let consumed = (currentBlockHeight - beginBlockHeight) / durationInBlocks;
       if (consumed < 0) {
         // This means that the region hasn't yet started.
         consumed = 0;
       }
 
-      _regions.push({
-        begin: beginTimestamp,
-        core,
-        mask,
-        end: endTimestamp,
-        owner,
-        paid: nPaid,
-        origin: origin ? origin : RegionOrigin.CORETIME_CHAIN,
-        rawId,
-        consumed,
-        name: name ?? `Region #${_regions.length + 1}`,
-        ownership: countOne(mask) / timeslicePeriod,
-        taskId,
-      });
+      const coretimeOwnership = region.getMask().countOnes() / timeslicePeriod;
+      const currentUsage = 0; // FIXME:
+
+      _regions.push(
+        new RegionMetadata(
+          region,
+          rawXcRegionIds.indexOf(rawId.toString()) === -1
+            ? RegionLocation.CORETIME_CHAIN
+            : RegionLocation.CONTRACTS_CHAIN,
+          rawId,
+          name ?? `Region #${_regions.length + 1}`,
+          coretimeOwnership,
+          currentUsage,
+          consumed,
+          taskId
+        )
+      );
     }
 
-    setRegions(_regions.filter(({ owner }) => owner === activeAccount.address));
+    setRegions(
+      _regions.filter(
+        ({ region }) => region.getOwner() === activeAccount.address
+      )
+    );
     setLoading(false);
   };
 
@@ -195,32 +186,30 @@ const RegionDataProvider = ({ children }: Props) => {
       name,
     };
     setRegions(_regions);
-    localStorage.setItem(
-      `region-${stringifyOnChainRegionId(region.rawId)}`,
-      name
-    );
+    localStorage.setItem(`region-${region.rawId}`, name);
   };
 
-  const getBrokerRegions = async (): Promise<Array<[HumanRegionId, HumanRegionRecord]>> => {
+  const getBrokerRegions = async (): Promise<Array<Region>> => {
     if (!coretimeApi) {
       return [];
     }
     const brokerEntries = await coretimeApi.query.broker.regions.entries();
 
-    const brokerRegions: Array<[HumanRegionId, HumanRegionRecord]> = brokerEntries
+    const brokerRegions: Array<Region> = brokerEntries
       .map(([key, value]) => {
-        const keyTuple = key.toHuman();
+        const keyTuple: any = key.toHuman();
 
         // This is defensive.
         if (keyTuple && Array.isArray(keyTuple) && keyTuple[0] !== undefined) {
-          return [keyTuple[0] as HumanRegionId, value.toHuman() as HumanRegionRecord];
+          const { begin, core, mask } = keyTuple[0];
+          const regionId = { begin, core, mask: new CoreMask(mask) };
+          return new Region(regionId, value.toHuman() as RegionRecord);
         }
-        return null;
       })
-      .filter(entry => entry !== null) as Array<[HumanRegionId, HumanRegionRecord]>;
+      .filter((entry) => entry !== null) as Array<Region>;
 
     return brokerRegions;
-  }
+  };
 
   const getOwnedRawXcRegionIds = async (): Promise<Array<string>> => {
     if (!contractsApi || !contract || !activeAccount) {
@@ -234,20 +223,24 @@ const RegionDataProvider = ({ children }: Props) => {
     while (!isError) {
       const result = await contractQuery(
         contractsApi,
-        "",
+        '',
         contract,
-        "PSP34Enumerable::owners_token_by_index",
+        'PSP34Enumerable::owners_token_by_index',
         {},
-        [activeAccount.address, index],
+        [activeAccount.address, index]
       );
 
-      const { output, isError: queryError, decodedOutput } = decodeOutput(
+      const {
+        output,
+        isError: queryError,
+        decodedOutput,
+      } = decodeOutput(
         result,
         contract,
-        "PSP34Enumerable::owners_token_by_index",
+        'PSP34Enumerable::owners_token_by_index'
       );
 
-      if (queryError || decodedOutput === "TokenNotExists") {
+      if (queryError || decodedOutput === 'TokenNotExists') {
         isError = true;
       } else {
         rawRegionIds.push(parseHNStringToString(output.Ok.U128));
@@ -258,50 +251,56 @@ const RegionDataProvider = ({ children }: Props) => {
     return rawRegionIds;
   };
 
-  const getOwnedXcRegions = async (rawRegionIds: Array<string>): Promise<Array<[HumanRegionId, HumanRegionRecord]>> => {
+  const getOwnedXcRegions = async (
+    rawRegionIds: Array<string>
+  ): Promise<Array<Region>> => {
     if (!contractsApi || !contract || !activeAccount) {
       return [];
     }
 
-    const regions: Array<[HumanRegionId, HumanRegionRecord]> = [];
+    const regions: Array<Region> = [];
 
     for await (const regionId of rawRegionIds) {
       const result = await contractQuery(
         contractsApi,
-        "",
+        '',
         contract,
-        "RegionMetadata::get_metadata",
+        'RegionMetadata::get_metadata',
         {},
-        [regionId],
+        [regionId]
       );
 
       const { output, isError: queryError } = decodeOutput(
         result,
         contract,
-        "RegionMetadata::get_metadata",
+        'RegionMetadata::get_metadata'
       );
 
       if (!queryError) {
         const versionedRegion = output.Ok;
 
-        // TODO: Once cross-chain region transfers are enabled from the broker pallet ensure 
+        // TODO: Once cross-chain region transfers are enabled from the broker pallet ensure
         // metadata is correct.
 
-        regions.push([{
-          begin: versionedRegion.region.begin,
-          core: versionedRegion.region.core,
-          mask: versionedRegion.region.mask,
-        }, {
-          end: versionedRegion.region.end,
-          owner: activeAccount.address,
-          origin: RegionOrigin.CONTRACTS_CHAIN,
-          paid: undefined
-        }]);
+        regions.push(
+          new Region(
+            {
+              begin: versionedRegion.region.begin,
+              core: versionedRegion.region.core,
+              mask: new CoreMask(versionedRegion.region.mask),
+            },
+            {
+              end: versionedRegion.region.end,
+              owner: activeAccount.address,
+              paid: null,
+            }
+          )
+        );
       }
     }
 
     return regions;
-  }
+  };
 
   return (
     <RegionDataContext.Provider

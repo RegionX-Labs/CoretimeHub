@@ -51,10 +51,10 @@ export const Sidebar = () => {
     api && isConnected
       ? ApiState.READY
       : isConnecting
-      ? ApiState.CONNECTING
-      : error
-      ? ApiState.ERROR
-      : ApiState.DISCONNECTED;
+        ? ApiState.CONNECTING
+        : error
+          ? ApiState.ERROR
+          : ApiState.DISCONNECTED;
 
   const menu = {
     dashboard: [

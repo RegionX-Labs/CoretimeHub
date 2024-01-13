@@ -2,6 +2,7 @@ import { CacheProvider, EmotionCache } from '@emotion/react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import { UseInkathonProvider } from '@scio-labs/use-inkathon';
+import { Id } from 'coretime-utils';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -21,7 +22,6 @@ import { WS_CONTRACTS_CHAIN } from '@/contexts/apis/consts';
 import { RegionDataProvider } from '@/contexts/regions';
 import { TaskDataProvider } from '@/contexts/tasks';
 import { ToastProvider } from '@/contexts/toast';
-import { Id } from '@/models';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();

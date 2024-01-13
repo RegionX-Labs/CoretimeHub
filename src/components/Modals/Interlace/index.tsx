@@ -12,9 +12,8 @@ import {
   useTheme,
 } from '@mui/material';
 import { useInkathon } from '@scio-labs/use-inkathon';
+import { CoreMask } from 'coretime-utils';
 import { useEffect, useState } from 'react';
-
-import { binMask2Strinng, mask2BinString } from '@/utils/functions';
 
 import { RegionCard } from '@/components/elements';
 
@@ -28,13 +27,13 @@ import styles from './index.module.scss';
 interface InterlaceModalProps {
   open: boolean;
   onClose: () => void;
-  region: RegionMetadata;
+  regionMetadata: RegionMetadata;
 }
 
 export const InterlaceModal = ({
   open,
   onClose,
-  region,
+  regionMetadata,
 }: InterlaceModalProps) => {
   const theme = useTheme();
   const { activeAccount, activeSigner } = useInkathon();
@@ -48,7 +47,7 @@ export const InterlaceModal = ({
     config: { timeslicePeriod },
   } = useRegions();
 
-  const currentMask = mask2BinString(region.mask);
+  const currentMask = regionMetadata.region.getMask().toBin();
   const oneStart = currentMask.indexOf('1');
   const oneEnd = currentMask.lastIndexOf('1');
   const activeBits = oneEnd - oneStart + 1;
@@ -67,9 +66,12 @@ export const InterlaceModal = ({
   const onInterlace = async () => {
     if (!api || !activeAccount || !activeSigner) return;
 
-    const mask = binMask2Strinng(newMask);
+    const mask = CoreMask.fromBin(newMask).getMask();
 
-    const txInterlace = api.tx.broker.interlace(region.rawId, mask);
+    const txInterlace = api.tx.broker.interlace(
+      regionMetadata.region.getOnChainRegionId(),
+      mask
+    );
     try {
       setWorking(true);
       await txInterlace.signAndSend(
@@ -106,7 +108,7 @@ export const InterlaceModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent>
         <Stack direction='column' gap={3}>
-          <RegionCard region={region} bordered={false} />
+          <RegionCard regionMetadata={regionMetadata} bordered={false} />
           <Stack direction='column' gap={2}>
             <Typography
               variant='h2'
@@ -118,8 +120,12 @@ export const InterlaceModal = ({
           </Stack>
           {activeBits > 1 && (
             <Stack direction='column' gap={2}>
-              <Box display="flex" justifyContent="center">
-                <CoremaskCircularProgress position={position} oneStart={oneStart} oneEnd={oneEnd} />
+              <Box display='flex' justifyContent='center'>
+                <CoremaskCircularProgress
+                  position={position}
+                  oneStart={oneStart}
+                  oneEnd={oneEnd}
+                />
               </Box>
               <Slider
                 min={oneStart}
@@ -166,30 +172,38 @@ export const InterlaceModal = ({
 
 interface CoremaskCircularProgressProps {
   position: number;
-  oneStart: number,
+  oneStart: number;
   oneEnd: number;
 }
 
-const CoremaskCircularProgress = ({ position, oneStart, oneEnd }: CoremaskCircularProgressProps) => {
-  const getCircularProgressValue = (value: number, minValue: number, maxValue: number) => {
+const CoremaskCircularProgress = ({
+  position,
+  oneStart,
+  oneEnd,
+}: CoremaskCircularProgressProps) => {
+  const getCircularProgressValue = (
+    value: number,
+    minValue: number,
+    maxValue: number
+  ) => {
     return ((value - minValue) / (maxValue - minValue)) * 100;
   };
 
   return (
-    <Box position="relative" display="inline-flex">
+    <Box position='relative' display='inline-flex'>
       <CircularProgress
         className={styles.circular}
-        size="250px"
-        variant="determinate"
+        size='250px'
+        variant='determinate'
         value={100}
         style={{ position: 'absolute', color: '#d3d3d3' }} // Secondary color
       />
       <CircularProgress
         className={styles.circular}
-        size="250px"
-        variant="determinate"
+        size='250px'
+        variant='determinate'
         value={getCircularProgressValue(position, oneStart, oneEnd)}
       />
     </Box>
   );
-}
+};

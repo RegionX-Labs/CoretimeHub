@@ -23,7 +23,7 @@ import {
   PartitionIcon,
   TransferIcon,
 } from '@/icons';
-import { RegionOrigin } from '@/models';
+import { RegionLocation } from '@/models';
 
 const Home = () => {
   const theme = useTheme();
@@ -64,9 +64,12 @@ const Home = () => {
 
   const isDisabled = (action: string): boolean => {
     if (!selectedRegion) return false;
-    // XcRegions can only be transferred. 
-    return action !== "transfer" && selectedRegion.origin !== RegionOrigin.CORETIME_CHAIN;
-  }
+    // XcRegions can only be transferred.
+    return (
+      action !== 'transfer' &&
+      selectedRegion.location !== RegionLocation.CORETIME_CHAIN
+    );
+  };
 
   return (
     <Box sx={{ display: 'flex', height: '100%', gap: '1rem' }}>
@@ -99,7 +102,7 @@ const Home = () => {
           {regions.map((region, index) => (
             <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
               <RegionCard
-                region={region}
+                regionMetadata={region}
                 active={index === currentRegionIndex}
                 editable
                 updateName={(name) => updateRegionName(index, name)}
@@ -151,22 +154,22 @@ const Home = () => {
           <PartitionModal
             open={partitionModalOpen}
             onClose={() => openPartitionModal(false)}
-            region={selectedRegion}
+            regionMetadata={selectedRegion}
           />
           <InterlaceModal
             open={interlaceModalOpen}
             onClose={() => openInterlaceModal(false)}
-            region={selectedRegion}
+            regionMetadata={selectedRegion}
           />
           <TaskAssignModal
             open={assignModalOpen}
             onClose={() => openAssignModal(false)}
-            region={selectedRegion}
+            regionMetadata={selectedRegion}
           />
           <TransferModal
             open={transferModalOpen}
             onClose={() => openTransferModal(false)}
-            region={selectedRegion}
+            regionMetadata={selectedRegion}
           />
         </>
       )}
