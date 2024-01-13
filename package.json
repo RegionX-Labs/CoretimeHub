@@ -24,6 +24,7 @@
     "@scio-labs/use-inkathon": "^0.0.1-alpha.44",
     "@types/humanize-duration": "^3.27.3",
     "clsx": "^1.1.1",
+    "coretime-utils": "^0.2.1",
     "humanize-duration": "^3.31.0",
     "javascript-time-ago": "^2.5.9",
     "next": "^13.3.1",

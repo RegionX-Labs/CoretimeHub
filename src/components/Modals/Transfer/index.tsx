@@ -21,7 +21,7 @@ import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import XcRegionsMetadata from "@/contracts/xc_regions.json";
-import { OnChainRegionId, RegionMetadata, RegionOrigin } from '@/models';
+import { OnChainRegionId, RegionMetadata, RegionLocation } from '@/models';
 
 interface TransferModalProps {
   open: boolean;
@@ -47,9 +47,9 @@ export const TransferModal = ({
   const [working, setWorking] = useState(false);
 
   const onTransfer = () => {
-    if (region.origin === RegionOrigin.CORETIME_CHAIN) {
+    if (region.origin === RegionLocation.CORETIME_CHAIN) {
       transferCoretimeRegion(region.rawId);
-    } else if (region.origin === RegionOrigin.CONTRACTS_CHAIN) {
+    } else if (region.origin === RegionLocation.CONTRACTS_CHAIN) {
       transferXcRegion(region.rawId);
     }
   };

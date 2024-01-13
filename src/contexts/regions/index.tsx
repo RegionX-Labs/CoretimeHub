@@ -14,7 +14,7 @@ import {
   HumanRegionRecord,
   OnChainRegionId,
   RegionMetadata,
-  RegionOrigin,
+  RegionLocation,
   RELAY_CHAIN_BLOCK_TIME,
   ScheduleItem,
 } from '@/models';
@@ -161,7 +161,7 @@ const RegionDataProvider = ({ children }: Props) => {
         end: endTimestamp,
         owner,
         paid: nPaid,
-        origin: origin ? origin : RegionOrigin.CORETIME_CHAIN,
+        origin: origin ? origin : RegionLocation.CORETIME_CHAIN,
         rawId,
         consumed,
         name: name ?? `Region #${_regions.length + 1}`,
@@ -294,7 +294,7 @@ const RegionDataProvider = ({ children }: Props) => {
         }, {
           end: versionedRegion.region.end,
           owner: activeAccount.address,
-          origin: RegionOrigin.CONTRACTS_CHAIN,
+          origin: RegionLocation.CONTRACTS_CHAIN,
           paid: undefined
         }]);
       }

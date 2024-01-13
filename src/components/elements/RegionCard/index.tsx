@@ -20,7 +20,7 @@ import en from 'javascript-time-ago/locale/en';
 import React, { useState } from 'react';
 
 import { useTasks } from '@/contexts/tasks';
-import { RegionMetadata, RegionOrigin } from '@/models';
+import { RegionMetadata, RegionLocation } from '@/models';
 
 import styles from './index.module.scss';
 import { Label } from '..';
@@ -183,7 +183,7 @@ const RegionCardInner = ({
           <Label text={paid ? 'Renewable' : 'Non-Renewable'} color='primary' />
           <Label
             text={
-              origin === RegionOrigin.CORETIME_CHAIN
+              origin === RegionLocation.CORETIME_CHAIN
                 ? 'Coretime Chain'
                 : 'Contracts Chain'
             }

@@ -21,7 +21,7 @@ import { WS_CONTRACTS_CHAIN } from '@/contexts/apis/consts';
 import { RegionDataProvider } from '@/contexts/regions';
 import { TaskDataProvider } from '@/contexts/tasks';
 import { ToastProvider } from '@/contexts/toast';
-import { Id } from '@/models';
+import { Id } from 'coretime-utils';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();

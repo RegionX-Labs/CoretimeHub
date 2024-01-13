@@ -1,69 +1,50 @@
-type U32 = number;
-type U16 = number;
-type Address = string;
-type Balance = U32;
+import { CoreMask, RawRegionId, RegionId, RegionRecord, TaskId } from "coretime-utils";
+
 type Percentage = number; // Percentage value between 0 and 1
-export type Timestamp = number;
 
-export type ParaID = number;
-export type TaskIndex = number;
-
-export type Timeslice = U32;
-export type CoreIndex = U16;
-export type CoreMask = string; // 80 bits bitmap
-export type RawRegionId = Uint8Array; // 128 bits
-
-export type OnChainRegionId = {
-  begin: Timeslice;
-  core: CoreIndex;
-  mask: CoreMask;
-};
-
-export type HumanRegionId = {
-  begin: string;
-  core: CoreIndex;
-  mask: CoreMask;
-};
-
-export type OnChainRegionRecord = {
-  end: Timeslice;
-  owner: Address;
-  paid?: Balance;
-};
-
-export type HumanRegionRecord = {
-  end: string;
-  owner: Address;
-  paid?: string;
-  origin?: RegionOrigin;
-};
-
-export enum RegionOrigin {
-  // eslint-disable-next-line no-unused-vars
+export enum RegionLocation {
   CORETIME_CHAIN,
-  // eslint-disable-next-line no-unused-vars
   CONTRACTS_CHAIN,
 }
 
 export type RegionMetadata = {
-  begin: Timestamp;
-  end: Timestamp;
-  core: CoreIndex;
-  mask: CoreMask;
-  paid?: Balance;
-  owner: Address;
+  regionId: RegionId;
+  regionRecord: RegionRecord;
 
-  origin: RegionOrigin;
+  // Indicates the location of the region. It can either be on the Coretime chain or on the contracts 
+  // chain as an xc-region.
+  location: RegionLocation;
 
-  rawId: OnChainRegionId; // raw region id in pallet storage
+  // u128 encoded RegionId. 
+  //
+  // This is used for interacting with the xc-regions contract or when conducting cross-chain transfers,
+  // where `regionId` needs to be represented as a u128.
+  rawId: RawRegionId;
+
+  // A user set name for the region.
   name: string | null;
-  ownership?: Percentage;
-  consumed?: Percentage;
-  taskId?: TaskIndex;
+  // This is essentially the Coremask of the region, representing the frequency with which the region will 
+  // be scheduled. 
+  //
+  // A 100% Coretime Ownership implies that the region occupies the entire Core.
+  coretimeOwnership: Percentage;
+
+  // Displays the current utilization of Coretime for the task assigned to the region. 
+  //
+  // If no task is assigned, this value will be 0%, indicating that the Coretime is essentially being wasted.
+  currentUsage: Percentage;
+
+  // Indicates the amount of time remaining until the region’s end, effectively showing the proportion of the 
+  // region that has already been ‘consumed’ or utilized.
+  consumed: Percentage;
+
+  // The task to which the region is assigned. If null, it means that the region is not assigned to 
+  // any specific task.
+  taskId: TaskId | null;
 };
 
 export type TaskMetadata = {
-  id: TaskIndex;
+  id: TaskId;
   usage: Percentage;
   name?: string;
 };
@@ -74,14 +55,3 @@ export type ScheduleItem = {
     Task: string;
   };
 };
-
-export const Id = {
-  _enum: {
-    U8: "u8",
-    U16: "u16",
-    U32: "u32",
-    U64: "u64",
-    U128: "u128",
-  },
-};
-

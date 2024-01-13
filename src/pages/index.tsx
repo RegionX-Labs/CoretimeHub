@@ -23,7 +23,7 @@ import {
   PartitionIcon,
   TransferIcon,
 } from '@/icons';
-import { RegionOrigin } from '@/models';
+import { RegionLocation } from '@/models';
 
 const Home = () => {
   const theme = useTheme();
@@ -65,7 +65,7 @@ const Home = () => {
   const isDisabled = (action: string): boolean => {
     if (!selectedRegion) return false;
     // XcRegions can only be transferred. 
-    return action !== "transfer" && selectedRegion.origin !== RegionOrigin.CORETIME_CHAIN;
+    return action !== "transfer" && selectedRegion.origin !== RegionLocation.CORETIME_CHAIN;
   }
 
   return (
