@@ -26,7 +26,7 @@ import styles from './index.module.scss';
 import { Label } from '..';
 
 interface RegionCardProps {
-  region: RegionMetadata;
+  regionMetadata: RegionMetadata;
   editable?: boolean;
   active?: boolean;
   bordered?: boolean;
@@ -34,7 +34,7 @@ interface RegionCardProps {
 }
 
 export const RegionCard = ({
-  region,
+  regionMetadata,
   active = false,
   editable = false,
   bordered = true,
@@ -44,11 +44,11 @@ export const RegionCard = ({
     <>{
       bordered ?
         <Paper className={clsx(styles.container, active ? styles.active : '')}>
-          <RegionCardInner region={region} editable={editable} updateName={updateName} />
+          <RegionCardInner regionMetadata={regionMetadata} editable={editable} updateName={updateName} />
         </Paper>
         :
         <div className={clsx(styles.container, active ? styles.active : '')}>
-          <RegionCardInner region={region} editable={editable} updateName={updateName} />
+          <RegionCardInner regionMetadata={regionMetadata} editable={editable} updateName={updateName} />
         </div>
     }
     </>
@@ -56,13 +56,13 @@ export const RegionCard = ({
 };
 
 interface RegionCardInnerProps {
-  region: RegionMetadata;
+  regionMetadata: RegionMetadata;
   editable?: boolean;
   updateName?: (_newName: string) => void;
 }
 
 const RegionCardInner = ({
-  region,
+  regionMetadata,
   editable = false,
   updateName,
 }: RegionCardInnerProps) => {
@@ -73,8 +73,8 @@ const RegionCardInner = ({
   const timeAgo = new TimeAgo('en-US');
 
   const formatDuration = humanizer();
-  const { begin, end, taskId, consumed, ownership, paid, origin, core } =
-    region;
+  const { region, taskId, consumed, coretimeOwnership, location } =
+    regionMetadata;
   const theme = useTheme();
 
   const [isEdit, setEdit] = useState(false);
@@ -83,7 +83,7 @@ const RegionCardInner = ({
   const progress = [
     {
       label: 'Coretime Ownership',
-      value: ownership ?? 0,
+      value: coretimeOwnership ?? 0,
       color: 'warning',
     },
     {
@@ -100,7 +100,7 @@ const RegionCardInner = ({
 
   const onEdit = () => {
     setEdit(true);
-    setName(region.name ?? '');
+    setName(regionMetadata.name ?? '');
   };
 
   const onSave = () => {
@@ -129,7 +129,7 @@ const RegionCardInner = ({
           }}
         >
           <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
-          {`Duration: ${formatDuration(end - begin)}`}
+          {`Duration: ${formatDuration(region.getEnd() - region.getBegin())}`}
         </div>
         <Box
           sx={{
@@ -146,7 +146,7 @@ const RegionCardInner = ({
               size='small'
             />
           ) : (
-            <Typography variant='subtitle2'>{region.name}</Typography>
+            <Typography variant='subtitle2'>{regionMetadata.name}</Typography>
           )}
           {isEdit ? (
             <Box style={{ display: 'flex', gap: '0.5rem' }}>
@@ -175,15 +175,15 @@ const RegionCardInner = ({
             color: theme.palette.grey[200],
           }}
         >
-          <Typography variant='h2'>{`Core Index: #${core}`}</Typography>
-          <Typography variant='h2'>Begin: {timeAgo.format(begin)}</Typography>
-          <Typography variant='h2'>End: {timeAgo.format(end)}</Typography>
+          <Typography variant='h2'>{`Core Index: #${region.getCore()}`}</Typography>
+          <Typography variant='h2'>Begin: {timeAgo.format(region.getBegin())}</Typography>
+          <Typography variant='h2'>End: {timeAgo.format(region.getEnd())}</Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1rem' }}>
-          <Label text={paid ? 'Renewable' : 'Non-Renewable'} color='primary' />
+          <Label text={region.getPaid() ? 'Renewable' : 'Non-Renewable'} color='primary' />
           <Label
             text={
-              origin === RegionLocation.CORETIME_CHAIN
+              location === RegionLocation.CORETIME_CHAIN
                 ? 'Coretime Chain'
                 : 'Contracts Chain'
             }
@@ -193,7 +193,7 @@ const RegionCardInner = ({
       </div>
       <Divider orientation='vertical' flexItem />
       <Box sx={{ color: theme.palette.grey[200] }}>
-        {taskId !== undefined ? (
+        {taskId !== null ? (
           <Typography variant='subtitle2'>
             {`Task: ${getTaskName(taskId)}`}
           </Typography>

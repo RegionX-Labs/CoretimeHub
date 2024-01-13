@@ -1,4 +1,4 @@
-import { CoreMask, RawRegionId, RegionId, RegionRecord, TaskId } from "coretime-utils";
+import { CoreMask, RawRegionId, Region, TaskId } from "coretime-utils";
 
 type Percentage = number; // Percentage value between 0 and 1
 
@@ -8,8 +8,7 @@ export enum RegionLocation {
 }
 
 export type RegionMetadata = {
-  regionId: RegionId;
-  regionRecord: RegionRecord;
+  region: Region;
 
   // Indicates the location of the region. It can either be on the Coretime chain or on the contracts 
   // chain as an xc-region.
