@@ -99,7 +99,7 @@ export const PartitionModal = ({
       Math.floor((pivot * unit) / RELAY_CHAIN_BLOCK_TIME) / timeslicePeriod
     );
     const txPartition = coretimeApi.tx.broker.partition(
-      regionMetadata.region.getRegionId(),
+      regionMetadata.region.getOnChainRegionId(),
       pivotInTimeslice
     );
 

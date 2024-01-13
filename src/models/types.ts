@@ -63,7 +63,7 @@ export type TaskMetadata = {
 };
 
 export type ScheduleItem = {
-  mask: CoreMask;
+  mask: string;
   assignment: {
     Task: string;
   };

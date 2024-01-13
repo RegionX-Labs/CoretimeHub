@@ -76,7 +76,7 @@ const RegionCardInner = ({
   const timeAgo = new TimeAgo('en-US');
 
   const formatDuration = humanizer();
-  const { region, taskId, consumed, coretimeOwnership, location } =
+  const { region, taskId, consumed, coretimeOwnership, location, currentUsage } =
     regionMetadata;
   const theme = useTheme();
 
@@ -99,7 +99,7 @@ const RegionCardInner = ({
       timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then((value) => setBeginTimestamp(value));
       timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then((value) => setEndTimestamp(value));
     }
-  }, []);
+  }, [regionMetadata]);
 
   const progress = [
     {
@@ -114,7 +114,7 @@ const RegionCardInner = ({
     },
     {
       label: 'Current Usage',
-      value: 0, // FIXME:
+      value: currentUsage,
       color: 'primary',
     },
   ];

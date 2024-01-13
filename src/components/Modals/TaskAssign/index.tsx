@@ -58,7 +58,7 @@ export const TaskAssignModal = ({
     }
 
     const txAssign = coretimeApi.tx.broker.assign(
-      regionMetadata.region.getRegionId(),
+      regionMetadata.region.getOnChainRegionId(),
       taskSelected,
       'Provisional'
     );

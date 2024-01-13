@@ -47,19 +47,19 @@ export const TransferModal = ({
 
   const onTransfer = () => {
     if (regionMetadata.location === RegionLocation.CORETIME_CHAIN) {
-      transferCoretimeRegion(regionMetadata.region.getRegionId());
+      transferCoretimeRegion(regionMetadata.region);
     } else if (regionMetadata.location === RegionLocation.CONTRACTS_CHAIN) {
       transferXcRegion(regionMetadata.region);
     }
   };
 
-  const transferCoretimeRegion = async (regionId: RegionId) => {
+  const transferCoretimeRegion = async (region: Region) => {
     if (!coretimeApi || !activeAccount || !activeSigner) return;
     if (!newOwner) {
       toastError('Please input the new owner.');
       return;
     }
-    const txTransfer = coretimeApi.tx.broker.transfer(regionId, newOwner);
+    const txTransfer = coretimeApi.tx.broker.transfer(region.getOnChainRegionId(), newOwner);
 
     try {
       setWorking(true);
@@ -115,7 +115,7 @@ export const TransferModal = ({
       toastError(
         `Failed to transfer the region. Error: ${e.errorMessage === 'Error'
           ? 'Please check your balance.'
-          : e
+          : e.errorMessage
         }`
       );
       setWorking(false);

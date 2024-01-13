@@ -66,9 +66,9 @@ export const InterlaceModal = ({
   const onInterlace = async () => {
     if (!api || !activeAccount || !activeSigner) return;
 
-    const mask = new CoreMask(newMask).getMask();
+    const mask = CoreMask.fromBin(newMask).getMask();
 
-    const txInterlace = api.tx.broker.interlace(regionMetadata.region.getRegionId(), mask);
+    const txInterlace = api.tx.broker.interlace(regionMetadata.region.getOnChainRegionId(), mask);
     try {
       setWorking(true);
       await txInterlace.signAndSend(

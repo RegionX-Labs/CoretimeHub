@@ -73,26 +73,23 @@ const RegionDataProvider = ({ children }: Props) => {
 
   const fetchTasks = async () => {
     if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
-    const res = await coretimeApi.query.broker.workplan.entries();
+    const workplan = await coretimeApi.query.broker.workplan.entries();
     const tasks: Record<string, number> = {};
 
-    /*
-    for await (const [key, value] of res) {
-      const [[strBegin, strCore]] = key.toHuman() as [[string, string]];
+    for await (const [key, value] of workplan) {
+      const [[begin, core]] = key.toHuman() as [[number, number]];
       const records = value.toHuman() as ScheduleItem[];
 
       records.forEach((record) => {
-        const begin = parseHNString(strBegin);
-        const core = parseHNString(strCore);
         const {
-          mask,
           assignment: { Task: taskId },
+          mask,
         } = record;
-        const rawId = { begin, core, mask } as OnChainRegionId;
-        tasks[stringifyOnChainRegionId(rawId)] = parseHNString(taskId);
+
+        const region = new Region({ begin, core, mask: new CoreMask(mask) }, { end: 0, owner: "", paid: null });
+        tasks[region.getEncodedRegionId(contractsApi).toString()] = parseHNString(taskId);
       });
     }
-    */
     return tasks;
   };
 
@@ -139,7 +136,7 @@ const RegionDataProvider = ({ children }: Props) => {
 
       _regions.push(new RegionMetadata(
         region,
-        RegionLocation.CORETIME_CHAIN, // FIXME
+        rawXcRegionIds.indexOf(rawId.toString()) === -1 ? RegionLocation.CORETIME_CHAIN : RegionLocation.CONTRACTS_CHAIN,
         rawId,
         name ?? `Region #${_regions.length + 1}`,
         coretimeOwnership,
@@ -148,7 +145,6 @@ const RegionDataProvider = ({ children }: Props) => {
         taskId
       ))
     }
-    console.log(_regions);
 
     setRegions(_regions.filter(({ region }) => region.getOwner() === activeAccount.address));
     setLoading(false);
