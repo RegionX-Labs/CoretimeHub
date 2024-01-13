@@ -151,7 +151,7 @@ const Home = () => {
           <PartitionModal
             open={partitionModalOpen}
             onClose={() => openPartitionModal(false)}
-            region={selectedRegion}
+            regionMetadata={selectedRegion}
           />
           <InterlaceModal
             open={interlaceModalOpen}

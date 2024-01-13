@@ -1,6 +1,8 @@
 import { CoreMask, RawRegionId, Region, TaskId } from "coretime-utils";
 
-type Percentage = number; // Percentage value between 0 and 1
+export type Percentage = number; // Percentage value between 0 and 1
+
+export type ParaId = number;
 
 export enum RegionLocation {
   CORETIME_CHAIN,

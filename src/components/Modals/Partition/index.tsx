@@ -28,17 +28,18 @@ import {
 } from '@/models';
 
 import styles from './index.module.scss';
+import { timesliceToTimestamp } from '@/utils/functions';
 
 interface PartitionModalProps {
   open: boolean;
   onClose: () => void;
-  region: RegionMetadata;
+  regionMetadata: RegionMetadata;
 }
 
 export const PartitionModal = ({
   open,
   onClose,
-  region,
+  regionMetadata,
 }: PartitionModalProps) => {
   const timeUnits = [
     {
@@ -74,10 +75,15 @@ export const PartitionModal = ({
   const [unitIdx, setUnitIdx] = useState(0);
   const [pivot, setPivot] = useState(1);
   const [working, setWorking] = useState(false);
+  const [duration, setDuration] = useState(1);
 
   const { unit } = timeUnits[unitIdx];
-  const duration = region.end - region.begin;
   const maxSteps = Math.floor(duration / unit) - 1;
+
+  useEffect(() => {
+    const diff = regionMetadata.region.getEnd() - regionMetadata.region.getBegin();
+    setDuration(diff * timeslicePeriod * RELAY_CHAIN_BLOCK_TIME);
+  }, []);
 
   useEffect(() => {
     setUnitIdx(0);
@@ -93,7 +99,7 @@ export const PartitionModal = ({
       Math.floor((pivot * unit) / RELAY_CHAIN_BLOCK_TIME) / timeslicePeriod
     );
     const txPartition = coretimeApi.tx.broker.partition(
-      region.rawId,
+      regionMetadata.region.getRegionId(),
       pivotInTimeslice
     );
 
@@ -128,7 +134,7 @@ export const PartitionModal = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent>
-        <RegionCard region={region} bordered={false} />
+        <RegionCard regionMetadata={regionMetadata} bordered={false} />
         <Box className={styles.unitContainer}>
           <Typography variant='h2' sx={{ color: theme.palette.text.secondary }}>
             Time units

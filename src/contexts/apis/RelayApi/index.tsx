@@ -4,7 +4,7 @@ import { parseHNString } from '@/utils/functions';
 
 import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
-import { ParaID } from '@/models';
+import { ParaId } from '@/models';
 
 import { connect, disconnect, initialState, reducer } from '../common';
 import { WS_RELAY_CHAIN } from '../consts';
@@ -25,7 +25,7 @@ const RelayApiContext = React.createContext(defaultValue);
 const RelayApiContextProvider = (props: any) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { toastError, toastSuccess } = useToast();
-  const [paraIds, setParaIds] = useState<ParaID[]>([]);
+  const [paraIds, setParaIds] = useState<ParaId[]>([]);
 
   useEffect(() => {
     state.apiError && toastError(`Failed to connect to relay chain`);
