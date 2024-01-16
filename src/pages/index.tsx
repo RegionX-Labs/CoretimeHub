@@ -4,7 +4,9 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+
 import FeatureCard from '@/components/elements/FeatureCard';
+
 import Chart from '@/assets/chart.png';
 import Config from '@/assets/config.png';
 import Split from '@/assets/split.png';

@@ -1,7 +1,8 @@
 import { Button, Card, CardActions, CardContent, Link, Typography } from '@mui/material';
-import React from 'react';
-import styles from './index.module.scss';
 import Image, { StaticImageData } from 'next/image';
+import React from 'react';
+
+import styles from './index.module.scss';
 
 interface FeatureCardProps {
   title: string;
