@@ -31,7 +31,7 @@ const Home = () => {
           Home
         </Typography>
       </Box>
-      <Box marginTop="12em">
+      <Box marginTop="2em">
         <Grid spacing={8} container>
           <Grid container item xs={6}>
             <FeatureCard title={"Manage your regions"} image={Config} buttonText={"Region Dashboard"} href="/regions" />
