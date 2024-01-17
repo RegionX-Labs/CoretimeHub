@@ -1,5 +1,6 @@
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import HomeIcon from '@mui/icons-material/Home';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Box, useTheme } from '@mui/material';
 import { useInkathon } from '@scio-labs/use-inkathon';
@@ -24,9 +25,8 @@ const MenuItem = ({ label, route, icon }: MenuItemProps) => {
 
   return (
     <Box
-      className={`${styles.menuItem} ${
-        isActive ? styles.active : styles.inactive
-      }`}
+      className={`${styles.menuItem} ${isActive ? styles.active : styles.inactive
+        }`}
       onClick={() => route && push(route)}
     >
       {{
@@ -57,10 +57,15 @@ export const Sidebar = () => {
           : ApiState.DISCONNECTED;
 
   const menu = {
-    dashboard: [
+    general: [
+      {
+        label: 'Home',
+        route: '/',
+        icon: <HomeIcon />,
+      },
       {
         label: 'My Regions',
-        route: '/',
+        route: '/regions',
         icon: <DashboardIcon />,
       },
     ],
