@@ -138,7 +138,7 @@ const RegionDataProvider = ({ children }: Props) => {
         consumed = 0;
       }
 
-      const coretimeOwnership = region.getMask().countOnes() / timeslicePeriod;
+      const coretimeOwnership = region.getMask().countOnes() / 80;
       const currentUsage = 0; // FIXME:
 
       _regions.push(

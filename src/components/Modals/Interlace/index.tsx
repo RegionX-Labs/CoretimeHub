@@ -56,7 +56,7 @@ export const InterlaceModal = ({
   const [position, setPosition] = useState(oneStart);
 
   const generateMask = (position: number): string => {
-    const mask = Array(timeslicePeriod).fill('0');
+    const mask = Array(80).fill('0');
     for (let i = oneStart; i <= position; ++i) mask[i] = '1';
     return mask.join('');
   };
@@ -135,7 +135,7 @@ export const InterlaceModal = ({
                 onChange={(_e, v) => setPosition(Number(v))}
                 valueLabelDisplay='on'
                 valueLabelFormat={(v) =>
-                  `${(((v - oneStart + 1) / timeslicePeriod) * 100).toFixed(
+                  `${(((v - oneStart + 1) / 80) * 100).toFixed(
                     2
                   )}%`
                 }
