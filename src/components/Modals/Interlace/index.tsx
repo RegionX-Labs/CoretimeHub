@@ -20,7 +20,7 @@ import { RegionCard } from '@/components/elements';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import { RegionMetadata } from '@/models';
+import { COREMASK_BYTES_LEN, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 
@@ -44,7 +44,6 @@ export const InterlaceModal = ({
   const { toastError, toastSuccess, toastInfo } = useToast();
   const {
     fetchRegions,
-    config: { timeslicePeriod },
   } = useRegions();
 
   const currentMask = regionMetadata.region.getMask().toBin();
@@ -56,7 +55,7 @@ export const InterlaceModal = ({
   const [position, setPosition] = useState(oneStart);
 
   const generateMask = (position: number): string => {
-    const mask = Array(80).fill('0');
+    const mask = Array(COREMASK_BYTES_LEN * 8).fill('0');
     for (let i = oneStart; i <= position; ++i) mask[i] = '1';
     return mask.join('');
   };
@@ -135,7 +134,7 @@ export const InterlaceModal = ({
                 onChange={(_e, v) => setPosition(Number(v))}
                 valueLabelDisplay='on'
                 valueLabelFormat={(v) =>
-                  `${(((v - oneStart + 1) / 80) * 100).toFixed(
+                  `${(((v - oneStart + 1) / (COREMASK_BYTES_LEN * 8)) * 100).toFixed(
                     2
                   )}%`
                 }

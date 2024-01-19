@@ -9,7 +9,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseHNString, parseHNStringToString } from '@/utils/functions';
 
-import { RegionLocation, RegionMetadata, ScheduleItem } from '@/models';
+import { COREMASK_BYTES_LEN, RegionLocation, RegionMetadata, ScheduleItem } from '@/models';
 
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { CONTRACT_XC_REGIONS } from '../apis/consts';
@@ -138,7 +138,7 @@ const RegionDataProvider = ({ children }: Props) => {
         consumed = 0;
       }
 
-      const coretimeOwnership = region.getMask().countOnes() / 80;
+      const coretimeOwnership = region.getMask().countOnes() / (COREMASK_BYTES_LEN * 8);
       const currentUsage = 0; // FIXME:
 
       _regions.push(
