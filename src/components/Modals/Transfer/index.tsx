@@ -34,7 +34,6 @@ export const TransferModal = ({
   regionMetadata,
 }: TransferModalProps) => {
   const { activeAccount, activeSigner, api: contractsApi } = useInkathon();
-  const { contract } = useContract(XcRegionsMetadata, CONTRACT_XC_REGIONS);
 
   const { fetchRegions } = useRegions();
   const { toastError, toastInfo, toastSuccess } = useToast();
@@ -49,7 +48,6 @@ export const TransferModal = ({
     if (regionMetadata.location === RegionLocation.CORETIME_CHAIN) {
       transferCoretimeRegion(regionMetadata.region);
     } else if (regionMetadata.location === RegionLocation.CONTRACTS_CHAIN) {
-      transferXcRegion(regionMetadata.region);
     }
   };
 
@@ -88,40 +86,6 @@ export const TransferModal = ({
       );
     } catch (e) {
       toastError(`Failed to transfer the region. ${e}`);
-      setWorking(false);
-    }
-  };
-
-  const transferXcRegion = async (region: Region) => {
-    if (!contractsApi || !activeAccount || !contract) {
-      return;
-    }
-
-    try {
-      setWorking(true);
-      const rawRegionId = region.getEncodedRegionId(contractsApi);
-      const id = contractsApi.createType('Id', { U128: rawRegionId });
-
-      await contractTx(
-        contractsApi,
-        activeAccount.address,
-        contract,
-        'PSP34::transfer',
-        {},
-        [newOwner, id, []]
-      );
-
-      toastSuccess(`Successfully transferred the xcRegion.`);
-      onClose();
-      fetchRegions();
-    } catch (e: any) {
-      toastError(
-        `Failed to transfer the region. Error: ${
-          e.errorMessage === 'Error'
-            ? 'Please check your balance.'
-            : e.errorMessage
-        }`
-      );
       setWorking(false);
     }
   };

@@ -25,8 +25,9 @@ const MenuItem = ({ label, route, icon }: MenuItemProps) => {
 
   return (
     <Box
-      className={`${styles.menuItem} ${isActive ? styles.active : styles.inactive
-        }`}
+      className={`${styles.menuItem} ${
+        isActive ? styles.active : styles.inactive
+      }`}
       onClick={() => route && push(route)}
     >
       {{

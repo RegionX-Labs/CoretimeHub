@@ -21,7 +21,7 @@ import React, { useEffect, useState } from 'react';
 
 import { timesliceToTimestamp } from '@/utils/functions';
 
-import { useCoretimeApi } from '@/contexts/apis';
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useTasks } from '@/contexts/tasks';
 import { RegionLocation, RegionMetadata } from '@/models';
@@ -103,7 +103,7 @@ const RegionCardInner = ({
 
   const {
     state: { api },
-  } = useCoretimeApi();
+  } = useRelayApi();
 
   const {
     config: { timeslicePeriod },
@@ -111,6 +111,7 @@ const RegionCardInner = ({
 
   useEffect(() => {
     if (api) {
+      console.log(region.getBegin())
       timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then(
         (value) => setBeginTimestamp(value)
       );
@@ -153,6 +154,8 @@ const RegionCardInner = ({
     setEdit(false);
     setName('');
   };
+
+  console.log(beginTimestamp);
 
   const getTaskName = (taskId: number) => {
     return tasks.find(({ id }) => id === taskId)?.name || '';

@@ -1,15 +1,18 @@
 import {
-  contractQuery,
-  decodeOutput,
   useContract,
   useInkathon,
 } from '@scio-labs/use-inkathon';
-import { CoreMask, Region, RegionRecord } from 'coretime-utils';
+import { CoreMask, Region } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import { parseHNString, parseHNStringToString } from '@/utils/functions';
+import { parseHNString } from '@/utils/functions';
 
-import { COREMASK_BYTES_LEN, RegionLocation, RegionMetadata, ScheduleItem } from '@/models';
+import {
+  COREMASK_BYTES_LEN,
+  RegionLocation,
+  RegionMetadata,
+  ScheduleItem,
+} from '@/models';
 
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { CONTRACT_XC_REGIONS } from '../apis/consts';
@@ -78,21 +81,21 @@ const RegionDataProvider = ({ children }: Props) => {
     const tasks: Record<string, number> = {};
 
     for await (const [key, value] of workplan) {
-      const [[begin, core]] = key.toHuman() as [[number, number]];
+      let [[begin, core]] = key.toHuman() as [[number, number]];
+
       const records = value.toHuman() as ScheduleItem[];
 
       records.forEach((record) => {
-        const {
-          assignment: { Task: taskId },
-          mask,
-        } = record;
+        const { mask } = record;
 
         const region = new Region(
-          { begin, core, mask: new CoreMask(mask) },
+          {
+            begin: parseHNString(begin.toString()),
+            core: parseHNString(core.toString()),
+            mask: new CoreMask(mask),
+          },
           { end: 0, owner: '', paid: null }
         );
-        tasks[region.getEncodedRegionId(contractsApi).toString()] =
-          parseHNString(taskId);
       });
     }
     return tasks;
@@ -110,15 +113,11 @@ const RegionDataProvider = ({ children }: Props) => {
     );
 
     const tasks = await fetchTasks();
-
-    const rawXcRegionIds = await getOwnedRawXcRegionIds();
-    const xcRegions = await getOwnedXcRegions(rawXcRegionIds);
-
     const brokerRegions = await getBrokerRegions();
 
     const _regions: Array<RegionMetadata> = [];
 
-    for await (const region of [...brokerRegions, ...xcRegions]) {
+    for await (const region of [...brokerRegions]) {
       const beginBlockHeight = timeslicePeriod * region.getBegin();
 
       const rawId = region.getEncodedRegionId(contractsApi);
@@ -138,15 +137,14 @@ const RegionDataProvider = ({ children }: Props) => {
         consumed = 0;
       }
 
-      const coretimeOwnership = region.getMask().countOnes() / (COREMASK_BYTES_LEN * 8);
+      const coretimeOwnership =
+        region.getMask().countOnes() / (COREMASK_BYTES_LEN * 8);
       const currentUsage = 0; // FIXME:
 
       _regions.push(
         new RegionMetadata(
           region,
-          rawXcRegionIds.indexOf(rawId.toString()) === -1
-            ? RegionLocation.CORETIME_CHAIN
-            : RegionLocation.CONTRACTS_CHAIN,
+          RegionLocation.CORETIME_CHAIN,
           rawId,
           name ?? `Region #${_regions.length + 1}`,
           coretimeOwnership,
@@ -199,107 +197,23 @@ const RegionDataProvider = ({ children }: Props) => {
       .map(([key, value]) => {
         const keyTuple: any = key.toHuman();
 
-        // This is defensive.
-        if (keyTuple && Array.isArray(keyTuple) && keyTuple[0] !== undefined) {
-          const { begin, core, mask } = keyTuple[0];
-          const regionId = { begin, core, mask: new CoreMask(mask) };
-          return new Region(regionId, value.toHuman() as RegionRecord);
-        }
+        const { begin, core, mask } = keyTuple[0] as any;
+        const { end, owner, paid } = value.toHuman() as any;
+
+        const regionId = {
+          begin: parseHNString(begin.toString()),
+          core: parseHNString(core.toString()),
+          mask: new CoreMask(mask),
+        };
+        return new Region(regionId, {
+          end: parseHNString(end),
+          owner,
+          paid: paid ? parseHNString(paid) : null,
+        });
       })
       .filter((entry) => entry !== null) as Array<Region>;
 
     return brokerRegions;
-  };
-
-  const getOwnedRawXcRegionIds = async (): Promise<Array<string>> => {
-    if (!contractsApi || !contract || !activeAccount) {
-      return [];
-    }
-
-    const rawRegionIds = [];
-    let isError = false;
-    let index = 0;
-
-    while (!isError) {
-      const result = await contractQuery(
-        contractsApi,
-        '',
-        contract,
-        'PSP34Enumerable::owners_token_by_index',
-        {},
-        [activeAccount.address, index]
-      );
-
-      const {
-        output,
-        isError: queryError,
-        decodedOutput,
-      } = decodeOutput(
-        result,
-        contract,
-        'PSP34Enumerable::owners_token_by_index'
-      );
-
-      if (queryError || decodedOutput === 'TokenNotExists') {
-        isError = true;
-      } else {
-        rawRegionIds.push(parseHNStringToString(output.Ok.U128));
-        index++;
-      }
-    }
-
-    return rawRegionIds;
-  };
-
-  const getOwnedXcRegions = async (
-    rawRegionIds: Array<string>
-  ): Promise<Array<Region>> => {
-    if (!contractsApi || !contract || !activeAccount) {
-      return [];
-    }
-
-    const regions: Array<Region> = [];
-
-    for await (const regionId of rawRegionIds) {
-      const result = await contractQuery(
-        contractsApi,
-        '',
-        contract,
-        'RegionMetadata::get_metadata',
-        {},
-        [regionId]
-      );
-
-      const { output, isError: queryError } = decodeOutput(
-        result,
-        contract,
-        'RegionMetadata::get_metadata'
-      );
-
-      if (!queryError) {
-        const versionedRegion = output.Ok;
-
-        // TODO: Once cross-chain region transfers are enabled from the broker pallet ensure
-        // metadata is correct.
-
-        regions.push(
-          new Region(
-            {
-              begin: versionedRegion.region.begin,
-              core: versionedRegion.region.core,
-              mask: new CoreMask(versionedRegion.region.mask),
-            },
-            {
-              end: versionedRegion.region.end,
-              owner: activeAccount.address,
-              paid: null,
-            }
-          )
-        );
-      }
-    }
-
-    return regions;
   };
 
   return (
