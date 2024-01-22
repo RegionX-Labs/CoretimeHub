@@ -21,7 +21,7 @@ import React, { useEffect, useState } from 'react';
 
 import { timesliceToTimestamp } from '@/utils/functions';
 
-import { useCoretimeApi } from '@/contexts/apis';
+import { useRelayApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useTasks } from '@/contexts/tasks';
 import { RegionLocation, RegionMetadata } from '@/models';
@@ -103,7 +103,7 @@ const RegionCardInner = ({
 
   const {
     state: { api },
-  } = useCoretimeApi();
+  } = useRelayApi();
 
   const {
     config: { timeslicePeriod },
@@ -242,7 +242,7 @@ const RegionCardInner = ({
       <Box sx={{ color: theme.palette.grey[200] }}>
         {taskId !== null ? (
           <Typography variant='subtitle2'>
-            {`Task: ${getTaskName(taskId)}`}
+            {`Task: ${taskId ? getTaskName(taskId) : 'Unassigned'}`}
           </Typography>
         ) : (
           <></>

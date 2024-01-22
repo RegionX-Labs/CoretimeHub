@@ -1,9 +1,4 @@
-import {
-  Box,
-  Grid,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, Grid, Typography, useTheme } from '@mui/material';
 
 import FeatureCard from '@/components/elements/FeatureCard';
 
@@ -31,23 +26,43 @@ const Home = () => {
           Home
         </Typography>
       </Box>
-      <Box marginTop="2em">
+      <Box marginTop='2em'>
         <Grid spacing={8} container>
           <Grid container item xs={6}>
-            <FeatureCard title={"Manage your regions"} image={Config} buttonText={"Region Dashboard"} href="/regions" />
+            <FeatureCard
+              title={'Manage your regions'}
+              image={Config}
+              buttonText={'Region Dashboard'}
+              href='/regions'
+            />
           </Grid>
-          <Grid container item xs={6} direction="column">
-            <FeatureCard title={"Track Blockspace Consumption"} image={Chart} buttonText={"Corespace Weigher"} href="https://www.polkadot-weigher.com/" />
+          <Grid container item xs={6} direction='column'>
+            <FeatureCard
+              title={'Track Blockspace Consumption'}
+              image={Chart}
+              buttonText={'Corespace Weigher'}
+              href='https://www.polkadot-weigher.com/'
+            />
           </Grid>
-          <Grid container item xs={6} direction="column">
-            <FeatureCard title={"Share a Polkadot Core"} image={Split} buttonText={"SOON"} href="/" />
+          <Grid container item xs={6} direction='column'>
+            <FeatureCard
+              title={'Share a Polkadot Core'}
+              image={Split}
+              buttonText={'SOON'}
+              href='/'
+            />
           </Grid>
-          <Grid container item xs={6} direction="column">
-            <FeatureCard title={"Trade Coretime"} image={Trade} buttonText={"Explore the market"} href="/" />
+          <Grid container item xs={6} direction='column'>
+            <FeatureCard
+              title={'Trade Coretime'}
+              image={Trade}
+              buttonText={'Explore the market'}
+              href='/'
+            />
           </Grid>
         </Grid>
       </Box>
-    </Box >
+    </Box>
   );
 };
 
