@@ -4,7 +4,7 @@ import {
   useContract,
   useInkathon,
 } from '@scio-labs/use-inkathon';
-import { CoreMask, Region, RegionRecord } from 'coretime-utils';
+import { CoreMask, Region } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseHNString, parseHNStringToString } from '@/utils/functions';
@@ -302,12 +302,12 @@ const RegionDataProvider = ({ children }: Props) => {
         regions.push(
           new Region(
             {
-              begin: versionedRegion.region.begin,
-              core: versionedRegion.region.core,
+              begin: parseHNString(versionedRegion.region.begin),
+              core: parseHNString(versionedRegion.region.core),
               mask: new CoreMask(versionedRegion.region.mask),
             },
             {
-              end: versionedRegion.region.end,
+              end: parseHNString(versionedRegion.region.end),
               owner: activeAccount.address,
               paid: null,
             }

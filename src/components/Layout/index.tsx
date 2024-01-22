@@ -2,6 +2,7 @@ import { Divider, Paper, useTheme } from '@mui/material';
 import React, { ReactElement } from 'react';
 
 import styles from './index.module.scss';
+import Banner from '../Banner';
 import { Header } from '../Header';
 import { Sidebar } from '../Sidebar';
 
@@ -14,6 +15,10 @@ export const Layout = ({ children }: Props) => {
   return (
     <div className={styles.layout}>
       <Header />
+      <Banner
+        content='The UI is still under active development and is released only for testing purposes!'
+        severity='error'
+      />
       <div className={styles.content}>
         <div className={styles.sidebar}>
           <Sidebar />
