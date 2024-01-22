@@ -25,7 +25,7 @@ import {
 } from '@/icons';
 import { RegionLocation } from '@/models';
 
-const Home = () => {
+const Dashboard = () => {
   const theme = useTheme();
   const { regions, loading, updateRegionName } = useRegions();
 
@@ -114,7 +114,7 @@ const Home = () => {
       <Box
         sx={{
           position: 'fixed',
-          right: '10rem',
+          right: '7.5rem',
           color: theme.palette.text.secondary,
           background: theme.palette.background.default,
           minWidth: 280,
@@ -177,4 +177,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Dashboard;

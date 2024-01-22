@@ -39,3 +39,8 @@
   flex-direction: column;
   gap: 0.5rem;
 }
+
+.menuItem.disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}

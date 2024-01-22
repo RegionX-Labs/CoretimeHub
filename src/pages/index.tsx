@@ -4,7 +4,7 @@ import FeatureCard from '@/components/elements/FeatureCard';
 
 import Chart from '@/assets/chart.png';
 import Config from '@/assets/config.png';
-import Split from '@/assets/split.png';
+import Shopping from '@/assets/shopping.png';
 import Trade from '@/assets/trade.png';
 
 const Home = () => {
@@ -30,7 +30,17 @@ const Home = () => {
         <Grid spacing={8} container>
           <Grid container item xs={6}>
             <FeatureCard
+              title={'Purchase a Rococo Core'}
+              enabled={true}
+              image={Shopping}
+              buttonText={'Purchase from Coretime chain'}
+              href='/purchase'
+            />
+          </Grid>
+          <Grid container item xs={6}>
+            <FeatureCard
               title={'Manage your regions'}
+              enabled={true}
               image={Config}
               buttonText={'Region Dashboard'}
               href='/regions'
@@ -39,6 +49,7 @@ const Home = () => {
           <Grid container item xs={6} direction='column'>
             <FeatureCard
               title={'Track Blockspace Consumption'}
+              enabled={false}
               image={Chart}
               buttonText={'Corespace Weigher'}
               href='https://www.polkadot-weigher.com/'
@@ -46,15 +57,8 @@ const Home = () => {
           </Grid>
           <Grid container item xs={6} direction='column'>
             <FeatureCard
-              title={'Share a Polkadot Core'}
-              image={Split}
-              buttonText={'SOON'}
-              href='/'
-            />
-          </Grid>
-          <Grid container item xs={6} direction='column'>
-            <FeatureCard
               title={'Trade Coretime'}
+              enabled={false}
               image={Trade}
               buttonText={'Explore the market'}
               href='/'
