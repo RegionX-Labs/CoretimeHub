@@ -9,7 +9,12 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseHNString, parseHNStringToString } from '@/utils/functions';
 
-import { COREMASK_BYTES_LEN, RegionLocation, RegionMetadata, ScheduleItem } from '@/models';
+import {
+  COREMASK_BYTES_LEN,
+  RegionLocation,
+  RegionMetadata,
+  ScheduleItem,
+} from '@/models';
 
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { CONTRACT_XC_REGIONS } from '../apis/consts';
@@ -75,7 +80,7 @@ const RegionDataProvider = ({ children }: Props) => {
   const fetchTasks = async () => {
     if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
     const workplan = await coretimeApi.query.broker.workplan.entries();
-    const tasks: Record<string, number> = {};
+    const tasks: Record<string, number | null> = {};
 
     for await (const [key, value] of workplan) {
       const [[begin, core]] = key.toHuman() as [[number, number]];
@@ -88,11 +93,16 @@ const RegionDataProvider = ({ children }: Props) => {
         } = record;
 
         const region = new Region(
-          { begin, core, mask: new CoreMask(mask) },
+          {
+            begin: parseHNString(begin.toString()),
+            core: parseHNString(core.toString()),
+            mask: new CoreMask(mask),
+          },
           { end: 0, owner: '', paid: null }
         );
-        tasks[region.getEncodedRegionId(contractsApi).toString()] =
-          parseHNString(taskId);
+        tasks[region.getEncodedRegionId(contractsApi).toString()] = taskId
+          ? parseHNString(taskId)
+          : null;
       });
     }
     return tasks;
@@ -138,8 +148,9 @@ const RegionDataProvider = ({ children }: Props) => {
         consumed = 0;
       }
 
-      const coretimeOwnership = region.getMask().countOnes() / (COREMASK_BYTES_LEN * 8);
-      const currentUsage = 0; // FIXME:
+      const coretimeOwnership =
+        region.getMask().countOnes() / (COREMASK_BYTES_LEN * 8);
+      const currentUsage = 0;
 
       _regions.push(
         new RegionMetadata(
@@ -198,13 +209,19 @@ const RegionDataProvider = ({ children }: Props) => {
     const brokerRegions: Array<Region> = brokerEntries
       .map(([key, value]) => {
         const keyTuple: any = key.toHuman();
+        const { begin, core, mask } = keyTuple[0] as any;
+        const { end, owner, paid } = value.toHuman() as any;
 
-        // This is defensive.
-        if (keyTuple && Array.isArray(keyTuple) && keyTuple[0] !== undefined) {
-          const { begin, core, mask } = keyTuple[0];
-          const regionId = { begin, core, mask: new CoreMask(mask) };
-          return new Region(regionId, value.toHuman() as RegionRecord);
-        }
+        const regionId = {
+          begin: parseHNString(begin.toString()),
+          core: parseHNString(core.toString()),
+          mask: new CoreMask(mask),
+        };
+        return new Region(regionId, {
+          end: parseHNString(end),
+          owner,
+          paid: paid ? parseHNString(paid) : null,
+        });
       })
       .filter((entry) => entry !== null) as Array<Region>;
 

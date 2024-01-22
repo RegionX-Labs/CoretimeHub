@@ -42,9 +42,7 @@ export const InterlaceModal = ({
     state: { api },
   } = useCoretimeApi();
   const { toastError, toastSuccess, toastInfo } = useToast();
-  const {
-    fetchRegions,
-  } = useRegions();
+  const { fetchRegions } = useRegions();
 
   const currentMask = regionMetadata.region.getMask().toBin();
   const oneStart = currentMask.indexOf('1');
@@ -134,9 +132,10 @@ export const InterlaceModal = ({
                 onChange={(_e, v) => setPosition(Number(v))}
                 valueLabelDisplay='on'
                 valueLabelFormat={(v) =>
-                  `${(((v - oneStart + 1) / (COREMASK_BYTES_LEN * 8)) * 100).toFixed(
-                    2
-                  )}%`
+                  `${(
+                    ((v - oneStart + 1) / (COREMASK_BYTES_LEN * 8)) *
+                    100
+                  ).toFixed(2)}%`
                 }
                 className={styles.slider}
               />

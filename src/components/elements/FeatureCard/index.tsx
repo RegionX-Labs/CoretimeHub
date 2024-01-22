@@ -1,4 +1,11 @@
-import { Button, Card, CardActions, CardContent, Link, Typography } from '@mui/material';
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Link,
+  Typography,
+} from '@mui/material';
 import Image, { StaticImageData } from 'next/image';
 import React from 'react';
 
@@ -8,21 +15,21 @@ interface FeatureCardProps {
   title: string;
   buttonText: string;
   image: StaticImageData;
-  href: string
+  href: string;
 }
 
 const FeatureCard = ({ title, buttonText, image, href }: FeatureCardProps) => {
   return (
     <Card className={styles.card}>
       <CardContent>
-        <Image className={styles.icon} src={image} alt="" />
+        <Image className={styles.icon} src={image} alt='' />
       </CardContent>
-      <Typography variant="h5" component="h2" gutterBottom>
+      <Typography variant='h5' component='h2' gutterBottom>
         {title}
       </Typography>
       <CardActions>
-        <Link margin="0 auto" href={href}>
-          <Button size="small" variant='text' className={styles.button}>
+        <Link margin='0 auto' href={href}>
+          <Button size='small' variant='text' className={styles.button}>
             {buttonText}
           </Button>
         </Link>
