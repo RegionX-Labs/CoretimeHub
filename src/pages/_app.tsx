@@ -41,7 +41,7 @@ export default function MyApp(props: MyAppProps) {
     <CacheProvider value={emotionCache}>
       <Head>
         <meta name='viewport' content='initial-scale=1, width=device-width' />
-        <title>Coretime UI</title>
+        <title>CoreHub</title>
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
@@ -49,7 +49,7 @@ export default function MyApp(props: MyAppProps) {
           <CoretimeApiContextProvider>
             <RelayApiContextProvider>
               <UseInkathonProvider
-                appName='Coretime UI'
+                appName='CoreHub'
                 connectOnInit={false}
                 defaultChain={{
                   network: '',

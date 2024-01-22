@@ -53,17 +53,20 @@ export const Header = () => {
 
               <Collapse in={accountsOpen} className={styles.accountsWrapper}>
                 <List component='div' className={styles.accountsList}>
-                  {accounts?.map((account, index) => (
-                    <ListItemButton
-                      key={index}
-                      onClick={() => {
-                        setActiveAccount && setActiveAccount(account);
-                        openAccounts(false);
-                      }}
-                    >
-                      {account.name}
-                    </ListItemButton>
-                  ))}
+                  {accounts?.map(
+                    (account, index) =>
+                      account.type == 'sr25519' && (
+                        <ListItemButton
+                          key={index}
+                          onClick={() => {
+                            setActiveAccount && setActiveAccount(account);
+                            openAccounts(false);
+                          }}
+                        >
+                          {account.name}
+                        </ListItemButton>
+                      )
+                  )}
                 </List>
                 <Divider />
                 <ListItemButton onClick={onDisconnect}>
