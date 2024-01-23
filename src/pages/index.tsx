@@ -30,10 +30,10 @@ const Home = () => {
         <Grid spacing={8} container>
           <Grid container item xs={6}>
             <FeatureCard
-              title={'Purchase a Rococo Core'}
+              title={'Purchase a core'}
               enabled={true}
               image={Shopping}
-              buttonText={'Purchase from Coretime chain'}
+              buttonText={'Go to Bulk Sale'}
               href='/purchase'
             />
           </Grid>

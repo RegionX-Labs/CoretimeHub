@@ -19,7 +19,13 @@ interface FeatureCardProps {
   href: string;
 }
 
-const FeatureCard = ({ title, buttonText, image, enabled, href }: FeatureCardProps) => {
+const FeatureCard = ({
+  title,
+  buttonText,
+  image,
+  enabled,
+  href,
+}: FeatureCardProps) => {
   return (
     <Card className={styles.card}>
       <CardContent>
@@ -29,8 +35,13 @@ const FeatureCard = ({ title, buttonText, image, enabled, href }: FeatureCardPro
         {title}
       </Typography>
       <CardActions>
-        <Link margin='0 auto' href={enabled ? href : "#"}>
-          <Button size='small' variant='text' disabled={!enabled} className={styles.button}>
+        <Link margin='0 auto' href={enabled ? href : '#'}>
+          <Button
+            size='small'
+            variant='text'
+            disabled={!enabled}
+            className={styles.button}
+          >
             {buttonText}
           </Button>
         </Link>

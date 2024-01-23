@@ -15,7 +15,7 @@ import { StatusIndicator } from '../elements';
 
 interface MenuItemProps {
   label: string;
-  enabled: boolean,
+  enabled: boolean;
   route?: string;
   icon?: any;
 }
@@ -26,8 +26,9 @@ const MenuItem = ({ label, enabled, route, icon }: MenuItemProps) => {
 
   return (
     <Box
-      className={`${styles.menuItem} ${isActive ? styles.active : styles.inactive
-        } ${!enabled ? styles.disabled : ''}`}
+      className={`${styles.menuItem} ${
+        isActive ? styles.active : styles.inactive
+      } ${!enabled ? styles.disabled : ''}`}
       onClick={() => enabled && route && push(route)}
     >
       {{
@@ -72,7 +73,7 @@ export const Sidebar = () => {
         icon: <DashboardIcon />,
       },
     ],
-    "primary market": [
+    'primary market': [
       {
         label: 'Purchase a core',
         route: '/purchase',
@@ -80,7 +81,7 @@ export const Sidebar = () => {
         icon: <ShoppingCartIcon />,
       },
     ],
-    "secondary market": [
+    'secondary market': [
       {
         label: 'Sell Region',
         route: '/market/sell',
@@ -105,7 +106,7 @@ export const Sidebar = () => {
             sx={{
               color: theme.palette.text.secondary,
               textTransform: 'capitalize',
-              marginBottom: "2em",
+              marginBottom: '2em',
             }}
           >
             {label}
