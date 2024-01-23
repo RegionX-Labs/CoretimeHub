@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 
-import { RELAY_CHAIN_BLOCK_TIME } from '@/models';
+import { RELAY_CHAIN_BLOCK_TIME, UNIT_DECIMALS } from '@/models';
 
 // parse human readable number string
 export const parseHNString = (str: string): number => {
@@ -41,3 +41,12 @@ export const timesliceToTimestamp = async (
 
   return timestamp;
 };
+
+export const formatBalance = (balance: number) => {
+  return (balance / UNIT_DECIMALS).toPrecision(2);
+}
+
+// TODO: should be queried from runtime api instead.
+export const leadinFactorAt = (when: number) => {
+  return 2 - when;
+}

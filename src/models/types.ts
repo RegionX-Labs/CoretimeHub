@@ -91,27 +91,33 @@ export type ScheduleItem = {
 
 export type SaleInfo = {
   /// The local block number at which the sale will/did start.
-  sale_start: BlockNumber;
+  saleStart: BlockNumber;
   /// The length in blocks of the Leadin Period (where the price is decreasing).
-  leadin_length: BlockNumber;
+  leadinLength: BlockNumber;
   /// The price of Bulk Coretime after the Leadin Period.
   price: Balance;
   /// The first timeslice of the Regions which are being sold in this sale.
-  region_begin: Timeslice;
+  regionBegin: Timeslice;
   /// The timeslice on which the Regions which are being sold in the sale terminate. (i.e. One
   /// after the last timeslice which the Regions control.)
-  region_end: Timeslice;
+  regionEnd: Timeslice;
   /// The number of cores we want to sell, ideally. Selling this amount would result in no
   /// change to the price for the next sale.
-  ideal_cores_sold: CoreIndex;
+  idealCoresSold: CoreIndex;
   /// Number of cores which are/have been offered for sale.
-  cores_offered: CoreIndex;
+  coresOffered: CoreIndex;
   /// The index of the first core which is for sale. Core of Regions which are sold have
   /// incrementing indices from this.
-  first_core: CoreIndex;
+  firstCore: CoreIndex;
   /// The latest price at which Bulk Coretime was purchased until surpassing the ideal number of
   /// cores were sold.
-  sellout_price: Balance | null;
+  selloutPrice: Balance | null;
   /// Number of cores which have been sold; never more than cores_offered.
-  cores_sold: CoreIndex;
+  coresSold: CoreIndex;
 };
+
+export enum SalePhase {
+  Interlude = "Interlude phase",
+  Leadin = "Leadin phase",
+  Regular = "Fixed price phase",
+}

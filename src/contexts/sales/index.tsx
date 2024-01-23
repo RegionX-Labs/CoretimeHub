@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { SaleInfo } from '@/models';
 import { useCoretimeApi } from '../apis';
 import { ApiState } from '../apis/types';
+import { parseHNString } from '@/utils/functions';
 
 interface SaleData {
   loading: boolean;
@@ -13,16 +14,16 @@ interface SaleData {
 const defaultSaleData: SaleData = {
   loading: true,
   saleInfo: {
-    cores_offered: 0,
-    cores_sold: 0,
-    first_core: 0,
-    ideal_cores_sold: 0,
-    leadin_length: 0,
+    coresOffered: 0,
+    coresSold: 0,
+    firstCore: 0,
+    idealCoresSold: 0,
+    leadinLength: 0,
     price: 0,
-    region_begin: 0,
-    region_end: 0,
-    sale_start: 0,
-    sellout_price: null,
+    regionBegin: 0,
+    regionEnd: 0,
+    saleStart: 0,
+    selloutPrice: null,
   },
   fetchSaleInfo: () => {
     /** */
@@ -47,8 +48,19 @@ const SaleInfoProvider = ({ children }: Props) => {
     setLoading(true);
     if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
 
-    const saleInfo = await coretimeApi.query.broker.saleInfo();
-    setSaleInfo(saleInfo.toHuman() as SaleInfo);
+    const saleInfo: any = (await coretimeApi.query.broker.saleInfo()).toHuman();
+    setSaleInfo({
+      coresOffered: parseHNString(saleInfo.coresOffered.toString()),
+      coresSold: parseHNString(saleInfo.coresSold.toString()),
+      firstCore: parseHNString(saleInfo.firstCore.toString()),
+      idealCoresSold: parseHNString(saleInfo.idealCoresSold.toString()),
+      leadinLength: parseHNString(saleInfo.leadinLength.toString()),
+      price: parseHNString(saleInfo.price.toString()),
+      regionBegin: parseHNString(saleInfo.regionBegin.toString()),
+      regionEnd: parseHNString(saleInfo.regionEnd.toString()),
+      saleStart: parseHNString(saleInfo.saleStart.toString()),
+      selloutPrice: saleInfo.selloutPrice ? parseHNString(saleInfo.saleStart.toString()) : null,
+    });
     setLoading(false);
   };
 

@@ -2,7 +2,7 @@ import { Divider, Paper, useTheme } from '@mui/material';
 import React, { ReactElement } from 'react';
 
 import styles from './index.module.scss';
-import Banner from '../Banner';
+import Banner from '../elements/Banner';
 import { Header } from '../Header';
 import { Sidebar } from '../Sidebar';
 
