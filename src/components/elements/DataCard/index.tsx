@@ -1,9 +1,5 @@
 import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Link,
+  Box,
   Typography,
 } from '@mui/material';
 import React from 'react';
@@ -17,16 +13,14 @@ interface DataCardComponentProps {
 
 const DataCardComponent = ({ title, content }: DataCardComponentProps) => {
   return (
-    <Card className={styles.card}>
-      <CardContent>
-        <Typography variant='h5' component='h2' gutterBottom>
-          {title}
-        </Typography>
-        <Typography component='h2' gutterBottom>
-          {content}
-        </Typography>
-      </CardContent>
-    </Card>
+    <Box className={styles.card}>
+      <Typography variant='h5' component='h2' gutterBottom>
+        {title}
+      </Typography>
+      <Typography component='h2' gutterBottom>
+        {content}
+      </Typography>
+    </Box>
   );
 };
 
