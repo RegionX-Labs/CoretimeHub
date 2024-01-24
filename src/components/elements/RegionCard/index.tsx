@@ -118,8 +118,8 @@ const RegionCardInner = ({
     timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then(
       (value) => setBeginTimestamp(value)
     );
-    timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then(
-      (value) => setEndTimestamp(value)
+    timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then((value) =>
+      setEndTimestamp(value)
     );
   }, [regionMetadata]);
 

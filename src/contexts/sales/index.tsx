@@ -59,7 +59,9 @@ const SaleInfoProvider = ({ children }: Props) => {
       regionBegin: parseHNString(saleInfo.regionBegin.toString()),
       regionEnd: parseHNString(saleInfo.regionEnd.toString()),
       saleStart: parseHNString(saleInfo.saleStart.toString()),
-      selloutPrice: saleInfo.selloutPrice ? parseHNString(saleInfo.saleStart.toString()) : null,
+      selloutPrice: saleInfo.selloutPrice
+        ? parseHNString(saleInfo.saleStart.toString())
+        : null,
     });
     setLoading(false);
   };

@@ -1,6 +1,4 @@
-import {
-  Box, Typography,
-} from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
 import styles from './index.module.scss';
@@ -18,7 +16,12 @@ interface SaleInfoGridProps {
   saleEnd: number;
 }
 
-const SaleInfoGrid = ({ saleInfo, currentPhase, currentPrice, saleEnd }: SaleInfoGridProps) => {
+const SaleInfoGrid = ({
+  saleInfo,
+  currentPhase,
+  currentPrice,
+  saleEnd,
+}: SaleInfoGridProps) => {
   TimeAgo.addLocale(en);
   const timeAgo = new TimeAgo('en-US');
 
@@ -35,21 +38,18 @@ const SaleInfoGrid = ({ saleInfo, currentPhase, currentPrice, saleEnd }: SaleInf
     // Calculate the index of the next phase
     const nextIndex = (currentIndex + 1) % phases.length;
     return phases[nextIndex];
-  }
+  };
 
   useEffect(() => {
     if (!api || apiState !== ApiState.READY) {
       return;
     }
 
-    getBlockTimestamp(api, saleInfo.saleStart).then(
-      (value) => setSaleStartTimestamp(value)
+    getBlockTimestamp(api, saleInfo.saleStart).then((value) =>
+      setSaleStartTimestamp(value)
     );
     console.log(saleEnd);
-    getBlockTimestamp(api, saleEnd).then(
-      (value) => setSaleEndTimestamp(value)
-    );
-
+    getBlockTimestamp(api, saleEnd).then((value) => setSaleEndTimestamp(value));
   }, [api, apiState, saleEnd, saleInfo]);
 
   return (
@@ -63,12 +63,8 @@ const SaleInfoGrid = ({ saleInfo, currentPhase, currentPrice, saleEnd }: SaleInf
         </Typography>
       </Box>
       <Box className={styles.gridItem}>
-        <Typography variant='h6'>
-          {`Current phase: ${currentPhase}`}
-        </Typography>
-        <Typography>
-          {`Upcoming phase: ${nextPhase()}`}
-        </Typography>
+        <Typography variant='h6'>{`Current phase: ${currentPhase}`}</Typography>
+        <Typography>{`Upcoming phase: ${nextPhase()}`}</Typography>
       </Box>
       <Box className={styles.gridItem}>
         <Typography variant='h6'>
@@ -83,9 +79,7 @@ const SaleInfoGrid = ({ saleInfo, currentPhase, currentPrice, saleEnd }: SaleInf
           <Typography variant='h6'>
             {`Cores offered: ${saleInfo.coresOffered}`}
           </Typography>
-          <Typography>
-            Number of cores which are offered for sale.
-          </Typography>
+          <Typography>Number of cores which are offered for sale.</Typography>
         </Box>
       </Box>
       <Box>
@@ -93,9 +87,7 @@ const SaleInfoGrid = ({ saleInfo, currentPhase, currentPrice, saleEnd }: SaleInf
           <Typography variant='h6'>
             {`Cores sold: ${saleInfo.coresSold}`}
           </Typography>
-          <Typography>
-            Number of cores which have been sold
-          </Typography>
+          <Typography>Number of cores which have been sold</Typography>
         </Box>
       </Box>
       <Box>

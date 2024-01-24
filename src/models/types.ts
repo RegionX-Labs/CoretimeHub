@@ -117,7 +117,7 @@ export type SaleInfo = {
 };
 
 export enum SalePhase {
-  Interlude = "Interlude phase",
-  Leadin = "Leadin phase",
-  Regular = "Fixed price phase",
+  Interlude = 'Interlude phase',
+  Leadin = 'Leadin phase',
+  Regular = 'Fixed price phase',
 }

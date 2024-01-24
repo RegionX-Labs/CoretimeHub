@@ -39,32 +39,47 @@ const Purchase = () => {
 
   const fetchCurrentPhase = async () => {
     if (!api || apiState !== ApiState.READY) return;
-    const blockNumber = parseHNString(((await api.query.system.number()).toHuman() as any).toString());
-    const saleEnd = saleInfo.saleStart + (timeslicePeriod * (saleInfo.regionEnd - saleInfo.regionBegin));
+    const blockNumber = parseHNString(
+      ((await api.query.system.number()).toHuman() as any).toString()
+    );
+    const saleEnd =
+      saleInfo.saleStart +
+      timeslicePeriod * (saleInfo.regionEnd - saleInfo.regionBegin);
 
     setCurrentBlockNumber(blockNumber);
     setSaleEnd(saleEnd);
 
     if (saleInfo.saleStart > currentBlockNumber) {
-      setCurrentPhase(SalePhase.Interlude)
-    } else if (saleInfo.saleStart + saleInfo.leadinLength > currentBlockNumber) {
-      setCurrentPhase(SalePhase.Leadin)
+      setCurrentPhase(SalePhase.Interlude);
+    } else if (
+      saleInfo.saleStart + saleInfo.leadinLength >
+      currentBlockNumber
+    ) {
+      setCurrentPhase(SalePhase.Leadin);
     } else {
-      setCurrentPhase(SalePhase.Regular)
+      setCurrentPhase(SalePhase.Regular);
     }
-  }
+  };
 
   const fetchCurreentPrice = async () => {
     if (!api || apiState !== ApiState.READY) return;
-    const blockNumber = parseHNString(((await api.query.system.number()).toHuman() as any).toString());
+    const blockNumber = parseHNString(
+      ((await api.query.system.number()).toHuman() as any).toString()
+    );
 
-    const num = Math.min(blockNumber - saleInfo.saleStart, saleInfo.leadinLength);
+    const num = Math.min(
+      blockNumber - saleInfo.saleStart,
+      saleInfo.leadinLength
+    );
     const through = num / saleInfo.leadinLength;
-    setCurrentPrice(Number((leadinFactorAt(through) * saleInfo.price).toFixed()));
-  }
+    setCurrentPrice(
+      Number((leadinFactorAt(through) * saleInfo.price).toFixed())
+    );
+  };
 
   const purchase = async () => {
-    if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner) return;
+    if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
+      return;
     const txPurchase = api.tx.broker.purchase(currentPrice);
 
     try {
@@ -91,7 +106,7 @@ const Purchase = () => {
       toastError(`Failed to partition the region. ${e}`);
       setWorking(false);
     }
-  }
+  };
 
   return (
     <Box>
@@ -118,15 +133,27 @@ const Purchase = () => {
           </>
         ) : (
           <>
-            <Box sx={{
-              marginTop: '2em',
-            }}>
-              <SaleInfoGrid currentPhase={currentPhase} currentPrice={currentPrice} saleInfo={saleInfo} saleEnd={saleEnd} />
+            <Box
+              sx={{
+                marginTop: '2em',
+              }}
+            >
+              <SaleInfoGrid
+                currentPhase={currentPhase}
+                currentPrice={currentPrice}
+                saleInfo={saleInfo}
+                saleEnd={saleEnd}
+              />
             </Box>
-            <Box sx={{
-              marginTop: '4em',
-            }}>
-              <BorderLinearProgress variant="determinate" value={(currentBlockNumber / saleEnd) * 100} />
+            <Box
+              sx={{
+                marginTop: '4em',
+              }}
+            >
+              <BorderLinearProgress
+                variant='determinate'
+                value={(currentBlockNumber / saleEnd) * 100}
+              />
             </Box>
             <Box
               sx={{

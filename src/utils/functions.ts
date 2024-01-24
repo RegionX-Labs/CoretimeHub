@@ -44,9 +44,9 @@ export const timesliceToTimestamp = async (
 
 export const formatBalance = (balance: number) => {
   return (balance / UNIT_DECIMALS).toPrecision(2);
-}
+};
 
 // TODO: should be queried from runtime api instead.
 export const leadinFactorAt = (when: number) => {
   return 2 - when;
-}
+};
