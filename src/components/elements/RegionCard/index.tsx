@@ -28,6 +28,7 @@ import { RegionLocation, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 import { Label } from '..';
+import { ApiState } from '@/contexts/apis/types';
 
 interface RegionCardProps {
   regionMetadata: RegionMetadata;
@@ -102,7 +103,7 @@ const RegionCardInner = ({
   const [endTimestamp, setEndTimestamp] = useState(0);
 
   const {
-    state: { api },
+    state: { api, apiState },
   } = useRelayApi();
 
   const {
@@ -110,14 +111,16 @@ const RegionCardInner = ({
   } = useRegions();
 
   useEffect(() => {
-    if (api) {
-      timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then(
-        (value) => setBeginTimestamp(value)
-      );
-      timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then(
-        (value) => setEndTimestamp(value)
-      );
+    if (!api || apiState !== ApiState.READY) {
+      return;
     }
+
+    timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then(
+      (value) => setBeginTimestamp(value)
+    );
+    timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then(
+      (value) => setEndTimestamp(value)
+    );
   }, [regionMetadata]);
 
   const progress = [

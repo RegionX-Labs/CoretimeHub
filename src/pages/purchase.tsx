@@ -1,12 +1,12 @@
 import BorderLinearProgress from '@/components/elements/BorderLinearProgress';
-import DataCardComponent from '@/components/elements/DataCard';
+import SaleInfoGrid from '@/components/elements/SaleInfo';
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
 import { SalePhase } from '@/models';
-import { formatBalance, leadinFactorAt, parseHNString } from '@/utils/functions';
+import { leadinFactorAt, parseHNString } from '@/utils/functions';
 import { LoadingButton } from '@mui/lab';
 import { Box, Typography, useTheme } from '@mui/material';
 import { useInkathon } from '@scio-labs/use-inkathon';
@@ -33,17 +33,14 @@ const Purchase = () => {
   } = useRegions();
 
   useEffect(() => {
-    fetchCurrentPhase();
     fetchCurreentPrice();
+    fetchCurrentPhase();
   }, [api, apiState, saleInfo]);
 
   const fetchCurrentPhase = async () => {
     if (!api || apiState !== ApiState.READY) return;
     const blockNumber = parseHNString(((await api.query.system.number()).toHuman() as any).toString());
-    console.log(saleInfo);
-    console.log(saleInfo.saleStart + saleInfo.leadinLength);
     const saleEnd = saleInfo.saleStart + (timeslicePeriod * (saleInfo.regionEnd - saleInfo.regionBegin));
-    console.log(saleEnd);
 
     setCurrentBlockNumber(blockNumber);
     setSaleEnd(saleEnd);
@@ -68,7 +65,6 @@ const Purchase = () => {
 
   const purchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner) return;
-    console.log(currentPrice);
     const txPurchase = api.tx.broker.purchase(currentPrice);
 
     try {
@@ -122,45 +118,10 @@ const Purchase = () => {
           </>
         ) : (
           <>
-            <Box
-              sx={{
-                marginTop: '2em',
-                display: 'flex',
-                justifyContent: 'space-around',
-              }}
-            >
-              <Typography variant='h6'>
-                {`Current phase: ${currentPhase}`}
-              </Typography>
-              <Typography variant='h6'>
-                {`Current price: ${formatBalance(currentPrice)}`} ROC
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                marginTop: '4em',
-                display: 'flex',
-                justifyContent: 'space-around',
-              }}
-            >
-              <Box>
-                <DataCardComponent
-                  title={`Cores offered: ${saleInfo.coresOffered}`}
-                  content='Number of cores which are offered for sale.'
-                />
-              </Box>
-              <Box sx={{ borderLeft: "1px solid black", borderRight: "1px solid black" }}>
-                <DataCardComponent
-                  title={`Cores sold: ${saleInfo.coresSold}`}
-                  content='Number of cores which have been sold; never more than cores offered.'
-                />
-              </Box>
-              <Box>
-                <DataCardComponent
-                  title={`Ideal cores sold: ${saleInfo.idealCoresSold}`}
-                  content='The number of cores ideally sold. Selling this amount would result in no change to the price for the next sale.'
-                />
-              </Box>
+            <Box sx={{
+              marginTop: '2em',
+            }}>
+              <SaleInfoGrid currentPhase={currentPhase} currentPrice={currentPrice} saleInfo={saleInfo} saleEnd={saleEnd} />
             </Box>
             <Box sx={{
               marginTop: '4em',
