@@ -20,6 +20,7 @@ import {
 } from '@/contexts/apis';
 import { WS_CONTRACTS_CHAIN } from '@/contexts/apis/consts';
 import { RegionDataProvider } from '@/contexts/regions';
+import { SaleInfoProvider } from '@/contexts/sales';
 import { TaskDataProvider } from '@/contexts/tasks';
 import { ToastProvider } from '@/contexts/toast';
 
@@ -59,9 +60,11 @@ export default function MyApp(props: MyAppProps) {
                 apiOptions={{ types: { Id } }}
               >
                 <RegionDataProvider>
-                  <TaskDataProvider>
-                    {getLayout(<Component {...pageProps} />)}
-                  </TaskDataProvider>
+                  <SaleInfoProvider>
+                    <TaskDataProvider>
+                      {getLayout(<Component {...pageProps} />)}
+                    </TaskDataProvider>
+                  </SaleInfoProvider>
                 </RegionDataProvider>
               </UseInkathonProvider>
             </RelayApiContextProvider>

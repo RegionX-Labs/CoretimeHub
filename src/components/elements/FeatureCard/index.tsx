@@ -3,10 +3,10 @@ import {
   Card,
   CardActions,
   CardContent,
-  Link,
   Typography,
 } from '@mui/material';
 import Image, { StaticImageData } from 'next/image';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 import styles from './index.module.scss';
@@ -15,10 +15,19 @@ interface FeatureCardProps {
   title: string;
   buttonText: string;
   image: StaticImageData;
+  enabled: boolean;
   href: string;
 }
 
-const FeatureCard = ({ title, buttonText, image, href }: FeatureCardProps) => {
+const FeatureCard = ({
+  title,
+  buttonText,
+  image,
+  enabled,
+  href,
+}: FeatureCardProps) => {
+  const { push } = useRouter();
+
   return (
     <Card className={styles.card}>
       <CardContent>
@@ -28,11 +37,15 @@ const FeatureCard = ({ title, buttonText, image, href }: FeatureCardProps) => {
         {title}
       </Typography>
       <CardActions>
-        <Link margin='0 auto' href={href}>
-          <Button size='small' variant='text' className={styles.button}>
-            {buttonText}
-          </Button>
-        </Link>
+        <Button
+          onClick={() => enabled && push(href)}
+          size='small'
+          variant='text'
+          disabled={!enabled}
+          className={styles.button}
+        >
+          {buttonText}
+        </Button>
       </CardActions>
     </Card>
   );

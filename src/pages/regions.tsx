@@ -6,6 +6,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import Link from 'next/link';
 import { useState } from 'react';
 
 import {
@@ -25,7 +26,7 @@ import {
 } from '@/icons';
 import { RegionLocation } from '@/models';
 
-const Home = () => {
+const Dashboard = () => {
   const theme = useTheme();
   const { regions, loading, updateRegionName } = useRegions();
 
@@ -99,22 +100,33 @@ const Home = () => {
           <Backdrop open={loading}>
             <CircularProgress />
           </Backdrop>
-          {regions.map((region, index) => (
-            <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
-              <RegionCard
-                regionMetadata={region}
-                active={index === currentRegionIndex}
-                editable
-                updateName={(name) => updateRegionName(index, name)}
-              />
-            </Box>
-          ))}
+          {regions.length === 0 ? (
+            <>
+              <Typography>
+                No regions owned. Go to <Link href='/purchase'>bulk sales</Link>{' '}
+                to make a purchase
+              </Typography>
+            </>
+          ) : (
+            <>
+              {regions.map((region, index) => (
+                <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
+                  <RegionCard
+                    regionMetadata={region}
+                    active={index === currentRegionIndex}
+                    editable
+                    updateName={(name) => updateRegionName(index, name)}
+                  />
+                </Box>
+              ))}
+            </>
+          )}
         </Box>
       </Box>
       <Box
         sx={{
           position: 'fixed',
-          right: '10rem',
+          right: '7.5rem',
           color: theme.palette.text.secondary,
           background: theme.palette.background.default,
           minWidth: 280,
@@ -177,4 +189,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Dashboard;

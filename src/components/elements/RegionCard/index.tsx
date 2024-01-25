@@ -22,6 +22,7 @@ import React, { useEffect, useState } from 'react';
 import { timesliceToTimestamp } from '@/utils/functions';
 
 import { useRelayApi } from '@/contexts/apis';
+import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useTasks } from '@/contexts/tasks';
 import { RegionLocation, RegionMetadata } from '@/models';
@@ -102,7 +103,7 @@ const RegionCardInner = ({
   const [endTimestamp, setEndTimestamp] = useState(0);
 
   const {
-    state: { api },
+    state: { api, apiState },
   } = useRelayApi();
 
   const {
@@ -110,14 +111,16 @@ const RegionCardInner = ({
   } = useRegions();
 
   useEffect(() => {
-    if (api) {
-      timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then(
-        (value) => setBeginTimestamp(value)
-      );
-      timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then(
-        (value) => setEndTimestamp(value)
-      );
+    if (!api || apiState !== ApiState.READY) {
+      return;
     }
+
+    timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then(
+      (value) => setBeginTimestamp(value)
+    );
+    timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then((value) =>
+      setEndTimestamp(value)
+    );
   }, [regionMetadata]);
 
   const progress = [

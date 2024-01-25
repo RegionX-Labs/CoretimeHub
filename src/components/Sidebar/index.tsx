@@ -15,11 +15,12 @@ import { StatusIndicator } from '../elements';
 
 interface MenuItemProps {
   label: string;
+  enabled: boolean;
   route?: string;
   icon?: any;
 }
 
-const MenuItem = ({ label, route, icon }: MenuItemProps) => {
+const MenuItem = ({ label, enabled, route, icon }: MenuItemProps) => {
   const { pathname, push } = useRouter();
   const isActive = pathname === route;
 
@@ -27,8 +28,8 @@ const MenuItem = ({ label, route, icon }: MenuItemProps) => {
     <Box
       className={`${styles.menuItem} ${
         isActive ? styles.active : styles.inactive
-      }`}
-      onClick={() => route && push(route)}
+      } ${!enabled ? styles.disabled : ''}`}
+      onClick={() => enabled && route && push(route)}
     >
       {{
         ...icon,
@@ -62,23 +63,35 @@ export const Sidebar = () => {
       {
         label: 'Home',
         route: '/',
+        enabled: true,
         icon: <HomeIcon />,
       },
       {
         label: 'My Regions',
         route: '/regions',
+        enabled: true,
         icon: <DashboardIcon />,
       },
     ],
-    market: [
+    'primary market': [
+      {
+        label: 'Purchase a core',
+        route: '/purchase',
+        enabled: true,
+        icon: <ShoppingCartIcon />,
+      },
+    ],
+    'secondary market': [
       {
         label: 'Sell Region',
         route: '/market/sell',
+        enabled: false,
         icon: <ArrowCircleRightIcon />,
       },
       {
         label: 'Buy Region',
         route: '/market/buy',
+        enabled: false,
         icon: <ShoppingCartIcon />,
       },
     ],
@@ -93,6 +106,7 @@ export const Sidebar = () => {
             sx={{
               color: theme.palette.text.secondary,
               textTransform: 'capitalize',
+              marginBottom: '2em',
             }}
           >
             {label}
