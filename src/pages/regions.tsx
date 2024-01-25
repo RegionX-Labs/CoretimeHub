@@ -18,6 +18,7 @@ import {
 } from '@/components';
 
 import { useRegions } from '@/contexts/regions';
+import { useToast } from '@/contexts/toast';
 import {
   AssignmentIcon,
   InterlaceIcon,
@@ -36,30 +37,42 @@ const Dashboard = () => {
   const [assignModalOpen, openAssignModal] = useState(false);
   const [transferModalOpen, openTransferModal] = useState(false);
 
+  const { toastInfo } = useToast();
+
   const selectedRegion =
     currentRegionIndex === undefined ? undefined : regions[currentRegionIndex];
   const regionSelected = selectedRegion !== undefined;
+
+  const manage = (openModal: (_v: boolean) => void) => {
+    if (!regionSelected) {
+      toastInfo(
+        'First select a region by clicking on one of the regions displayed.'
+      );
+    } else {
+      openModal(true);
+    }
+  };
 
   const management = [
     {
       label: 'partition',
       icon: PartitionIcon,
-      onClick: () => openPartitionModal(true),
+      onClick: () => manage(openPartitionModal),
     },
     {
       label: 'interlace',
       icon: InterlaceIcon,
-      onClick: () => openInterlaceModal(true),
+      onClick: () => manage(openInterlaceModal),
     },
     {
       label: 'transfer',
       icon: TransferIcon,
-      onClick: () => openTransferModal(true),
+      onClick: () => manage(openTransferModal),
     },
     {
       label: 'assign',
       icon: AssignmentIcon,
-      onClick: () => openAssignModal(true),
+      onClick: () => manage(openAssignModal),
     },
   ];
 

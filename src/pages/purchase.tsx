@@ -34,16 +34,14 @@ const Purchase = () => {
   const [progress, setProgress] = useState<number | null>(0);
 
   const { activeSigner, activeAccount } = useInkathon();
-  const { toastError, toastSuccess, toastInfo } = useToast();
+  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast();
 
   const { saleInfo, loading } = useSaleInfo();
   const {
     state: { api, apiState },
   } = useCoretimeApi();
 
-  const {
-    fetchRegions,
-  } = useRegions();
+  const { fetchRegions } = useRegions();
 
   useEffect(() => {
     fetchBalance();
@@ -56,7 +54,13 @@ const Purchase = () => {
     const account = (
       await api.query.system.account(activeAccount.address)
     ).toHuman() as any;
-    setBalance(parseHNString(account.data.free.toString()));
+    const balance = parseHNString(account.data.free.toString());
+    setBalance(balance);
+    if (balance == 0) {
+      toastWarning(
+        'The selected account does not have any ROC tokens on the Coretime chain.'
+      );
+    }
   };
 
   const fetchCurrentPhase = async () => {
@@ -157,10 +161,10 @@ const Purchase = () => {
       </Box>
       <Box>
         {loading ||
-          !currentPhase ||
-          !saleEnd ||
-          !currentBlockNumber ||
-          !progress ? (
+        !currentPhase ||
+        !saleEnd ||
+        !currentBlockNumber ||
+        !progress ? (
           <>
             <Typography variant='h5' align='center'>
               Connect your wallet
@@ -196,9 +200,7 @@ const Purchase = () => {
               }}
             >
               <Link href='/regions'>
-                <Button variant='outlined'>
-                  Manage your regions
-                </Button>
+                <Button variant='outlined'>Manage your regions</Button>
               </Link>
               <LoadingButton
                 onClick={purchase}
