@@ -6,20 +6,22 @@ import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
 import { SalePhase } from '@/models';
-import { leadinFactorAt, parseHNString } from '@/utils/functions';
+import { formatBalance, leadinFactorAt, parseHNString } from '@/utils/functions';
 import { LoadingButton } from '@mui/lab';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Button, Typography, useTheme } from '@mui/material';
 import { useInkathon } from '@scio-labs/use-inkathon';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 const Purchase = () => {
   const theme = useTheme();
 
   const [working, setWorking] = useState(false);
-  const [currentPhase, setCurrentPhase] = useState(SalePhase.Interlude);
+  const [balance, setBalance] = useState<number>(0);
+  const [currentPhase, setCurrentPhase] = useState<SalePhase | null>(null);
   const [currentPrice, setCurrentPrice] = useState(0);
-  const [saleEnd, setSaleEnd] = useState(0);
-  const [currentBlockNumber, setCurrentBlockNumber] = useState(0);
+  const [saleEnd, setSaleEnd] = useState<number | null>(null);
+  const [currentBlockNumber, setCurrentBlockNumber] = useState<number | null>(null);
 
   const { activeSigner, activeAccount } = useInkathon();
   const { toastError, toastSuccess, toastInfo } = useToast();
@@ -33,12 +35,19 @@ const Purchase = () => {
   } = useRegions();
 
   useEffect(() => {
-    fetchCurreentPrice();
+    fetchBalance();
     fetchCurrentPhase();
+    fetchCurreentPrice();
   }, [api, apiState, saleInfo]);
 
-  const fetchCurrentPhase = async () => {
+  const fetchBalance = async () => {
     if (!api || apiState !== ApiState.READY) return;
+    const account = (await api.query.system.account(activeAccount?.address)).toHuman() as any;
+    setBalance(parseHNString(account.data.free.toString()));
+  }
+
+  const fetchCurrentPhase = async () => {
+    if (!api || apiState !== ApiState.READY || loading) return;
     const blockNumber = parseHNString(
       ((await api.query.system.number()).toHuman() as any).toString()
     );
@@ -49,11 +58,11 @@ const Purchase = () => {
     setCurrentBlockNumber(blockNumber);
     setSaleEnd(saleEnd);
 
-    if (saleInfo.saleStart > currentBlockNumber) {
+    if (saleInfo.saleStart > blockNumber) {
       setCurrentPhase(SalePhase.Interlude);
     } else if (
       saleInfo.saleStart + saleInfo.leadinLength >
-      currentBlockNumber
+      blockNumber
     ) {
       setCurrentPhase(SalePhase.Leadin);
     } else {
@@ -62,7 +71,7 @@ const Purchase = () => {
   };
 
   const fetchCurreentPrice = async () => {
-    if (!api || apiState !== ApiState.READY) return;
+    if (!api || apiState !== ApiState.READY || loading) return;
     const blockNumber = parseHNString(
       ((await api.query.system.number()).toHuman() as any).toString()
     );
@@ -110,22 +119,34 @@ const Purchase = () => {
 
   return (
     <Box>
-      <Box>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}>
+        <Box>
+          <Typography
+            variant='subtitle2'
+            sx={{ color: theme.palette.text.secondary }}
+          >
+            Purchase a core directly from the Coretime chain
+          </Typography>
+          <Typography
+            variant='subtitle1'
+            sx={{ color: theme.palette.text.primary }}
+          >
+            Purchase a core
+          </Typography>
+        </Box>
         <Typography
-          variant='subtitle2'
-          sx={{ color: theme.palette.text.secondary }}
-        >
-          Purchase a core directly from the Coretime chain
-        </Typography>
-        <Typography
-          variant='subtitle1'
+          variant='h6'
           sx={{ color: theme.palette.text.primary }}
         >
-          Purchase a core
+          {`Your balance: ${formatBalance(balance)} ROC`}
         </Typography>
       </Box>
       <Box>
-        {loading ? (
+        {loading || !currentPhase || !saleEnd || !currentBlockNumber ? (
           <>
             <Typography variant='h4' align='center'>
               Connect your wallet
@@ -147,9 +168,12 @@ const Purchase = () => {
             </Box>
             <Box
               sx={{
-                marginTop: '4em',
+                marginTop: '2em',
               }}
             >
+              <Typography variant='h6'>
+                Current Bulk Sale:
+              </Typography>
               <BorderLinearProgress
                 variant='determinate'
                 value={(currentBlockNumber / saleEnd) * 100}
@@ -159,9 +183,14 @@ const Purchase = () => {
               sx={{
                 marginTop: '2em',
                 display: 'flex',
-                justifyContent: 'space-around',
+                justifyContent: 'space-between',
               }}
             >
+              <Link href="/regions">
+                <Button variant='outlined' onClick={() => { }}>
+                  Manage your regions
+                </Button>
+              </Link>
               <LoadingButton
                 onClick={purchase}
                 variant='contained'

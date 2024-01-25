@@ -24,6 +24,7 @@ import {
   TransferIcon,
 } from '@/icons';
 import { RegionLocation } from '@/models';
+import Link from 'next/link';
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -99,16 +100,28 @@ const Dashboard = () => {
           <Backdrop open={loading}>
             <CircularProgress />
           </Backdrop>
-          {regions.map((region, index) => (
-            <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
-              <RegionCard
-                regionMetadata={region}
-                active={index === currentRegionIndex}
-                editable
-                updateName={(name) => updateRegionName(index, name)}
-              />
-            </Box>
-          ))}
+          {regions.length === 0 ?
+            <>
+              <Typography>
+                No regions owned. Go to <Link href="/purchase">
+                  bulk sales
+                </Link> to make a purchase
+              </Typography>
+            </>
+            :
+            <>
+              {regions.map((region, index) => (
+                <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
+                  <RegionCard
+                    regionMetadata={region}
+                    active={index === currentRegionIndex}
+                    editable
+                    updateName={(name) => updateRegionName(index, name)}
+                  />
+                </Box>
+              ))}
+            </>
+          }
         </Box>
       </Box>
       <Box

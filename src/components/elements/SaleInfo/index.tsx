@@ -48,9 +48,8 @@ const SaleInfoGrid = ({
     getBlockTimestamp(api, saleInfo.saleStart).then((value) =>
       setSaleStartTimestamp(value)
     );
-    console.log(saleEnd);
     getBlockTimestamp(api, saleEnd).then((value) => setSaleEndTimestamp(value));
-  }, [api, apiState, saleEnd, saleInfo]);
+  }, [api, apiState, saleEnd]);
 
   return (
     <Box className={styles.grid}>
