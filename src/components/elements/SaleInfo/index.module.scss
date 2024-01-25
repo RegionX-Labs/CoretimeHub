@@ -3,9 +3,9 @@
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: auto auto;
   gap: 2em;
-  border: 1px solid #181336;
   padding: 1.5em;
   border-radius: .5em;
+  box-shadow: 0 2px 5px 2px rgba(0, 0, 0, 0.2);
 }
 
 .gridItem {

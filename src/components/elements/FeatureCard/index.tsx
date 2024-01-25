@@ -10,6 +10,7 @@ import Image, { StaticImageData } from 'next/image';
 import React from 'react';
 
 import styles from './index.module.scss';
+import { useRouter } from 'next/router';
 
 interface FeatureCardProps {
   title: string;
@@ -26,6 +27,8 @@ const FeatureCard = ({
   enabled,
   href,
 }: FeatureCardProps) => {
+  const { push } = useRouter();
+
   return (
     <Card className={styles.card}>
       <CardContent>
@@ -35,16 +38,15 @@ const FeatureCard = ({
         {title}
       </Typography>
       <CardActions>
-        <Link margin='0 auto' href={enabled ? href : '#'}>
-          <Button
-            size='small'
-            variant='text'
-            disabled={!enabled}
-            className={styles.button}
-          >
-            {buttonText}
-          </Button>
-        </Link>
+        <Button
+          onClick={() => enabled && push(href)}
+          size='small'
+          variant='text'
+          disabled={!enabled}
+          className={styles.button}
+        >
+          {buttonText}
+        </Button>
       </CardActions>
     </Card>
   );

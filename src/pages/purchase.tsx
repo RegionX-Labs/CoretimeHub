@@ -2,7 +2,6 @@ import BorderLinearProgress from '@/components/elements/BorderLinearProgress';
 import SaleInfoGrid from '@/components/elements/SaleInfo';
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
-import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
 import { SalePhase } from '@/models';
@@ -37,9 +36,6 @@ const Purchase = () => {
   const {
     state: { api, apiState },
   } = useCoretimeApi();
-  const {
-    config: { timeslicePeriod },
-  } = useRegions();
 
   useEffect(() => {
     fetchBalance();
@@ -48,9 +44,9 @@ const Purchase = () => {
   }, [api, apiState, saleInfo]);
 
   const fetchBalance = async () => {
-    if (!api || apiState !== ApiState.READY) return;
+    if (!api || apiState !== ApiState.READY || !activeAccount) return;
     const account = (
-      await api.query.system.account(activeAccount?.address)
+      await api.query.system.account(activeAccount.address)
     ).toHuman() as any;
     setBalance(parseHNString(account.data.free.toString()));
   };
@@ -61,13 +57,15 @@ const Purchase = () => {
       ((await api.query.system.number()).toHuman() as any).toString()
     );
     const end =
-      saleInfo.saleStart +
-      timeslicePeriod * (saleInfo.regionEnd - saleInfo.regionBegin);
+      saleInfo.saleStart + 80 * (saleInfo.regionEnd - saleInfo.regionBegin);
 
     setCurrentBlockNumber(blockNumber);
     setSaleEnd(end);
 
     setProgress((blockNumber / end) * 100);
+    console.log(blockNumber);
+    console.log(end);
+    console.log((blockNumber / end) * 100);
 
     if (saleInfo.saleStart > blockNumber) {
       setCurrentPhase(SalePhase.Interlude);
@@ -158,7 +156,7 @@ const Purchase = () => {
         !currentBlockNumber ||
         !progress ? (
           <>
-            <Typography variant='h4' align='center'>
+            <Typography variant='h5' align='center'>
               Connect your wallet
             </Typography>
           </>
