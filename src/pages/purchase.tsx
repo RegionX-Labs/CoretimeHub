@@ -1,11 +1,14 @@
 import { LoadingButton } from '@mui/lab';
 import { Box, Button, Typography, useTheme } from '@mui/material';
 import { useInkathon } from '@scio-labs/use-inkathon';
+import TimeAgo from 'javascript-time-ago';
+import en from 'javascript-time-ago/locale/en.json';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import {
   formatBalance,
+  getBlockTimestamp,
   leadinFactorAt,
   parseHNString,
 } from '@/utils/functions';
@@ -33,9 +36,14 @@ const Purchase = () => {
   );
   const [progress, setProgress] = useState<number | null>(0);
 
+  TimeAgo.addLocale(en);
+  // Create formatter (English).
+  const timeAgo = new TimeAgo('en-US');
+
   const { activeSigner, activeAccount } = useInkathon();
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast();
 
+  const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const { saleInfo, loading } = useSaleInfo();
   const {
     state: { api, apiState },
@@ -68,11 +76,14 @@ const Purchase = () => {
     const blockNumber = parseHNString(
       ((await api.query.system.number()).toHuman() as any).toString()
     );
-    const end =
-      saleInfo.saleStart + 80 * (saleInfo.regionEnd - saleInfo.regionBegin);
+    const lastCommittedTimeslice = parseHNString(
+      (((await api.query.broker.status()).toHuman() as any).lastCommittedTimeslice.toString())
+    );
+    const end = blockNumber + 80 * (saleInfo.regionBegin - lastCommittedTimeslice);
 
     setCurrentBlockNumber(blockNumber);
     setSaleEnd(end);
+    getBlockTimestamp(api, end).then((value) => setSaleEndTimestamp(value));
 
     setProgress((blockNumber / end) * 100);
 
@@ -161,57 +172,62 @@ const Purchase = () => {
       </Box>
       <Box>
         {loading ||
-        !currentPhase ||
-        !saleEnd ||
-        !currentBlockNumber ||
-        !progress ? (
-          <>
-            <Typography variant='h5' align='center'>
-              Connect your wallet
-            </Typography>
-          </>
-        ) : (
-          <>
-            <Box
-              sx={{
-                marginTop: '2em',
-              }}
-            >
-              <SaleInfoGrid
-                currentPhase={currentPhase}
-                currentPrice={currentPrice}
-                saleInfo={saleInfo}
-                saleEnd={saleEnd}
-              />
-            </Box>
-            <Box
-              sx={{
-                marginTop: '2em',
-              }}
-            >
-              <Typography variant='h6'>Current Bulk Sale:</Typography>
-              <BorderLinearProgress variant='determinate' value={progress} />
-            </Box>
-            <Box
-              sx={{
-                marginTop: '2em',
-                display: 'flex',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Link href='/regions'>
-                <Button variant='outlined'>Manage your regions</Button>
-              </Link>
-              <LoadingButton
-                onClick={purchase}
-                variant='contained'
-                loading={working}
+          !currentPhase ||
+          !saleEnd ||
+          !currentBlockNumber ||
+          !progress ||
+          !saleEndTimestamp
+          ? (
+            <>
+              <Typography variant='h5' align='center'>
+                Connect your wallet
+              </Typography>
+            </>
+          ) : (
+            <>
+              <Box
+                sx={{
+                  marginTop: '2em',
+                }}
               >
-                Purchase
-              </LoadingButton>
-            </Box>
-          </>
-        )}
+                <SaleInfoGrid
+                  currentPhase={currentPhase}
+                  currentPrice={currentPrice}
+                  saleInfo={saleInfo}
+                  saleEnd={saleEnd}
+                />
+              </Box>
+              <Box
+                sx={{
+                  marginTop: '2em',
+                }}
+              >
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant='h6'>Current Bulk Sale:</Typography>
+                  <Typography>Ends {timeAgo.format(saleEndTimestamp)}</Typography>
+                </Box>
+                <BorderLinearProgress variant='determinate' value={progress} />
+              </Box>
+              <Box
+                sx={{
+                  marginTop: '2em',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Link href='/regions'>
+                  <Button variant='outlined'>Manage your regions</Button>
+                </Link>
+                <LoadingButton
+                  onClick={purchase}
+                  variant='contained'
+                  loading={working}
+                >
+                  Purchase
+                </LoadingButton>
+              </Box>
+            </>
+          )}
       </Box>
     </Box>
   );
