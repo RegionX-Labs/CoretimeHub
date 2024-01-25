@@ -100,15 +100,14 @@ const Dashboard = () => {
           <Backdrop open={loading}>
             <CircularProgress />
           </Backdrop>
-          {regions.length === 0 ?
+          {regions.length === 0 ? (
             <>
               <Typography>
-                No regions owned. Go to <Link href="/purchase">
-                  bulk sales
-                </Link> to make a purchase
+                No regions owned. Go to <Link href='/purchase'>bulk sales</Link>{' '}
+                to make a purchase
               </Typography>
             </>
-            :
+          ) : (
             <>
               {regions.map((region, index) => (
                 <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
@@ -121,7 +120,7 @@ const Dashboard = () => {
                 </Box>
               ))}
             </>
-          }
+          )}
         </Box>
       </Box>
       <Box

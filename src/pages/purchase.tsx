@@ -6,7 +6,11 @@ import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
 import { SalePhase } from '@/models';
-import { formatBalance, leadinFactorAt, parseHNString } from '@/utils/functions';
+import {
+  formatBalance,
+  leadinFactorAt,
+  parseHNString,
+} from '@/utils/functions';
 import { LoadingButton } from '@mui/lab';
 import { Box, Button, Typography, useTheme } from '@mui/material';
 import { useInkathon } from '@scio-labs/use-inkathon';
@@ -21,7 +25,10 @@ const Purchase = () => {
   const [currentPhase, setCurrentPhase] = useState<SalePhase | null>(null);
   const [currentPrice, setCurrentPrice] = useState(0);
   const [saleEnd, setSaleEnd] = useState<number | null>(null);
-  const [currentBlockNumber, setCurrentBlockNumber] = useState<number | null>(null);
+  const [currentBlockNumber, setCurrentBlockNumber] = useState<number | null>(
+    null
+  );
+  const [progress, setProgress] = useState<number | null>(0);
 
   const { activeSigner, activeAccount } = useInkathon();
   const { toastError, toastSuccess, toastInfo } = useToast();
@@ -42,28 +49,29 @@ const Purchase = () => {
 
   const fetchBalance = async () => {
     if (!api || apiState !== ApiState.READY) return;
-    const account = (await api.query.system.account(activeAccount?.address)).toHuman() as any;
+    const account = (
+      await api.query.system.account(activeAccount?.address)
+    ).toHuman() as any;
     setBalance(parseHNString(account.data.free.toString()));
-  }
+  };
 
   const fetchCurrentPhase = async () => {
     if (!api || apiState !== ApiState.READY || loading) return;
     const blockNumber = parseHNString(
       ((await api.query.system.number()).toHuman() as any).toString()
     );
-    const saleEnd =
+    const end =
       saleInfo.saleStart +
       timeslicePeriod * (saleInfo.regionEnd - saleInfo.regionBegin);
 
     setCurrentBlockNumber(blockNumber);
-    setSaleEnd(saleEnd);
+    setSaleEnd(end);
+
+    setProgress((blockNumber / end) * 100);
 
     if (saleInfo.saleStart > blockNumber) {
       setCurrentPhase(SalePhase.Interlude);
-    } else if (
-      saleInfo.saleStart + saleInfo.leadinLength >
-      blockNumber
-    ) {
+    } else if (saleInfo.saleStart + saleInfo.leadinLength > blockNumber) {
       setCurrentPhase(SalePhase.Leadin);
     } else {
       setCurrentPhase(SalePhase.Regular);
@@ -123,7 +131,8 @@ const Purchase = () => {
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
-        }}>
+        }}
+      >
         <Box>
           <Typography
             variant='subtitle2'
@@ -138,15 +147,16 @@ const Purchase = () => {
             Purchase a core
           </Typography>
         </Box>
-        <Typography
-          variant='h6'
-          sx={{ color: theme.palette.text.primary }}
-        >
+        <Typography variant='h6' sx={{ color: theme.palette.text.primary }}>
           {`Your balance: ${formatBalance(balance)} ROC`}
         </Typography>
       </Box>
       <Box>
-        {loading || !currentPhase || !saleEnd || !currentBlockNumber ? (
+        {loading ||
+        !currentPhase ||
+        !saleEnd ||
+        !currentBlockNumber ||
+        !progress ? (
           <>
             <Typography variant='h4' align='center'>
               Connect your wallet
@@ -171,13 +181,8 @@ const Purchase = () => {
                 marginTop: '2em',
               }}
             >
-              <Typography variant='h6'>
-                Current Bulk Sale:
-              </Typography>
-              <BorderLinearProgress
-                variant='determinate'
-                value={(currentBlockNumber / saleEnd) * 100}
-              />
+              <Typography variant='h6'>Current Bulk Sale:</Typography>
+              <BorderLinearProgress variant='determinate' value={progress} />
             </Box>
             <Box
               sx={{
@@ -186,8 +191,8 @@ const Purchase = () => {
                 justifyContent: 'space-between',
               }}
             >
-              <Link href="/regions">
-                <Button variant='outlined' onClick={() => { }}>
+              <Link href='/regions'>
+                <Button variant='outlined' onClick={() => {}}>
                   Manage your regions
                 </Button>
               </Link>
