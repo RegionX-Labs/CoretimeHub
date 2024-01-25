@@ -117,7 +117,10 @@ export type SaleInfo = {
 };
 
 export enum SalePhase {
+  // eslint-disable-next-line no-unused-vars
   Interlude = 'Interlude phase',
+  // eslint-disable-next-line no-unused-vars
   Leadin = 'Leadin phase',
+  // eslint-disable-next-line no-unused-vars
   Regular = 'Fixed price phase',
 }

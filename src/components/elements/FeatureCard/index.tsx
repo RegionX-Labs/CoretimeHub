@@ -3,14 +3,13 @@ import {
   Card,
   CardActions,
   CardContent,
-  Link,
   Typography,
 } from '@mui/material';
 import Image, { StaticImageData } from 'next/image';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 import styles from './index.module.scss';
-import { useRouter } from 'next/router';
 
 interface FeatureCardProps {
   title: string;

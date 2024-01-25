@@ -20,9 +20,9 @@ import {
 } from '@/contexts/apis';
 import { WS_CONTRACTS_CHAIN } from '@/contexts/apis/consts';
 import { RegionDataProvider } from '@/contexts/regions';
+import { SaleInfoProvider } from '@/contexts/sales';
 import { TaskDataProvider } from '@/contexts/tasks';
 import { ToastProvider } from '@/contexts/toast';
-import { SaleInfoProvider } from '@/contexts/sales';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();

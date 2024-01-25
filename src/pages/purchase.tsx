@@ -1,20 +1,24 @@
-import BorderLinearProgress from '@/components/elements/BorderLinearProgress';
-import SaleInfoGrid from '@/components/elements/SaleInfo';
-import { useCoretimeApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
-import { useSaleInfo } from '@/contexts/sales';
-import { useToast } from '@/contexts/toast';
-import { SalePhase } from '@/models';
-import {
-  formatBalance,
-  leadinFactorAt,
-  parseHNString,
-} from '@/utils/functions';
 import { LoadingButton } from '@mui/lab';
 import { Box, Button, Typography, useTheme } from '@mui/material';
 import { useInkathon } from '@scio-labs/use-inkathon';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+
+import {
+  formatBalance,
+  leadinFactorAt,
+  parseHNString,
+} from '@/utils/functions';
+
+import BorderLinearProgress from '@/components/elements/BorderLinearProgress';
+import SaleInfoGrid from '@/components/elements/SaleInfo';
+
+import { useCoretimeApi } from '@/contexts/apis';
+import { ApiState } from '@/contexts/apis/types';
+import { useRegions } from '@/contexts/regions';
+import { useSaleInfo } from '@/contexts/sales';
+import { useToast } from '@/contexts/toast';
+import { SalePhase } from '@/models';
 
 const Purchase = () => {
   const theme = useTheme();
@@ -37,11 +41,15 @@ const Purchase = () => {
     state: { api, apiState },
   } = useCoretimeApi();
 
+  const {
+    fetchRegions,
+  } = useRegions();
+
   useEffect(() => {
     fetchBalance();
     fetchCurrentPhase();
     fetchCurreentPrice();
-  }, [api, apiState, saleInfo]);
+  }, [api, apiState, saleInfo, activeAccount]);
 
   const fetchBalance = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount) return;
@@ -63,9 +71,6 @@ const Purchase = () => {
     setSaleEnd(end);
 
     setProgress((blockNumber / end) * 100);
-    console.log(blockNumber);
-    console.log(end);
-    console.log((blockNumber / end) * 100);
 
     if (saleInfo.saleStart > blockNumber) {
       setCurrentPhase(SalePhase.Interlude);
@@ -110,6 +115,7 @@ const Purchase = () => {
             events.forEach(({ event: { method } }) => {
               if (method === 'ExtrinsicSuccess') {
                 toastSuccess('Transaction successful');
+                fetchRegions();
               } else if (method === 'ExtrinsicFailed') {
                 toastError(`Failed to partition the region`);
               }
@@ -151,10 +157,10 @@ const Purchase = () => {
       </Box>
       <Box>
         {loading ||
-        !currentPhase ||
-        !saleEnd ||
-        !currentBlockNumber ||
-        !progress ? (
+          !currentPhase ||
+          !saleEnd ||
+          !currentBlockNumber ||
+          !progress ? (
           <>
             <Typography variant='h5' align='center'>
               Connect your wallet
@@ -190,7 +196,7 @@ const Purchase = () => {
               }}
             >
               <Link href='/regions'>
-                <Button variant='outlined' onClick={() => {}}>
+                <Button variant='outlined'>
                   Manage your regions
                 </Button>
               </Link>

@@ -1,13 +1,15 @@
 import { Box, Typography } from '@mui/material';
+import TimeAgo from 'javascript-time-ago';
+import en from 'javascript-time-ago/locale/en.json';
 import React, { useEffect, useState } from 'react';
 
-import styles from './index.module.scss';
-import { SaleInfo, SalePhase } from '@/models';
 import { formatBalance, getBlockTimestamp } from '@/utils/functions';
-import TimeAgo from 'javascript-time-ago';
+
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
-import en from 'javascript-time-ago/locale/en.json';
+import { SaleInfo, SalePhase } from '@/models';
+
+import styles from './index.module.scss';
 
 interface SaleInfoGridProps {
   saleInfo: SaleInfo;

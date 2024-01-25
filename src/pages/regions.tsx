@@ -6,6 +6,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import Link from 'next/link';
 import { useState } from 'react';
 
 import {
@@ -24,7 +25,6 @@ import {
   TransferIcon,
 } from '@/icons';
 import { RegionLocation } from '@/models';
-import Link from 'next/link';
 
 const Dashboard = () => {
   const theme = useTheme();

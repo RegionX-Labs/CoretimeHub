@@ -22,13 +22,13 @@ import React, { useEffect, useState } from 'react';
 import { timesliceToTimestamp } from '@/utils/functions';
 
 import { useRelayApi } from '@/contexts/apis';
+import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useTasks } from '@/contexts/tasks';
 import { RegionLocation, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 import { Label } from '..';
-import { ApiState } from '@/contexts/apis/types';
 
 interface RegionCardProps {
   regionMetadata: RegionMetadata;
