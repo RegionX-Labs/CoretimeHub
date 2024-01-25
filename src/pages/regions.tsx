@@ -18,6 +18,7 @@ import {
 } from '@/components';
 
 import { useRegions } from '@/contexts/regions';
+import { useToast } from '@/contexts/toast';
 import {
   AssignmentIcon,
   InterlaceIcon,
@@ -25,7 +26,6 @@ import {
   TransferIcon,
 } from '@/icons';
 import { RegionLocation } from '@/models';
-import { useToast } from '@/contexts/toast';
 
 const Dashboard = () => {
   const theme = useTheme();
