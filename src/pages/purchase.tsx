@@ -13,7 +13,7 @@ import {
   parseHNString,
 } from '@/utils/functions';
 
-import BorderLinearProgress from '@/components/elements/BorderLinearProgress';
+import Progress, { Section } from '@/components/elements/Progress';
 import SaleInfoGrid from '@/components/elements/SaleInfo';
 
 import { useCoretimeApi } from '@/contexts/apis';
@@ -35,6 +35,7 @@ const Purchase = () => {
     null
   );
   const [progress, setProgress] = useState<number | null>(0);
+  const [saleSections, setSaleSections] = useState<Section[]>([]);
 
   TimeAgo.addLocale(en);
   // Create formatter (English).
@@ -44,7 +45,7 @@ const Purchase = () => {
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast();
 
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
-  const { saleInfo, loading } = useSaleInfo();
+  const { saleInfo, config, loading } = useSaleInfo();
   const {
     state: { api, apiState },
   } = useCoretimeApi();
@@ -55,7 +56,7 @@ const Purchase = () => {
     fetchBalance();
     fetchCurrentPhase();
     fetchCurreentPrice();
-  }, [api, apiState, saleInfo, activeAccount]);
+  }, [api, apiState, saleInfo, activeAccount, loading]);
 
   const fetchBalance = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount) return;
@@ -77,15 +78,23 @@ const Purchase = () => {
       ((await api.query.system.number()).toHuman() as any).toString()
     );
     const lastCommittedTimeslice = parseHNString(
-      (((await api.query.broker.status()).toHuman() as any).lastCommittedTimeslice.toString())
+      (
+        (await api.query.broker.status()).toHuman() as any
+      ).lastCommittedTimeslice.toString()
     );
-    const end = blockNumber + 80 * (saleInfo.regionBegin - lastCommittedTimeslice);
+    const end =
+      blockNumber + 80 * (saleInfo.regionBegin - lastCommittedTimeslice);
 
     setCurrentBlockNumber(blockNumber);
     setSaleEnd(end);
     getBlockTimestamp(api, end).then((value) => setSaleEndTimestamp(value));
 
-    setProgress((blockNumber / end) * 100);
+    const saleDuration = end - saleInfo.saleStart;
+    const elapsed = blockNumber - (saleInfo.saleStart - config.interludeLength);
+
+    setProgress(
+      (elapsed / (end - (saleInfo.saleStart + config.interludeLength))) * 100
+    );
 
     if (saleInfo.saleStart > blockNumber) {
       setCurrentPhase(SalePhase.Interlude);
@@ -94,6 +103,19 @@ const Purchase = () => {
     } else {
       setCurrentPhase(SalePhase.Regular);
     }
+
+    setSaleSections([
+      { name: 'Interlude', value: 0 },
+      {
+        name: 'Leadin phase',
+        value: (config.interludeLength / saleDuration) * 100,
+      },
+      {
+        name: 'Fixed price phase',
+        value:
+          ((config.interludeLength + config.leadinLength) / saleDuration) * 100,
+      },
+    ]);
   };
 
   const fetchCurreentPrice = async () => {
@@ -172,62 +194,63 @@ const Purchase = () => {
       </Box>
       <Box>
         {loading ||
-          !currentPhase ||
-          !saleEnd ||
-          !currentBlockNumber ||
-          !progress ||
-          !saleEndTimestamp
-          ? (
-            <>
-              <Typography variant='h5' align='center'>
-                Connect your wallet
-              </Typography>
-            </>
-          ) : (
-            <>
-              <Box
-                sx={{
-                  marginTop: '2em',
-                }}
-              >
-                <SaleInfoGrid
-                  currentPhase={currentPhase}
-                  currentPrice={currentPrice}
-                  saleInfo={saleInfo}
-                  saleEnd={saleEnd}
-                />
+        !currentPhase ||
+        !saleEnd ||
+        !currentBlockNumber ||
+        !progress ||
+        !saleEndTimestamp ? (
+          <>
+            <Typography variant='h5' align='center'>
+              Connect your wallet
+            </Typography>
+          </>
+        ) : (
+          <>
+            <Box
+              sx={{
+                marginTop: '2em',
+              }}
+            >
+              <SaleInfoGrid
+                currentPhase={currentPhase}
+                currentPrice={currentPrice}
+                saleInfo={saleInfo}
+                saleEnd={saleEnd}
+              />
+            </Box>
+            <Box
+              sx={{
+                marginTop: '2em',
+              }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant='h6'>Current Bulk Sale:</Typography>
+                <Typography>Ends {timeAgo.format(saleEndTimestamp)}</Typography>
               </Box>
-              <Box
-                sx={{
-                  marginTop: '2em',
-                }}
-              >
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant='h6'>Current Bulk Sale:</Typography>
-                  <Typography>Ends {timeAgo.format(saleEndTimestamp)}</Typography>
-                </Box>
-                <BorderLinearProgress variant='determinate' value={progress} />
+              <Box sx={{ marginTop: '1em' }}>
+                <Progress progress={progress} sections={saleSections} />
               </Box>
-              <Box
-                sx={{
-                  marginTop: '2em',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                }}
+            </Box>
+            <Box
+              sx={{
+                marginTop: '4em',
+                display: 'flex',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Link href='/regions'>
+                <Button variant='outlined'>Manage your regions</Button>
+              </Link>
+              <LoadingButton
+                onClick={purchase}
+                variant='contained'
+                loading={working}
               >
-                <Link href='/regions'>
-                  <Button variant='outlined'>Manage your regions</Button>
-                </Link>
-                <LoadingButton
-                  onClick={purchase}
-                  variant='contained'
-                  loading={working}
-                >
-                  Purchase
-                </LoadingButton>
-              </Box>
-            </>
-          )}
+                Purchase
+              </LoadingButton>
+            </Box>
+          </>
+        )}
       </Box>
     </Box>
   );

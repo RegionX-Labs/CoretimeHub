@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
 
-import { SaleInfo } from '@/models';
+import { SaleConfig, SaleInfo } from '@/models';
 
 import { useCoretimeApi } from '../apis';
 import { ApiState } from '../apis/types';
@@ -10,6 +10,7 @@ import { ApiState } from '../apis/types';
 interface SaleData {
   loading: boolean;
   saleInfo: SaleInfo;
+  config: SaleConfig;
   fetchSaleInfo: () => void;
 }
 
@@ -27,6 +28,16 @@ const defaultSaleData: SaleData = {
     saleStart: 0,
     selloutPrice: null,
   },
+  config: {
+    advanceNotice: 0,
+    contributionTimeout: 0,
+    idealBulkProportion: 0,
+    interludeLength: 0,
+    leadinLength: 0,
+    limitCoresOffered: 0,
+    regionLength: 0,
+    renewalBump: 0,
+  },
   fetchSaleInfo: () => {
     /** */
   },
@@ -40,6 +51,7 @@ interface Props {
 
 const SaleInfoProvider = ({ children }: Props) => {
   const [saleInfo, setSaleInfo] = useState<SaleInfo>(defaultSaleData.saleInfo);
+  const [config, setConfig] = useState<SaleConfig>(defaultSaleData.config);
   const [loading, setLoading] = useState(true);
 
   const {
@@ -65,6 +77,21 @@ const SaleInfoProvider = ({ children }: Props) => {
         ? parseHNString(saleInfo.saleStart.toString())
         : null,
     });
+    const config: any = (
+      await coretimeApi.query.broker.configuration()
+    ).toHuman();
+    setConfig({
+      advanceNotice: parseHNString(config.advanceNotice.toString()),
+      contributionTimeout: parseHNString(config.contributionTimeout.toString()),
+      idealBulkProportion: config.idealBulkProportion,
+      interludeLength: parseHNString(config.interludeLength.toString()),
+      leadinLength: parseHNString(config.leadinLength.toString()),
+      limitCoresOffered: config.limitCoresOffered
+        ? parseHNString(config.limitCoresOffered.toString())
+        : null,
+      regionLength: parseHNString(config.regionLength.toString()),
+      renewalBump: config.renewalBump,
+    });
     setLoading(false);
   };
 
@@ -74,7 +101,9 @@ const SaleInfoProvider = ({ children }: Props) => {
   }, [coretimeApi, coretimeApiState]);
 
   return (
-    <SaleDataContext.Provider value={{ loading, saleInfo, fetchSaleInfo }}>
+    <SaleDataContext.Provider
+      value={{ loading, saleInfo, config, fetchSaleInfo }}
+    >
       {children}
     </SaleDataContext.Provider>
   );

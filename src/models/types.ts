@@ -124,3 +124,25 @@ export enum SalePhase {
   // eslint-disable-next-line no-unused-vars
   Regular = 'Fixed price phase',
 }
+
+export type SaleConfig = {
+  /// The number of Relay-chain blocks in advance which scheduling should be fixed and the
+  /// `Coretime::assign` API used to inform the Relay-chain.
+  advanceNotice: BlockNumber;
+  /// The length in blocks of the Interlude Period for forthcoming sales.
+  interludeLength: BlockNumber;
+  /// The length in blocks of the Leadin Period for forthcoming sales.
+  leadinLength: BlockNumber;
+  /// The length in timeslices of Regions which are up for sale in forthcoming sales.
+  regionLength: Timeslice;
+  /// The proportion of cores available for sale which should be sold in order for the price
+  /// to remain the same in the next sale.
+  idealBulkProportion: any;
+  /// An artificial limit to the number of cores which are allowed to be sold. If `Some` then
+  /// no more cores will be sold than this.
+  limitCoresOffered: CoreIndex | null;
+  /// The amount by which the renewal price increases each sale period.
+  renewalBump: any;
+  /// The duration by which rewards for contributions to the InstaPool must be collected.
+  contributionTimeout: Timeslice;
+};
