@@ -138,7 +138,7 @@ const RegionDataProvider = ({ children }: Props) => {
       // rough estimation
       const endBlockHeight = timeslicePeriod * region.getEnd();
       const currentBlockHeight = parseHNString(
-        (await coretimeApi.query.system.number()).toString()
+        (await relayApi.query.system.number()).toString()
       );
       const durationInBlocks = endBlockHeight - beginBlockHeight;
 
