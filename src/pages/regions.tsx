@@ -122,16 +122,19 @@ const Dashboard = () => {
             </>
           ) : (
             <>
-              {regions.map((region, index) => (
-                <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
-                  <RegionCard
-                    regionMetadata={region}
-                    active={index === currentRegionIndex}
-                    editable
-                    updateName={(name) => updateRegionName(index, name)}
-                  />
-                </Box>
-              ))}
+              {/* Don't show expired regions:  */}
+              {regions
+                .filter((region) => region.consumed < 1)
+                .map((region, index) => (
+                  <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
+                    <RegionCard
+                      regionMetadata={region}
+                      active={index === currentRegionIndex}
+                      editable
+                      updateName={(name) => updateRegionName(index, name)}
+                    />
+                  </Box>
+                ))}
             </>
           )}
         </Box>
