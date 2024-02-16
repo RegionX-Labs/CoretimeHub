@@ -1,4 +1,3 @@
-import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import HomeIcon from '@mui/icons-material/Home';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -82,12 +81,6 @@ export const Sidebar = () => {
       },
     ],
     'secondary market': [
-      {
-        label: 'Sell Region',
-        route: '/market/sell',
-        enabled: false,
-        icon: <ArrowCircleRightIcon />,
-      },
       {
         label: 'Buy Region',
         route: '/market/buy',
