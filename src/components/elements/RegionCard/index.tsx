@@ -172,7 +172,7 @@ const RegionCardInner = ({
           }}
         >
           <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
-          {`Duration: ${formatDuration(endTimestamp - beginTimestamp)}`}
+          {`Duration: ${formatDuration(Math.floor((endTimestamp - beginTimestamp + 999) / 1000) * 1000)}`}
         </div>
         <Box
           sx={{
