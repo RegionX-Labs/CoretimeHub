@@ -20,6 +20,7 @@ import { useCoretimeApi, useRelayApi } from '../apis';
 import { CONTRACT_XC_REGIONS } from '../apis/consts';
 import { ApiState } from '../apis/types';
 import XcRegionsMetadata from '../../contracts/xc_regions.json';
+import { BN } from '@polkadot/util';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
@@ -280,13 +281,14 @@ const RegionDataProvider = ({ children }: Props) => {
     const regions: Array<Region> = [];
 
     for await (const regionId of rawRegionIds) {
+      const id = contractsApi.createType('Id', { U128: regionId });
       const result = await contractQuery(
         contractsApi,
         '',
         contract,
         'RegionMetadata::get_metadata',
         {},
-        [regionId]
+        [id]
       );
 
       const { output, isError: queryError } = decodeOutput(
