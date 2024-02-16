@@ -20,7 +20,6 @@ import { useCoretimeApi, useRelayApi } from '../apis';
 import { CONTRACT_XC_REGIONS } from '../apis/consts';
 import { ApiState } from '../apis/types';
 import XcRegionsMetadata from '../../contracts/xc_regions.json';
-import { BN } from '@polkadot/util';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;

@@ -9,18 +9,20 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useContract, useInkathon } from '@scio-labs/use-inkathon';
+import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
 import { useState } from 'react';
 
 import { RegionCard } from '@/components/elements';
 import AmountInput from '@/components/elements/AmountInput';
 
 import { useCoretimeApi } from '@/contexts/apis';
-import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
+import { CONTRACT_XC_REGIONS, CONTRACT_MARKET } from '@/contexts/apis/consts';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import XcRegionsMetadata from '@/contracts/xc_regions.json';
+import MarketMetadata from '@/contracts/market.json';
 import { RegionMetadata } from '@/models';
+import { Region } from 'coretime-utils';
 
 interface TransferModalProps {
   open: boolean;
@@ -34,17 +36,99 @@ export const SellModal = ({
   regionMetadata,
 }: TransferModalProps) => {
   const { activeAccount, activeSigner, api: contractsApi } = useInkathon();
-  const { contract } = useContract(XcRegionsMetadata, CONTRACT_XC_REGIONS);
+
+  const { contract: xcRegionsContract } = useContract(
+    XcRegionsMetadata,
+    CONTRACT_XC_REGIONS
+  );
+  const { contract: marketContract } = useContract(
+    MarketMetadata,
+    CONTRACT_MARKET
+  );
 
   const { fetchRegions } = useRegions();
   const { toastError, toastInfo, toastSuccess } = useToast();
-  const {
-    state: { api: coretimeApi },
-  } = useCoretimeApi();
 
   const [regionPrice, setRegionPrice] = useState('');
   const [paymentReceiver, setPaymentReceiver] = useState<null | string>(null);
   const [working, setWorking] = useState(false);
+
+  const listOnSale = async () => {
+    //await approveXcRegion(regionMetadata.region);
+    await listRegion(regionMetadata.region);
+  };
+
+  const approveXcRegion = async (region: Region) => {
+    if (!contractsApi || !activeAccount || !xcRegionsContract) {
+      return;
+    }
+
+    try {
+      setWorking(true);
+      const rawRegionId = region.getEncodedRegionId(contractsApi);
+      const id = contractsApi.createType('Id', { U128: rawRegionId });
+
+      await contractTx(
+        contractsApi,
+        activeAccount.address,
+        xcRegionsContract,
+        'PSP34::approve',
+        {},
+        [CONTRACT_MARKET, id, true]
+      );
+
+      toastSuccess(`Successfully approved region to the market.`);
+      onClose();
+      fetchRegions();
+    } catch (e: any) {
+      toastError(
+        `Failed to approve the region. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
+        }`
+      );
+      setWorking(false);
+    }
+  };
+
+  const listRegion = async (region: Region) => {
+    if (!contractsApi || !activeAccount || !marketContract) {
+      return;
+    }
+
+    try {
+      setWorking(true);
+      const rawRegionId = region.getEncodedRegionId(contractsApi);
+      const id = contractsApi.createType('Id', { U128: rawRegionId });
+      // const timeslicePrice = (Number(regionPrice) * Math.pow(10, 12)) / regionDuration;
+      const timeslicePrice = 50;
+      console.log(CONTRACT_MARKET);
+
+      await contractTx(
+        contractsApi,
+        activeAccount.address,
+        marketContract,
+        'list_region',
+        {},
+        [id, timeslicePrice, null]
+      );
+
+      toastSuccess(`Successfully listed region on sale.`);
+      onClose();
+      fetchRegions();
+    } catch (e: any) {
+      console.log(e);
+      toastError(
+        `Failed to list the region. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
+        }`
+      );
+      setWorking(false);
+    }
+  };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
@@ -56,7 +140,6 @@ export const SellModal = ({
             <ArrowDownwardOutlinedIcon />
           </Stack>
           <Stack direction='column' gap={2}>
-            <Typography>Total region price:</Typography>
             <AmountInput
               amount={regionPrice}
               title='Region price'
@@ -76,7 +159,11 @@ export const SellModal = ({
         </Stack>
       </DialogContent>
       <DialogActions>
-        <LoadingButton onClick={() => {}} variant='contained' loading={working}>
+        <LoadingButton
+          onClick={listOnSale}
+          variant='contained'
+          loading={working}
+        >
           List on sale
         </LoadingButton>
         <Button onClick={onClose} variant='outlined'>
