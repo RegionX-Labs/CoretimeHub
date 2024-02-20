@@ -5,3 +5,4 @@ export const MINUTE = 60 * SECOND;
 export const HOUR = 60 * MINUTE;
 export const DAY = 24 * HOUR;
 export const UNIT_DECIMALS = 10 ** 12;
+export const LISTING_DEPOSIT = 0 * UNIT_DECIMALS;

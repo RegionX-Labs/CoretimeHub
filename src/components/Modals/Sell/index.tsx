@@ -15,13 +15,12 @@ import { useState } from 'react';
 import { RegionCard } from '@/components/elements';
 import AmountInput from '@/components/elements/AmountInput';
 
-import { useCoretimeApi } from '@/contexts/apis';
 import { CONTRACT_XC_REGIONS, CONTRACT_MARKET } from '@/contexts/apis/consts';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import MarketMetadata from '@/contracts/market.json';
-import { RegionMetadata } from '@/models';
+import { LISTING_DEPOSIT, RegionMetadata, UNIT_DECIMALS } from '@/models';
 import { Region } from 'coretime-utils';
 
 interface TransferModalProps {
@@ -35,7 +34,7 @@ export const SellModal = ({
   onClose,
   regionMetadata,
 }: TransferModalProps) => {
-  const { activeAccount, activeSigner, api: contractsApi } = useInkathon();
+  const { activeAccount, api: contractsApi } = useInkathon();
 
   const { contract: xcRegionsContract } = useContract(
     XcRegionsMetadata,
@@ -47,14 +46,14 @@ export const SellModal = ({
   );
 
   const { fetchRegions } = useRegions();
-  const { toastError, toastInfo, toastSuccess } = useToast();
+  const { toastError, toastSuccess } = useToast();
 
   const [regionPrice, setRegionPrice] = useState('');
-  const [paymentReceiver, setPaymentReceiver] = useState<null | string>(null);
+  const [paymentReceiver, setPaymentReceiver] = useState<string>('');
   const [working, setWorking] = useState(false);
 
   const listOnSale = async () => {
-    //await approveXcRegion(regionMetadata.region);
+    await approveXcRegion(regionMetadata.region);
     await listRegion(regionMetadata.region);
   };
 
@@ -82,10 +81,9 @@ export const SellModal = ({
       fetchRegions();
     } catch (e: any) {
       toastError(
-        `Failed to approve the region. Error: ${
-          e.errorMessage === 'Error'
-            ? 'Please check your balance.'
-            : e.errorMessage
+        `Failed to approve the region. Error: ${e.errorMessage === 'Error'
+          ? 'Please check your balance.'
+          : e.errorMessage
         }`
       );
       setWorking(false);
@@ -100,17 +98,23 @@ export const SellModal = ({
     try {
       setWorking(true);
       const rawRegionId = region.getEncodedRegionId(contractsApi);
-      const id = contractsApi.createType('Id', { U128: rawRegionId });
-      // const timeslicePrice = (Number(regionPrice) * Math.pow(10, 12)) / regionDuration;
-      const timeslicePrice = 50;
-      console.log(CONTRACT_MARKET);
+
+      const id = contractsApi.createType('Id', {
+        U128: rawRegionId.toString(),
+      });
+      const regionDuration = region.getEnd() - region.getBegin();
+      const timeslicePrice = (
+        (Number(regionPrice) * UNIT_DECIMALS) /
+        regionDuration
+      ).toFixed(0);
+      console.log(timeslicePrice);
 
       await contractTx(
         contractsApi,
         activeAccount.address,
         marketContract,
         'list_region',
-        {},
+        { value: LISTING_DEPOSIT },
         [id, timeslicePrice, null]
       );
 
@@ -118,12 +122,10 @@ export const SellModal = ({
       onClose();
       fetchRegions();
     } catch (e: any) {
-      console.log(e);
       toastError(
-        `Failed to list the region. Error: ${
-          e.errorMessage === 'Error'
-            ? 'Please check your balance.'
-            : e.errorMessage
+        `Failed to list the region. Error: ${e.errorMessage === 'Error'
+          ? 'Please check your balance.'
+          : e.errorMessage
         }`
       );
       setWorking(false);

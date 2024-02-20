@@ -69,13 +69,11 @@ const RegionDataProvider = ({ children }: Props) => {
   const [timeslicePeriod, setTimeslicePeriod] = useState<number>(0);
   const [loading, setLoading] = useState(false);
 
-  const apisConnected =
-    coretimeApi &&
-    coretimeApiState === ApiState.READY &&
-    relayApi &&
-    relayApiState === ApiState.READY &&
-    contractsApi &&
-    contractsReady;
+  const relayConnected = relayApi && relayApiState === ApiState.READY;
+
+  const coretimeConnected = coretimeApi && coretimeApiState === ApiState.READY;
+
+  const contractsConnected = contractsApi && contractsReady;
 
   const fetchTasks = async () => {
     if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
@@ -109,15 +107,16 @@ const RegionDataProvider = ({ children }: Props) => {
   };
 
   const fetchRegions = async (): Promise<void> => {
-    if (!apisConnected || !activeAccount) {
+    if (!activeAccount || !relayApi) {
       setRegions([]);
       return;
     }
 
     setLoading(true);
-    const timeslicePeriod = parseHNString(
-      coretimeApi.consts.broker.timeslicePeriod.toString()
-    );
+
+    const timeslicePeriod = coretimeConnected
+      ? parseHNString(coretimeApi.consts.broker.timeslicePeriod.toString())
+      : 80;
 
     const tasks = await fetchTasks();
 
@@ -179,13 +178,12 @@ const RegionDataProvider = ({ children }: Props) => {
   };
 
   useEffect(() => {
-    if (!apisConnected) return;
-    const timeslicePeriod = parseHNString(
-      coretimeApi.consts.broker.timeslicePeriod.toString()
-    );
+    const timeslicePeriod = coretimeConnected
+      ? parseHNString(coretimeApi.consts.broker.timeslicePeriod.toString())
+      : 80;
     setTimeslicePeriod(timeslicePeriod);
     fetchRegions();
-  }, [apisConnected]);
+  }, [relayConnected, coretimeConnected, contractsConnected]);
 
   useEffect(() => {
     activeAccount && fetchRegions();

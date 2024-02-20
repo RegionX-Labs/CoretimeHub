@@ -55,6 +55,8 @@ export const connect = (
   // We only want this function to be performed once
   if (apiState !== ApiState.DISCONNECTED) return;
 
+  if (!socket) return;
+
   dispatch({ type: 'CONNECT_INIT' });
 
   const provider = new WsProvider(socket);
