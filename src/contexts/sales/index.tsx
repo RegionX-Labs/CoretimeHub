@@ -63,35 +63,42 @@ const SaleInfoProvider = ({ children }: Props) => {
     if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
 
     const saleInfo: any = (await coretimeApi.query.broker.saleInfo()).toHuman();
-    setSaleInfo({
-      coresOffered: parseHNString(saleInfo.coresOffered.toString()),
-      coresSold: parseHNString(saleInfo.coresSold.toString()),
-      firstCore: parseHNString(saleInfo.firstCore.toString()),
-      idealCoresSold: parseHNString(saleInfo.idealCoresSold.toString()),
-      leadinLength: parseHNString(saleInfo.leadinLength.toString()),
-      price: parseHNString(saleInfo.price.toString()),
-      regionBegin: parseHNString(saleInfo.regionBegin.toString()),
-      regionEnd: parseHNString(saleInfo.regionEnd.toString()),
-      saleStart: parseHNString(saleInfo.saleStart.toString()),
-      selloutPrice: saleInfo.selloutPrice
-        ? parseHNString(saleInfo.saleStart.toString())
-        : null,
-    });
-    const config: any = (
-      await coretimeApi.query.broker.configuration()
-    ).toHuman();
-    setConfig({
-      advanceNotice: parseHNString(config.advanceNotice.toString()),
-      contributionTimeout: parseHNString(config.contributionTimeout.toString()),
-      idealBulkProportion: config.idealBulkProportion,
-      interludeLength: parseHNString(config.interludeLength.toString()),
-      leadinLength: parseHNString(config.leadinLength.toString()),
-      limitCoresOffered: config.limitCoresOffered
-        ? parseHNString(config.limitCoresOffered.toString())
-        : null,
-      regionLength: parseHNString(config.regionLength.toString()),
-      renewalBump: config.renewalBump,
-    });
+    if (Object.keys(saleInfo).length) {
+      setSaleInfo({
+        coresOffered: parseHNString(saleInfo.coresOffered.toString()),
+        coresSold: parseHNString(saleInfo.coresSold.toString()),
+        firstCore: parseHNString(saleInfo.firstCore.toString()),
+        idealCoresSold: parseHNString(saleInfo.idealCoresSold.toString()),
+        leadinLength: parseHNString(saleInfo.leadinLength.toString()),
+        price: parseHNString(saleInfo.price.toString()),
+        regionBegin: parseHNString(saleInfo.regionBegin.toString()),
+        regionEnd: parseHNString(saleInfo.regionEnd.toString()),
+        saleStart: parseHNString(saleInfo.saleStart.toString()),
+        selloutPrice: saleInfo.selloutPrice
+          ? parseHNString(saleInfo.saleStart.toString())
+          : null,
+      });
+      const config: any = (
+        await coretimeApi.query.broker.configuration()
+      ).toHuman();
+      setConfig({
+        advanceNotice: parseHNString(config.advanceNotice.toString()),
+        contributionTimeout: parseHNString(config.contributionTimeout.toString()),
+        idealBulkProportion: config.idealBulkProportion,
+        interludeLength: parseHNString(config.interludeLength.toString()),
+        leadinLength: parseHNString(config.leadinLength.toString()),
+        limitCoresOffered: config.limitCoresOffered
+          ? parseHNString(config.limitCoresOffered.toString())
+          : null,
+        regionLength: parseHNString(config.regionLength.toString()),
+        renewalBump: config.renewalBump,
+      });
+    }
+    else {
+      setSaleInfo(defaultSaleData.saleInfo);
+      setConfig(defaultSaleData.config);
+    }
+
     setLoading(false);
   };
 

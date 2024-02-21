@@ -20,7 +20,7 @@ import { useEffect, useState } from 'react';
 import { RegionCard } from '@/components/elements';
 import AmountInput from '@/components/elements/AmountInput';
 
-import { CONTRACT_MARKET,CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
+import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import MarketMetadata from '@/contracts/market.json';
@@ -91,10 +91,9 @@ export const SellModal = ({
       fetchRegions();
     } catch (e: any) {
       toastError(
-        `Failed to approve the region. Error: ${
-          e.errorMessage === 'Error'
-            ? 'Please check your balance.'
-            : e.errorMessage
+        `Failed to approve the region. Error: ${e.errorMessage === 'Error'
+          ? 'Please check your balance.'
+          : e
         }`
       );
       setWorking(false);
@@ -133,10 +132,9 @@ export const SellModal = ({
       fetchRegions();
     } catch (e: any) {
       toastError(
-        `Failed to list the region. Error: ${
-          e.errorMessage === 'Error'
-            ? 'Please check your balance.'
-            : e.errorMessage
+        `Failed to list the region. Error: ${e.errorMessage === 'Error'
+          ? 'Please check your balance.'
+          : e.errorMessage
         }`
       );
       setWorking(false);
