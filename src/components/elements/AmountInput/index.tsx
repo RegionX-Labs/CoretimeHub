@@ -5,7 +5,7 @@ interface AmountInputProps {
   currency: string;
   title: string;
   caption: string;
-  setAmount: (amount: string) => void;
+  setAmount: (_: string) => void;
 }
 
 // TODO: Fetch dot price and show how much is the currency amount worth.

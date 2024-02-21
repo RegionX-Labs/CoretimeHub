@@ -14,18 +14,18 @@ import {
   Typography,
 } from '@mui/material';
 import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
+import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
 import { RegionCard } from '@/components/elements';
 import AmountInput from '@/components/elements/AmountInput';
 
-import { CONTRACT_XC_REGIONS, CONTRACT_MARKET } from '@/contexts/apis/consts';
+import { CONTRACT_MARKET,CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import MarketMetadata from '@/contracts/market.json';
+import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import { LISTING_DEPOSIT, RegionMetadata, UNIT_DECIMALS } from '@/models';
-import { Region } from 'coretime-utils';
 
 interface TransferModalProps {
   open: boolean;
