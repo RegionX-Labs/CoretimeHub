@@ -5,12 +5,16 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Typography,
 } from '@mui/material';
 import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { RegionCard } from '@/components/elements';
 import AmountInput from '@/components/elements/AmountInput';
@@ -49,8 +53,14 @@ export const SellModal = ({
   const { toastError, toastSuccess } = useToast();
 
   const [regionPrice, setRegionPrice] = useState('');
-  const [paymentReceiver, setPaymentReceiver] = useState<string>('');
+  const [saleRecipient, setSaleRecipient] = useState<string>('');
   const [working, setWorking] = useState(false);
+
+  useEffect(() => {
+    if (activeAccount) {
+      setSaleRecipient(activeAccount.address);
+    }
+  }, [activeAccount]);
 
   const listOnSale = async () => {
     await approveXcRegion(regionMetadata.region);
@@ -81,9 +91,10 @@ export const SellModal = ({
       fetchRegions();
     } catch (e: any) {
       toastError(
-        `Failed to approve the region. Error: ${e.errorMessage === 'Error'
-          ? 'Please check your balance.'
-          : e.errorMessage
+        `Failed to approve the region. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
         }`
       );
       setWorking(false);
@@ -107,7 +118,6 @@ export const SellModal = ({
         (Number(regionPrice) * UNIT_DECIMALS) /
         regionDuration
       ).toFixed(0);
-      console.log(timeslicePrice);
 
       await contractTx(
         contractsApi,
@@ -115,7 +125,7 @@ export const SellModal = ({
         marketContract,
         'list_region',
         { value: LISTING_DEPOSIT },
-        [id, timeslicePrice, null]
+        [id, timeslicePrice, saleRecipient ? null : [saleRecipient]]
       );
 
       toastSuccess(`Successfully listed region on sale.`);
@@ -123,9 +133,10 @@ export const SellModal = ({
       fetchRegions();
     } catch (e: any) {
       toastError(
-        `Failed to list the region. Error: ${e.errorMessage === 'Error'
-          ? 'Please check your balance.'
-          : e.errorMessage
+        `Failed to list the region. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
         }`
       );
       setWorking(false);
@@ -151,11 +162,9 @@ export const SellModal = ({
             />
           </Stack>
           <Stack direction='column' gap={2}>
-            <Typography>Payment receiver:</Typography>
-            <TextField
-              value={paymentReceiver}
-              onChange={(e) => setPaymentReceiver(e.target.value)}
-              fullWidth
+            <RecipientSelector
+              setSaleRecipient={setSaleRecipient}
+              saleRecipient={saleRecipient}
             />
           </Stack>
         </Stack>
@@ -173,5 +182,53 @@ export const SellModal = ({
         </Button>
       </DialogActions>
     </Dialog>
+  );
+};
+
+interface RecipientSelectorProps {
+  setSaleRecipient: (_: string) => void;
+  saleRecipient: string;
+}
+
+const RecipientSelector = ({
+  setSaleRecipient,
+  saleRecipient,
+}: RecipientSelectorProps) => {
+  const [recipientKind, setRecipientKind] = useState('Me');
+
+  const handleRecipientKindChange = (event: any) => {
+    setSaleRecipient('');
+    setRecipientKind(event.target.value);
+  };
+
+  const handleOtherRecipientChange = (event: any) => {
+    setSaleRecipient(event.target.value);
+  };
+
+  return (
+    <div>
+      <FormControl fullWidth>
+        <InputLabel id='recipient-selector-label'>Sale Recipient</InputLabel>
+        <Select
+          labelId='recipient-selector-label'
+          id='recipient-selector'
+          value={recipientKind}
+          label='Recipient'
+          onChange={handleRecipientKindChange}
+        >
+          <MenuItem value='Me'>Me</MenuItem>
+          <MenuItem value='Other'>Other</MenuItem>
+        </Select>
+      </FormControl>
+      {recipientKind === 'Other' && (
+        <TextField
+          label='Specify sale recipient'
+          fullWidth
+          margin='normal'
+          value={saleRecipient}
+          onChange={handleOtherRecipientChange}
+        />
+      )}
+    </div>
   );
 };
