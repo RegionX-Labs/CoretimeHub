@@ -69,13 +69,11 @@ const RegionDataProvider = ({ children }: Props) => {
   const [timeslicePeriod, setTimeslicePeriod] = useState<number>(0);
   const [loading, setLoading] = useState(false);
 
-  const apisConnected =
-    coretimeApi &&
-    coretimeApiState === ApiState.READY &&
-    relayApi &&
-    relayApiState === ApiState.READY &&
-    contractsApi &&
-    contractsReady;
+  const relayConnected = relayApi && relayApiState === ApiState.READY;
+
+  const coretimeConnected = coretimeApi && coretimeApiState === ApiState.READY;
+
+  const contractsConnected = contractsApi && contractsReady;
 
   const fetchTasks = async () => {
     if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
@@ -109,15 +107,16 @@ const RegionDataProvider = ({ children }: Props) => {
   };
 
   const fetchRegions = async (): Promise<void> => {
-    if (!apisConnected || !activeAccount) {
+    if (!activeAccount || !relayApi) {
       setRegions([]);
       return;
     }
 
     setLoading(true);
-    const timeslicePeriod = parseHNString(
-      coretimeApi.consts.broker.timeslicePeriod.toString()
-    );
+
+    const timeslicePeriod = coretimeConnected
+      ? parseHNString(coretimeApi.consts.broker.timeslicePeriod.toString())
+      : 80;
 
     const tasks = await fetchTasks();
 
@@ -170,20 +169,21 @@ const RegionDataProvider = ({ children }: Props) => {
 
     setRegions(
       _regions.filter(
-        ({ region }) => region.getOwner() === activeAccount.address
+        // Only user owned non-expired regions.
+        ({ region, consumed }) =>
+          region.getOwner() === activeAccount.address && consumed < 1
       )
     );
     setLoading(false);
   };
 
   useEffect(() => {
-    if (!apisConnected) return;
-    const timeslicePeriod = parseHNString(
-      coretimeApi.consts.broker.timeslicePeriod.toString()
-    );
+    const timeslicePeriod = coretimeConnected
+      ? parseHNString(coretimeApi.consts.broker.timeslicePeriod.toString())
+      : 80;
     setTimeslicePeriod(timeslicePeriod);
     fetchRegions();
-  }, [apisConnected]);
+  }, [relayConnected, coretimeConnected, contractsConnected]);
 
   useEffect(() => {
     activeAccount && fetchRegions();
@@ -278,13 +278,14 @@ const RegionDataProvider = ({ children }: Props) => {
     const regions: Array<Region> = [];
 
     for await (const regionId of rawRegionIds) {
+      const id = contractsApi.createType('Id', { U128: regionId });
       const result = await contractQuery(
         contractsApi,
         '',
         contract,
         'RegionMetadata::get_metadata',
         {},
-        [regionId]
+        [id]
       );
 
       const { output, isError: queryError } = decodeOutput(

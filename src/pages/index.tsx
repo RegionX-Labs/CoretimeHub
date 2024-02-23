@@ -49,7 +49,7 @@ const Home = () => {
           <Grid container item xs={6} direction='column'>
             <FeatureCard
               title={'Track Blockspace Consumption'}
-              enabled={false}
+              enabled={true}
               image={Chart}
               buttonText={'Corespace Weigher'}
               href='https://www.polkadot-weigher.com/'

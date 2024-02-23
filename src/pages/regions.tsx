@@ -1,3 +1,4 @@
+import SellIcon from '@mui/icons-material/Sell';
 import {
   Backdrop,
   Box,
@@ -16,6 +17,7 @@ import {
   TaskAssignModal,
   TransferModal,
 } from '@/components';
+import { SellModal } from '@/components/Modals/Sell';
 
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
@@ -35,6 +37,7 @@ const Dashboard = () => {
   const [partitionModalOpen, openPartitionModal] = useState(false);
   const [interlaceModalOpen, openInterlaceModal] = useState(false);
   const [assignModalOpen, openAssignModal] = useState(false);
+  const [sellModalOpen, openSellModal] = useState(false);
   const [transferModalOpen, openTransferModal] = useState(false);
 
   const { toastInfo } = useToast();
@@ -74,15 +77,23 @@ const Dashboard = () => {
       icon: AssignmentIcon,
       onClick: () => manage(openAssignModal),
     },
+    {
+      label: 'sell',
+      icon: SellIcon,
+      onClick: () => manage(openSellModal),
+    },
   ];
 
   const isDisabled = (action: string): boolean => {
     if (!selectedRegion) return false;
-    // XcRegions can only be transferred.
-    return (
-      action !== 'transfer' &&
-      selectedRegion.location !== RegionLocation.CORETIME_CHAIN
-    );
+    if (selectedRegion.location === RegionLocation.CORETIME_CHAIN) {
+      // regions on the coretime chain cannot be listed on sale. They first have to be
+      // transferred to the contacts chain.
+      return action === 'sell';
+    } else {
+      // XcRegions can only be transferred and listed on sale.
+      return !(action === 'transfer' || action === 'sell');
+    }
   };
 
   return (
@@ -122,19 +133,16 @@ const Dashboard = () => {
             </>
           ) : (
             <>
-              {/* Don't show expired regions:  */}
-              {regions
-                .filter((region) => region.consumed < 1)
-                .map((region, index) => (
-                  <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
-                    <RegionCard
-                      regionMetadata={region}
-                      active={index === currentRegionIndex}
-                      editable
-                      updateName={(name) => updateRegionName(index, name)}
-                    />
-                  </Box>
-                ))}
+              {regions.map((region, index) => (
+                <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
+                  <RegionCard
+                    regionMetadata={region}
+                    active={index === currentRegionIndex}
+                    editable
+                    updateName={(name) => updateRegionName(index, name)}
+                  />
+                </Box>
+              ))}
             </>
           )}
         </Box>
@@ -168,7 +176,13 @@ const Dashboard = () => {
                 color: theme.palette.text.secondary,
                 textTransform: 'capitalize',
               }}
-              startIcon={<Icon color={theme.palette.text.secondary} />}
+              startIcon={
+                <Icon
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  color={theme.palette.text.secondary}
+                />
+              }
               disabled={isDisabled(label)}
               onClick={onClick}
             >
@@ -197,6 +211,11 @@ const Dashboard = () => {
           <TransferModal
             open={transferModalOpen}
             onClose={() => openTransferModal(false)}
+            regionMetadata={selectedRegion}
+          />
+          <SellModal
+            open={sellModalOpen}
+            onClose={() => openSellModal(false)}
             regionMetadata={selectedRegion}
           />
         </>

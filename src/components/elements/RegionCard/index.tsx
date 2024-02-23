@@ -230,6 +230,7 @@ const RegionCardInner = ({
           <Label
             text={region.getPaid() ? 'Renewable' : 'Non-Renewable'}
             color='primary'
+            width='9rem'
           />
           <Label
             text={
@@ -238,6 +239,7 @@ const RegionCardInner = ({
                 : 'Contracts Chain'
             }
             color='success'
+            width='9rem'
           />
         </Box>
       </div>
