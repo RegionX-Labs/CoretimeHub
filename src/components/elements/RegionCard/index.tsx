@@ -161,6 +161,16 @@ const RegionCardInner = ({
     return tasks.find(({ id }) => id === taskId)?.name || '';
   };
 
+  const locationToLabel = (location: RegionLocation): string => {
+    if (location === RegionLocation.CONTRACTS_CHAIN) {
+      return 'Contracts Chain';
+    } else if (location === RegionLocation.MARKET) {
+      return 'Listed on Market';
+    } else {
+      return 'Coretime Chain'
+    }
+  }
+
   return (
     <>
       <div className={styles.regionInfo}>
@@ -233,11 +243,7 @@ const RegionCardInner = ({
             width='9rem'
           />
           <Label
-            text={
-              location === RegionLocation.CORETIME_CHAIN
-                ? 'Coretime Chain'
-                : 'Contracts Chain'
-            }
+            text={locationToLabel(location)}
             color='success'
             width='9rem'
           />
