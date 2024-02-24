@@ -27,7 +27,7 @@ import MarketMetadata from '@/contracts/market.json';
 import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import { LISTING_DEPOSIT, RegionMetadata, UNIT_DECIMALS } from '@/models';
 
-interface TransferModalProps {
+interface SellModalProps {
   open: boolean;
   onClose: () => void;
   regionMetadata: RegionMetadata;
@@ -37,7 +37,7 @@ export const SellModal = ({
   open,
   onClose,
   regionMetadata,
-}: TransferModalProps) => {
+}: SellModalProps) => {
   const { activeAccount, api: contractsApi } = useInkathon();
 
   const { contract: xcRegionsContract } = useContract(
@@ -89,11 +89,11 @@ export const SellModal = ({
       toastSuccess(`Successfully approved region to the market.`);
       onClose();
       fetchRegions();
+      setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to approve the region. Error: ${e.errorMessage === 'Error'
-          ? 'Please check your balance.'
-          : e
+        `Failed to approve the region. Error: ${
+          e.errorMessage === 'Error' ? 'Please check your balance.' : e
         }`
       );
       setWorking(false);
@@ -130,11 +130,13 @@ export const SellModal = ({
       toastSuccess(`Successfully listed region on sale.`);
       onClose();
       fetchRegions();
+      setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to list the region. Error: ${e.errorMessage === 'Error'
-          ? 'Please check your balance.'
-          : e.errorMessage
+        `Failed to list the region. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
         }`
       );
       setWorking(false);

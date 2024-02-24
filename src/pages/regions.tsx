@@ -1,3 +1,4 @@
+import BackspaceIcon from '@mui/icons-material/Backspace';
 import SellIcon from '@mui/icons-material/Sell';
 import {
   Backdrop,
@@ -18,6 +19,7 @@ import {
   TransferModal,
 } from '@/components';
 import { SellModal } from '@/components/Modals/Sell';
+import { UnlistModal } from '@/components/Modals/Unlist';
 
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
@@ -28,7 +30,6 @@ import {
   TransferIcon,
 } from '@/icons';
 import { RegionLocation } from '@/models';
-
 const Dashboard = () => {
   const theme = useTheme();
   const { regions, loading, updateRegionName } = useRegions();
@@ -38,8 +39,8 @@ const Dashboard = () => {
   const [interlaceModalOpen, openInterlaceModal] = useState(false);
   const [assignModalOpen, openAssignModal] = useState(false);
   const [sellModalOpen, openSellModal] = useState(false);
+  const [unlistModalOpen, openUnlistModal] = useState(false);
   const [transferModalOpen, openTransferModal] = useState(false);
-
   const { toastInfo } = useToast();
 
   const selectedRegion =
@@ -82,6 +83,11 @@ const Dashboard = () => {
       icon: SellIcon,
       onClick: () => manage(openSellModal),
     },
+    {
+      label: 'unlist',
+      icon: BackspaceIcon,
+      onClick: () => manage(openUnlistModal),
+    },
   ];
 
   const isDisabled = (action: string): boolean => {
@@ -90,9 +96,12 @@ const Dashboard = () => {
       // regions on the coretime chain cannot be listed on sale. They first have to be
       // transferred to the contacts chain.
       return action === 'sell';
-    } else {
+    } else if (selectedRegion.location === RegionLocation.CONTRACTS_CHAIN) {
       // XcRegions can only be transferred and listed on sale.
       return !(action === 'transfer' || action === 'sell');
+    } else {
+      // TODO: allow price updates as well.
+      return !(action == 'unlist');
     }
   };
 
@@ -216,6 +225,11 @@ const Dashboard = () => {
           <SellModal
             open={sellModalOpen}
             onClose={() => openSellModal(false)}
+            regionMetadata={selectedRegion}
+          />
+          <UnlistModal
+            open={unlistModalOpen}
+            onClose={() => openUnlistModal(false)}
             regionMetadata={selectedRegion}
           />
         </>

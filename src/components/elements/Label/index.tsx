@@ -18,7 +18,7 @@ export const Label = ({ text, color, width }: LabelProps) => {
             : theme.palette.primary.main,
         color: theme.palette.common.white,
         fontWeight: 400,
-        width
+        width,
       }}
     >
       <Typography variant='h2'>{text}</Typography>

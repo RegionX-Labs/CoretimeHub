@@ -17,8 +17,9 @@ import {
 } from '@/models';
 
 import { useCoretimeApi, useRelayApi } from '../apis';
-import { CONTRACT_XC_REGIONS } from '../apis/consts';
+import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '../apis/consts';
 import { ApiState } from '../apis/types';
+import MarketMetadata from '../../contracts/market.json';
 import XcRegionsMetadata from '../../contracts/xc_regions.json';
 
 interface RegionsData {
@@ -63,7 +64,14 @@ const RegionDataProvider = ({ children }: Props) => {
     activeAccount,
   } = useInkathon();
 
-  const { contract } = useContract(XcRegionsMetadata, CONTRACT_XC_REGIONS);
+  const { contract: xcRegionsContract } = useContract(
+    XcRegionsMetadata,
+    CONTRACT_XC_REGIONS
+  );
+  const { contract: marketContract } = useContract(
+    MarketMetadata,
+    CONTRACT_MARKET
+  );
 
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
   const [timeslicePeriod, setTimeslicePeriod] = useState<number>(0);
@@ -120,8 +128,11 @@ const RegionDataProvider = ({ children }: Props) => {
 
     const tasks = await fetchTasks();
 
-    const rawXcRegionIds = await getOwnedRawXcRegionIds();
-    const xcRegions = await getOwnedXcRegions(rawXcRegionIds);
+    const xcRegionIds = await getOwnedXcRegionIds();
+    const listedRegionIds = await getListedRegionIds();
+    const xcRegions = await getOwnedXcRegions(
+      xcRegionIds.concat(listedRegionIds)
+    );
 
     const brokerRegions = await getBrokerRegions();
 
@@ -154,9 +165,11 @@ const RegionDataProvider = ({ children }: Props) => {
       _regions.push(
         new RegionMetadata(
           region,
-          rawXcRegionIds.indexOf(rawId.toString()) === -1
-            ? RegionLocation.CORETIME_CHAIN
-            : RegionLocation.CONTRACTS_CHAIN,
+          determineRegionLocation(
+            xcRegionIds,
+            listedRegionIds,
+            rawId.toString()
+          ),
           rawId,
           name ?? `Region #${_regions.length + 1}`,
           coretimeOwnership,
@@ -228,8 +241,9 @@ const RegionDataProvider = ({ children }: Props) => {
     return brokerRegions;
   };
 
-  const getOwnedRawXcRegionIds = async (): Promise<Array<string>> => {
-    if (!contractsApi || !contract || !activeAccount) {
+  // Get the region ids of all the regions that the user owns on the contracts chain.
+  const getOwnedXcRegionIds = async (): Promise<Array<string>> => {
+    if (!contractsApi || !xcRegionsContract || !activeAccount) {
       return [];
     }
 
@@ -241,7 +255,7 @@ const RegionDataProvider = ({ children }: Props) => {
       const result = await contractQuery(
         contractsApi,
         '',
-        contract,
+        xcRegionsContract,
         'PSP34Enumerable::owners_token_by_index',
         {},
         [activeAccount.address, index]
@@ -253,7 +267,7 @@ const RegionDataProvider = ({ children }: Props) => {
         decodedOutput,
       } = decodeOutput(
         result,
-        contract,
+        xcRegionsContract,
         'PSP34Enumerable::owners_token_by_index'
       );
 
@@ -268,10 +282,30 @@ const RegionDataProvider = ({ children }: Props) => {
     return rawRegionIds;
   };
 
+  // Get the region ids of all the regions that the user listed on the market
+  const getListedRegionIds = async () => {
+    if (!contractsApi || !marketContract || !activeAccount) {
+      return [];
+    }
+
+    const result = await contractQuery(
+      contractsApi,
+      '',
+      marketContract,
+      'listed_regions',
+      {},
+      [activeAccount.address]
+    );
+
+    const { output } = decodeOutput(result, marketContract, 'listed_regions');
+
+    return output.map((regionId: string) => parseHNStringToString(regionId));
+  };
+
   const getOwnedXcRegions = async (
     rawRegionIds: Array<string>
   ): Promise<Array<Region>> => {
-    if (!contractsApi || !contract || !activeAccount) {
+    if (!contractsApi || !xcRegionsContract || !activeAccount) {
       return [];
     }
 
@@ -282,7 +316,7 @@ const RegionDataProvider = ({ children }: Props) => {
       const result = await contractQuery(
         contractsApi,
         '',
-        contract,
+        xcRegionsContract,
         'RegionMetadata::get_metadata',
         {},
         [id]
@@ -290,7 +324,7 @@ const RegionDataProvider = ({ children }: Props) => {
 
       const { output, isError: queryError } = decodeOutput(
         result,
-        contract,
+        xcRegionsContract,
         'RegionMetadata::get_metadata'
       );
 
@@ -318,6 +352,20 @@ const RegionDataProvider = ({ children }: Props) => {
     }
 
     return regions;
+  };
+
+  const determineRegionLocation = (
+    xcRegionIds: string[],
+    listedRegionIds: string[],
+    regionId: string
+  ): RegionLocation => {
+    if (xcRegionIds.indexOf(regionId) >= 0) {
+      return RegionLocation.CONTRACTS_CHAIN;
+    } else if (listedRegionIds.indexOf(regionId) >= 0) {
+      return RegionLocation.MARKET;
+    } else {
+      return RegionLocation.CORETIME_CHAIN;
+    }
   };
 
   return (
