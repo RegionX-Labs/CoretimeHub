@@ -29,6 +29,7 @@ import {
   TransferIcon,
 } from '@/icons';
 import { RegionLocation } from '@/models';
+import { UnlistModal } from '@/components/Modals/Unlist';
 const Dashboard = () => {
   const theme = useTheme();
   const { regions, loading, updateRegionName } = useRegions();
@@ -38,6 +39,7 @@ const Dashboard = () => {
   const [interlaceModalOpen, openInterlaceModal] = useState(false);
   const [assignModalOpen, openAssignModal] = useState(false);
   const [sellModalOpen, openSellModal] = useState(false);
+  const [unlistModalOpen, openUnlistModal] = useState(false);
   const [transferModalOpen, openTransferModal] = useState(false);
   const { toastInfo } = useToast();
 
@@ -84,7 +86,7 @@ const Dashboard = () => {
     {
       label: 'unlist',
       icon: BackspaceIcon,
-      onClick: () => manage(openSellModal),
+      onClick: () => manage(openUnlistModal),
     },
   ];
 
@@ -222,6 +224,11 @@ const Dashboard = () => {
           <SellModal
             open={sellModalOpen}
             onClose={() => openSellModal(false)}
+            regionMetadata={selectedRegion}
+          />
+          <UnlistModal
+            open={unlistModalOpen}
+            onClose={() => openUnlistModal(false)}
             regionMetadata={selectedRegion}
           />
         </>

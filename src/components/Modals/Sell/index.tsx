@@ -27,7 +27,7 @@ import MarketMetadata from '@/contracts/market.json';
 import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import { LISTING_DEPOSIT, RegionMetadata, UNIT_DECIMALS } from '@/models';
 
-interface TransferModalProps {
+interface SellModalProps {
   open: boolean;
   onClose: () => void;
   regionMetadata: RegionMetadata;
@@ -37,7 +37,7 @@ export const SellModal = ({
   open,
   onClose,
   regionMetadata,
-}: TransferModalProps) => {
+}: SellModalProps) => {
   const { activeAccount, api: contractsApi } = useInkathon();
 
   const { contract: xcRegionsContract } = useContract(
