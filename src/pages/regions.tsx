@@ -100,6 +100,7 @@ const Dashboard = () => {
       // XcRegions can only be transferred and listed on sale.
       return !(action === 'transfer' || action === 'sell');
     } else {
+      // TODO: allow price updates as well.
       return !(action == 'unlist');
     }
   };
