@@ -64,8 +64,14 @@ const RegionDataProvider = ({ children }: Props) => {
     activeAccount,
   } = useInkathon();
 
-  const { contract: xcRegionsContract } = useContract(XcRegionsMetadata, CONTRACT_XC_REGIONS);
-  const { contract: marketContract } = useContract(MarketMetadata, CONTRACT_MARKET);
+  const { contract: xcRegionsContract } = useContract(
+    XcRegionsMetadata,
+    CONTRACT_XC_REGIONS
+  );
+  const { contract: marketContract } = useContract(
+    MarketMetadata,
+    CONTRACT_MARKET
+  );
 
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
   const [timeslicePeriod, setTimeslicePeriod] = useState<number>(0);
@@ -124,7 +130,9 @@ const RegionDataProvider = ({ children }: Props) => {
 
     const rawXcRegionIds = await getOwnedRawXcRegionIds();
     const listedRegionIds = await getListedRawRegionIds();
-    const xcRegions = await getOwnedXcRegions(rawXcRegionIds.concat(listedRegionIds));
+    const xcRegions = await getOwnedXcRegions(
+      rawXcRegionIds.concat(listedRegionIds)
+    );
 
     const brokerRegions = await getBrokerRegions();
 
@@ -157,7 +165,11 @@ const RegionDataProvider = ({ children }: Props) => {
       _regions.push(
         new RegionMetadata(
           region,
-          determineRegionLocation(rawXcRegionIds, listedRegionIds, rawId.toString()),
+          determineRegionLocation(
+            rawXcRegionIds,
+            listedRegionIds,
+            rawId.toString()
+          ),
           rawId,
           name ?? `Region #${_regions.length + 1}`,
           coretimeOwnership,
@@ -285,14 +297,10 @@ const RegionDataProvider = ({ children }: Props) => {
       [activeAccount.address]
     );
 
-    const { output } = decodeOutput(
-      result,
-      marketContract,
-      'listed_regions'
-    );
+    const { output } = decodeOutput(result, marketContract, 'listed_regions');
 
     return output.map((regionId: string) => parseHNStringToString(regionId));
-  }
+  };
 
   const getOwnedXcRegions = async (
     rawRegionIds: Array<string>
@@ -346,7 +354,11 @@ const RegionDataProvider = ({ children }: Props) => {
     return regions;
   };
 
-  const determineRegionLocation = (xcRegionIds: string[], listedRegionIds: string[], regionId: string): RegionLocation => {
+  const determineRegionLocation = (
+    xcRegionIds: string[],
+    listedRegionIds: string[],
+    regionId: string
+  ): RegionLocation => {
     if (xcRegionIds.indexOf(regionId) >= 0) {
       return RegionLocation.CONTRACTS_CHAIN;
     } else if (listedRegionIds.indexOf(regionId) >= 0) {
@@ -354,7 +366,7 @@ const RegionDataProvider = ({ children }: Props) => {
     } else {
       return RegionLocation.CORETIME_CHAIN;
     }
-  }
+  };
 
   return (
     <RegionDataContext.Provider

@@ -83,7 +83,9 @@ const SaleInfoProvider = ({ children }: Props) => {
       ).toHuman();
       setConfig({
         advanceNotice: parseHNString(config.advanceNotice.toString()),
-        contributionTimeout: parseHNString(config.contributionTimeout.toString()),
+        contributionTimeout: parseHNString(
+          config.contributionTimeout.toString()
+        ),
         idealBulkProportion: config.idealBulkProportion,
         interludeLength: parseHNString(config.interludeLength.toString()),
         leadinLength: parseHNString(config.leadinLength.toString()),
@@ -93,8 +95,7 @@ const SaleInfoProvider = ({ children }: Props) => {
         regionLength: parseHNString(config.regionLength.toString()),
         renewalBump: config.renewalBump,
       });
-    }
-    else {
+    } else {
       setSaleInfo(defaultSaleData.saleInfo);
       setConfig(defaultSaleData.config);
     }

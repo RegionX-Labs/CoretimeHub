@@ -167,9 +167,9 @@ const RegionCardInner = ({
     } else if (location === RegionLocation.MARKET) {
       return 'Listed on Market';
     } else {
-      return 'Coretime Chain'
+      return 'Coretime Chain';
     }
-  }
+  };
 
   return (
     <>
