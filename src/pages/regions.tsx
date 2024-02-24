@@ -1,4 +1,5 @@
 import SellIcon from '@mui/icons-material/Sell';
+import BackspaceIcon from '@mui/icons-material/Backspace';
 import {
   Backdrop,
   Box,
@@ -28,7 +29,6 @@ import {
   TransferIcon,
 } from '@/icons';
 import { RegionLocation } from '@/models';
-
 const Dashboard = () => {
   const theme = useTheme();
   const { regions, loading, updateRegionName } = useRegions();
@@ -39,7 +39,6 @@ const Dashboard = () => {
   const [assignModalOpen, openAssignModal] = useState(false);
   const [sellModalOpen, openSellModal] = useState(false);
   const [transferModalOpen, openTransferModal] = useState(false);
-
   const { toastInfo } = useToast();
 
   const selectedRegion =
@@ -82,6 +81,11 @@ const Dashboard = () => {
       icon: SellIcon,
       onClick: () => manage(openSellModal),
     },
+    {
+      label: 'unlist',
+      icon: BackspaceIcon,
+      onClick: () => manage(openSellModal),
+    },
   ];
 
   const isDisabled = (action: string): boolean => {
@@ -90,9 +94,11 @@ const Dashboard = () => {
       // regions on the coretime chain cannot be listed on sale. They first have to be
       // transferred to the contacts chain.
       return action === 'sell';
-    } else {
+    } else if (selectedRegion.location === RegionLocation.CONTRACTS_CHAIN) {
       // XcRegions can only be transferred and listed on sale.
       return !(action === 'transfer' || action === 'sell');
+    } else {
+      return !(action == 'unlist');
     }
   };
 

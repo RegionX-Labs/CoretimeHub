@@ -19,8 +19,8 @@ import {
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '../apis/consts';
 import { ApiState } from '../apis/types';
-import XcRegionsMetadata from '../../contracts/xc_regions.json';
 import MarketMetadata from '../../contracts/market.json';
+import XcRegionsMetadata from '../../contracts/xc_regions.json';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
@@ -128,10 +128,10 @@ const RegionDataProvider = ({ children }: Props) => {
 
     const tasks = await fetchTasks();
 
-    const rawXcRegionIds = await getOwnedRawXcRegionIds();
-    const listedRegionIds = await getListedRawRegionIds();
+    const xcRegionIds = await getOwnedXcRegionIds();
+    const listedRegionIds = await getListedRegionIds();
     const xcRegions = await getOwnedXcRegions(
-      rawXcRegionIds.concat(listedRegionIds)
+      xcRegionIds.concat(listedRegionIds)
     );
 
     const brokerRegions = await getBrokerRegions();
@@ -166,7 +166,7 @@ const RegionDataProvider = ({ children }: Props) => {
         new RegionMetadata(
           region,
           determineRegionLocation(
-            rawXcRegionIds,
+            xcRegionIds,
             listedRegionIds,
             rawId.toString()
           ),
@@ -242,7 +242,7 @@ const RegionDataProvider = ({ children }: Props) => {
   };
 
   // Get the region ids of all the regions that the user owns on the contracts chain.
-  const getOwnedRawXcRegionIds = async (): Promise<Array<string>> => {
+  const getOwnedXcRegionIds = async (): Promise<Array<string>> => {
     if (!contractsApi || !xcRegionsContract || !activeAccount) {
       return [];
     }
@@ -283,7 +283,7 @@ const RegionDataProvider = ({ children }: Props) => {
   };
 
   // Get the region ids of all the regions that the user listed on the market
-  const getListedRawRegionIds = async () => {
+  const getListedRegionIds = async () => {
     if (!contractsApi || !marketContract || !activeAccount) {
       return [];
     }
