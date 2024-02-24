@@ -1,5 +1,5 @@
-import SellIcon from '@mui/icons-material/Sell';
 import BackspaceIcon from '@mui/icons-material/Backspace';
+import SellIcon from '@mui/icons-material/Sell';
 import {
   Backdrop,
   Box,
@@ -19,6 +19,7 @@ import {
   TransferModal,
 } from '@/components';
 import { SellModal } from '@/components/Modals/Sell';
+import { UnlistModal } from '@/components/Modals/Unlist';
 
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
@@ -29,7 +30,6 @@ import {
   TransferIcon,
 } from '@/icons';
 import { RegionLocation } from '@/models';
-import { UnlistModal } from '@/components/Modals/Unlist';
 const Dashboard = () => {
   const theme = useTheme();
   const { regions, loading, updateRegionName } = useRegions();

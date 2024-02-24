@@ -1,31 +1,22 @@
-import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
 import { LoadingButton } from '@mui/lab';
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Stack,
-  TextField,
-  Typography,
 } from '@mui/material';
 import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { RegionCard } from '@/components/elements';
-import AmountInput from '@/components/elements/AmountInput';
 
-import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
+import { CONTRACT_MARKET } from '@/contexts/apis/consts';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import MarketMetadata from '@/contracts/market.json';
-import XcRegionsMetadata from '@/contracts/xc_regions.json';
-import { LISTING_DEPOSIT, RegionMetadata, UNIT_DECIMALS } from '@/models';
+import { LISTING_DEPOSIT, RegionMetadata } from '@/models';
 
 interface UnlistModalProps {
   open: boolean;
@@ -75,6 +66,7 @@ export const UnlistModal = ({
       toastSuccess(`Successfully unlisted region from sale.`);
       onClose();
       fetchRegions();
+      setWorking(false);
     } catch (e: any) {
       toastError(
         `Failed to unlist region from sale. Error: ${
@@ -92,10 +84,6 @@ export const UnlistModal = ({
       <DialogContent>
         <Stack direction='column' gap={3}>
           <RegionCard regionMetadata={regionMetadata} bordered={false} />
-          <Stack direction='column' gap={1} alignItems='center'>
-            <Typography>Unlist Region</Typography>
-            <ArrowDownwardOutlinedIcon />
-          </Stack>
         </Stack>
       </DialogContent>
       <DialogActions>

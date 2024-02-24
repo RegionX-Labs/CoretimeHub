@@ -89,6 +89,7 @@ export const SellModal = ({
       toastSuccess(`Successfully approved region to the market.`);
       onClose();
       fetchRegions();
+      setWorking(false);
     } catch (e: any) {
       toastError(
         `Failed to approve the region. Error: ${
@@ -129,6 +130,7 @@ export const SellModal = ({
       toastSuccess(`Successfully listed region on sale.`);
       onClose();
       fetchRegions();
+      setWorking(false);
     } catch (e: any) {
       toastError(
         `Failed to list the region. Error: ${
