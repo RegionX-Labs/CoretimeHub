@@ -1,4 +1,8 @@
+import { useMarket } from "@/contexts/market";
+
 const Page = () => {
+  const { } = useMarket();
+
   return <></>;
 };
 

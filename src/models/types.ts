@@ -148,3 +148,11 @@ export type SaleConfig = {
   /// The duration by which rewards for contributions to the InstaPool must be collected.
   contributionTimeout: Timeslice;
 };
+
+export type Listing = {
+  region: Region,
+  seller: string,
+  timeslicePrice: Balance,
+  saleRecepient: string,
+  metadataVersion: number,
+};

@@ -23,6 +23,7 @@ import { RegionDataProvider } from '@/contexts/regions';
 import { SaleInfoProvider } from '@/contexts/sales';
 import { TaskDataProvider } from '@/contexts/tasks';
 import { ToastProvider } from '@/contexts/toast';
+import { MarketProvider } from '@/contexts/market';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -60,11 +61,13 @@ export default function MyApp(props: MyAppProps) {
                 apiOptions={{ types: { Id } }}
               >
                 <RegionDataProvider>
-                  <SaleInfoProvider>
-                    <TaskDataProvider>
-                      {getLayout(<Component {...pageProps} />)}
-                    </TaskDataProvider>
-                  </SaleInfoProvider>
+                  <MarketProvider>
+                    <SaleInfoProvider>
+                      <TaskDataProvider>
+                        {getLayout(<Component {...pageProps} />)}
+                      </TaskDataProvider>
+                    </SaleInfoProvider>
+                  </MarketProvider>
                 </RegionDataProvider>
               </UseInkathonProvider>
             </RelayApiContextProvider>
