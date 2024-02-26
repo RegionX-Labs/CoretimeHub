@@ -19,7 +19,7 @@ import {
   RelayApiContextProvider,
 } from '@/contexts/apis';
 import { WS_CONTRACTS_CHAIN } from '@/contexts/apis/consts';
-import { CommonDataProvider } from '@/contexts/common';
+import { ContextDataProvider } from '@/contexts/common';
 import { MarketProvider } from '@/contexts/market';
 import { RegionDataProvider } from '@/contexts/regions';
 import { SaleInfoProvider } from '@/contexts/sales';
@@ -61,7 +61,7 @@ export default function MyApp(props: MyAppProps) {
                 }}
                 apiOptions={{ types: { Id } }}
               >
-                <CommonDataProvider>
+                <ContextDataProvider>
                   <RegionDataProvider>
                     <MarketProvider>
                       <SaleInfoProvider>
@@ -71,7 +71,7 @@ export default function MyApp(props: MyAppProps) {
                       </SaleInfoProvider>
                     </MarketProvider>
                   </RegionDataProvider>
-                </CommonDataProvider>
+                </ContextDataProvider>
               </UseInkathonProvider>
             </RelayApiContextProvider>
           </CoretimeApiContextProvider>

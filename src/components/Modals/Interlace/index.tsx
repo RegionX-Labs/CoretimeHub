@@ -20,7 +20,7 @@ import { RegionCard } from '@/components/elements';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import { COREMASK_BYTES_LEN, RegionMetadata } from '@/models';
+import { COREMASK_BIT_LEN, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 
@@ -53,7 +53,7 @@ export const InterlaceModal = ({
   const [position, setPosition] = useState(oneStart);
 
   const generateMask = (position: number): string => {
-    const mask = Array(COREMASK_BYTES_LEN * 8).fill('0');
+    const mask = Array(COREMASK_BIT_LEN).fill('0');
     for (let i = oneStart; i <= position; ++i) mask[i] = '1';
     return mask.join('');
   };
@@ -132,10 +132,9 @@ export const InterlaceModal = ({
                 onChange={(_e, v) => setPosition(Number(v))}
                 valueLabelDisplay='on'
                 valueLabelFormat={(v) =>
-                  `${(
-                    ((v - oneStart + 1) / (COREMASK_BYTES_LEN * 8)) *
-                    100
-                  ).toFixed(2)}%`
+                  `${(((v - oneStart + 1) / COREMASK_BIT_LEN) * 100).toFixed(
+                    2
+                  )}%`
                 }
                 className={styles.slider}
               />

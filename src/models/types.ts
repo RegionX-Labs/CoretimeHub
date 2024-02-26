@@ -1,6 +1,7 @@
-import { Balance, CoreIndex, Region, TaskId, Timeslice } from 'coretime-utils';
+import { Balance, CoreIndex, TaskId, Timeslice } from 'coretime-utils';
 
 export { RegionMetadata } from './types/regionMetadata';
+export { Listing } from './types/listing';
 
 export type Percentage = number; // Percentage value between 0 and 1
 
@@ -16,11 +17,6 @@ export enum RegionLocation {
   // eslint-disable-next-line no-unused-vars
   MARKET,
 }
-
-export type CommonData = {
-  timeslicePeriod: number;
-  relayBlockNumber: number;
-};
 
 export type TaskMetadata = {
   id: TaskId;
@@ -91,21 +87,4 @@ export type SaleConfig = {
   renewalBump: any;
   /// The duration by which rewards for contributions to the InstaPool must be collected.
   contributionTimeout: Timeslice;
-};
-
-export type Listing = {
-  /// The reigon listed on sale.
-  region: Region;
-  /// The percentage of the region that got consumed by now.
-  regionConsumed: Percentage;
-  /// The percentage of the core the region ocucupies.
-  regionCoreOccupancy: Percentage;
-  /// The seller of the region.
-  seller: string;
-  /// The price per timeslice set by the seller.
-  timeslicePrice: Balance;
-  /// The recepient of the sale.
-  saleRecepient: string;
-  /// The metadata version of the region.
-  metadataVersion: number;
 };

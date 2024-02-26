@@ -1,8 +1,7 @@
 import { BN } from '@polkadot/util';
-import { RawRegionId, Region, TaskId } from 'coretime-utils';
+import { ContextData, RawRegionId, Region, TaskId } from 'coretime-utils';
 
-import { COREMASK_BYTES_LEN } from '../consts';
-import { CommonData, Percentage, RegionLocation } from '../types';
+import { Percentage, RegionLocation } from '../types';
 
 export class RegionMetadata {
   public region: Region;
@@ -40,27 +39,13 @@ export class RegionMetadata {
   public taskId: TaskId | null;
 
   public static construct(
-    context: CommonData,
+    context: ContextData,
     rawId: BN,
     region: Region,
     name: string,
     regionLocation: RegionLocation,
     task: number | null
   ): RegionMetadata {
-    // rough estimation
-    const beginBlockHeight = context.timeslicePeriod * region.getBegin();
-    const endBlockHeight = context.timeslicePeriod * region.getEnd();
-    const durationInBlocks = endBlockHeight - beginBlockHeight;
-
-    let consumed =
-      (context.relayBlockNumber - beginBlockHeight) / durationInBlocks;
-    if (consumed < 0) {
-      // This means that the region hasn't yet started.
-      consumed = 0;
-    }
-
-    const coreOccupancy =
-      region.getMask().countOnes() / (COREMASK_BYTES_LEN * 8);
     const currentUsage = 0;
 
     return new RegionMetadata(
@@ -68,9 +53,9 @@ export class RegionMetadata {
       regionLocation,
       rawId,
       name,
-      coreOccupancy,
+      region.coreOccupancy(),
       currentUsage,
-      consumed,
+      region.consumed(context),
       task
     );
   }

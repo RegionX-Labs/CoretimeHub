@@ -9,7 +9,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseHNString, parseHNStringToString } from '@/utils/functions';
 
-import { COREMASK_BYTES_LEN, Listing } from '@/models';
+import { COREMASK_BIT_LEN, Listing } from '@/models';
 
 import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '../apis/consts';
 import { useCommon } from '../common';
@@ -40,7 +40,7 @@ const MarketProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState(true);
   const [listedRegions, setListedRegions] = useState<Array<Listing>>([]);
 
-  const { relayBlockNumber, timeslicePeriod } = useCommon();
+  const context = useCommon();
 
   const {
     api: contractsApi,
@@ -112,40 +112,28 @@ const MarketProvider = ({ children }: Props) => {
         'RegionMetadata::get_metadata'
       );
 
-      // rough estimation
-      const beginBlockHeight =
-        timeslicePeriod * regionOutput.Ok.region.getBegin();
-      const endBlockHeight = timeslicePeriod * regionOutput.Ok.region.getEnd();
-      const durationInBlocks = endBlockHeight - beginBlockHeight;
+      const region = new Region(
+        {
+          begin: regionOutput.Ok.region.begin,
+          core: regionOutput.Ok.region.core,
+          mask: regionOutput.Ok.region.mask,
+        },
+        {
+          end: regionOutput.Ok.region.end,
+          owner: listingOutput.Ok.seller,
+          paid: null,
+        }
+      );
 
-      let consumed = (relayBlockNumber - beginBlockHeight) / durationInBlocks;
-      if (consumed < 0) {
-        // This means that the region hasn't yet started.
-        consumed = 0;
-      }
-
-      _listedRegions.push({
-        metadataVersion: listingOutput.Ok.metadataVersion,
-        region: new Region(
-          {
-            begin: regionOutput.Ok.region.begin,
-            core: regionOutput.Ok.region.core,
-            mask: regionOutput.Ok.region.mask,
-          },
-          {
-            end: regionOutput.Ok.region.end,
-            owner: listingOutput.Ok.seller,
-            paid: null,
-          }
-        ),
-        regionCoreOccupancy:
-          regionOutput.Ok.region.region.getMask().countOnes() /
-          (COREMASK_BYTES_LEN * 8),
-        regionConsumed: consumed,
-        saleRecepient: listingOutput.Ok.saleRecepient,
-        seller: listingOutput.Ok.seller,
-        timeslicePrice: parseHNString(listingOutput.Ok.timeslicePrice),
-      });
+      _listedRegions.push(
+        Listing.construct(
+          context,
+          region,
+          listingOutput.Ok.seller,
+          parseHNString(listingOutput.Ok.timeslicePrice),
+          listingOutput.Ok.saleRecepient
+        )
+      );
     }
 
     console.log(_listedRegions);
