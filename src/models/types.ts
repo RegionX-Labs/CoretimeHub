@@ -42,7 +42,7 @@ export class RegionMetadata {
   // be scheduled.
   //
   // A 100% Coretime Ownership implies that the region occupies the entire Core.
-  public coretimeOwnership: Percentage;
+  public coreOccupancy: Percentage;
 
   // Displays the current utilization of Coretime for the task assigned to the region.
   //
@@ -62,7 +62,7 @@ export class RegionMetadata {
     location: RegionLocation,
     rawId: RawRegionId,
     name: string | null,
-    coretimeOwnership: Percentage,
+    coreOccupancy: Percentage,
     currentUsage: Percentage,
     consumed: Percentage,
     taskId: TaskId | null
@@ -71,7 +71,7 @@ export class RegionMetadata {
     this.location = location;
     this.rawId = rawId;
     this.name = name;
-    this.coretimeOwnership = coretimeOwnership;
+    this.coreOccupancy = coreOccupancy;
     this.currentUsage = currentUsage;
     this.consumed = consumed;
     this.taskId = taskId;
@@ -150,9 +150,18 @@ export type SaleConfig = {
 };
 
 export type Listing = {
-  region: Region,
-  seller: string,
-  timeslicePrice: Balance,
-  saleRecepient: string,
-  metadataVersion: number,
+  /// The reigon listed on sale.
+  region: Region;
+  /// The percentage of the region that got consumed by now.
+  regionConsumed: Percentage;
+  /// The percentage of the core the region ocucupies.
+  regionCoreOccupancy: Percentage;
+  /// The seller of the region.
+  seller: string;
+  /// The price per timeslice set by the seller.
+  timeslicePrice: Balance;
+  /// The recepient of the sale.
+  saleRecepient: string;
+  /// The metadata version of the region.
+  metadataVersion: number;
 };

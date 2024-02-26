@@ -21,6 +21,9 @@ import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '../apis/consts';
 import { ApiState } from '../apis/types';
 import MarketMetadata from '../../contracts/market.json';
 import XcRegionsMetadata from '../../contracts/xc_regions.json';
+import { useCommon } from '../common';
+
+type Tasks = Record<string, number | null>;
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
@@ -73,17 +76,16 @@ const RegionDataProvider = ({ children }: Props) => {
     CONTRACT_MARKET
   );
 
+  const { relayBlockNumber, timeslicePeriod } = useCommon();
+
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
-  const [timeslicePeriod, setTimeslicePeriod] = useState<number>(0);
   const [loading, setLoading] = useState(false);
 
   const relayConnected = relayApi && relayApiState === ApiState.READY;
-
   const coretimeConnected = coretimeApi && coretimeApiState === ApiState.READY;
-
   const contractsConnected = contractsApi && contractsReady;
 
-  const fetchTasks = async () => {
+  const fetchTasks = async (): Promise<Tasks> => {
     if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
     const workplan = await coretimeApi.query.broker.workplan.entries();
     const tasks: Record<string, number | null> = {};
@@ -122,10 +124,6 @@ const RegionDataProvider = ({ children }: Props) => {
 
     setLoading(true);
 
-    const timeslicePeriod = coretimeConnected
-      ? parseHNString(coretimeApi.consts.broker.timeslicePeriod.toString())
-      : 80;
-
     const tasks = await fetchTasks();
 
     const xcRegionIds = await getOwnedXcRegionIds();
@@ -139,44 +137,15 @@ const RegionDataProvider = ({ children }: Props) => {
     const _regions: Array<RegionMetadata> = [];
 
     for await (const region of [...brokerRegions, ...xcRegions]) {
-      const beginBlockHeight = timeslicePeriod * region.getBegin();
-
       const rawId = region.getEncodedRegionId(contractsApi);
-      const name = localStorage.getItem(`region-${rawId}`);
-      const taskId = tasks[rawId.toString()];
-
-      // rough estimation
-      const endBlockHeight = timeslicePeriod * region.getEnd();
-      const currentBlockHeight = parseHNString(
-        (await relayApi.query.system.number()).toString()
+      const location = determineRegionLocation(
+        xcRegionIds,
+        listedRegionIds,
+        rawId.toString()
       );
-      const durationInBlocks = endBlockHeight - beginBlockHeight;
-
-      let consumed = (currentBlockHeight - beginBlockHeight) / durationInBlocks;
-      if (consumed < 0) {
-        // This means that the region hasn't yet started.
-        consumed = 0;
-      }
-
-      const coretimeOwnership =
-        region.getMask().countOnes() / (COREMASK_BYTES_LEN * 8);
-      const currentUsage = 0;
 
       _regions.push(
-        new RegionMetadata(
-          region,
-          determineRegionLocation(
-            xcRegionIds,
-            listedRegionIds,
-            rawId.toString()
-          ),
-          rawId,
-          name ?? `Region #${_regions.length + 1}`,
-          coretimeOwnership,
-          currentUsage,
-          consumed,
-          taskId
-        )
+        contructRegionMetadata(region, _regions.length, location, tasks[rawId.toString()])
       );
     }
 
@@ -191,16 +160,48 @@ const RegionDataProvider = ({ children }: Props) => {
   };
 
   useEffect(() => {
-    const timeslicePeriod = coretimeConnected
-      ? parseHNString(coretimeApi.consts.broker.timeslicePeriod.toString())
-      : 80;
-    setTimeslicePeriod(timeslicePeriod);
     fetchRegions();
   }, [relayConnected, coretimeConnected, contractsConnected]);
 
   useEffect(() => {
     activeAccount && fetchRegions();
   }, [activeAccount]);
+
+  const contructRegionMetadata = (
+    region: Region,
+    regionIndex: number,
+    regionLocation: RegionLocation,
+    task: number | null
+  ): RegionMetadata => {
+    const rawId = region.getEncodedRegionId(contractsApi);
+    const name = localStorage.getItem(`region-${rawId}`);
+
+    // rough estimation
+    const beginBlockHeight = timeslicePeriod * region.getBegin();
+    const endBlockHeight = timeslicePeriod * region.getEnd();
+    const durationInBlocks = endBlockHeight - beginBlockHeight;
+
+    let consumed = (relayBlockNumber - beginBlockHeight) / durationInBlocks;
+    if (consumed < 0) {
+      // This means that the region hasn't yet started.
+      consumed = 0;
+    }
+
+    const coreOccupancy =
+      region.getMask().countOnes() / (COREMASK_BYTES_LEN * 8);
+    const currentUsage = 0;
+
+    return new RegionMetadata(
+      region,
+      regionLocation,
+      rawId,
+      name ?? `Region #${regionIndex + 1}`,
+      coreOccupancy,
+      currentUsage,
+      consumed,
+      task
+    );
+  };
 
   const updateRegionName = (index: number, name: string) => {
     const _regions = [...regions];

@@ -1,11 +1,18 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useInkathon, useContract, contractQuery, decodeOutput } from '@scio-labs/use-inkathon';
+import {
+  useInkathon,
+  useContract,
+  contractQuery,
+  decodeOutput,
+} from '@scio-labs/use-inkathon';
 import XcRegionsMetadata from '../../contracts/xc_regions.json';
 import MarketMetadata from '../../contracts/market.json';
 import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '../apis/consts';
-import { Listing } from '@/models';
+import { COREMASK_BYTES_LEN, Listing } from '@/models';
 import { parseHNString, parseHNStringToString } from '@/utils/functions';
 import { Region } from 'coretime-utils';
+import { useCoretimeApi, useRelayApi } from '../apis';
+import { useCommon } from '../common';
 
 interface MarketData {
   loading: boolean;
@@ -31,6 +38,14 @@ const MarketProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState(true);
   const [listedRegions, setListedRegions] = useState<Array<Listing>>([]);
 
+  const { relayBlockNumber, timeslicePeriod } = useCommon();
+
+  const {
+    state: { api: coretimeApi, apiState: coretimeApiState },
+  } = useCoretimeApi();
+  const {
+    state: { api: relayApi, apiState: relayApiState },
+  } = useRelayApi();
   const {
     api: contractsApi,
     isConnected: contractsReady,
@@ -48,7 +63,12 @@ const MarketProvider = ({ children }: Props) => {
 
   const fetchMarketInfo = async () => {
     setLoading(true);
-    if (!contractsApi || !marketContract || !xcRegionsContract || !activeAccount) {
+    if (
+      !contractsApi ||
+      !marketContract ||
+      !xcRegionsContract ||
+      !activeAccount
+    ) {
       return [];
     }
     const result = await contractQuery(
@@ -60,7 +80,9 @@ const MarketProvider = ({ children }: Props) => {
       [null]
     );
     const { output } = decodeOutput(result, marketContract, 'listed_regions');
-    const regionIds = output.map((regionId: string) => parseHNStringToString(regionId));
+    const regionIds = output.map((regionId: string) =>
+      parseHNStringToString(regionId)
+    );
 
     let _listedRegions: Array<Listing> = [];
 
@@ -74,7 +96,11 @@ const MarketProvider = ({ children }: Props) => {
         {},
         [id]
       );
-      const { output: listingOutput } = decodeOutput(listingResult, marketContract, 'listed_region');
+      const { output: listingOutput } = decodeOutput(
+        listingResult,
+        marketContract,
+        'listed_region'
+      );
 
       const regionResult = await contractQuery(
         contractsApi,
@@ -84,34 +110,57 @@ const MarketProvider = ({ children }: Props) => {
         {},
         [id]
       );
-      const { output: regionOutput } = decodeOutput(regionResult, xcRegionsContract, 'RegionMetadata::get_metadata');
+      const { output: regionOutput } = decodeOutput(
+        regionResult,
+        xcRegionsContract,
+        'RegionMetadata::get_metadata'
+      );
+
+      // rough estimation
+      const beginBlockHeight =
+        timeslicePeriod * regionOutput.Ok.region.getBegin();
+      const endBlockHeight = timeslicePeriod * regionOutput.Ok.region.getEnd();
+      const durationInBlocks = endBlockHeight - beginBlockHeight;
+
+      let consumed = (relayBlockNumber - beginBlockHeight) / durationInBlocks;
+      if (consumed < 0) {
+        // This means that the region hasn't yet started.
+        consumed = 0;
+      }
 
       _listedRegions.push({
         metadataVersion: listingOutput.Ok.metadataVersion,
-        region: new Region({
-          begin: regionOutput.Ok.region.begin,
-          core: regionOutput.Ok.region.core,
-          mask: regionOutput.Ok.region.mask,
-        }, {
-          end: regionOutput.Ok.region.end,
-          owner: listingOutput.Ok.seller,
-          paid: null
-        }),
+        region: new Region(
+          {
+            begin: regionOutput.Ok.region.begin,
+            core: regionOutput.Ok.region.core,
+            mask: regionOutput.Ok.region.mask,
+          },
+          {
+            end: regionOutput.Ok.region.end,
+            owner: listingOutput.Ok.seller,
+            paid: null,
+          }
+        ),
+        regionCoreOccupancy:
+          regionOutput.Ok.region.region.getMask().countOnes() /
+          (COREMASK_BYTES_LEN * 8),
+        regionConsumed: consumed,
         saleRecepient: listingOutput.Ok.saleRecepient,
         seller: listingOutput.Ok.seller,
         timeslicePrice: parseHNString(listingOutput.Ok.timeslicePrice),
       });
-
-      console.log(listingOutput.Ok);
-      console.log(regionOutput.Ok);
     }
+
+    console.log(_listedRegions);
 
     setListedRegions(_listedRegions);
     setLoading(false);
   };
 
   useEffect(() => {
-    if (!contractsApi || !activeAccount || !marketContract || !contractsReady) return;
+    if (!contractsApi || !activeAccount || !marketContract || !contractsReady)
+      return;
     fetchMarketInfo();
   }, [contractsApi, activeAccount, marketContract, contractsReady]);
 

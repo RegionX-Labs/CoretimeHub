@@ -25,60 +25,16 @@ import { useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useTasks } from '@/contexts/tasks';
-import { RegionLocation, RegionMetadata } from '@/models';
+import { Listing, RegionLocation, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 import { Label } from '..';
 
-interface RegionCardProps {
-  regionMetadata: RegionMetadata;
-  editable?: boolean;
-  active?: boolean;
-  bordered?: boolean;
-  updateName?: (_newName: string) => void;
+interface ListingCardProps {
+  listing: Listing;
 }
 
-export const RegionCard = ({
-  regionMetadata,
-  active = false,
-  editable = false,
-  bordered = true,
-  updateName,
-}: RegionCardProps) => {
-  return (
-    <>
-      {bordered ? (
-        <Paper className={clsx(styles.container, active ? styles.active : '')}>
-          <RegionCardInner
-            regionMetadata={regionMetadata}
-            editable={editable}
-            updateName={updateName}
-          />
-        </Paper>
-      ) : (
-        <div className={clsx(styles.container, active ? styles.active : '')}>
-          <RegionCardInner
-            regionMetadata={regionMetadata}
-            editable={editable}
-            updateName={updateName}
-          />
-        </div>
-      )}
-    </>
-  );
-};
-
-interface RegionCardInnerProps {
-  regionMetadata: RegionMetadata;
-  editable?: boolean;
-  updateName?: (_newName: string) => void;
-}
-
-const RegionCardInner = ({
-  regionMetadata,
-  editable = false,
-  updateName,
-}: RegionCardInnerProps) => {
+export const ListingCard = ({ listing }: ListingCardProps) => {
   const { tasks } = useTasks();
 
   TimeAgo.addLocale(en);
@@ -86,8 +42,7 @@ const RegionCardInner = ({
   const timeAgo = new TimeAgo('en-US');
 
   const formatDuration = humanizer();
-  const { region, taskId, consumed, coreOccupancy, location, currentUsage } =
-    regionMetadata;
+  const { region, regionConsumed, regionCoreOccupancy } = listing;
   const theme = useTheme();
 
   const [isEdit, setEdit] = useState(false);
@@ -115,56 +70,20 @@ const RegionCardInner = ({
     timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then((value) =>
       setEndTimestamp(value)
     );
-  }, [regionMetadata]);
+  }, [listing]);
 
   const progress = [
     {
       label: 'Coretime Ownership',
-      value: coreOccupancy ?? 0,
+      value: regionCoreOccupancy ?? 0,
       color: 'warning',
     },
     {
       label: 'Consumed',
-      value: consumed ?? 0,
+      value: regionConsumed ?? 0,
       color: 'success',
     },
-    {
-      label: 'Current Usage',
-      value: currentUsage,
-      color: 'primary',
-    },
   ];
-
-  const onEdit = () => {
-    setEdit(true);
-    setName(regionMetadata.name ?? '');
-  };
-
-  const onSave = () => {
-    setEdit(false);
-    setName('');
-    updateName && updateName(name);
-  };
-
-  const onCancel = () => {
-    setEdit(false);
-    setName('');
-  };
-
-  const getTaskName = (taskId: number) => {
-    return tasks.find(({ id }) => id === taskId)?.name || '';
-  };
-
-  const locationToLabel = (location: RegionLocation): string => {
-    if (location === RegionLocation.CONTRACTS_CHAIN) {
-      return 'Contracts Chain';
-    } else if (location === RegionLocation.MARKET) {
-      return 'Listed on Market';
-    } else {
-      return 'Coretime Chain';
-    }
-  };
-
   return (
     <>
       <div className={styles.regionInfo}>
@@ -178,42 +97,6 @@ const RegionCardInner = ({
           <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
           {`Duration: ${formatDuration(endTimestamp - beginTimestamp)}`}
         </div>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            height: '2rem',
-          }}
-        >
-          {editable && isEdit ? (
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              size='small'
-            />
-          ) : (
-            <Typography variant='subtitle2'>{regionMetadata.name}</Typography>
-          )}
-          {isEdit ? (
-            <Box style={{ display: 'flex', gap: '0.5rem' }}>
-              <IconButton onClick={onSave} sx={{ px: 0, py: '4px' }}>
-                <CheckOutlinedIcon sx={{ fontSize: '0.7em' }} />
-              </IconButton>
-              <IconButton onClick={onCancel} sx={{ px: 0, py: '4px' }}>
-                <CloseOutlinedIcon sx={{ fontSize: '0.7em' }} />
-              </IconButton>
-            </Box>
-          ) : editable ? (
-            <Box>
-              <IconButton onClick={onEdit}>
-                <ModeOutlinedIcon sx={{ fontSize: '0.7em' }} />
-              </IconButton>
-            </Box>
-          ) : (
-            <></>
-          )}
-        </Box>
         <Box
           sx={{
             display: 'flex',
@@ -236,22 +119,10 @@ const RegionCardInner = ({
             color='primary'
             width='9rem'
           />
-          <Label
-            text={locationToLabel(location)}
-            color='success'
-            width='9rem'
-          />
         </Box>
       </div>
       <Divider orientation='vertical' flexItem />
       <Box sx={{ color: theme.palette.grey[200] }}>
-        {taskId !== null ? (
-          <Typography variant='subtitle2'>
-            {`Task: ${taskId ? getTaskName(taskId) : 'Unassigned'}`}
-          </Typography>
-        ) : (
-          <></>
-        )}
         <Box
           sx={{
             display: 'flex',

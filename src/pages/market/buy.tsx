@@ -1,7 +1,7 @@
-import { useMarket } from "@/contexts/market";
+import { useMarket } from '@/contexts/market';
 
 const Page = () => {
-  const { } = useMarket();
+  const { listedRegions } = useMarket();
 
   return <></>;
 };
