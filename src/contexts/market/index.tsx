@@ -1,18 +1,20 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
-  useInkathon,
-  useContract,
   contractQuery,
   decodeOutput,
+  useContract,
+  useInkathon,
 } from '@scio-labs/use-inkathon';
-import XcRegionsMetadata from '../../contracts/xc_regions.json';
-import MarketMetadata from '../../contracts/market.json';
-import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '../apis/consts';
-import { COREMASK_BYTES_LEN, Listing } from '@/models';
-import { parseHNString, parseHNStringToString } from '@/utils/functions';
 import { Region } from 'coretime-utils';
-import { useCoretimeApi, useRelayApi } from '../apis';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+
+import { parseHNString, parseHNStringToString } from '@/utils/functions';
+
+import { COREMASK_BYTES_LEN, Listing } from '@/models';
+
+import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '../apis/consts';
 import { useCommon } from '../common';
+import MarketMetadata from '../../contracts/market.json';
+import XcRegionsMetadata from '../../contracts/xc_regions.json';
 
 interface MarketData {
   loading: boolean;
@@ -40,12 +42,6 @@ const MarketProvider = ({ children }: Props) => {
 
   const { relayBlockNumber, timeslicePeriod } = useCommon();
 
-  const {
-    state: { api: coretimeApi, apiState: coretimeApiState },
-  } = useCoretimeApi();
-  const {
-    state: { api: relayApi, apiState: relayApiState },
-  } = useRelayApi();
   const {
     api: contractsApi,
     isConnected: contractsReady,
@@ -84,7 +80,7 @@ const MarketProvider = ({ children }: Props) => {
       parseHNStringToString(regionId)
     );
 
-    let _listedRegions: Array<Listing> = [];
+    const _listedRegions: Array<Listing> = [];
 
     for await (const regionId of regionIds) {
       const id = contractsApi.createType('Id', { U128: regionId });

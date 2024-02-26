@@ -19,12 +19,12 @@ import {
   RelayApiContextProvider,
 } from '@/contexts/apis';
 import { WS_CONTRACTS_CHAIN } from '@/contexts/apis/consts';
+import { CommonDataProvider } from '@/contexts/common';
+import { MarketProvider } from '@/contexts/market';
 import { RegionDataProvider } from '@/contexts/regions';
 import { SaleInfoProvider } from '@/contexts/sales';
 import { TaskDataProvider } from '@/contexts/tasks';
 import { ToastProvider } from '@/contexts/toast';
-import { MarketProvider } from '@/contexts/market';
-import { CommonDataProvider } from '@/contexts/common';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();

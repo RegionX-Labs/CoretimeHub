@@ -1,16 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useCoretimeApi, useRelayApi } from '../apis';
-import { ApiState } from '../apis/types';
+
 import { parseHNString } from '@/utils/functions';
 
-interface CommonData {
-  loading: boolean;
-  timeslicePeriod: number;
-  relayBlockNumber: number;
-}
+import { CommonData } from '@/models';
+
+import { useCoretimeApi, useRelayApi } from '../apis';
+import { ApiState } from '../apis/types';
 
 const defaultCommonData: CommonData = {
-  loading: true,
   timeslicePeriod: 80,
   relayBlockNumber: 0,
 };
@@ -22,7 +19,6 @@ interface Props {
 }
 
 const CommonDataProvider = ({ children }: Props) => {
-  const [loading, setLoading] = useState(true);
   const [timeslicePeriod, setTimeslicePeriod] = useState(80);
   const [relayBlockNumber, setRelayBlockNumber] = useState(0);
 
@@ -38,7 +34,6 @@ const CommonDataProvider = ({ children }: Props) => {
 
   const collectCommonData = async () => {
     if (!relayApi || !coretimeApi) return;
-    setLoading(true);
     const timeslicePeriod = parseHNString(
       coretimeApi.consts.broker.timeslicePeriod.toString()
     );
@@ -48,7 +43,6 @@ const CommonDataProvider = ({ children }: Props) => {
 
     setTimeslicePeriod(timeslicePeriod);
     setRelayBlockNumber(currentBlockHeight);
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -56,9 +50,7 @@ const CommonDataProvider = ({ children }: Props) => {
   }, [relayConnected, coretimeConnected]);
 
   return (
-    <CommonDataContext.Provider
-      value={{ loading, relayBlockNumber, timeslicePeriod }}
-    >
+    <CommonDataContext.Provider value={{ relayBlockNumber, timeslicePeriod }}>
       {children}
     </CommonDataContext.Provider>
   );

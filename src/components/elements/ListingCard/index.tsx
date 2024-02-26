@@ -1,18 +1,11 @@
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
-import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
 import {
   Box,
   Divider,
-  IconButton,
-  Input,
   LinearProgress,
-  Paper,
   Typography,
   useTheme,
 } from '@mui/material';
-import { clsx } from 'clsx';
 import { humanizer } from 'humanize-duration';
 import TimeAgo from 'javascript-time-ago';
 // English.
@@ -23,9 +16,9 @@ import { timesliceToTimestamp } from '@/utils/functions';
 
 import { useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
-import { useRegions } from '@/contexts/regions';
+import { useCommon } from '@/contexts/common';
 import { useTasks } from '@/contexts/tasks';
-import { Listing, RegionLocation, RegionMetadata } from '@/models';
+import { Listing } from '@/models';
 
 import styles from './index.module.scss';
 import { Label } from '..';
@@ -45,19 +38,13 @@ export const ListingCard = ({ listing }: ListingCardProps) => {
   const { region, regionConsumed, regionCoreOccupancy } = listing;
   const theme = useTheme();
 
-  const [isEdit, setEdit] = useState(false);
-  const [name, setName] = useState('');
-
   const [beginTimestamp, setBeginTimestamp] = useState(0);
   const [endTimestamp, setEndTimestamp] = useState(0);
 
   const {
     state: { api, apiState },
   } = useRelayApi();
-
-  const {
-    config: { timeslicePeriod },
-  } = useRegions();
+  const { timeslicePeriod } = useCommon();
 
   useEffect(() => {
     if (!api || apiState !== ApiState.READY) {

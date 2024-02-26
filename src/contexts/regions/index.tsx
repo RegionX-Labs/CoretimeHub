@@ -9,36 +9,25 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseHNString, parseHNStringToString } from '@/utils/functions';
 
-import {
-  COREMASK_BYTES_LEN,
-  RegionLocation,
-  RegionMetadata,
-  ScheduleItem,
-} from '@/models';
+import { RegionLocation, RegionMetadata, ScheduleItem } from '@/models';
 
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '../apis/consts';
 import { ApiState } from '../apis/types';
+import { useCommon } from '../common';
 import MarketMetadata from '../../contracts/market.json';
 import XcRegionsMetadata from '../../contracts/xc_regions.json';
-import { useCommon } from '../common';
 
 type Tasks = Record<string, number | null>;
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
-  config: {
-    timeslicePeriod: number;
-  };
   loading: boolean;
   updateRegionName: (_index: number, _name: string) => void;
   fetchRegions: () => Promise<void>;
 }
 const defaultRegionData: RegionsData = {
   regions: [],
-  config: {
-    timeslicePeriod: 0,
-  },
   loading: false,
   updateRegionName: () => {
     /** */
@@ -76,7 +65,7 @@ const RegionDataProvider = ({ children }: Props) => {
     CONTRACT_MARKET
   );
 
-  const { relayBlockNumber, timeslicePeriod } = useCommon();
+  const context = useCommon();
 
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
   const [loading, setLoading] = useState(false);
@@ -144,8 +133,19 @@ const RegionDataProvider = ({ children }: Props) => {
         rawId.toString()
       );
 
+      const name =
+        localStorage.getItem(`region-${rawId}`) ??
+        `Region #${_regions.length + 1}`;
+
       _regions.push(
-        contructRegionMetadata(region, _regions.length, location, tasks[rawId.toString()])
+        RegionMetadata.construct(
+          context,
+          region.getEncodedRegionId(contractsApi),
+          region,
+          name,
+          location,
+          tasks[rawId.toString()]
+        )
       );
     }
 
@@ -166,42 +166,6 @@ const RegionDataProvider = ({ children }: Props) => {
   useEffect(() => {
     activeAccount && fetchRegions();
   }, [activeAccount]);
-
-  const contructRegionMetadata = (
-    region: Region,
-    regionIndex: number,
-    regionLocation: RegionLocation,
-    task: number | null
-  ): RegionMetadata => {
-    const rawId = region.getEncodedRegionId(contractsApi);
-    const name = localStorage.getItem(`region-${rawId}`);
-
-    // rough estimation
-    const beginBlockHeight = timeslicePeriod * region.getBegin();
-    const endBlockHeight = timeslicePeriod * region.getEnd();
-    const durationInBlocks = endBlockHeight - beginBlockHeight;
-
-    let consumed = (relayBlockNumber - beginBlockHeight) / durationInBlocks;
-    if (consumed < 0) {
-      // This means that the region hasn't yet started.
-      consumed = 0;
-    }
-
-    const coreOccupancy =
-      region.getMask().countOnes() / (COREMASK_BYTES_LEN * 8);
-    const currentUsage = 0;
-
-    return new RegionMetadata(
-      region,
-      regionLocation,
-      rawId,
-      name ?? `Region #${regionIndex + 1}`,
-      coreOccupancy,
-      currentUsage,
-      consumed,
-      task
-    );
-  };
 
   const updateRegionName = (index: number, name: string) => {
     const _regions = [...regions];
@@ -373,7 +337,6 @@ const RegionDataProvider = ({ children }: Props) => {
     <RegionDataContext.Provider
       value={{
         regions,
-        config: { timeslicePeriod },
         loading,
         updateRegionName,
         fetchRegions,

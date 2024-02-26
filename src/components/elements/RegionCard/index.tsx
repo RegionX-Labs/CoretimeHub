@@ -23,7 +23,7 @@ import { timesliceToTimestamp } from '@/utils/functions';
 
 import { useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
-import { useRegions } from '@/contexts/regions';
+import { useCommon } from '@/contexts/common';
 import { useTasks } from '@/contexts/tasks';
 import { RegionLocation, RegionMetadata } from '@/models';
 
@@ -100,9 +100,7 @@ const RegionCardInner = ({
     state: { api, apiState },
   } = useRelayApi();
 
-  const {
-    config: { timeslicePeriod },
-  } = useRegions();
+  const { timeslicePeriod } = useCommon();
 
   useEffect(() => {
     if (!api || apiState !== ApiState.READY) {
