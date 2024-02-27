@@ -28,7 +28,7 @@ import styles from './index.module.scss';
 interface ListingCardProps {
   listing: Listing;
   readOnly: boolean;
-  onPurchase?(_: Listing): void;
+  onPurchase?(_listing: Listing): void;
   bordered?: boolean;
 }
 
@@ -36,7 +36,7 @@ export const ListingCard = ({
   listing,
   readOnly,
   bordered = true,
-  onPurchase = (_: Listing): void => {},
+  onPurchase = (): void => { /** */ },
 }: ListingCardProps) => {
   return (
     <>
@@ -64,7 +64,7 @@ export const ListingCard = ({
 interface ListingCardInnerProps {
   listing: Listing;
   readOnly: boolean;
-  onPurchase(listing: Listing): void;
+  onPurchase(_listing: Listing): void;
 }
 
 const ListingCardInner = ({

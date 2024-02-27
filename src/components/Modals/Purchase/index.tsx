@@ -18,13 +18,13 @@ import { useToast } from '@/contexts/toast';
 import MarketMetadata from '@/contracts/market.json';
 import { Listing } from '@/models';
 
-interface PurchaseModal {
+interface PurchaseModalProps {
   open: boolean;
   onClose: () => void;
   listing: Listing;
 }
 
-export const PurchaseModal = ({ open, onClose, listing }: PurchaseModal) => {
+export const PurchaseModal = ({ open, onClose, listing }: PurchaseModalProps) => {
   const { activeAccount, api: contractsApi } = useInkathon();
 
   const { contract: marketContract } = useContract(
@@ -68,10 +68,9 @@ export const PurchaseModal = ({ open, onClose, listing }: PurchaseModal) => {
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to purchase region from sale. Error: ${
-          e.errorMessage === 'Error'
-            ? 'Please check your balance.'
-            : e.errorMessage
+        `Failed to purchase region from sale. Error: ${e.errorMessage === 'Error'
+          ? 'Please check your balance.'
+          : e.errorMessage
         }`
       );
       setWorking(false);
