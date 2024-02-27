@@ -24,7 +24,11 @@ interface PurchaseModalProps {
   listing: Listing;
 }
 
-export const PurchaseModal = ({ open, onClose, listing }: PurchaseModalProps) => {
+export const PurchaseModal = ({
+  open,
+  onClose,
+  listing,
+}: PurchaseModalProps) => {
   const { activeAccount, api: contractsApi } = useInkathon();
 
   const { contract: marketContract } = useContract(
@@ -68,9 +72,10 @@ export const PurchaseModal = ({ open, onClose, listing }: PurchaseModalProps) =>
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to purchase region from sale. Error: ${e.errorMessage === 'Error'
-          ? 'Please check your balance.'
-          : e.errorMessage
+        `Failed to purchase region from sale. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
         }`
       );
       setWorking(false);

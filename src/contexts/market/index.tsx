@@ -41,7 +41,7 @@ const MarketProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState(true);
   const [listedRegions, setListedRegions] = useState<Array<Listing>>([]);
 
-  const { regions } = useRegions();
+  const { regions, fetchRegion } = useRegions();
   const context = useCommon();
 
   const {
@@ -128,6 +128,12 @@ const MarketProvider = ({ children }: Props) => {
         regionOutput.Ok.version
       );
 
+      /* TODO: For now we will skip this, but this should be uncommented
+      if (!verifyMetadata(region)) {
+        continue;
+      }
+      */
+
       const priceResult = await contractQuery(
         contractsApi,
         '',
@@ -156,6 +162,19 @@ const MarketProvider = ({ children }: Props) => {
 
     setListedRegions(_listedRegions);
     setLoading(false);
+  };
+
+  /// Returns true or false depending whether the metadata matches with the one stored
+  /// on the coreitme chain.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _verifyMetadata = async (region: Region): Promise<boolean> => {
+    const actualRegion = await fetchRegion(region.getRegionId());
+
+    if (actualRegion) {
+      return actualRegion.getRegionRecord() == region.getRegionRecord();
+    } else {
+      return false;
+    }
   };
 
   useEffect(() => {

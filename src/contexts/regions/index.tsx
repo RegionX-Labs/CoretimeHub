@@ -4,7 +4,7 @@ import {
   useContract,
   useInkathon,
 } from '@scio-labs/use-inkathon';
-import { CoreMask, Region } from 'coretime-utils';
+import { CoreMask, Region, RegionId } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseHNString, parseHNStringToString } from '@/utils/functions';
@@ -25,6 +25,7 @@ interface RegionsData {
   loading: boolean;
   updateRegionName: (_index: number, _name: string) => void;
   fetchRegions: () => Promise<void>;
+  fetchRegion: (_regionId: RegionId) => Promise<Region | null>;
 }
 const defaultRegionData: RegionsData = {
   regions: [],
@@ -34,6 +35,9 @@ const defaultRegionData: RegionsData = {
   },
   fetchRegions: async () => {
     /** */
+  },
+  fetchRegion: async () => {
+    return null;
   },
 };
 
@@ -211,6 +215,17 @@ const RegionDataProvider = ({ children }: Props) => {
     return brokerRegions;
   };
 
+  const fetchRegion = async (regionId: RegionId): Promise<Region | null> => {
+    if (!coretimeApi) return null;
+    const record: any = coretimeApi?.query.broker.get({
+      begin: regionId.begin,
+      core: regionId.core,
+      mask: regionId.mask.getMask(),
+    });
+
+    return new Region(regionId, record, 0);
+  };
+
   // Get the region ids of all the regions that the user owns on the contracts chain.
   const getOwnedXcRegionIds = async (): Promise<Array<string>> => {
     if (!contractsApi || !xcRegionsContract || !activeAccount) {
@@ -346,6 +361,7 @@ const RegionDataProvider = ({ children }: Props) => {
         loading,
         updateRegionName,
         fetchRegions,
+        fetchRegion,
       }}
     >
       {children}

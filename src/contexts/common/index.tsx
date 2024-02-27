@@ -32,7 +32,7 @@ const ContextDataProvider = ({ children }: Props) => {
   const coretimeConnected = coretimeApi && coretimeApiState === ApiState.READY;
 
   const collectContextData = async () => {
-    if (!relayApi || !coretimeApi) return;
+    if (!relayConnected || !coretimeConnected) return;
     const timeslicePeriod = parseHNString(
       coretimeApi.consts.broker.timeslicePeriod.toString()
     );

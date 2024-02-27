@@ -36,7 +36,9 @@ export const ListingCard = ({
   listing,
   readOnly,
   bordered = true,
-  onPurchase = (): void => { /** */ },
+  onPurchase = (): void => {
+    /** */
+  },
 }: ListingCardProps) => {
   return (
     <>
