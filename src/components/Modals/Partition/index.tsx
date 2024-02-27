@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { RegionCard } from '@/components/elements';
 
 import { useCoretimeApi } from '@/contexts/apis';
+import { useCommon } from '@/contexts/common';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import {
@@ -64,10 +65,8 @@ export const PartitionModal = ({
   const {
     state: { api: coretimeApi },
   } = useCoretimeApi();
-  const {
-    config: { timeslicePeriod },
-    fetchRegions,
-  } = useRegions();
+  const { fetchRegions } = useRegions();
+  const { timeslicePeriod } = useCommon();
 
   const { toastError, toastSuccess, toastInfo } = useToast();
 

@@ -4,44 +4,40 @@ import {
   useContract,
   useInkathon,
 } from '@scio-labs/use-inkathon';
-import { CoreMask, Region } from 'coretime-utils';
+import { CoreMask, Region, RegionId } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseHNString, parseHNStringToString } from '@/utils/functions';
 
-import {
-  COREMASK_BYTES_LEN,
-  RegionLocation,
-  RegionMetadata,
-  ScheduleItem,
-} from '@/models';
+import { RegionLocation, RegionMetadata, ScheduleItem } from '@/models';
 
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '../apis/consts';
 import { ApiState } from '../apis/types';
+import { useCommon } from '../common';
 import MarketMetadata from '../../contracts/market.json';
 import XcRegionsMetadata from '../../contracts/xc_regions.json';
 
+type Tasks = Record<string, number | null>;
+
 interface RegionsData {
   regions: Array<RegionMetadata>;
-  config: {
-    timeslicePeriod: number;
-  };
   loading: boolean;
   updateRegionName: (_index: number, _name: string) => void;
   fetchRegions: () => Promise<void>;
+  fetchRegion: (_regionId: RegionId) => Promise<Region | null>;
 }
 const defaultRegionData: RegionsData = {
   regions: [],
-  config: {
-    timeslicePeriod: 0,
-  },
   loading: false,
   updateRegionName: () => {
     /** */
   },
   fetchRegions: async () => {
     /** */
+  },
+  fetchRegion: async () => {
+    return null;
   },
 };
 
@@ -73,17 +69,16 @@ const RegionDataProvider = ({ children }: Props) => {
     CONTRACT_MARKET
   );
 
+  const context = useCommon();
+
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
-  const [timeslicePeriod, setTimeslicePeriod] = useState<number>(0);
   const [loading, setLoading] = useState(false);
 
   const relayConnected = relayApi && relayApiState === ApiState.READY;
-
   const coretimeConnected = coretimeApi && coretimeApiState === ApiState.READY;
-
   const contractsConnected = contractsApi && contractsReady;
 
-  const fetchTasks = async () => {
+  const fetchTasks = async (): Promise<Tasks> => {
     if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
     const workplan = await coretimeApi.query.broker.workplan.entries();
     const tasks: Record<string, number | null> = {};
@@ -104,7 +99,8 @@ const RegionDataProvider = ({ children }: Props) => {
             core: parseHNString(core.toString()),
             mask: new CoreMask(mask),
           },
-          { end: 0, owner: '', paid: null }
+          { end: 0, owner: '', paid: null },
+          0
         );
         tasks[region.getEncodedRegionId(contractsApi).toString()] = taskId
           ? parseHNString(taskId)
@@ -122,10 +118,6 @@ const RegionDataProvider = ({ children }: Props) => {
 
     setLoading(true);
 
-    const timeslicePeriod = coretimeConnected
-      ? parseHNString(coretimeApi.consts.broker.timeslicePeriod.toString())
-      : 80;
-
     const tasks = await fetchTasks();
 
     const xcRegionIds = await getOwnedXcRegionIds();
@@ -139,43 +131,25 @@ const RegionDataProvider = ({ children }: Props) => {
     const _regions: Array<RegionMetadata> = [];
 
     for await (const region of [...brokerRegions, ...xcRegions]) {
-      const beginBlockHeight = timeslicePeriod * region.getBegin();
-
       const rawId = region.getEncodedRegionId(contractsApi);
-      const name = localStorage.getItem(`region-${rawId}`);
-      const taskId = tasks[rawId.toString()];
-
-      // rough estimation
-      const endBlockHeight = timeslicePeriod * region.getEnd();
-      const currentBlockHeight = parseHNString(
-        (await relayApi.query.system.number()).toString()
+      const location = determineRegionLocation(
+        xcRegionIds,
+        listedRegionIds,
+        rawId.toString()
       );
-      const durationInBlocks = endBlockHeight - beginBlockHeight;
 
-      let consumed = (currentBlockHeight - beginBlockHeight) / durationInBlocks;
-      if (consumed < 0) {
-        // This means that the region hasn't yet started.
-        consumed = 0;
-      }
-
-      const coretimeOwnership =
-        region.getMask().countOnes() / (COREMASK_BYTES_LEN * 8);
-      const currentUsage = 0;
+      const name =
+        localStorage.getItem(`region-${rawId}`) ??
+        `Region #${_regions.length + 1}`;
 
       _regions.push(
-        new RegionMetadata(
+        RegionMetadata.construct(
+          context,
+          region.getEncodedRegionId(contractsApi),
           region,
-          determineRegionLocation(
-            xcRegionIds,
-            listedRegionIds,
-            rawId.toString()
-          ),
-          rawId,
-          name ?? `Region #${_regions.length + 1}`,
-          coretimeOwnership,
-          currentUsage,
-          consumed,
-          taskId
+          name,
+          location,
+          tasks[rawId.toString()]
         )
       );
     }
@@ -191,10 +165,6 @@ const RegionDataProvider = ({ children }: Props) => {
   };
 
   useEffect(() => {
-    const timeslicePeriod = coretimeConnected
-      ? parseHNString(coretimeApi.consts.broker.timeslicePeriod.toString())
-      : 80;
-    setTimeslicePeriod(timeslicePeriod);
     fetchRegions();
   }, [relayConnected, coretimeConnected, contractsConnected]);
 
@@ -230,15 +200,30 @@ const RegionDataProvider = ({ children }: Props) => {
           core: parseHNString(core.toString()),
           mask: new CoreMask(mask),
         };
-        return new Region(regionId, {
-          end: parseHNString(end),
-          owner,
-          paid: paid ? parseHNString(paid) : null,
-        });
+        return new Region(
+          regionId,
+          {
+            end: parseHNString(end),
+            owner,
+            paid: paid ? parseHNString(paid) : null,
+          },
+          0
+        );
       })
       .filter((entry) => entry !== null) as Array<Region>;
 
     return brokerRegions;
+  };
+
+  const fetchRegion = async (regionId: RegionId): Promise<Region | null> => {
+    if (!coretimeApi) return null;
+    const record: any = coretimeApi?.query.broker.get({
+      begin: regionId.begin,
+      core: regionId.core,
+      mask: regionId.mask.getMask(),
+    });
+
+    return new Region(regionId, record, 0);
   };
 
   // Get the region ids of all the regions that the user owns on the contracts chain.
@@ -345,7 +330,8 @@ const RegionDataProvider = ({ children }: Props) => {
               end: parseHNString(versionedRegion.region.end),
               owner: activeAccount.address,
               paid: null,
-            }
+            },
+            versionedRegion.version
           )
         );
       }
@@ -372,10 +358,10 @@ const RegionDataProvider = ({ children }: Props) => {
     <RegionDataContext.Provider
       value={{
         regions,
-        config: { timeslicePeriod },
         loading,
         updateRegionName,
         fetchRegions,
+        fetchRegion,
       }}
     >
       {children}

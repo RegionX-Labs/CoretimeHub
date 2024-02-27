@@ -7,29 +7,28 @@ import {
   Stack,
 } from '@mui/material';
 import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
-import { Region } from 'coretime-utils';
 import { useState } from 'react';
 
-import { RegionCard } from '@/components/elements';
+import { ListingCard } from '@/components/elements/ListingCard';
 
 import { CONTRACT_MARKET } from '@/contexts/apis/consts';
 import { useMarket } from '@/contexts/market';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import MarketMetadata from '@/contracts/market.json';
-import { RegionMetadata } from '@/models';
+import { Listing } from '@/models';
 
-interface UnlistModalProps {
+interface PurchaseModalProps {
   open: boolean;
   onClose: () => void;
-  regionMetadata: RegionMetadata;
+  listing: Listing;
 }
 
-export const UnlistModal = ({
+export const PurchaseModal = ({
   open,
   onClose,
-  regionMetadata,
-}: UnlistModalProps) => {
+  listing,
+}: PurchaseModalProps) => {
   const { activeAccount, api: contractsApi } = useInkathon();
 
   const { contract: marketContract } = useContract(
@@ -39,18 +38,19 @@ export const UnlistModal = ({
 
   const { fetchRegions } = useRegions();
   const { fetchMarket } = useMarket();
+
   const { toastError, toastSuccess } = useToast();
 
   const [working, setWorking] = useState(false);
 
-  const unlistRegion = async (region: Region) => {
+  const purchaseRegion = async () => {
     if (!contractsApi || !activeAccount || !marketContract) {
       return;
     }
 
     try {
       setWorking(true);
-      const rawRegionId = region.getEncodedRegionId(contractsApi);
+      const rawRegionId = listing.region.getEncodedRegionId(contractsApi);
 
       const id = contractsApi.createType('Id', {
         U128: rawRegionId.toString(),
@@ -60,19 +60,19 @@ export const UnlistModal = ({
         contractsApi,
         activeAccount.address,
         marketContract,
-        'unlist_region',
-        {},
-        [id]
+        'purchase_region',
+        { value: listing.currentPrice },
+        [id, listing.region.getMetadataVersion()]
       );
 
-      toastSuccess(`Successfully unlisted region from sale.`);
+      toastSuccess(`Successfully purchased region from sale.`);
       onClose();
-      fetchRegions();
       fetchMarket();
+      fetchRegions();
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to unlist region from sale. Error: ${
+        `Failed to purchase region from sale. Error: ${
           e.errorMessage === 'Error'
             ? 'Please check your balance.'
             : e.errorMessage
@@ -86,16 +86,16 @@ export const UnlistModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent>
         <Stack direction='column' gap={3}>
-          <RegionCard regionMetadata={regionMetadata} bordered={false} />
+          <ListingCard listing={listing} readOnly={true} bordered={false} />
         </Stack>
       </DialogContent>
       <DialogActions>
         <LoadingButton
-          onClick={() => unlistRegion(regionMetadata.region)}
+          onClick={() => purchaseRegion()}
           variant='contained'
           loading={working}
         >
-          Unlist from sale
+          Purchase from sale
         </LoadingButton>
         <Button onClick={onClose} variant='outlined'>
           Cancel

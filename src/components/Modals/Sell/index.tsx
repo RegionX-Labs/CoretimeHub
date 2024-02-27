@@ -21,6 +21,7 @@ import { RegionCard } from '@/components/elements';
 import AmountInput from '@/components/elements/AmountInput';
 
 import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
+import { useMarket } from '@/contexts/market';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import MarketMetadata from '@/contracts/market.json';
@@ -50,6 +51,7 @@ export const SellModal = ({
   );
 
   const { fetchRegions } = useRegions();
+  const { fetchMarket } = useMarket();
   const { toastError, toastSuccess } = useToast();
 
   const [regionPrice, setRegionPrice] = useState('');
@@ -89,6 +91,7 @@ export const SellModal = ({
       toastSuccess(`Successfully approved region to the market.`);
       onClose();
       fetchRegions();
+      fetchMarket();
       setWorking(false);
     } catch (e: any) {
       toastError(
@@ -115,7 +118,8 @@ export const SellModal = ({
       const regionDuration = region.getEnd() - region.getBegin();
       const timeslicePrice = (
         (Number(regionPrice) * UNIT_DECIMALS) /
-        regionDuration
+        regionDuration /
+        region.coreOccupancy()
       ).toFixed(0);
 
       await contractTx(
