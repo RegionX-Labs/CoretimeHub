@@ -13,6 +13,7 @@ import { Listing } from '@/models';
 
 import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '../apis/consts';
 import { useCommon } from '../common';
+import { useRegions } from '../regions';
 import MarketMetadata from '../../contracts/market.json';
 import XcRegionsMetadata from '../../contracts/xc_regions.json';
 
@@ -40,6 +41,7 @@ const MarketProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState(true);
   const [listedRegions, setListedRegions] = useState<Array<Listing>>([]);
 
+  const { regions } = useRegions();
   const context = useCommon();
 
   const {
@@ -160,7 +162,7 @@ const MarketProvider = ({ children }: Props) => {
     if (!contractsApi || !activeAccount || !marketContract || !contractsReady)
       return;
     fetchMarket();
-  }, [contractsApi, activeAccount, marketContract, contractsReady]);
+  }, [contractsApi, regions, activeAccount, marketContract, contractsReady]);
 
   return (
     <MarketDataContext.Provider value={{ loading, listedRegions, fetchMarket }}>

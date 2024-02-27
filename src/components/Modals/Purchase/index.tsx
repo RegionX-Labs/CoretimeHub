@@ -57,7 +57,7 @@ export const PurchaseModal = ({ open, onClose, listing }: PurchaseModal) => {
         activeAccount.address,
         marketContract,
         'purchase_region',
-        {},
+        { value: listing.currentPrice },
         [id, listing.region.getMetadataVersion()]
       );
 
