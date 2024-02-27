@@ -1,4 +1,5 @@
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import ExploreIcon from '@mui/icons-material/Explore';
 import HomeIcon from '@mui/icons-material/Home';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Box, useTheme } from '@mui/material';
@@ -82,10 +83,10 @@ export const Sidebar = () => {
     ],
     'secondary market': [
       {
-        label: 'Buy Region',
-        route: '/market/buy',
+        label: 'Explore the Market',
+        route: '/market/marketplace',
         enabled: true,
-        icon: <ShoppingCartIcon />,
+        icon: <ExploreIcon />,
       },
     ],
   };

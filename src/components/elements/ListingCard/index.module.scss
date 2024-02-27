@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  gap: 1.5rem;
+  border-radius: 0.5rem;
+  max-width: 45rem;
+  padding: 1.5rem 2rem;
+}
+
+.duration {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 2px;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1;
+  width: fit-content;
+}
+
+.regionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 16rem;
+}

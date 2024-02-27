@@ -1,7 +1,7 @@
 import { Balance, CoreIndex, TaskId, Timeslice } from 'coretime-utils';
 
-export { RegionMetadata } from './types/regionMetadata';
 export { Listing } from './types/listing';
+export { RegionMetadata } from './types/regionMetadata';
 
 export type Percentage = number; // Percentage value between 0 and 1
 

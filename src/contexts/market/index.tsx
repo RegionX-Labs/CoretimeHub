@@ -4,12 +4,12 @@ import {
   useContract,
   useInkathon,
 } from '@scio-labs/use-inkathon';
-import { Region } from 'coretime-utils';
+import { CoreMask, Region } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseHNString, parseHNStringToString } from '@/utils/functions';
 
-import { COREMASK_BIT_LEN, Listing } from '@/models';
+import { Listing } from '@/models';
 
 import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '../apis/consts';
 import { useCommon } from '../common';
@@ -116,7 +116,7 @@ const MarketProvider = ({ children }: Props) => {
         {
           begin: regionOutput.Ok.region.begin,
           core: regionOutput.Ok.region.core,
-          mask: regionOutput.Ok.region.mask,
+          mask: new CoreMask(regionOutput.Ok.region.mask),
         },
         {
           end: regionOutput.Ok.region.end,

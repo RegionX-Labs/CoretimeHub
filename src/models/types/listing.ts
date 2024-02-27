@@ -1,4 +1,5 @@
 import { Balance, ContextData, Region } from 'coretime-utils';
+
 import { Percentage } from '../types';
 
 export class Listing {

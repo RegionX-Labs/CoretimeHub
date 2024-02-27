@@ -1,10 +1,10 @@
+import { ContextData } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
 
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { ApiState } from '../apis/types';
-import { ContextData } from 'coretime-utils';
 
 const defaultContextData: ContextData = {
   timeslicePeriod: 80,
