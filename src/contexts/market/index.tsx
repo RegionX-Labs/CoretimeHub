@@ -134,6 +134,14 @@ const MarketProvider = ({ children }: Props) => {
       }
       */
 
+      // Skip expired regions.
+      if (
+        context.relayBlockNumber * context.timeslicePeriod >
+        region.getEnd()
+      ) {
+        continue;
+      }
+
       const priceResult = await contractQuery(
         contractsApi,
         '',
