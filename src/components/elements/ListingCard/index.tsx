@@ -27,9 +27,51 @@ import styles from './index.module.scss';
 
 interface ListingCardProps {
   listing: Listing;
+  readOnly: boolean;
+  onPurchase?(_: Listing): void;
+  bordered?: boolean;
 }
 
-export const ListingCard = ({ listing }: ListingCardProps) => {
+export const ListingCard = ({
+  listing,
+  readOnly,
+  bordered = true,
+  onPurchase = (_: Listing): void => {},
+}: ListingCardProps) => {
+  return (
+    <>
+      {bordered ? (
+        <Paper className={clsx(styles.container)}>
+          <ListingCardInner
+            listing={listing}
+            readOnly={readOnly}
+            onPurchase={onPurchase}
+          />
+        </Paper>
+      ) : (
+        <div className={clsx(styles.container)}>
+          <ListingCardInner
+            listing={listing}
+            readOnly={readOnly}
+            onPurchase={onPurchase}
+          />
+        </div>
+      )}
+    </>
+  );
+};
+
+interface ListingCardInnerProps {
+  listing: Listing;
+  readOnly: boolean;
+  onPurchase(listing: Listing): void;
+}
+
+const ListingCardInner = ({
+  listing,
+  readOnly,
+  onPurchase,
+}: ListingCardInnerProps) => {
   TimeAgo.addLocale(en);
   // Create formatter (English).
   const timeAgo = new TimeAgo('en-US');
@@ -59,10 +101,6 @@ export const ListingCard = ({ listing }: ListingCardProps) => {
     );
   }, [listing]);
 
-  const totalPrice = () => {
-    return listing.timeslicePrice * (region.getEnd() - region.getBegin());
-  };
-
   const progress = [
     {
       label: 'Coretime Ownership',
@@ -77,89 +115,91 @@ export const ListingCard = ({ listing }: ListingCardProps) => {
   ];
   return (
     <>
-      <Paper className={clsx(styles.container)}>
-        <div className={styles.regionInfo}>
-          <div
-            className={styles.duration}
-            style={{
-              borderColor: theme.palette.grey[200],
-              color: theme.palette.grey[200],
-            }}
-          >
-            <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
-            {`Duration: ${formatDuration(endTimestamp - beginTimestamp)}`}
-          </div>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.5rem',
-              color: theme.palette.grey[200],
-            }}
-          >
-            <Typography variant='h2'>{`Core Index: #${region.getCore()}`}</Typography>
-            <Typography variant='h2'>
-              Begin: {timeAgo.format(beginTimestamp)}
-            </Typography>
-            <Typography variant='h2'>
-              End: {timeAgo.format(endTimestamp)}
-            </Typography>
-          </Box>
-          <Box sx={{ marginTop: '1em' }}>
-            <Button variant='outlined'>Purchase</Button>
-          </Box>
+      <div className={styles.regionInfo}>
+        <div
+          className={styles.duration}
+          style={{
+            borderColor: theme.palette.grey[200],
+            color: theme.palette.grey[200],
+          }}
+        >
+          <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
+          {`Duration: ${formatDuration(endTimestamp - beginTimestamp)}`}
         </div>
-        <Divider orientation='vertical' flexItem />
-        <Box sx={{ color: theme.palette.grey[200] }}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1.5rem',
-              mt: '2rem',
-            }}
-          >
-            {progress.map(({ label, value, color }, index) => (
-              <Box
-                key={index}
-                sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}
-              >
-                <LinearProgress
-                  value={value * 100}
-                  valueBuffer={100}
-                  sx={{
-                    width: '8rem',
-                    height: '0.8em',
-                  }}
-                  variant='buffer'
-                  color={color as 'warning' | 'success' | 'info'}
-                />
-                <Typography
-                  variant='h2'
-                  sx={{
-                    color: theme.palette.text.primary,
-                    width: '3rem',
-                    fontWeight: 400,
-                  }}
-                >
-                  {`${(value * 100).toFixed(2)}%`}
-                </Typography>
-                <Typography variant='h2' sx={{ fontWeight: 400 }}>
-                  {label}
-                </Typography>
-              </Box>
-            ))}
-            <Stack marginTop={'.5rem'} spacing={'.5em'}>
-              <Typography fontSize={'1rem'} color={'black'}>
-                Total price: {formatBalance(totalPrice())} ROC
-              </Typography>
-              <Typography fontSize={'1rem'} color={'black'}>
-                Price per timeslice: {formatBalance(listing.timeslicePrice)} ROC
-              </Typography>
-            </Stack>
-          </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.5rem',
+            color: theme.palette.grey[200],
+          }}
+        >
+          <Typography variant='h2'>{`Core Index: #${region.getCore()}`}</Typography>
+          <Typography variant='h2'>
+            Begin: {timeAgo.format(beginTimestamp)}
+          </Typography>
+          <Typography variant='h2'>
+            End: {timeAgo.format(endTimestamp)}
+          </Typography>
         </Box>
-      </Paper>
+        {!readOnly && (
+          <Box sx={{ marginTop: '1em' }}>
+            <Button variant='outlined' onClick={() => onPurchase(listing)}>
+              Purchase
+            </Button>
+          </Box>
+        )}
+      </div>
+      <Divider orientation='vertical' flexItem />
+      <Box sx={{ color: theme.palette.grey[200] }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.5rem',
+            mt: '2rem',
+          }}
+        >
+          {progress.map(({ label, value, color }, index) => (
+            <Box
+              key={index}
+              sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}
+            >
+              <LinearProgress
+                value={value * 100}
+                valueBuffer={100}
+                sx={{
+                  width: '8rem',
+                  height: '0.8em',
+                }}
+                variant='buffer'
+                color={color as 'warning' | 'success' | 'info'}
+              />
+              <Typography
+                variant='h2'
+                sx={{
+                  color: theme.palette.text.primary,
+                  width: '3rem',
+                  fontWeight: 400,
+                }}
+              >
+                {`${(value * 100).toFixed(2)}%`}
+              </Typography>
+              <Typography variant='h2' sx={{ fontWeight: 400 }}>
+                {label}
+              </Typography>
+            </Box>
+          ))}
+          <Stack marginTop={'.5rem'} spacing={'.5em'}>
+            <Typography fontSize={'1rem'} color={'black'}>
+              Total price: {formatBalance(listing.currentPrice)} ROC
+            </Typography>
+            <Typography fontSize={'1rem'} color={'black'}>
+              Price per timeslice: {formatBalance(listing.timeslicePrice)} ROC
+            </Typography>
+          </Stack>
+        </Box>
+      </Box>
     </>
   );
 };

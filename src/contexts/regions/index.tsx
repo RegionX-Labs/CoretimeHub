@@ -95,7 +95,8 @@ const RegionDataProvider = ({ children }: Props) => {
             core: parseHNString(core.toString()),
             mask: new CoreMask(mask),
           },
-          { end: 0, owner: '', paid: null }
+          { end: 0, owner: '', paid: null },
+          0
         );
         tasks[region.getEncodedRegionId(contractsApi).toString()] = taskId
           ? parseHNString(taskId)
@@ -195,11 +196,15 @@ const RegionDataProvider = ({ children }: Props) => {
           core: parseHNString(core.toString()),
           mask: new CoreMask(mask),
         };
-        return new Region(regionId, {
-          end: parseHNString(end),
-          owner,
-          paid: paid ? parseHNString(paid) : null,
-        });
+        return new Region(
+          regionId,
+          {
+            end: parseHNString(end),
+            owner,
+            paid: paid ? parseHNString(paid) : null,
+          },
+          0
+        );
       })
       .filter((entry) => entry !== null) as Array<Region>;
 
@@ -310,7 +315,8 @@ const RegionDataProvider = ({ children }: Props) => {
               end: parseHNString(versionedRegion.region.end),
               owner: activeAccount.address,
               paid: null,
-            }
+            },
+            versionedRegion.version
           )
         );
       }

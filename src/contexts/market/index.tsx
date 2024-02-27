@@ -19,13 +19,13 @@ import XcRegionsMetadata from '../../contracts/xc_regions.json';
 interface MarketData {
   loading: boolean;
   listedRegions: Array<Listing>;
-  fetchMarketInfo: () => void;
+  fetchMarket: () => void;
 }
 
 const defaultMarketData: MarketData = {
   loading: true,
   listedRegions: [],
-  fetchMarketInfo: () => {
+  fetchMarket: () => {
     /** */
   },
 };
@@ -57,7 +57,7 @@ const MarketProvider = ({ children }: Props) => {
     CONTRACT_MARKET
   );
 
-  const fetchMarketInfo = async () => {
+  const fetchMarket = async () => {
     setLoading(true);
     if (
       !contractsApi ||
@@ -122,7 +122,22 @@ const MarketProvider = ({ children }: Props) => {
           end: regionOutput.Ok.region.end,
           owner: listingOutput.Ok.seller,
           paid: null,
-        }
+        },
+        regionOutput.Ok.version
+      );
+
+      const priceResult = await contractQuery(
+        contractsApi,
+        '',
+        marketContract,
+        'region_price',
+        {},
+        [id]
+      );
+      const { output: priceOutput } = decodeOutput(
+        priceResult,
+        marketContract,
+        'region_price'
       );
 
       _listedRegions.push(
@@ -131,12 +146,11 @@ const MarketProvider = ({ children }: Props) => {
           region,
           listingOutput.Ok.seller,
           parseHNString(listingOutput.Ok.timeslicePrice),
+          parseHNString(priceOutput.Ok),
           listingOutput.Ok.saleRecepient
         )
       );
     }
-
-    console.log(_listedRegions);
 
     setListedRegions(_listedRegions);
     setLoading(false);
@@ -145,13 +159,11 @@ const MarketProvider = ({ children }: Props) => {
   useEffect(() => {
     if (!contractsApi || !activeAccount || !marketContract || !contractsReady)
       return;
-    fetchMarketInfo();
+    fetchMarket();
   }, [contractsApi, activeAccount, marketContract, contractsReady]);
 
   return (
-    <MarketDataContext.Provider
-      value={{ loading, listedRegions, fetchMarketInfo }}
-    >
+    <MarketDataContext.Provider value={{ loading, listedRegions, fetchMarket }}>
       {children}
     </MarketDataContext.Provider>
   );

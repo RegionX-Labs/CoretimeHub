@@ -13,6 +13,8 @@ export class Listing {
   public seller: string;
   /// The price per timeslice set by the seller.
   public timeslicePrice: Balance;
+  /// The current total price of the region.
+  public currentPrice: Balance;
   /// The recepient of the sale.
   public saleRecepient: string | null;
 
@@ -21,6 +23,7 @@ export class Listing {
     region: Region,
     seller: string,
     timeslicePrice: Balance,
+    currentPrice: Balance,
     saleRecepient: string | null
   ): Listing {
     return new Listing(
@@ -29,6 +32,7 @@ export class Listing {
       region.coreOccupancy(),
       seller,
       timeslicePrice,
+      currentPrice,
       saleRecepient
     );
   }
@@ -39,6 +43,7 @@ export class Listing {
     regionCoreOccupancy: Percentage,
     seller: string,
     timeslicePrice: Balance,
+    currentPrice: Balance,
     saleRecepient: string | null
   ) {
     this.region = region;
@@ -46,6 +51,7 @@ export class Listing {
     this.regionCoreOccupancy = regionCoreOccupancy;
     this.seller = seller;
     this.timeslicePrice = timeslicePrice;
+    this.currentPrice = currentPrice;
     this.saleRecepient = saleRecepient;
   }
 }
