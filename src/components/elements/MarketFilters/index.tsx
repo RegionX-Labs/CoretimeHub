@@ -2,6 +2,7 @@ import { Listing } from '@/models';
 import { Box, Typography } from '@mui/material';
 import CoreOccupancyFilter from './coreOccupancyFilter';
 import DurationFilter from './DurationFilter';
+import Sort from './sort';
 
 export interface Props {
   listings: Array<Listing>;
@@ -18,6 +19,9 @@ const MarketFilters = (props: Props) => {
         </Box>
         <Box marginRight={'1em'} marginTop={'.5em'}>
           <DurationFilter {...props} />
+        </Box>
+        <Box marginRight={'1em'} marginTop={'.5em'}>
+          <Sort {...props} />
         </Box>
       </Box>
     </Box>
