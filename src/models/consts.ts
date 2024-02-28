@@ -6,3 +6,6 @@ export const HOUR = 60 * MINUTE;
 export const DAY = 24 * HOUR;
 export const UNIT_DECIMALS = 10 ** 12;
 export const LISTING_DEPOSIT = 0 * UNIT_DECIMALS;
+/// Given that a timeslice is 8 minutes;
+export const DAY_IN_TIMESLICES = 180;
+export const WEEK_IN_TIMESLICES = DAY_IN_TIMESLICES * 7;
