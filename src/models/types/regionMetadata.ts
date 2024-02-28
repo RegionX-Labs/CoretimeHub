@@ -22,7 +22,7 @@ export class RegionMetadata {
   // This is essentially the Coremask of the region, representing the frequency with which the region will
   // be scheduled.
   //
-  // A 100% Coretime Ownership implies that the region occupies the entire Core.
+  // A 100% Core Occupancy implies that the region occupies the entire Core.
   public coreOccupancy: Percentage;
 
   // Displays the current utilization of Coretime for the task assigned to the region.

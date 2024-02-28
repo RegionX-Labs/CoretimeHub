@@ -117,7 +117,7 @@ const RegionCardInner = ({
 
   const progress = [
     {
-      label: 'Coretime Ownership',
+      label: 'Core Occupancy',
       value: coreOccupancy ?? 0,
       color: 'warning',
     },
