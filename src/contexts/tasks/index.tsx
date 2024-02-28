@@ -1,16 +1,29 @@
+import { useInkathon } from '@scio-labs/use-inkathon';
+import { CoreMask, Region } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import { TaskMetadata } from '@/models';
+import { parseHNString } from '@/utils/functions';
+
+import { ScheduleItem, TaskMetadata } from '@/models';
+
+import { useCoretimeApi } from '../apis';
+import { ApiState } from '../apis/types';
+
+type Tasks = Record<string, number | null>;
 
 interface TasksData {
   tasks: Array<TaskMetadata>;
-  loadTasks: () => void;
+  fetchTasks: () => Promise<Tasks>;
+  loadTasksFromLocalStorage: () => void;
   addTask: (_task: TaskMetadata) => void;
 }
 
 const defaultTasksData: TasksData = {
   tasks: [],
-  loadTasks: () => {
+  fetchTasks: async (): Promise<Tasks> => {
+    return {};
+  },
+  loadTasksFromLocalStorage: () => {
     /** */
   },
   addTask: () => {
@@ -27,7 +40,44 @@ interface Props {
 const TaskDataProvider = ({ children }: Props) => {
   const [tasks, setTasks] = useState<TaskMetadata[]>([]);
 
+  const {
+    state: { api: coretimeApi, apiState: coretimeApiState },
+  } = useCoretimeApi();
+  const { api: contractsApi } = useInkathon();
+
   const STORAGE_ITEM_KEY = 'tasks';
+
+  const fetchTasks = async (): Promise<Tasks> => {
+    if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
+    const workplan = await coretimeApi.query.broker.workplan.entries();
+    const tasks: Record<string, number | null> = {};
+
+    for await (const [key, value] of workplan) {
+      const [[begin, core]] = key.toHuman() as [[number, number]];
+      const records = value.toHuman() as ScheduleItem[];
+
+      records.forEach((record) => {
+        const {
+          assignment: { Task: taskId },
+          mask,
+        } = record;
+
+        const region = new Region(
+          {
+            begin: parseHNString(begin.toString()),
+            core: parseHNString(core.toString()),
+            mask: new CoreMask(mask),
+          },
+          { end: 0, owner: '', paid: null },
+          0
+        );
+        tasks[region.getEncodedRegionId(contractsApi).toString()] = taskId
+          ? parseHNString(taskId)
+          : null;
+      });
+    }
+    return tasks;
+  };
 
   const loadTasksFromLocalStorage = () => {
     const strTasks = localStorage.getItem(STORAGE_ITEM_KEY);
@@ -43,8 +93,6 @@ const TaskDataProvider = ({ children }: Props) => {
     }
   };
 
-  const loadTasks = () => loadTasksFromLocalStorage();
-
   const addTask = (task: TaskMetadata) => {
     const _tasks = [...tasks, task];
     setTasks(_tasks);
@@ -56,7 +104,9 @@ const TaskDataProvider = ({ children }: Props) => {
   }, []);
 
   return (
-    <TaskDataContext.Provider value={{ tasks, loadTasks, addTask }}>
+    <TaskDataContext.Provider
+      value={{ tasks, fetchTasks, loadTasksFromLocalStorage, addTask }}
+    >
       {children}
     </TaskDataContext.Provider>
   );

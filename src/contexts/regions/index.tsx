@@ -1,10 +1,8 @@
 import { useContract, useInkathon } from '@scio-labs/use-inkathon';
-import { CoreMask, Region, RegionId } from 'coretime-utils';
+import { Region, RegionId } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import { parseHNString } from '@/utils/functions';
-
-import { RegionLocation, RegionMetadata, ScheduleItem } from '@/models';
+import { RegionLocation, RegionMetadata } from '@/models';
 
 import * as NativeRegions from './native';
 import * as XcRegions from './xc';
@@ -12,10 +10,9 @@ import { useCoretimeApi, useRelayApi } from '../apis';
 import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '../apis/consts';
 import { ApiState } from '../apis/types';
 import { useCommon } from '../common';
+import { useTasks } from '../tasks';
 import MarketMetadata from '../../contracts/market.json';
 import XcRegionsMetadata from '../../contracts/xc_regions.json';
-
-type Tasks = Record<string, number | null>;
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
@@ -66,6 +63,8 @@ const RegionDataProvider = ({ children }: Props) => {
     CONTRACT_MARKET
   );
 
+  const { fetchTasks } = useTasks();
+
   const context = useCommon();
 
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
@@ -74,38 +73,6 @@ const RegionDataProvider = ({ children }: Props) => {
   const relayConnected = relayApi && relayApiState === ApiState.READY;
   const coretimeConnected = coretimeApi && coretimeApiState === ApiState.READY;
   const contractsConnected = contractsApi && contractsReady;
-
-  const fetchTasks = async (): Promise<Tasks> => {
-    if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
-    const workplan = await coretimeApi.query.broker.workplan.entries();
-    const tasks: Record<string, number | null> = {};
-
-    for await (const [key, value] of workplan) {
-      const [[begin, core]] = key.toHuman() as [[number, number]];
-      const records = value.toHuman() as ScheduleItem[];
-
-      records.forEach((record) => {
-        const {
-          assignment: { Task: taskId },
-          mask,
-        } = record;
-
-        const region = new Region(
-          {
-            begin: parseHNString(begin.toString()),
-            core: parseHNString(core.toString()),
-            mask: new CoreMask(mask),
-          },
-          { end: 0, owner: '', paid: null },
-          0
-        );
-        tasks[region.getEncodedRegionId(contractsApi).toString()] = taskId
-          ? parseHNString(taskId)
-          : null;
-      });
-    }
-    return tasks;
-  };
 
   const fetchRegions = async (): Promise<void> => {
     if (!activeAccount || !relayApi) {
