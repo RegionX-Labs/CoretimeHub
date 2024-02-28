@@ -1,3 +1,6 @@
+import { ApiPromise } from '@polkadot/api';
+import { ContractPromise } from '@polkadot/api-contract';
+import { Signer } from '@polkadot/types/types';
 import { Balance, CoreIndex, TaskId, Timeslice } from 'coretime-utils';
 
 export { Listing } from './types/listing';
@@ -8,6 +11,24 @@ export type Percentage = number; // Percentage value between 0 and 1
 export type ParaId = number;
 
 export type BlockNumber = number;
+
+export type SignerContext = {
+  address: string;
+  signer: Signer;
+};
+
+export type ContractContext = {
+  contractsApi: ApiPromise | undefined;
+  xcRegionsContract: ContractPromise | undefined;
+  marketContract: ContractPromise | undefined;
+};
+
+export type TransactionResultHandlers = {
+  onReady: () => void;
+  onInBlock: () => void;
+  onExtrinsicSuccess: () => void;
+  onExtrinsicFailure: () => void;
+};
 
 export enum RegionLocation {
   // eslint-disable-next-line no-unused-vars
