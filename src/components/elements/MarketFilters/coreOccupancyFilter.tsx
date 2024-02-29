@@ -1,5 +1,3 @@
-import { useState } from 'react';
-import { Props } from '.';
 import {
   Box,
   FormControl,
@@ -9,6 +7,9 @@ import {
   SelectChangeEvent,
   Typography,
 } from '@mui/material';
+import { useState } from 'react';
+
+import { Props } from '.';
 
 const CoreOccupancyFilter = ({ listings, setFilteredListings }: Props) => {
   type Range = {

@@ -1,5 +1,3 @@
-import { useState } from 'react';
-import { Props } from '.';
 import {
   Box,
   FormControl,
@@ -10,7 +8,11 @@ import {
   Typography,
 } from '@mui/material';
 import { Timeslice } from 'coretime-utils';
+import { useState } from 'react';
+
 import { WEEK_IN_TIMESLICES } from '@/models';
+
+import { Props } from '.';
 
 const DurationFilter = ({ listings, setFilteredListings }: Props) => {
   type Option = {

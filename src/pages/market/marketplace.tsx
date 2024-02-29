@@ -4,11 +4,11 @@ import { useState } from 'react';
 import theme from '@/utils/muiTheme';
 
 import { ListingCard } from '@/components/elements/ListingCard';
+import MarketFilters from '@/components/elements/MarketFilters';
 import { PurchaseModal } from '@/components/Modals/Purchase';
 
 import { useMarket } from '@/contexts/market';
 import { Listing } from '@/models';
-import MarketFilters from '@/components/elements/MarketFilters';
 
 const Page = () => {
   const { listedRegions } = useMarket();
@@ -57,9 +57,8 @@ const Page = () => {
         justifyContent={'space-between'}
       >
         {filteredListings.map((listing, indx) => (
-          <Box margin={'1em'}>
+          <Box key={indx} margin={'1em'}>
             <ListingCard
-              key={indx}
               listing={listing}
               readOnly={false}
               onPurchase={onPurchase}

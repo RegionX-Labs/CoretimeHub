@@ -1,5 +1,3 @@
-import { useState } from 'react';
-import { Props } from '.';
 import {
   Box,
   FormControl,
@@ -9,13 +7,22 @@ import {
   SelectChangeEvent,
   Typography,
 } from '@mui/material';
+import { useState } from 'react';
+
 import { Listing } from '@/models';
 
+import { Props } from '.';
+
+// eslint-disable-next-line no-unused-vars
 enum SortOption {
+  // eslint-disable-next-line no-unused-vars
   CheapestFirst = 'CheapestFirst',
+  // eslint-disable-next-line no-unused-vars
   ExpensiveFirst = 'ExpensiveFirst',
   // 'ppt' stands for price per timeslice
+  // eslint-disable-next-line no-unused-vars
   LowestPptFirst = 'LowestPptFirst',
+  // eslint-disable-next-line no-unused-vars
   HighestPptFirst = 'HighestPptFirst',
 }
 
@@ -43,10 +50,8 @@ const Sort = ({ listings, setFilteredListings }: Props) => {
   );
 
   const handleChange = (event: SelectChangeEvent) => {
-    console.log(event.target.value);
-    let filteredListings = new Array(...listings);
+    const filteredListings = new Array(...listings);
     const sortOption = event.target.value as SortOption;
-    console.log(sortOption);
     setSelectedOption(sortOption);
 
     switch (sortOption) {

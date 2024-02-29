@@ -1,7 +1,10 @@
-import { Listing } from '@/models';
 import { Box, Typography } from '@mui/material';
+
+import { Listing } from '@/models';
+
 import CoreOccupancyFilter from './coreOccupancyFilter';
 import DurationFilter from './DurationFilter';
+import PriceFilter from './PriceFilter';
 import Sort from './sort';
 
 export interface Props {
@@ -11,18 +14,27 @@ export interface Props {
 
 const MarketFilters = (props: Props) => {
   return (
-    <Box>
-      <Typography variant='subtitle2'>Search filters: </Typography>
-      <Box display={'flex'}>
-        <Box marginRight={'1em'} marginTop={'.5em'}>
-          <CoreOccupancyFilter {...props} />
+    <Box
+      display={'flex'}
+      justifyContent={'space-between'}
+      alignItems={'center'}
+    >
+      <Box>
+        <Typography variant='subtitle2'>Search filters: </Typography>
+        <Box display={'flex'}>
+          <Box marginRight={'1em'} marginTop={'.5em'}>
+            <CoreOccupancyFilter {...props} />
+          </Box>
+          <Box marginRight={'1em'} marginTop={'.5em'}>
+            <DurationFilter {...props} />
+          </Box>
+          <Box marginRight={'1em'} marginTop={'.5em'}>
+            <PriceFilter {...props} />
+          </Box>
         </Box>
-        <Box marginRight={'1em'} marginTop={'.5em'}>
-          <DurationFilter {...props} />
-        </Box>
-        <Box marginRight={'1em'} marginTop={'.5em'}>
-          <Sort {...props} />
-        </Box>
+      </Box>
+      <Box marginRight={'1em'} marginTop={'.5em'}>
+        <Sort {...props} />
       </Box>
     </Box>
   );
