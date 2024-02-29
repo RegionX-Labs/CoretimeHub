@@ -77,7 +77,12 @@ const MarketProvider = ({ children }: Props) => {
       {},
       [null]
     );
-    const { output } = decodeOutput(result, marketContract, 'listed_regions');
+    const { output, isError } = decodeOutput(
+      result,
+      marketContract,
+      'listed_regions'
+    );
+    if (isError) return [];
     const regionIds = output.map((regionId: string) =>
       parseHNStringToString(regionId)
     );

@@ -42,6 +42,30 @@ export const timesliceToTimestamp = async (
   return timestamp;
 };
 
+export const timestampToTimeslice = async (
+  api: ApiPromise,
+  timestamp: EpochTimeStamp,
+  timeslicePeriod: number
+): Promise<number> => {
+  // We have the current block number and the corresponding timestamp.
+  // Assume that 1 block ~ 6 seconds..
+  const [resHeight, resTimestamp] = await Promise.all([
+    api.query.system.number(),
+    api.query.timestamp.now(),
+  ]);
+  const currentHeight = parseHNString(resHeight.toString());
+  const now = parseHNString(resTimestamp.toString());
+  if (now > timestamp) {
+    // timestamps are in millis
+    const diffInBlocks = currentHeight - (now - timestamp) / 6000;
+    return diffInBlocks / timeslicePeriod;
+  } else {
+    // timestamps are in millis
+    const diffInBlocks = currentHeight + (timestamp - now) / 6000;
+    return diffInBlocks / timeslicePeriod;
+  }
+};
+
 export const formatBalance = (balance: number) => {
   return (balance / UNIT_DECIMALS).toPrecision(2);
 };

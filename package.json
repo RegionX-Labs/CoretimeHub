@@ -9,6 +9,7 @@
     "format": "npx prettier --write '**/*.{js,jsx,ts,tsx}'"
   },
   "dependencies": {
+    "@date-io/date-fns": "^3.0.0",
     "@emotion/cache": "^11.7.1",
     "@emotion/react": "^11.7.1",
     "@emotion/server": "^11.4.0",
@@ -16,6 +17,7 @@
     "@mui/icons-material": "^5.2.5",
     "@mui/lab": "5.0.0-alpha.134",
     "@mui/material": "^5.2.8",
+    "@mui/x-date-pickers": "^6.19.5",
     "@polkadot/api": "^10.8.1",
     "@polkadot/api-contract": "^10.8.1",
     "@polkadot/extension-inject": "^0.46.4",
@@ -25,6 +27,7 @@
     "@types/humanize-duration": "^3.27.3",
     "clsx": "^1.1.1",
     "coretime-utils": "^0.2.6",
+    "date-fns": "^3.3.1",
     "humanize-duration": "^3.31.0",
     "javascript-time-ago": "^2.5.9",
     "next": "^13.3.1",

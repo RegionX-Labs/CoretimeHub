@@ -6,6 +6,8 @@ import { Listing } from '@/models';
 import CoreOccupancyFilter from './coreOccupancyFilter';
 import DurationFilter from './DurationFilter';
 import PriceFilter from './PriceFilter';
+import RegionEndFilter from './RegionEndFilter';
+import RegionStartFilter from './RegionStartFilter';
 import Sort from './sort';
 
 export interface Props {
@@ -23,6 +25,8 @@ type Filters = {
   coreOccupancyFilter: (_listing: Listing) => boolean;
   durationFilter: (_listing: Listing) => boolean;
   priceFilter: (_listing: Listing) => boolean;
+  regionStartFilter: (_listing: Listing) => boolean;
+  regionEndFilter: (_listing: Listing) => boolean;
 };
 
 const MarketFilters = ({ listings, setFilteredListings }: Props) => {
@@ -30,6 +34,8 @@ const MarketFilters = ({ listings, setFilteredListings }: Props) => {
     coreOccupancyFilter: () => true,
     durationFilter: () => true,
     priceFilter: () => true,
+    regionStartFilter: () => true,
+    regionEndFilter: () => true,
   });
 
   const updateFilters = (newFilters: Filters) => {
@@ -43,7 +49,9 @@ const MarketFilters = ({ listings, setFilteredListings }: Props) => {
     return (
       f.coreOccupancyFilter(listing) &&
       f.durationFilter(listing) &&
-      f.priceFilter(listing)
+      f.priceFilter(listing) &&
+      f.regionStartFilter(listing) &&
+      f.regionEndFilter(listing)
     );
   };
 
@@ -72,6 +80,22 @@ const MarketFilters = ({ listings, setFilteredListings }: Props) => {
           </Box>
           <Box marginRight={'1em'} marginTop={'.5em'}>
             <PriceFilter
+              listings={listings}
+              filters={filters}
+              updateFilters={updateFilters}
+            />
+          </Box>
+        </Box>
+        <Box display={'flex'}>
+          <Box marginRight={'1em'} marginTop={'.5em'}>
+            <RegionStartFilter
+              listings={listings}
+              filters={filters}
+              updateFilters={updateFilters}
+            />
+          </Box>
+          <Box marginRight={'1em'} marginTop={'.5em'}>
+            <RegionEndFilter
               listings={listings}
               filters={filters}
               updateFilters={updateFilters}
