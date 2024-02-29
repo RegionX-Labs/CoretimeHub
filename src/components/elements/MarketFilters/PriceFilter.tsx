@@ -25,20 +25,20 @@ const PriceFilter = ({ listings, filters, updateFilters }: FilterProps) => {
   };
 
   return (
-    <Box width={240}>
-      <Typography marginBottom={'.5em'}>Price Limit</Typography>
-      <Box marginTop={'2em'}>
-        <Slider
-          defaultValue={70}
-          max={maxValue()}
-          color='info'
-          value={priceLimit}
-          onChange={handleChange}
-          aria-label='Always visible'
-          valueLabelDisplay='on'
-          valueLabelFormat={(value) => `${value} ROC`}
-        />
-      </Box>
+    <Box width={230}>
+      <Typography textAlign={'center'}>
+        Price Limit: {`${priceLimit} ROC`}
+      </Typography>
+      <Slider
+        defaultValue={70}
+        max={maxValue()}
+        color='info'
+        value={priceLimit}
+        onChange={handleChange}
+        aria-label='Always visible'
+        valueLabelDisplay='off'
+        valueLabelFormat={(value) => `${value} ROC`}
+      />
     </Box>
   );
 };

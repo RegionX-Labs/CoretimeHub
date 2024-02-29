@@ -90,23 +90,25 @@ const Sort = ({ listings, setFilteredListings, filter }: SortProps) => {
 
   return (
     <Box width={240}>
-      <Typography marginBottom={'.5em'}>Sort By</Typography>
-      <FormControl fullWidth>
-        <InputLabel id='range-dropdown-label'>Sort</InputLabel>
-        <Select
-          labelId='range-dropdown-label'
-          id='range-dropdown'
-          value={selectedOption.toString()}
-          label='Range'
-          onChange={handleChange}
-        >
-          {options.map((option) => (
-            <MenuItem key={option.label} value={option.sortOption}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <Typography variant='subtitle2'>Sort By:</Typography>
+      <Box marginY={'2em'}>
+        <FormControl fullWidth>
+          <InputLabel id='range-dropdown-label'>Sort</InputLabel>
+          <Select
+            labelId='range-dropdown-label'
+            id='range-dropdown'
+            value={selectedOption.toString()}
+            label='Range'
+            onChange={handleChange}
+          >
+            {options.map((option) => (
+              <MenuItem key={option.label} value={option.sortOption}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
     </Box>
   );
 };

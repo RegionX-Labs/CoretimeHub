@@ -56,14 +56,10 @@ const MarketFilters = ({ listings, setFilteredListings }: Props) => {
   };
 
   return (
-    <Box
-      display={'flex'}
-      justifyContent={'space-between'}
-      alignItems={'center'}
-    >
+    <Box display={'flex'} justifyContent={'space-between'}>
       <Box>
         <Typography variant='subtitle2'>Search filters: </Typography>
-        <Box display={'flex'}>
+        <Box display={'flex'} alignItems={'end'}>
           <Box marginRight={'1em'} marginTop={'.5em'}>
             <CoreOccupancyFilter
               listings={listings}
@@ -103,12 +99,14 @@ const MarketFilters = ({ listings, setFilteredListings }: Props) => {
           </Box>
         </Box>
       </Box>
-      <Box marginRight={'1em'} marginTop={'.5em'}>
-        <Sort
-          listings={listings}
-          filter={(listing) => filter(filters, listing)}
-          setFilteredListings={setFilteredListings}
-        />
+      <Box>
+        <Box marginRight={'1em'}>
+          <Sort
+            listings={listings}
+            filter={(listing) => filter(filters, listing)}
+            setFilteredListings={setFilteredListings}
+          />
+        </Box>
       </Box>
     </Box>
   );

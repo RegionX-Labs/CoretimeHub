@@ -18,7 +18,7 @@ let theme = createTheme({
       main: '#3868a9',
     },
     success: {
-      main: '#68a938',
+      main: '#49a078',
     },
     grey: {
       100: '#eeeff4',

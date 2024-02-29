@@ -46,7 +46,7 @@ const CoreOccupancyFilter = ({ filters, updateFilters }: FilterProps) => {
   };
 
   return (
-    <Box width={240}>
+    <Box width={230}>
       <Typography marginBottom={'.5em'}>Core Occupancy</Typography>
       <FormControl fullWidth>
         <InputLabel id='range-dropdown-label'>Range</InputLabel>
