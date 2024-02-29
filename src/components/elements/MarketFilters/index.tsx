@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material';
+import { useState } from 'react';
 
 import { Listing } from '@/models';
 
@@ -12,7 +13,40 @@ export interface Props {
   setFilteredListings: (_filtered: Array<Listing>) => void;
 }
 
-const MarketFilters = (props: Props) => {
+export interface FilterProps {
+  filters: Filters;
+  listings: Array<Listing>;
+  updateFilters: (_filters: Filters) => void;
+}
+
+type Filters = {
+  coreOccupancyFilter: (_listing: Listing) => boolean;
+  durationFilter: (_listing: Listing) => boolean;
+  priceFilter: (_listing: Listing) => boolean;
+};
+
+const MarketFilters = ({ listings, setFilteredListings }: Props) => {
+  const [filters, setFilters] = useState<Filters>({
+    coreOccupancyFilter: () => true,
+    durationFilter: () => true,
+    priceFilter: () => true,
+  });
+
+  const updateFilters = (newFilters: Filters) => {
+    setFilters(newFilters);
+    setFilteredListings(
+      listings.filter((listing) => filter(newFilters, listing))
+    );
+  };
+
+  const filter = (f: Filters, listing: Listing): boolean => {
+    return (
+      f.coreOccupancyFilter(listing) &&
+      f.durationFilter(listing) &&
+      f.priceFilter(listing)
+    );
+  };
+
   return (
     <Box
       display={'flex'}
@@ -23,18 +57,34 @@ const MarketFilters = (props: Props) => {
         <Typography variant='subtitle2'>Search filters: </Typography>
         <Box display={'flex'}>
           <Box marginRight={'1em'} marginTop={'.5em'}>
-            <CoreOccupancyFilter {...props} />
+            <CoreOccupancyFilter
+              listings={listings}
+              filters={filters}
+              updateFilters={updateFilters}
+            />
           </Box>
           <Box marginRight={'1em'} marginTop={'.5em'}>
-            <DurationFilter {...props} />
+            <DurationFilter
+              listings={listings}
+              filters={filters}
+              updateFilters={updateFilters}
+            />
           </Box>
           <Box marginRight={'1em'} marginTop={'.5em'}>
-            <PriceFilter {...props} />
+            <PriceFilter
+              listings={listings}
+              filters={filters}
+              updateFilters={updateFilters}
+            />
           </Box>
         </Box>
       </Box>
       <Box marginRight={'1em'} marginTop={'.5em'}>
-        <Sort {...props} />
+        <Sort
+          listings={listings}
+          filter={(listing) => filter(filters, listing)}
+          setFilteredListings={setFilteredListings}
+        />
       </Box>
     </Box>
   );

@@ -9,9 +9,9 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
-import { Props } from '.';
+import { FilterProps } from '.';
 
-const CoreOccupancyFilter = ({ listings, setFilteredListings }: Props) => {
+const CoreOccupancyFilter = ({ filters, updateFilters }: FilterProps) => {
   type Range = {
     lowerLimit: number;
     upperLimit: number;
@@ -37,13 +37,12 @@ const CoreOccupancyFilter = ({ listings, setFilteredListings }: Props) => {
   const handleChange = (event: SelectChangeEvent) => {
     const range = JSON.parse(event.target.value) as Range;
     setSelectedRange(JSON.stringify(range));
-    setFilteredListings(
-      listings.filter(
-        (listing) =>
-          listing.region.coreOccupancy() >= range.lowerLimit &&
-          listing.region.coreOccupancy() <= range.upperLimit
-      )
-    );
+    updateFilters({
+      ...filters,
+      coreOccupancyFilter: (listing) =>
+        listing.region.coreOccupancy() >= range.lowerLimit &&
+        listing.region.coreOccupancy() <= range.upperLimit,
+    });
   };
 
   return (

@@ -11,8 +11,6 @@ import { useState } from 'react';
 
 import { Listing } from '@/models';
 
-import { Props } from '.';
-
 // eslint-disable-next-line no-unused-vars
 enum SortOption {
   // eslint-disable-next-line no-unused-vars
@@ -26,7 +24,13 @@ enum SortOption {
   HighestPptFirst = 'HighestPptFirst',
 }
 
-const Sort = ({ listings, setFilteredListings }: Props) => {
+interface SortProps {
+  listings: Array<Listing>;
+  filter: (_listing: Listing) => boolean;
+  setFilteredListings: (_listings: Array<Listing>) => void;
+}
+
+const Sort = ({ listings, setFilteredListings, filter }: SortProps) => {
   type Option = {
     sortOption: SortOption;
     label: string;
@@ -81,7 +85,7 @@ const Sort = ({ listings, setFilteredListings }: Props) => {
       }
     }
 
-    setFilteredListings(filteredListings);
+    setFilteredListings(filteredListings.filter(filter));
   };
 
   return (

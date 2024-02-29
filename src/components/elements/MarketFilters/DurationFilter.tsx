@@ -12,9 +12,9 @@ import { useState } from 'react';
 
 import { WEEK_IN_TIMESLICES } from '@/models';
 
-import { Props } from '.';
+import { FilterProps } from '.';
 
-const DurationFilter = ({ listings, setFilteredListings }: Props) => {
+const DurationFilter = ({ filters, updateFilters }: FilterProps) => {
   type Option = {
     duration: Timeslice;
     label: string;
@@ -35,12 +35,11 @@ const DurationFilter = ({ listings, setFilteredListings }: Props) => {
   const handleChange = (event: SelectChangeEvent) => {
     const duration = Number(event.target.value);
     setSelectedDuration(duration);
-    setFilteredListings(
-      listings.filter(
-        (listing) =>
-          listing.region.getEnd() - listing.region.getBegin() <= duration
-      )
-    );
+    updateFilters({
+      ...filters,
+      durationFilter: (listing) =>
+        listing.region.getEnd() - listing.region.getBegin() <= duration,
+    });
   };
 
   return (
