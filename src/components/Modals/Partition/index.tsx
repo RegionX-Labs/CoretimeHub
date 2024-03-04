@@ -85,7 +85,7 @@ export const PartitionModal = ({
   }, []);
 
   useEffect(() => {
-    setUnitIdx(timeUnits.length - 1);
+    setUnitIdx(0);
   }, [open]);
 
   useEffect(() => {

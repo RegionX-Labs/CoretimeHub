@@ -4,6 +4,7 @@ import { useState } from 'react';
 import theme from '@/utils/muiTheme';
 
 import { ListingCard } from '@/components/elements/ListingCard';
+import MarketFilters from '@/components/elements/MarketFilters';
 import { PurchaseModal } from '@/components/Modals/Purchase';
 
 import { useMarket } from '@/contexts/market';
@@ -14,6 +15,8 @@ const Page = () => {
 
   const [purchaseModalOpen, openPurhcaseModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const [filteredListings, setFilteredListings] =
+    useState<Listing[]>(listedRegions);
 
   const onPurchase = (listing: Listing) => {
     setSelectedListing(listing);
@@ -43,14 +46,24 @@ const Page = () => {
           </Typography>
         </Box>
       </Box>
-      <Box marginTop={'2rem'}>
-        {listedRegions.map((listing, indx) => (
-          <ListingCard
-            key={indx}
-            listing={listing}
-            readOnly={false}
-            onPurchase={onPurchase}
-          />
+      <MarketFilters
+        listings={listedRegions}
+        setFilteredListings={setFilteredListings}
+      />
+      <Box
+        marginTop={'2rem'}
+        display={'flex'}
+        flexWrap={'wrap'}
+        justifyContent={'space-between'}
+      >
+        {filteredListings.map((listing, indx) => (
+          <Box key={indx} margin={'1em'}>
+            <ListingCard
+              listing={listing}
+              readOnly={false}
+              onPurchase={onPurchase}
+            />
+          </Box>
         ))}
       </Box>
       {selectedListing && (

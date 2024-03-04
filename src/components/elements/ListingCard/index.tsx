@@ -105,7 +105,7 @@ const ListingCardInner = ({
 
   const progress = [
     {
-      label: 'Coretime Ownership',
+      label: 'Core Occupancy',
       value: regionCoreOccupancy ?? 0,
       color: 'warning',
     },
