@@ -5,22 +5,59 @@ import {
   DialogActions,
   FormControl,
   InputLabel,
+  Link,
   MenuItem,
   Select,
   Stack,
   TextField,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import theme from '@/utils/muiTheme';
 import { LoadingButton } from '@mui/lab';
+import { useRegions } from '@/contexts/regions';
+import { RegionCard } from '@/components';
+import { RegionLocation, RegionMetadata } from '@/models';
 
 const Page = () => {
+  const { regions } = useRegions();
+  const [filteredRegions, setFilteredRegions] = useState<Array<RegionMetadata>>(
+    []
+  );
+
   const [newOwner, setNewOwner] = useState('');
 
   const [originChain, setOriginChain] = useState('');
   const [destination, setDestinationChain] = useState('');
+
+  const [selectedRegion, setSelectedRegion] = useState<RegionMetadata | null>(
+    null
+  );
+
+  useEffect(() => {
+    setFilteredRegions(
+      regions.filter((r) => r.location != RegionLocation.MARKET)
+    );
+  }, [regions]);
+
+  const handleRegionChange = (indx: number) => {
+    console.log(regions[indx]);
+    setSelectedRegion(regions[indx]);
+  };
+
+  const handleOriginChange = (newOrigin: string) => {
+    setOriginChain(newOrigin);
+    if (newOrigin === 'CoretimeChain')
+      setFilteredRegions(
+        regions.filter((r) => r.location == RegionLocation.CORETIME_CHAIN)
+      );
+    else {
+      setFilteredRegions(
+        regions.filter((r) => r.location == RegionLocation.CONTRACTS_CHAIN)
+      );
+    }
+  };
 
   return (
     <Box>
@@ -38,10 +75,13 @@ const Page = () => {
           Cross-Chain Transfer
         </Typography>
       </Box>
-      <Box width={'50%'} margin={'2em auto'}>
+      <Box width={'60%'} margin={'2em auto'}>
         <Stack margin={'1em 0'} direction='column' gap={1}>
           <Typography>Origin chain:</Typography>
-          <ChainSelectorProps chain={originChain} setChain={setOriginChain} />
+          <ChainSelectorProps
+            chain={originChain}
+            setChain={handleOriginChange}
+          />
         </Stack>
         <Stack margin={'1em 0'} direction='column' gap={1}>
           <Typography>Destination chain:</Typography>
@@ -50,6 +90,26 @@ const Page = () => {
             setChain={setDestinationChain}
           />
         </Stack>
+        {originChain && (
+          <Stack margin={'1em 0'} direction='column' gap={1}>
+            <Typography>Region</Typography>
+            <RegionSelector
+              regions={filteredRegions}
+              selectedRegion={selectedRegion}
+              handleRegionChange={handleRegionChange}
+            />
+          </Stack>
+        )}
+        {selectedRegion && (
+          <Box
+            sx={{
+              transform: 'scale(0.8)',
+              transformOrigin: 'center',
+            }}
+          >
+            <RegionCard regionMetadata={selectedRegion} />
+          </Box>
+        )}
         <Stack margin={'2em 0'} direction='column' gap={1} alignItems='center'>
           <Typography>Transfer</Typography>
           <ArrowDownward />
@@ -63,9 +123,11 @@ const Page = () => {
         </Stack>
         <Box margin={'2em 0'}>
           <DialogActions>
-            <Button onClick={() => {}} variant='outlined'>
-              Home
-            </Button>
+            <Link href='/'>
+              <Button onClick={() => {}} variant='outlined'>
+                Home
+              </Button>
+            </Link>
             <LoadingButton
               onClick={() => {}}
               variant='contained'
@@ -77,6 +139,35 @@ const Page = () => {
         </Box>
       </Box>
     </Box>
+  );
+};
+
+interface RegionSelectorProps {
+  regions: Array<RegionMetadata>;
+  selectedRegion: RegionMetadata | null;
+  handleRegionChange: (_indx: number) => void;
+}
+
+const RegionSelector = ({
+  regions,
+  selectedRegion,
+  handleRegionChange,
+}: RegionSelectorProps) => {
+  return (
+    <FormControl fullWidth>
+      <InputLabel id='destination-selector-label'>Region Name</InputLabel>
+      <Select
+        labelId='destination-selector-label'
+        id='destination-selector'
+        value={selectedRegion?.name}
+        label='Destination'
+        onChange={(e) => handleRegionChange(Number(e.target.value))}
+      >
+        {regions.map((region, indx) => (
+          <MenuItem value={indx}>{region.name}</MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   );
 };
 
@@ -96,8 +187,8 @@ const ChainSelectorProps = ({ chain, setChain }: ChainSelectorProps) => {
         label='Origin'
         onChange={(e) => setChain(e.target.value)}
       >
-        <MenuItem value='Coretime'>Coretime Chain</MenuItem>
-        <MenuItem value='Contracts'>Contracts Chain</MenuItem>
+        <MenuItem value='CoretimeChain'>Coretime Chain</MenuItem>
+        <MenuItem value='ContractsChain'>Contracts Chain</MenuItem>
       </Select>
     </FormControl>
   );
@@ -126,9 +217,7 @@ const DestinationSelector = ({
   return (
     <div>
       <FormControl fullWidth>
-        <InputLabel id='destination-selector-label'>
-          Sale Destination
-        </InputLabel>
+        <InputLabel id='destination-selector-label'>Destination</InputLabel>
         <Select
           labelId='destination-selector-label'
           id='destination-selector'
