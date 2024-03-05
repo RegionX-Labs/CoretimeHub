@@ -9,6 +9,7 @@ import React from 'react';
 
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
+import { TransferIcon } from '@/icons';
 
 import styles from './index.module.scss';
 import { StatusIndicator } from '../elements';
@@ -71,6 +72,12 @@ export const Sidebar = () => {
         route: '/regions',
         enabled: true,
         icon: <DashboardIcon />,
+      },
+      {
+        label: 'Cross-chain transfer',
+        route: '/transfer',
+        enabled: true,
+        icon: <TransferIcon color='#7e8591' />,
       },
     ],
     'primary market': [
