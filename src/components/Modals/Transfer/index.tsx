@@ -9,9 +9,14 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
+import { useContract, useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
+
+import {
+  transferRegionOnContractsChain,
+  transferRegionOnCoretimeChain,
+} from '@/utils/native/transfer';
 
 import { RegionCard } from '@/components/elements';
 
@@ -21,10 +26,6 @@ import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import { RegionLocation, RegionMetadata } from '@/models';
-import {
-  transferRegionOnContractsChain,
-  transferRegionOnCoretimeChain,
-} from '@/utils/native/transfer';
 
 interface TransferModalProps {
   open: boolean;

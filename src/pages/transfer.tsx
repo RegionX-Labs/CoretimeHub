@@ -1,4 +1,5 @@
 import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
+import { LoadingButton } from '@mui/lab';
 import {
   Box,
   Button,
@@ -12,23 +13,24 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useContract, useInkathon } from '@scio-labs/use-inkathon';
+import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
 import theme from '@/utils/muiTheme';
-import { LoadingButton } from '@mui/lab';
-import { useRegions } from '@/contexts/regions';
-import { RegionCard } from '@/components';
-import { RegionLocation, RegionMetadata } from '@/models';
-import { useToast } from '@/contexts/toast';
-import { Region } from 'coretime-utils';
-import { useCoretimeApi } from '@/contexts/apis';
-import { useContract, useInkathon } from '@scio-labs/use-inkathon';
-import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
-import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import {
   transferRegionOnContractsChain,
   transferRegionOnCoretimeChain,
 } from '@/utils/native/transfer';
+
+import { RegionCard } from '@/components';
+
+import { useCoretimeApi } from '@/contexts/apis';
+import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
+import { useRegions } from '@/contexts/regions';
+import { useToast } from '@/contexts/toast';
+import XcRegionsMetadata from '@/contracts/xc_regions.json';
+import { RegionLocation, RegionMetadata } from '@/models';
 
 const Page = () => {
   const { activeAccount, activeSigner, api: contractsApi } = useInkathon();
@@ -60,7 +62,6 @@ const Page = () => {
   }, [regions]);
 
   const handleRegionChange = (indx: number) => {
-    console.log(regions[indx]);
     setSelectedRegion(regions[indx]);
   };
 
@@ -218,7 +219,7 @@ const Page = () => {
         <Box margin={'2em 0'}>
           <DialogActions>
             <Link href='/'>
-              <Button onClick={() => {}} variant='outlined'>
+              <Button variant='outlined'>
                 Home
               </Button>
             </Link>
@@ -258,7 +259,7 @@ const RegionSelector = ({
         onChange={(e) => handleRegionChange(Number(e.target.value))}
       >
         {regions.map((region, indx) => (
-          <MenuItem value={indx}>{region.name}</MenuItem>
+          <MenuItem key={indx} value={indx}>{region.name}</MenuItem>
         ))}
       </Select>
     </FormControl>

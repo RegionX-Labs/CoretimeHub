@@ -1,8 +1,9 @@
-import { ContractContext, TxHandlers } from '@/models';
 import { ApiPromise } from '@polkadot/api';
 import { Signer } from '@polkadot/types/types';
 import { contractTx } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
+
+import { ContractContext, TxHandlers } from '@/models';
 
 export const transferRegionOnCoretimeChain = async (
   coretimeApi: ApiPromise,

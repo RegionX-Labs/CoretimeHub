@@ -1,14 +1,15 @@
-import { ContractContext } from '@/models';
 import { ApiPromise } from '@polkadot/api';
-import { Signer } from '@polkadot/types/types';
 import { BN } from '@polkadot/util';
+import { contractTx } from '@scio-labs/use-inkathon';
+import { Region } from 'coretime-utils';
+
+import { ContractContext } from '@/models';
+
 import {
   ContractsChain,
   CoretimeRegionFromCoretimePerspective,
 } from './consts';
 import { versionedNonfungibleAssetWrap, versionedWrap } from './utils';
-import { Region } from 'coretime-utils';
-import { contractTx } from '@scio-labs/use-inkathon';
 
 export function coretimeToContractsTransfer(
   coretimeApi: ApiPromise,
@@ -43,6 +44,7 @@ export function coretimeToContractsTransfer(
       weightLimit
     );
 
+  // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
     try {
       const unsub = await reserveTransfer.signAndSend(
