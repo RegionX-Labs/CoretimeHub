@@ -23,11 +23,12 @@ export type ContractContext = {
   marketContract: ContractPromise | undefined;
 };
 
-export type TransactionResultHandlers = {
-  onReady: () => void;
-  onInBlock: () => void;
-  onExtrinsicSuccess: () => void;
-  onExtrinsicFailure: () => void;
+export type TxHandlers = {
+  ready: () => void;
+  inBlock: () => void;
+  finalized: () => void;
+  success: () => void;
+  error: () => void;
 };
 
 export enum RegionLocation {

@@ -19,17 +19,35 @@ import { LoadingButton } from '@mui/lab';
 import { useRegions } from '@/contexts/regions';
 import { RegionCard } from '@/components';
 import { RegionLocation, RegionMetadata } from '@/models';
+import { useToast } from '@/contexts/toast';
+import { Region } from 'coretime-utils';
+import { useCoretimeApi } from '@/contexts/apis';
+import { useContract, useInkathon } from '@scio-labs/use-inkathon';
+import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
+import XcRegionsMetadata from '@/contracts/xc_regions.json';
+import {
+  transferRegionOnContractsChain,
+  transferRegionOnCoretimeChain,
+} from '@/utils/native/transfer';
 
 const Page = () => {
+  const { activeAccount, activeSigner, api: contractsApi } = useInkathon();
+  const { contract } = useContract(XcRegionsMetadata, CONTRACT_XC_REGIONS);
+
+  const { toastError, toastInfo, toastSuccess, toastWarning } = useToast();
+  const {
+    state: { api: coretimeApi },
+  } = useCoretimeApi();
   const { regions } = useRegions();
+
   const [filteredRegions, setFilteredRegions] = useState<Array<RegionMetadata>>(
     []
   );
+  const [working, setWorking] = useState(false);
 
   const [newOwner, setNewOwner] = useState('');
-
   const [originChain, setOriginChain] = useState('');
-  const [destination, setDestinationChain] = useState('');
+  const [destinationChain, setDestinationChain] = useState('');
 
   const [selectedRegion, setSelectedRegion] = useState<RegionMetadata | null>(
     null
@@ -59,6 +77,82 @@ const Page = () => {
     }
   };
 
+  const handleTransfer = () => {
+    if (!selectedRegion) {
+      toastError('Select a region');
+      return;
+    }
+
+    if (
+      originChain === 'CoretimeChain' &&
+      destinationChain === 'CoretimeChain'
+    ) {
+      transferCoretimeRegion(selectedRegion.region);
+    } else if (
+      originChain === 'ContractsChain' &&
+      destinationChain === 'ContractsChain'
+    ) {
+      transferXcRegion(selectedRegion.region);
+    } else {
+      toastWarning('Cross-chain transfers are currently not supported');
+    }
+  };
+
+  const transferCoretimeRegion = async (region: Region) => {
+    if (!coretimeApi || !activeAccount || !activeSigner) return;
+    if (!newOwner) {
+      toastError('Please input the new owner.');
+      return;
+    }
+
+    setWorking(true);
+    transferRegionOnCoretimeChain(
+      coretimeApi,
+      region,
+      activeSigner,
+      activeAccount.address,
+      newOwner,
+      {
+        ready: () => toastInfo('Transaction was initiated.'),
+        inBlock: () => toastInfo(`In Block`),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully transferred the region.');
+        },
+        error: () => {
+          toastError(`Failed to transfer the region.`);
+          setWorking(false);
+        },
+      }
+    );
+  };
+
+  const transferXcRegion = async (region: Region) => {
+    if (!contractsApi || !activeAccount || !contract) {
+      return;
+    }
+
+    setWorking(true);
+    transferRegionOnContractsChain(
+      { contractsApi, xcRegionsContract: contract, marketContract: undefined },
+      region,
+      activeAccount.address,
+      newOwner,
+      {
+        ready: () => toastInfo('Transaction was initiated.'),
+        inBlock: () => toastInfo(`In Block`),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully transferred the region.');
+        },
+        error: () => {
+          toastError(`Failed to transfer the region.`);
+          setWorking(false);
+        },
+      }
+    );
+  };
+
   return (
     <Box>
       <Box>
@@ -86,7 +180,7 @@ const Page = () => {
         <Stack margin={'1em 0'} direction='column' gap={1}>
           <Typography>Destination chain:</Typography>
           <ChainSelectorProps
-            chain={destination}
+            chain={destinationChain}
             setChain={setDestinationChain}
           />
         </Stack>
@@ -129,9 +223,9 @@ const Page = () => {
               </Button>
             </Link>
             <LoadingButton
-              onClick={() => {}}
+              onClick={handleTransfer}
               variant='contained'
-              loading={false}
+              loading={working}
             >
               Transfer
             </LoadingButton>
@@ -231,7 +325,7 @@ const DestinationSelector = ({
       </FormControl>
       {destinationKind === 'Other' && (
         <TextField
-          label='Specify sale destination'
+          label='Destination'
           fullWidth
           margin='normal'
           value={destination}

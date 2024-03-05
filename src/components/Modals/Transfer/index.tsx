@@ -21,6 +21,10 @@ import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import { RegionLocation, RegionMetadata } from '@/models';
+import {
+  transferRegionOnContractsChain,
+  transferRegionOnCoretimeChain,
+} from '@/utils/native/transfer';
 
 interface TransferModalProps {
   open: boolean;
@@ -59,37 +63,29 @@ export const TransferModal = ({
       toastError('Please input the new owner.');
       return;
     }
-    const txTransfer = coretimeApi.tx.broker.transfer(
-      region.getOnChainRegionId(),
-      newOwner
-    );
 
-    try {
-      setWorking(true);
-      await txTransfer.signAndSend(
-        activeAccount.address,
-        { signer: activeSigner },
-        ({ status, events }) => {
-          if (status.isReady) toastInfo('Transaction was initiated.');
-          else if (status.isInBlock) toastInfo(`In Block`);
-          else if (status.isFinalized) {
-            setWorking(false);
-            events.forEach(({ event: { method } }) => {
-              if (method === 'ExtrinsicSuccess') {
-                toastSuccess('Successfully transferred the region.');
-                onClose();
-                fetchRegions();
-              } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to transfer the region.`);
-              }
-            });
-          }
-        }
-      );
-    } catch (e) {
-      toastError(`Failed to transfer the region. ${e}`);
-      setWorking(false);
-    }
+    setWorking(true);
+    transferRegionOnCoretimeChain(
+      coretimeApi,
+      region,
+      activeSigner,
+      activeAccount.address,
+      newOwner,
+      {
+        ready: () => toastInfo('Transaction was initiated.'),
+        inBlock: () => toastInfo(`In Block`),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully transferred the region.');
+          onClose();
+          fetchRegions();
+        },
+        error: () => {
+          toastError(`Failed to transfer the region.`);
+          setWorking(false);
+        },
+      }
+    );
   };
 
   const transferXcRegion = async (region: Region) => {
@@ -97,33 +93,27 @@ export const TransferModal = ({
       return;
     }
 
-    try {
-      setWorking(true);
-      const rawRegionId = region.getEncodedRegionId(contractsApi);
-      const id = contractsApi.createType('Id', { U128: rawRegionId });
-
-      await contractTx(
-        contractsApi,
-        activeAccount.address,
-        contract,
-        'PSP34::transfer',
-        {},
-        [newOwner, id, []]
-      );
-
-      toastSuccess(`Successfully transferred the xcRegion.`);
-      onClose();
-      fetchRegions();
-    } catch (e: any) {
-      toastError(
-        `Failed to transfer the region. Error: ${
-          e.errorMessage === 'Error'
-            ? 'Please check your balance.'
-            : e.errorMessage
-        }`
-      );
-      setWorking(false);
-    }
+    setWorking(true);
+    transferRegionOnContractsChain(
+      { contractsApi, xcRegionsContract: contract, marketContract: undefined },
+      region,
+      activeAccount.address,
+      newOwner,
+      {
+        ready: () => toastInfo('Transaction was initiated.'),
+        inBlock: () => toastInfo(`In Block`),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully transferred the region.');
+          onClose();
+          fetchRegions();
+        },
+        error: () => {
+          toastError(`Failed to transfer the region.`);
+          setWorking(false);
+        },
+      }
+    );
   };
 
   useEffect(() => {

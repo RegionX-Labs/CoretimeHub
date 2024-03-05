@@ -131,6 +131,8 @@ const RegionDataProvider = ({ children }: Props) => {
       );
     }
 
+    console.log(_regions);
+
     setRegions(
       _regions.filter(
         // Only user owned non-expired regions.
