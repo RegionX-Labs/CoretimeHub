@@ -2,7 +2,7 @@ import { useContract, useInkathon } from '@scio-labs/use-inkathon';
 import { Region, RegionId } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import { RegionLocation, RegionMetadata } from '@/models';
+import { ContractContext, RegionLocation, RegionMetadata } from '@/models';
 
 import * as NativeRegions from './native';
 import * as XcRegions from './xc';
@@ -13,6 +13,7 @@ import { useCommon } from '../common';
 import { useTasks } from '../tasks';
 import MarketMetadata from '../../contracts/market.json';
 import XcRegionsMetadata from '../../contracts/xc_regions.json';
+import { parseHNString } from '@/utils/functions';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
@@ -162,13 +163,23 @@ const RegionDataProvider = ({ children }: Props) => {
 
   const fetchRegion = async (regionId: RegionId): Promise<Region | null> => {
     if (!coretimeApi) return null;
-    const record: any = coretimeApi?.query.broker.get({
-      begin: regionId.begin,
-      core: regionId.core,
-      mask: regionId.mask.getMask(),
-    });
+    const { end, owner, paid } = (
+      await coretimeApi.query.broker.regions({
+        begin: regionId.begin,
+        core: regionId.core,
+        mask: regionId.mask.getMask(),
+      })
+    ).toHuman() as any;
 
-    return new Region(regionId, record, 0);
+    return new Region(
+      regionId,
+      {
+        end: parseHNString(end),
+        owner,
+        paid: paid ? parseHNString(paid) : null,
+      },
+      0
+    );
   };
 
   const determineRegionLocation = (

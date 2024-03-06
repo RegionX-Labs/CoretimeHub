@@ -1,6 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 
 import { RELAY_CHAIN_BLOCK_TIME, UNIT_DECIMALS } from '@/models';
+import { CoreMask, RegionId } from 'coretime-utils';
 
 // parse human readable number string
 export const parseHNString = (str: string): number => {
@@ -79,4 +80,22 @@ export const formatBalance = (balance: number) => {
 // TODO: should be queried from runtime api instead.
 export const leadinFactorAt = (when: number) => {
   return 2 - when;
+};
+
+export const extractRegionIdFromRaw = (rawRegionId: BigInt): RegionId => {
+  // Extract 'begin' (top 32 bits) and explicitly cast to number
+  const begin: number = Number(
+    // @ts-ignore
+    (rawRegionId >> BigInt(96)) & BigInt(0xffffffff)
+  );
+
+  // Extract 'core' (next 16 bits) and explicitly cast to number
+  // @ts-ignore
+  const core: number = Number((rawRegionId >> BigInt(80)) & BigInt(0xffff));
+
+  // Extract 'mask' (lowest 80 bits)
+  // @ts-ignore
+  const mask: bigint = rawRegionId & BigInt('0xFFFFFFFFFFFFFFFFFFFF');
+
+  return { begin, core, mask: new CoreMask('0x' + mask.toString(16)) };
 };

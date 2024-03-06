@@ -9,3 +9,4 @@ export const LISTING_DEPOSIT = 0 * UNIT_DECIMALS;
 /// Given that a timeslice is 8 minutes;
 export const DAY_IN_TIMESLICES = 180;
 export const WEEK_IN_TIMESLICES = DAY_IN_TIMESLICES * 7;
+export const REGION_COLLECTION_ID = 42;

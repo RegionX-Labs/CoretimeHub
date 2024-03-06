@@ -12,7 +12,7 @@ export type ParaId = number;
 
 export type BlockNumber = number;
 
-export type SignerContext = {
+export type Sender = {
   address: string;
   signer: Signer;
 };

@@ -3,7 +3,7 @@ import { BN } from '@polkadot/util';
 import { contractTx } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 
-import { ContractContext } from '@/models';
+import { ContractContext, Sender, TxHandlers } from '@/models';
 
 import {
   ContractsChain,
@@ -13,9 +13,10 @@ import { versionedNonfungibleAssetWrap, versionedWrap } from './utils';
 
 export function coretimeToContractsTransfer(
   coretimeApi: ApiPromise,
-  senderAddress: string,
+  sender: Sender,
   rawRegionId: BN,
-  receiver: string
+  receiver: Uint8Array,
+  handlers: TxHandlers
 ) {
   const beneficiary = {
     parents: 0,
@@ -45,53 +46,23 @@ export function coretimeToContractsTransfer(
     );
 
   // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async () => {
     try {
       const unsub = await reserveTransfer.signAndSend(
-        senderAddress,
+        sender.address,
+        { signer: sender.signer },
         (result: any) => {
           unsub();
+          handlers.finalized();
           if (result.dispatchError !== undefined) {
-            reject(result.dispatchError);
+            handlers.error();
           } else {
-            resolve(result);
+            handlers.success();
           }
         }
       );
     } catch (e) {
-      reject(e);
+      handlers.error();
     }
   });
-}
-
-export async function initRegionMetadata(
-  contractsCtx: ContractContext,
-  sender: string,
-  region: Region
-) {
-  const { contractsApi, xcRegionsContract } = contractsCtx;
-  if (!contractsApi || !xcRegionsContract) return;
-
-  try {
-    const rawRegionId = region.getEncodedRegionId(contractsApi);
-    const id = contractsApi.createType('Id', { U128: rawRegionId.toString() });
-
-    const regionMetadata = {
-      begin: region.getBegin(),
-      end: region.getEnd(),
-      core: region.getCore(),
-      mask: region.getMask().getMask(),
-    };
-
-    await contractTx(
-      contractsApi,
-      sender,
-      xcRegionsContract,
-      'regionMetadata::init',
-      {},
-      [id, regionMetadata]
-    );
-  } catch (e: any) {
-    throw new Error(`Region initialization failed: ${e}`);
-  }
 }

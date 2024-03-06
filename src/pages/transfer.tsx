@@ -31,16 +31,25 @@ import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import { RegionLocation, RegionMetadata } from '@/models';
+import { coretimeToContractsTransfer } from '@/utils/crossChain/transfer';
+import { Keyring } from '@polkadot/api';
+import { approveNonWrappedRegion } from '@/utils/native/approve';
+import { initRegionMetadata } from '@/utils/native/init';
+import {
+  extractRegionIdFromRaw,
+  parseHNStringToString,
+} from '@/utils/functions';
+import { fetchXcRegion } from '@/contexts/regions/xc';
 
 const Page = () => {
   const { activeAccount, activeSigner, api: contractsApi } = useInkathon();
   const { contract } = useContract(XcRegionsMetadata, CONTRACT_XC_REGIONS);
 
-  const { toastError, toastInfo, toastSuccess, toastWarning } = useToast();
+  const { toastError, toastInfo, toastSuccess } = useToast();
   const {
     state: { api: coretimeApi },
   } = useCoretimeApi();
-  const { regions } = useRegions();
+  const { regions, fetchRegion } = useRegions();
 
   const [filteredRegions, setFilteredRegions] = useState<Array<RegionMetadata>>(
     []
@@ -59,7 +68,18 @@ const Page = () => {
     setFilteredRegions(
       regions.filter((r) => r.location != RegionLocation.MARKET)
     );
+    handleNonWrappedRegions();
   }, [regions]);
+
+  const handleNonWrappedRegions = async () => {
+    if (working) return;
+
+    const nonWrappedRegions = await getNonWrappedRegions();
+    nonWrappedRegions.forEach((region) => {
+      console.log(region);
+      startInitializationProcess(region);
+    });
+  };
 
   const handleRegionChange = (indx: number) => {
     setSelectedRegion(regions[indx]);
@@ -78,7 +98,7 @@ const Page = () => {
     }
   };
 
-  const handleTransfer = () => {
+  const handleTransfer = async () => {
     if (!selectedRegion) {
       toastError('Select a region');
       return;
@@ -95,7 +115,9 @@ const Page = () => {
     ) {
       transferXcRegion(selectedRegion.region);
     } else {
-      toastWarning('Cross-chain transfers are currently not supported');
+      if (originChain === 'CoretimeChain') {
+        transferFromCoretimeChain(selectedRegion.region);
+      }
     }
   };
 
@@ -148,6 +170,125 @@ const Page = () => {
         },
         error: () => {
           toastError(`Failed to transfer the region.`);
+          setWorking(false);
+        },
+      }
+    );
+  };
+
+  const transferFromCoretimeChain = async (region: Region) => {
+    if (!coretimeApi || !activeAccount || !activeSigner) return;
+
+    const receiverKeypair = new Keyring();
+    receiverKeypair.addFromAddress(newOwner);
+
+    const regionId = region.getEncodedRegionId(contractsApi);
+    setWorking(true);
+    coretimeToContractsTransfer(
+      coretimeApi,
+      { address: activeAccount.address, signer: activeSigner },
+      regionId,
+      receiverKeypair.pairs[0].publicKey,
+      {
+        ready: () => toastInfo('Transaction was initiated.'),
+        inBlock: () => toastInfo(`In Block`),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully transferred the region.');
+        },
+        error: () => {
+          toastError(`Failed to transfer the region.`);
+          setWorking(false);
+        },
+      }
+    );
+  };
+
+  const getNonWrappedRegions = async (): Promise<Array<Region>> => {
+    if (!contractsApi || !coretimeApi || !activeAccount || !contract) return [];
+    const nonWrappedRegionIds =
+      await contractsApi.query.uniques.asset.entries();
+    let nonWrappedRegions: Array<Region> = [];
+    for await (const entry of nonWrappedRegionIds) {
+      const rawRegionId = BigInt(
+        parseHNStringToString((entry[0] as any).toHuman()[1])
+      );
+
+      const regionId = extractRegionIdFromRaw(rawRegionId);
+      const region = await fetchRegion(regionId);
+      const xcRegion = await fetchXcRegion(
+        {
+          contractsApi,
+          xcRegionsContract: contract,
+          marketContract: undefined,
+        },
+        rawRegionId.toString(),
+        activeAccount.address
+      );
+
+      if (region && !xcRegion) nonWrappedRegions.push(region);
+    }
+
+    return nonWrappedRegions;
+  };
+
+  const startInitializationProcess = async (region: Region) => {
+    approveRegionToContract(region, () => initMetadata(region));
+  };
+
+  const approveRegionToContract = async (
+    region: Region,
+    onSuccess: () => void
+  ) => {
+    if (!activeAccount || !activeSigner || working) return;
+
+    setWorking(true);
+    approveNonWrappedRegion(
+      {
+        contractsApi,
+        xcRegionsContract: contract,
+        marketContract: undefined,
+      },
+      { address: activeAccount.address, signer: activeSigner },
+      region,
+      CONTRACT_XC_REGIONS,
+      {
+        ready: () => toastInfo('Transaction was initiated.'),
+        inBlock: () => toastInfo(`In Block`),
+        finalized: () => { },
+        success: () => {
+          toastSuccess('Successfully approved the region.');
+          onSuccess();
+        },
+        error: () => {
+          toastError(`Failed to approve the region.`);
+          setWorking(false);
+        },
+      }
+    );
+  };
+
+  const initMetadata = async (region: Region) => {
+    if (!activeAccount || !activeSigner) return;
+
+    setWorking(true);
+    initRegionMetadata(
+      {
+        contractsApi,
+        xcRegionsContract: contract,
+        marketContract: undefined,
+      },
+      { address: activeAccount.address, signer: activeSigner },
+      region,
+      {
+        ready: () => toastInfo('Transaction was initiated.'),
+        inBlock: () => toastInfo(`In Block`),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully initialized region metadata.');
+        },
+        error: () => {
+          toastError(`Failed to initialize the region metadata.`);
           setWorking(false);
         },
       }
@@ -219,9 +360,7 @@ const Page = () => {
         <Box margin={'2em 0'}>
           <DialogActions>
             <Link href='/'>
-              <Button variant='outlined'>
-                Home
-              </Button>
+              <Button variant='outlined'>Home</Button>
             </Link>
             <LoadingButton
               onClick={handleTransfer}
@@ -259,7 +398,9 @@ const RegionSelector = ({
         onChange={(e) => handleRegionChange(Number(e.target.value))}
       >
         {regions.map((region, indx) => (
-          <MenuItem key={indx} value={indx}>{region.name}</MenuItem>
+          <MenuItem key={indx} value={indx}>
+            {region.name}
+          </MenuItem>
         ))}
       </Select>
     </FormControl>

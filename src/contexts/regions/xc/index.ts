@@ -79,54 +79,62 @@ export const fetchOwnedRegions = async (
   rawRegionIds: Array<string>,
   address: string
 ): Promise<Array<Region>> => {
-  const { contractsApi, xcRegionsContract } = ctx;
-
-  if (!contractsApi || !xcRegionsContract || !address) {
-    return [];
-  }
-
   const regions: Array<Region> = [];
 
   for await (const regionId of rawRegionIds) {
-    const id = contractsApi.createType('Id', { U128: regionId });
-    const result = await contractQuery(
-      contractsApi,
-      '',
-      xcRegionsContract,
-      'RegionMetadata::get_metadata',
-      {},
-      [id]
-    );
-
-    const { output, isError: queryError } = decodeOutput(
-      result,
-      xcRegionsContract,
-      'RegionMetadata::get_metadata'
-    );
-
-    if (!queryError) {
-      const versionedRegion = output.Ok;
-
-      // TODO: Once cross-chain region transfers are enabled from the broker pallet ensure
-      // metadata is correct.
-
-      regions.push(
-        new Region(
-          {
-            begin: parseHNString(versionedRegion.region.begin),
-            core: parseHNString(versionedRegion.region.core),
-            mask: new CoreMask(versionedRegion.region.mask),
-          },
-          {
-            end: parseHNString(versionedRegion.region.end),
-            owner: address,
-            paid: null,
-          },
-          versionedRegion.version
-        )
-      );
-    }
+    const region = await fetchXcRegion(ctx, regionId, address);
+    if (region) regions.push(region);
   }
 
   return regions;
+};
+
+export const fetchXcRegion = async (
+  ctx: ContractContext,
+  rawRegionId: string,
+  owner: string
+): Promise<Region | null> => {
+  const { contractsApi, xcRegionsContract } = ctx;
+  if (!contractsApi || !xcRegionsContract) {
+    return null;
+  }
+
+  const id = contractsApi.createType('Id', { U128: rawRegionId });
+  const result = await contractQuery(
+    contractsApi,
+    '',
+    xcRegionsContract,
+    'RegionMetadata::get_metadata',
+    {},
+    [id]
+  );
+
+  const { output, isError: queryError } = decodeOutput(
+    result,
+    xcRegionsContract,
+    'RegionMetadata::get_metadata'
+  );
+
+  if (!queryError) {
+    const versionedRegion = output.Ok;
+
+    // TODO: Once cross-chain region transfers are enabled from the broker pallet ensure
+    // metadata is correct.
+
+    return new Region(
+      {
+        begin: parseHNString(versionedRegion.region.begin),
+        core: parseHNString(versionedRegion.region.core),
+        mask: new CoreMask(versionedRegion.region.mask),
+      },
+      {
+        end: parseHNString(versionedRegion.region.end),
+        owner,
+        paid: null,
+      },
+      versionedRegion.version
+    );
+  } else {
+    return null;
+  }
 };
