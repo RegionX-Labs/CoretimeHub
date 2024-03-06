@@ -49,7 +49,7 @@ const Page = () => {
   const {
     state: { api: coretimeApi },
   } = useCoretimeApi();
-  const { regions, fetchRegion } = useRegions();
+  const { regions, fetchRegion, fetchRegions } = useRegions();
 
   const [filteredRegions, setFilteredRegions] = useState<Array<RegionMetadata>>(
     []
@@ -68,15 +68,25 @@ const Page = () => {
     setFilteredRegions(
       regions.filter((r) => r.location != RegionLocation.MARKET)
     );
-    handleNonWrappedRegions();
   }, [regions]);
 
-  const handleNonWrappedRegions = async () => {
-    if (working) return;
+  useEffect(() => {
+    let intervalId: any;
+    if (!working) {
+      intervalId = setInterval(() => {
+        handleNonWrappedRegions();
+      }, 5000);
+    }
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [working]);
 
+  const handleNonWrappedRegions = async () => {
     const nonWrappedRegions = await getNonWrappedRegions();
     nonWrappedRegions.forEach((region) => {
-      console.log(region);
       startInitializationProcess(region);
     });
   };
@@ -255,7 +265,7 @@ const Page = () => {
       {
         ready: () => toastInfo('Transaction was initiated.'),
         inBlock: () => toastInfo(`In Block`),
-        finalized: () => { },
+        finalized: () => {},
         success: () => {
           toastSuccess('Successfully approved the region.');
           onSuccess();
@@ -286,6 +296,7 @@ const Page = () => {
         finalized: () => setWorking(false),
         success: () => {
           toastSuccess('Successfully initialized region metadata.');
+          fetchRegions();
         },
         error: () => {
           toastError(`Failed to initialize the region metadata.`);
