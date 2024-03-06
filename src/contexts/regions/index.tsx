@@ -2,7 +2,7 @@ import { useContract, useInkathon } from '@scio-labs/use-inkathon';
 import { Region, RegionId } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import { ContractContext, RegionLocation, RegionMetadata } from '@/models';
+import { RegionLocation, RegionMetadata } from '@/models';
 
 import * as NativeRegions from './native';
 import * as XcRegions from './xc';
@@ -13,7 +13,6 @@ import { useCommon } from '../common';
 import { useTasks } from '../tasks';
 import MarketMetadata from '../../contracts/market.json';
 import XcRegionsMetadata from '../../contracts/xc_regions.json';
-import { parseHNString } from '@/utils/functions';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;

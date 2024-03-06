@@ -1,11 +1,12 @@
+import { contractTx } from '@scio-labs/use-inkathon';
+import { Region } from 'coretime-utils';
+
 import {
   ContractContext,
   REGION_COLLECTION_ID,
   Sender,
   TxHandlers,
 } from '@/models';
-import { contractTx } from '@scio-labs/use-inkathon';
-import { Region } from 'coretime-utils';
 
 export const approveNonWrappedRegion = async (
   ctx: ContractContext,
@@ -75,7 +76,6 @@ export const approveXcRegion = async (
     handlers.finalized();
     handlers.success();
   } catch (e: any) {
-    console.log(e);
     handlers.error();
   }
 };

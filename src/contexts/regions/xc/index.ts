@@ -1,3 +1,4 @@
+import { ApiPromise } from '@polkadot/api';
 import { contractQuery, decodeOutput } from '@scio-labs/use-inkathon';
 import { CoreMask, Region } from 'coretime-utils';
 
@@ -8,7 +9,7 @@ import {
 } from '@/utils/functions';
 
 import { ContractContext } from '@/models';
-import { ApiPromise } from '@polkadot/api';
+
 import { fetchRegion } from '../native';
 
 // Get the region ids of all the regions that the user listed on the market
@@ -154,7 +155,7 @@ export const getNonWrappedRegions = async (
   if (!contractsApi || !coretimeApi) return [];
 
   const nonWrappedRegionIds = await contractsApi.query.uniques.asset.entries();
-  let nonWrappedRegions: Array<Region> = [];
+  const nonWrappedRegions: Array<Region> = [];
   for await (const entry of nonWrappedRegionIds) {
     const rawRegionId = BigInt(
       parseHNStringToString((entry[0] as any).toHuman()[1])
@@ -164,7 +165,6 @@ export const getNonWrappedRegions = async (
     const region = await fetchRegion(coretimeApi, regionId);
     const xcRegion = await fetchXcRegion(ctx, rawRegionId.toString(), address);
 
-    console.log(region?.getOwner());
     if (region && !xcRegion) nonWrappedRegions.push(region);
   }
 

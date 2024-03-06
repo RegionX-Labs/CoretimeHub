@@ -14,11 +14,19 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { Keyring } from '@polkadot/api';
 import { useContract, useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
+import {
+  contractsToCoretimeTransfer,
+  coretimeToContractsTransfer,
+} from '@/utils/crossChain/transfer';
 import theme from '@/utils/muiTheme';
+import { approveNonWrappedRegion } from '@/utils/native/approve';
+import { initRegionMetadata } from '@/utils/native/init';
+import { removeXcRegionWrapper } from '@/utils/native/remove';
 import {
   transferRegionOnContractsChain,
   transferRegionOnCoretimeChain,
@@ -29,18 +37,10 @@ import { RegionCard } from '@/components';
 import { useCoretimeApi } from '@/contexts/apis';
 import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
 import { useRegions } from '@/contexts/regions';
+import { getNonWrappedRegions } from '@/contexts/regions/xc';
 import { useToast } from '@/contexts/toast';
 import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import { RegionLocation, RegionMetadata } from '@/models';
-import {
-  contractsToCoretimeTransfer,
-  coretimeToContractsTransfer,
-} from '@/utils/crossChain/transfer';
-import { Keyring } from '@polkadot/api';
-import { approveNonWrappedRegion } from '@/utils/native/approve';
-import { initRegionMetadata } from '@/utils/native/init';
-import { getNonWrappedRegions } from '@/contexts/regions/xc';
-import { removeXcRegionWrapper } from '@/utils/native/remove';
 
 const Page = () => {
   const { activeAccount, activeSigner, api: contractsApi } = useInkathon();
@@ -88,7 +88,6 @@ const Page = () => {
 
   const handleNonWrappedRegions = async () => {
     if (!activeAccount || !coretimeApi) return;
-    console.log('hey');
     const nonWrappedRegions = await getNonWrappedRegions(
       { contractsApi, xcRegionsContract: contract, marketContract: undefined },
       coretimeApi,
@@ -273,7 +272,7 @@ const Page = () => {
       {
         ready: () => toastInfo('Transaction was initiated.'),
         inBlock: () => toastInfo(`In Block`),
-        finalized: () => {},
+        finalized: () => { /** */ },
         success: () => {
           toastSuccess('Successfully unwrapped the xc-region.');
           onSuccess();
@@ -310,7 +309,7 @@ const Page = () => {
       {
         ready: () => toastInfo('Transaction was initiated.'),
         inBlock: () => toastInfo(`In Block`),
-        finalized: () => {},
+        finalized: () => { /** */ },
         success: () => {
           toastSuccess('Successfully approved the region.');
           onSuccess();

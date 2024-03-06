@@ -1,6 +1,7 @@
-import { ContractContext, Sender, TxHandlers } from '@/models';
 import { contractTx } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
+
+import { ContractContext, Sender, TxHandlers } from '@/models';
 
 export async function initRegionMetadata(
   contractsCtx: ContractContext,
