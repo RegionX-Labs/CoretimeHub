@@ -219,9 +219,7 @@ const Page = () => {
         <Box margin={'2em 0'}>
           <DialogActions>
             <Link href='/'>
-              <Button variant='outlined'>
-                Home
-              </Button>
+              <Button variant='outlined'>Home</Button>
             </Link>
             <LoadingButton
               onClick={handleTransfer}
@@ -259,7 +257,9 @@ const RegionSelector = ({
         onChange={(e) => handleRegionChange(Number(e.target.value))}
       >
         {regions.map((region, indx) => (
-          <MenuItem key={indx} value={indx}>{region.name}</MenuItem>
+          <MenuItem key={indx} value={indx}>
+            {region.name}
+          </MenuItem>
         ))}
       </Select>
     </FormControl>

@@ -134,8 +134,9 @@ const RegionDataProvider = ({ children }: Props) => {
     setRegions(
       _regions.filter(
         // Only user owned non-expired regions.
-        ({ region, consumed }) =>
-          region.getOwner() === activeAccount.address && consumed < 1
+        ({ region }) =>
+          region.getOwner() === activeAccount.address &&
+          region.consumed(context) < 1
       )
     );
     setLoading(false);

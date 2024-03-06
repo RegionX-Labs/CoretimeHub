@@ -86,8 +86,7 @@ const RegionCardInner = ({
   const timeAgo = new TimeAgo('en-US');
 
   const formatDuration = humanizer();
-  const { region, taskId, consumed, coreOccupancy, location, currentUsage } =
-    regionMetadata;
+  const { region, taskId, location, currentUsage } = regionMetadata;
   const theme = useTheme();
 
   const [isEdit, setEdit] = useState(false);
@@ -100,7 +99,7 @@ const RegionCardInner = ({
     state: { api, apiState },
   } = useRelayApi();
 
-  const { timeslicePeriod } = useCommon();
+  const { timeslicePeriod, relayBlockNumber } = useCommon();
 
   useEffect(() => {
     if (!api || apiState !== ApiState.READY) {
@@ -118,12 +117,12 @@ const RegionCardInner = ({
   const progress = [
     {
       label: 'Core Occupancy',
-      value: coreOccupancy ?? 0,
+      value: region.coreOccupancy() ?? 0,
       color: 'warning',
     },
     {
       label: 'Consumed',
-      value: consumed ?? 0,
+      value: region.consumed({ timeslicePeriod, relayBlockNumber }) ?? 0,
       color: 'success',
     },
     {
