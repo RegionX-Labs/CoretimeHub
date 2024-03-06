@@ -5,12 +5,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material';
 import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
@@ -19,6 +14,7 @@ import { useEffect, useState } from 'react';
 
 import { RegionCard } from '@/components/elements';
 import AmountInput from '@/components/elements/AmountInput';
+import { RecipientSelector } from '@/components/elements/RecipientSelector';
 
 import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
 import { useMarket } from '@/contexts/market';
@@ -167,8 +163,8 @@ export const SellModal = ({
           </Stack>
           <Stack direction='column' gap={2}>
             <RecipientSelector
-              setSaleRecipient={setSaleRecipient}
-              saleRecipient={saleRecipient}
+              setRecipient={setSaleRecipient}
+              recipient={saleRecipient}
             />
           </Stack>
         </Stack>
@@ -186,53 +182,5 @@ export const SellModal = ({
         </Button>
       </DialogActions>
     </Dialog>
-  );
-};
-
-interface RecipientSelectorProps {
-  setSaleRecipient: (_: string) => void;
-  saleRecipient: string;
-}
-
-const RecipientSelector = ({
-  setSaleRecipient,
-  saleRecipient,
-}: RecipientSelectorProps) => {
-  const [recipientKind, setRecipientKind] = useState('Me');
-
-  const handleRecipientKindChange = (event: any) => {
-    setSaleRecipient('');
-    setRecipientKind(event.target.value);
-  };
-
-  const handleOtherRecipientChange = (event: any) => {
-    setSaleRecipient(event.target.value);
-  };
-
-  return (
-    <div>
-      <FormControl fullWidth>
-        <InputLabel id='recipient-selector-label'>Sale Recipient</InputLabel>
-        <Select
-          labelId='recipient-selector-label'
-          id='recipient-selector'
-          value={recipientKind}
-          label='Recipient'
-          onChange={handleRecipientKindChange}
-        >
-          <MenuItem value='Me'>Me</MenuItem>
-          <MenuItem value='Other'>Other</MenuItem>
-        </Select>
-      </FormControl>
-      {recipientKind === 'Other' && (
-        <TextField
-          label='Specify sale recipient'
-          fullWidth
-          margin='normal'
-          value={saleRecipient}
-          onChange={handleOtherRecipientChange}
-        />
-      )}
-    </div>
   );
 };

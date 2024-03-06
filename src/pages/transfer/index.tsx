@@ -5,13 +5,8 @@ import {
   Box,
   Button,
   DialogActions,
-  FormControl,
-  InputLabel,
   Link,
-  MenuItem,
-  Select,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material';
 import { Keyring } from '@polkadot/api';
@@ -33,6 +28,7 @@ import {
 } from '@/utils/native/transfer';
 
 import { RegionCard } from '@/components';
+import { RecipientSelector } from '@/components/elements/RecipientSelector';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
@@ -41,6 +37,9 @@ import { getNonWrappedRegions } from '@/contexts/regions/xc';
 import { useToast } from '@/contexts/toast';
 import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import { RegionLocation, RegionMetadata } from '@/models';
+
+import { ChainSelector } from './ChainSelector';
+import { RegionSelector } from './RegionSelector';
 
 const Page = () => {
   const { activeAccount, activeSigner, api: contractsApi } = useInkathon();
@@ -272,7 +271,9 @@ const Page = () => {
       {
         ready: () => toastInfo('Transaction was initiated.'),
         inBlock: () => toastInfo(`In Block`),
-        finalized: () => { /** */ },
+        finalized: () => {
+          /** */
+        },
         success: () => {
           toastSuccess('Successfully unwrapped the xc-region.');
           onSuccess();
@@ -309,7 +310,9 @@ const Page = () => {
       {
         ready: () => toastInfo('Transaction was initiated.'),
         inBlock: () => toastInfo(`In Block`),
-        finalized: () => { /** */ },
+        finalized: () => {
+          /** */
+        },
         success: () => {
           toastSuccess('Successfully approved the region.');
           onSuccess();
@@ -371,14 +374,14 @@ const Page = () => {
       <Box width={'60%'} margin={'2em auto'}>
         <Stack margin={'1em 0'} direction='column' gap={1}>
           <Typography>Origin chain:</Typography>
-          <ChainSelectorProps
+          <ChainSelector
             chain={originChain}
             setChain={handleOriginChange}
           />
         </Stack>
         <Stack margin={'1em 0'} direction='column' gap={1}>
           <Typography>Destination chain:</Typography>
-          <ChainSelectorProps
+          <ChainSelector
             chain={destinationChain}
             setChain={setDestinationChain}
           />
@@ -409,10 +412,7 @@ const Page = () => {
         </Stack>
         <Stack direction='column' gap={1}>
           <Typography>Transfer to:</Typography>
-          <DestinationSelector
-            destination={newOwner}
-            setDestination={setNewOwner}
-          />
+          <RecipientSelector recipient={newOwner} setRecipient={setNewOwner} />
         </Stack>
         {statusLabel && (
           <Alert severity='info' sx={{ marginY: '2em' }}>
@@ -435,108 +435,6 @@ const Page = () => {
         </Box>
       </Box>
     </Box>
-  );
-};
-
-interface RegionSelectorProps {
-  regions: Array<RegionMetadata>;
-  selectedRegion: RegionMetadata | null;
-  handleRegionChange: (_indx: number) => void;
-}
-
-const RegionSelector = ({
-  regions,
-  selectedRegion,
-  handleRegionChange,
-}: RegionSelectorProps) => {
-  return (
-    <FormControl fullWidth>
-      <InputLabel id='destination-selector-label'>Region Name</InputLabel>
-      <Select
-        labelId='destination-selector-label'
-        id='destination-selector'
-        value={selectedRegion?.name}
-        label='Destination'
-        onChange={(e) => handleRegionChange(Number(e.target.value))}
-      >
-        {regions.map((region, indx) => (
-          <MenuItem key={indx} value={indx}>
-            {region.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  );
-};
-
-interface ChainSelectorProps {
-  chain: string;
-  setChain: (_: string) => void;
-}
-
-const ChainSelectorProps = ({ chain, setChain }: ChainSelectorProps) => {
-  return (
-    <FormControl fullWidth>
-      <InputLabel id='origin-selector-label'>Chain</InputLabel>
-      <Select
-        labelId='origin-selector-label'
-        id='origin-selector'
-        value={chain}
-        label='Origin'
-        onChange={(e) => setChain(e.target.value)}
-      >
-        <MenuItem value='CoretimeChain'>Coretime Chain</MenuItem>
-        <MenuItem value='ContractsChain'>Contracts Chain</MenuItem>
-      </Select>
-    </FormControl>
-  );
-};
-
-interface DestinationSelectorProps {
-  setDestination: (_: string) => void;
-  destination: string;
-}
-
-const DestinationSelector = ({
-  setDestination,
-  destination,
-}: DestinationSelectorProps) => {
-  const [destinationKind, setDestinationKind] = useState('Me');
-
-  const handleDestinationKindChange = (event: any) => {
-    setDestination('');
-    setDestinationKind(event.target.value);
-  };
-
-  const handleOtherDestinationChange = (event: any) => {
-    setDestination(event.target.value);
-  };
-
-  return (
-    <div>
-      <FormControl fullWidth>
-        <InputLabel id='destination-selector-label'>Destination</InputLabel>
-        <Select
-          labelId='destination-selector-label'
-          id='destination-selector'
-          value={destinationKind}
-          label='Destination'
-          onChange={handleDestinationKindChange}
-        >
-          <MenuItem value='Me'>Me</MenuItem>
-          <MenuItem value='Other'>Other</MenuItem>
-        </Select>
-      </FormControl>
-      {destinationKind === 'Other' && (
-        <TextField
-          label='Destination'
-          fullWidth
-          margin='normal'
-          value={destination}
-          onChange={handleOtherDestinationChange}
-        />
-      )}
-    </div>
   );
 };
 
