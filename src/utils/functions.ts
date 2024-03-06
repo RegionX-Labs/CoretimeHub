@@ -97,5 +97,9 @@ export const extractRegionIdFromRaw = (rawRegionId: BigInt): RegionId => {
   // @ts-ignore
   const mask: bigint = rawRegionId & BigInt('0xFFFFFFFFFFFFFFFFFFFF');
 
-  return { begin, core, mask: new CoreMask('0x' + mask.toString(16)) };
+  return {
+    begin,
+    core,
+    mask: new CoreMask(('0x' + mask.toString(16)).padEnd(22, '0')),
+  };
 };

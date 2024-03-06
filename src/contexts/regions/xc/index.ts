@@ -1,9 +1,15 @@
 import { contractQuery, decodeOutput } from '@scio-labs/use-inkathon';
 import { CoreMask, Region } from 'coretime-utils';
 
-import { parseHNString, parseHNStringToString } from '@/utils/functions';
+import {
+  extractRegionIdFromRaw,
+  parseHNString,
+  parseHNStringToString,
+} from '@/utils/functions';
 
 import { ContractContext } from '@/models';
+import { ApiPromise } from '@polkadot/api';
+import { fetchRegion } from '../native';
 
 // Get the region ids of all the regions that the user listed on the market
 export const fetchListedRegionIds = async (
@@ -137,4 +143,30 @@ export const fetchXcRegion = async (
   } else {
     return null;
   }
+};
+
+export const getNonWrappedRegions = async (
+  ctx: ContractContext,
+  coretimeApi: ApiPromise,
+  address: string
+): Promise<Array<Region>> => {
+  const { contractsApi } = ctx;
+  if (!contractsApi || !coretimeApi) return [];
+
+  const nonWrappedRegionIds = await contractsApi.query.uniques.asset.entries();
+  let nonWrappedRegions: Array<Region> = [];
+  for await (const entry of nonWrappedRegionIds) {
+    const rawRegionId = BigInt(
+      parseHNStringToString((entry[0] as any).toHuman()[1])
+    );
+
+    const regionId = extractRegionIdFromRaw(rawRegionId);
+    const region = await fetchRegion(coretimeApi, regionId);
+    const xcRegion = await fetchXcRegion(ctx, rawRegionId.toString(), address);
+
+    console.log(region?.getOwner());
+    if (region && !xcRegion) nonWrappedRegions.push(region);
+  }
+
+  return nonWrappedRegions;
 };

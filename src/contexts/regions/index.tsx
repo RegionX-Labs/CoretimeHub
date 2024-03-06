@@ -161,27 +161,6 @@ const RegionDataProvider = ({ children }: Props) => {
     localStorage.setItem(`region-${region.rawId}`, name);
   };
 
-  const fetchRegion = async (regionId: RegionId): Promise<Region | null> => {
-    if (!coretimeApi) return null;
-    const { end, owner, paid } = (
-      await coretimeApi.query.broker.regions({
-        begin: regionId.begin,
-        core: regionId.core,
-        mask: regionId.mask.getMask(),
-      })
-    ).toHuman() as any;
-
-    return new Region(
-      regionId,
-      {
-        end: parseHNString(end),
-        owner,
-        paid: paid ? parseHNString(paid) : null,
-      },
-      0
-    );
-  };
-
   const determineRegionLocation = (
     xcRegionIds: string[],
     listedRegionIds: string[],
@@ -203,7 +182,8 @@ const RegionDataProvider = ({ children }: Props) => {
         loading,
         updateRegionName,
         fetchRegions,
-        fetchRegion,
+        fetchRegion: (_r: RegionId) =>
+          NativeRegions.fetchRegion(coretimeApi, _r),
       }}
     >
       {children}

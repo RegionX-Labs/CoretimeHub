@@ -1,6 +1,7 @@
 import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
 import { LoadingButton } from '@mui/lab';
 import {
+  Alert,
   Box,
   Button,
   DialogActions,
@@ -38,11 +39,7 @@ import {
 import { Keyring } from '@polkadot/api';
 import { approveNonWrappedRegion } from '@/utils/native/approve';
 import { initRegionMetadata } from '@/utils/native/init';
-import {
-  extractRegionIdFromRaw,
-  parseHNStringToString,
-} from '@/utils/functions';
-import { fetchXcRegion } from '@/contexts/regions/xc';
+import { getNonWrappedRegions } from '@/contexts/regions/xc';
 import { removeXcRegionWrapper } from '@/utils/native/remove';
 
 const Page = () => {
@@ -53,7 +50,7 @@ const Page = () => {
   const {
     state: { api: coretimeApi },
   } = useCoretimeApi();
-  const { regions, fetchRegion, fetchRegions } = useRegions();
+  const { regions, fetchRegions } = useRegions();
 
   const [filteredRegions, setFilteredRegions] = useState<Array<RegionMetadata>>(
     []
@@ -63,6 +60,7 @@ const Page = () => {
   const [newOwner, setNewOwner] = useState('');
   const [originChain, setOriginChain] = useState('');
   const [destinationChain, setDestinationChain] = useState('');
+  const [statusLabel, setStatusLabel] = useState('');
 
   const [selectedRegion, setSelectedRegion] = useState<RegionMetadata | null>(
     null
@@ -86,18 +84,19 @@ const Page = () => {
         clearInterval(intervalId);
       }
     };
-  }, [working]);
+  }, [working, activeAccount, coretimeApi]);
 
   const handleNonWrappedRegions = async () => {
-    const nonWrappedRegions = await getNonWrappedRegions();
-    console.log(nonWrappedRegions);
+    if (!activeAccount || !coretimeApi) return;
+    console.log('hey');
+    const nonWrappedRegions = await getNonWrappedRegions(
+      { contractsApi, xcRegionsContract: contract, marketContract: undefined },
+      coretimeApi,
+      activeAccount.address
+    );
     nonWrappedRegions.forEach((region) => {
       startInitializationProcess(region);
     });
-  };
-
-  const handleRegionChange = (indx: number) => {
-    setSelectedRegion(regions[indx]);
   };
 
   const handleOriginChange = (newOrigin: string) => {
@@ -111,34 +110,6 @@ const Page = () => {
         regions.filter((r) => r.location == RegionLocation.CONTRACTS_CHAIN)
       );
     }
-  };
-
-  const getNonWrappedRegions = async (): Promise<Array<Region>> => {
-    if (!contractsApi || !coretimeApi || !activeAccount || !contract) return [];
-    const nonWrappedRegionIds =
-      await contractsApi.query.uniques.asset.entries();
-    let nonWrappedRegions: Array<Region> = [];
-    for await (const entry of nonWrappedRegionIds) {
-      const rawRegionId = BigInt(
-        parseHNStringToString((entry[0] as any).toHuman()[1])
-      );
-
-      const regionId = extractRegionIdFromRaw(rawRegionId);
-      const region = await fetchRegion(regionId);
-      const xcRegion = await fetchXcRegion(
-        {
-          contractsApi,
-          xcRegionsContract: contract,
-          marketContract: undefined,
-        },
-        rawRegionId.toString(),
-        activeAccount.address
-      );
-
-      if (region && !xcRegion) nonWrappedRegions.push(region);
-    }
-
-    return nonWrappedRegions;
   };
 
   const handleTransfer = async () => {
@@ -179,7 +150,7 @@ const Page = () => {
       region,
       activeSigner,
       activeAccount.address,
-      newOwner,
+      newOwner ? newOwner : activeAccount.address,
       {
         ready: () => toastInfo('Transaction was initiated.'),
         inBlock: () => toastInfo(`In Block`),
@@ -205,7 +176,7 @@ const Page = () => {
       { contractsApi, xcRegionsContract: contract, marketContract: undefined },
       region,
       activeAccount.address,
-      newOwner,
+      newOwner ? newOwner : activeAccount.address,
       {
         ready: () => toastInfo('Transaction was initiated.'),
         inBlock: () => toastInfo(`In Block`),
@@ -224,8 +195,9 @@ const Page = () => {
   const transferFromCoretimeChain = async (region: Region) => {
     if (!coretimeApi || !activeAccount || !activeSigner) return;
 
+    setStatusLabel('Initiating transfer from coretime chain');
     const receiverKeypair = new Keyring();
-    receiverKeypair.addFromAddress(newOwner);
+    receiverKeypair.addFromAddress(newOwner ? newOwner : activeAccount.address);
 
     const regionId = region.getEncodedRegionId(contractsApi);
     setWorking(true);
@@ -240,6 +212,7 @@ const Page = () => {
         finalized: () => setWorking(false),
         success: () => {
           toastSuccess('Successfully transferred the region.');
+          setStatusLabel('Waiting to wrap the region...');
         },
         error: () => {
           toastError(`Failed to transfer the region.`);
@@ -251,9 +224,13 @@ const Page = () => {
 
   const transferFromContractsChain = async (region: Region) => {
     if (!contractsApi || !activeAccount || !activeSigner) return;
+
     removeWrapper(region, () => {
+      setStatusLabel('Initiating transfer from contracts chain');
       const receiverKeypair = new Keyring();
-      receiverKeypair.addFromAddress(newOwner);
+      receiverKeypair.addFromAddress(
+        newOwner ? newOwner : activeAccount.address
+      );
 
       const regionId = region.getEncodedRegionId(contractsApi);
       setWorking(true);
@@ -268,6 +245,7 @@ const Page = () => {
           finalized: () => setWorking(false),
           success: () => {
             toastSuccess('Successfully transferred the region.');
+            setStatusLabel('');
           },
           error: () => {
             toastError(`Failed to transfer the region.`);
@@ -280,6 +258,8 @@ const Page = () => {
 
   const removeWrapper = async (region: Region, onSuccess: () => void) => {
     if (!activeAccount || !activeSigner) return;
+
+    setStatusLabel('Unwrapping xc-region...');
 
     setWorking(true);
     removeXcRegionWrapper(
@@ -316,6 +296,7 @@ const Page = () => {
   ) => {
     if (!activeAccount || !activeSigner || working) return;
 
+    setStatusLabel('Approving region to the xc-region contract...');
     setWorking(true);
     approveNonWrappedRegion(
       {
@@ -345,6 +326,7 @@ const Page = () => {
   const initMetadata = async (region: Region) => {
     if (!activeAccount || !activeSigner) return;
 
+    setStatusLabel('Initializing metadata...');
     setWorking(true);
     initRegionMetadata(
       {
@@ -360,6 +342,7 @@ const Page = () => {
         finalized: () => setWorking(false),
         success: () => {
           toastSuccess('Successfully initialized region metadata.');
+          setStatusLabel('');
           fetchRegions();
         },
         error: () => {
@@ -407,7 +390,7 @@ const Page = () => {
             <RegionSelector
               regions={filteredRegions}
               selectedRegion={selectedRegion}
-              handleRegionChange={handleRegionChange}
+              handleRegionChange={(indx) => setSelectedRegion(regions[indx])}
             />
           </Stack>
         )}
@@ -432,6 +415,11 @@ const Page = () => {
             setDestination={setNewOwner}
           />
         </Stack>
+        {statusLabel && (
+          <Alert severity='info' sx={{ marginY: '2em' }}>
+            {statusLabel}
+          </Alert>
+        )}
         <Box margin={'2em 0'}>
           <DialogActions>
             <Link href='/'>
