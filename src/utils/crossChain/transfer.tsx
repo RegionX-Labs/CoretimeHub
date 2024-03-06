@@ -1,17 +1,17 @@
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
-import { contractTx } from '@scio-labs/use-inkathon';
-import { Region } from 'coretime-utils';
 
-import { ContractContext, Sender, TxHandlers } from '@/models';
+import { Sender, TxHandlers } from '@/models';
 
 import {
   ContractsChain,
+  CoretimeChain,
+  CoretimeRegionFromContractsPerspective,
   CoretimeRegionFromCoretimePerspective,
 } from './consts';
 import { versionedNonfungibleAssetWrap, versionedWrap } from './utils';
 
-export function coretimeToContractsTransfer(
+export async function coretimeToContractsTransfer(
   coretimeApi: ApiPromise,
   sender: Sender,
   rawRegionId: BN,
@@ -45,24 +45,84 @@ export function coretimeToContractsTransfer(
       weightLimit
     );
 
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async () => {
-    try {
-      const unsub = await reserveTransfer.signAndSend(
-        sender.address,
-        { signer: sender.signer },
-        (result: any) => {
-          unsub();
+  try {
+    reserveTransfer.signAndSend(
+      sender.address,
+      { signer: sender.signer },
+      ({ status, events }) => {
+        if (status.isReady) handlers.ready();
+        else if (status.isInBlock) handlers.inBlock();
+        else if (status.isFinalized) {
           handlers.finalized();
-          if (result.dispatchError !== undefined) {
-            handlers.error();
-          } else {
-            handlers.success();
-          }
+          events.forEach(({ event: { method } }) => {
+            if (method === 'ExtrinsicSuccess') {
+              handlers.success();
+            } else if (method === 'ExtrinsicFailed') {
+              handlers.error();
+            }
+          });
         }
-      );
-    } catch (e) {
-      handlers.error();
-    }
-  });
+      }
+    );
+  } catch (e) {
+    handlers.error();
+  }
+}
+
+export function contractsToCoretimeTransfer(
+  contractsApi: ApiPromise,
+  sender: Sender,
+  rawRegionId: BN,
+  receiver: Uint8Array,
+  handlers: TxHandlers
+) {
+  const beneficiary = {
+    parents: 0,
+    interior: {
+      X1: {
+        AccountId32: {
+          chain: 'Any',
+          id: receiver,
+        },
+      },
+    },
+  };
+
+  const feeAssetItem = 0;
+  const weightLimit = 'Unlimited';
+
+  const reserveTransfer =
+    contractsApi.tx.polkadotXcm.limitedReserveTransferAssets(
+      versionedWrap(CoretimeChain),
+      versionedWrap(beneficiary),
+      versionedNonfungibleAssetWrap(
+        CoretimeRegionFromContractsPerspective,
+        rawRegionId.toString()
+      ),
+      feeAssetItem,
+      weightLimit
+    );
+
+  try {
+    reserveTransfer.signAndSend(
+      sender.address,
+      { signer: sender.signer },
+      ({ status, events }) => {
+        if (status.isReady) handlers.ready();
+        else if (status.isInBlock) handlers.inBlock();
+        else if (status.isFinalized) {
+          handlers.finalized();
+          events.forEach(({ event: { method } }) => {
+            if (method === 'ExtrinsicSuccess') {
+              handlers.success();
+            } else if (method === 'ExtrinsicFailed') {
+              handlers.error();
+            }
+          });
+        }
+      }
+    );
+  } catch (e) {
+    handlers.error();
+  }
 }

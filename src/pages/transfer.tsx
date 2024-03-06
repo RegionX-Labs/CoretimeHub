@@ -31,7 +31,10 @@ import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import { RegionLocation, RegionMetadata } from '@/models';
-import { coretimeToContractsTransfer } from '@/utils/crossChain/transfer';
+import {
+  contractsToCoretimeTransfer,
+  coretimeToContractsTransfer,
+} from '@/utils/crossChain/transfer';
 import { Keyring } from '@polkadot/api';
 import { approveNonWrappedRegion } from '@/utils/native/approve';
 import { initRegionMetadata } from '@/utils/native/init';
@@ -40,6 +43,7 @@ import {
   parseHNStringToString,
 } from '@/utils/functions';
 import { fetchXcRegion } from '@/contexts/regions/xc';
+import { removeXcRegionWrapper } from '@/utils/native/remove';
 
 const Page = () => {
   const { activeAccount, activeSigner, api: contractsApi } = useInkathon();
@@ -86,6 +90,7 @@ const Page = () => {
 
   const handleNonWrappedRegions = async () => {
     const nonWrappedRegions = await getNonWrappedRegions();
+    console.log(nonWrappedRegions);
     nonWrappedRegions.forEach((region) => {
       startInitializationProcess(region);
     });
@@ -108,6 +113,34 @@ const Page = () => {
     }
   };
 
+  const getNonWrappedRegions = async (): Promise<Array<Region>> => {
+    if (!contractsApi || !coretimeApi || !activeAccount || !contract) return [];
+    const nonWrappedRegionIds =
+      await contractsApi.query.uniques.asset.entries();
+    let nonWrappedRegions: Array<Region> = [];
+    for await (const entry of nonWrappedRegionIds) {
+      const rawRegionId = BigInt(
+        parseHNStringToString((entry[0] as any).toHuman()[1])
+      );
+
+      const regionId = extractRegionIdFromRaw(rawRegionId);
+      const region = await fetchRegion(regionId);
+      const xcRegion = await fetchXcRegion(
+        {
+          contractsApi,
+          xcRegionsContract: contract,
+          marketContract: undefined,
+        },
+        rawRegionId.toString(),
+        activeAccount.address
+      );
+
+      if (region && !xcRegion) nonWrappedRegions.push(region);
+    }
+
+    return nonWrappedRegions;
+  };
+
   const handleTransfer = async () => {
     if (!selectedRegion) {
       toastError('Select a region');
@@ -127,6 +160,8 @@ const Page = () => {
     } else {
       if (originChain === 'CoretimeChain') {
         transferFromCoretimeChain(selectedRegion.region);
+      } else {
+        transferFromContractsChain(selectedRegion.region);
       }
     }
   };
@@ -214,32 +249,61 @@ const Page = () => {
     );
   };
 
-  const getNonWrappedRegions = async (): Promise<Array<Region>> => {
-    if (!contractsApi || !coretimeApi || !activeAccount || !contract) return [];
-    const nonWrappedRegionIds =
-      await contractsApi.query.uniques.asset.entries();
-    let nonWrappedRegions: Array<Region> = [];
-    for await (const entry of nonWrappedRegionIds) {
-      const rawRegionId = BigInt(
-        parseHNStringToString((entry[0] as any).toHuman()[1])
-      );
+  const transferFromContractsChain = async (region: Region) => {
+    if (!contractsApi || !activeAccount || !activeSigner) return;
+    removeWrapper(region, () => {
+      const receiverKeypair = new Keyring();
+      receiverKeypair.addFromAddress(newOwner);
 
-      const regionId = extractRegionIdFromRaw(rawRegionId);
-      const region = await fetchRegion(regionId);
-      const xcRegion = await fetchXcRegion(
+      const regionId = region.getEncodedRegionId(contractsApi);
+      setWorking(true);
+      contractsToCoretimeTransfer(
+        contractsApi,
+        { address: activeAccount.address, signer: activeSigner },
+        regionId,
+        receiverKeypair.pairs[0].publicKey,
         {
-          contractsApi,
-          xcRegionsContract: contract,
-          marketContract: undefined,
-        },
-        rawRegionId.toString(),
-        activeAccount.address
+          ready: () => toastInfo('Transaction was initiated.'),
+          inBlock: () => toastInfo(`In Block`),
+          finalized: () => setWorking(false),
+          success: () => {
+            toastSuccess('Successfully transferred the region.');
+          },
+          error: () => {
+            toastError(`Failed to transfer the region.`);
+            setWorking(false);
+          },
+        }
       );
+    });
+  };
 
-      if (region && !xcRegion) nonWrappedRegions.push(region);
-    }
+  const removeWrapper = async (region: Region, onSuccess: () => void) => {
+    if (!activeAccount || !activeSigner) return;
 
-    return nonWrappedRegions;
+    setWorking(true);
+    removeXcRegionWrapper(
+      {
+        contractsApi,
+        xcRegionsContract: contract,
+        marketContract: undefined,
+      },
+      { address: activeAccount.address, signer: activeSigner },
+      region,
+      {
+        ready: () => toastInfo('Transaction was initiated.'),
+        inBlock: () => toastInfo(`In Block`),
+        finalized: () => {},
+        success: () => {
+          toastSuccess('Successfully unwrapped the xc-region.');
+          onSuccess();
+        },
+        error: () => {
+          toastError(`Failed to unwrap the xc-region.`);
+          setWorking(false);
+        },
+      }
+    );
   };
 
   const startInitializationProcess = async (region: Region) => {

@@ -28,7 +28,7 @@ export const CoretimeRegionFromCoretimePerspective = {
 };
 
 export const CoretimeRegionFromContractsPerspective = {
-  parents: 0,
+  parents: 1,
   interior: {
     X2: [{ Parachain: 1005 }, { PalletInstance: 50 }],
   },
