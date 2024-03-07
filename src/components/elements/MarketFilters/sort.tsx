@@ -5,7 +5,6 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  Typography,
 } from '@mui/material';
 import { useState } from 'react';
 
@@ -89,9 +88,8 @@ const Sort = ({ listings, setFilteredListings, filter }: SortProps) => {
   };
 
   return (
-    <Box width={240}>
-      <Typography variant='subtitle2'>Sort By:</Typography>
-      <Box marginY={'2em'}>
+    <Box width={200}>
+      <Box>
         <FormControl fullWidth>
           <InputLabel id='range-dropdown-label'>Sort</InputLabel>
           <Select

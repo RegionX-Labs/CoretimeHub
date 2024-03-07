@@ -32,16 +32,19 @@ const ContextDataProvider = ({ children }: Props) => {
   const coretimeConnected = coretimeApi && coretimeApiState === ApiState.READY;
 
   const collectContextData = async () => {
-    if (!relayConnected || !coretimeConnected) return;
-    const timeslicePeriod = parseHNString(
-      coretimeApi.consts.broker.timeslicePeriod.toString()
-    );
+    if (!relayConnected) return;
     const currentBlockHeight = parseHNString(
       (await relayApi.query.system.number()).toString()
     );
+    setRelayBlockNumber(currentBlockHeight);
+
+    if (!coretimeConnected) return;
+
+    const timeslicePeriod = parseHNString(
+      coretimeApi.consts.broker.timeslicePeriod.toString()
+    );
 
     setTimeslicePeriod(timeslicePeriod);
-    setRelayBlockNumber(currentBlockHeight);
   };
 
   useEffect(() => {

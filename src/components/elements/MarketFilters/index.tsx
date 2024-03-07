@@ -56,57 +56,58 @@ const MarketFilters = ({ listings, setFilteredListings }: Props) => {
   };
 
   return (
-    <Box display={'flex'} justifyContent={'space-between'}>
-      <Box>
-        <Typography variant='subtitle2'>Search filters: </Typography>
-        <Box display={'flex'} alignItems={'end'}>
-          <Box marginRight={'1em'} marginTop={'.5em'}>
-            <CoreOccupancyFilter
-              listings={listings}
-              filters={filters}
-              updateFilters={updateFilters}
-            />
-          </Box>
-          <Box marginRight={'1em'} marginTop={'.5em'}>
-            <DurationFilter
-              listings={listings}
-              filters={filters}
-              updateFilters={updateFilters}
-            />
-          </Box>
-          <Box marginRight={'1em'} marginTop={'.5em'}>
-            <PriceFilter
-              listings={listings}
-              filters={filters}
-              updateFilters={updateFilters}
-            />
+    <Box>
+      <Box display={'flex'} justifyContent={'space-between'} alignItems={'end'}>
+        <Box>
+          <Typography variant='subtitle2'>Search filters: </Typography>
+          <Box display={'flex'}>
+            <Box marginRight={'1em'} marginTop={'.5em'}>
+              <CoreOccupancyFilter
+                listings={listings}
+                filters={filters}
+                updateFilters={updateFilters}
+              />
+            </Box>
+            <Box marginRight={'1em'} marginTop={'.5em'}>
+              <DurationFilter
+                listings={listings}
+                filters={filters}
+                updateFilters={updateFilters}
+              />
+            </Box>
+            <Box marginRight={'1em'} marginTop={'.5em'}>
+              <RegionStartFilter
+                listings={listings}
+                filters={filters}
+                updateFilters={updateFilters}
+              />
+            </Box>
+            <Box marginRight={'1em'} marginTop={'.5em'}>
+              <RegionEndFilter
+                listings={listings}
+                filters={filters}
+                updateFilters={updateFilters}
+              />
+            </Box>
           </Box>
         </Box>
-        <Box display={'flex'}>
-          <Box marginRight={'1em'} marginTop={'.5em'}>
-            <RegionStartFilter
+        <Box>
+          <Typography variant='subtitle2'>Sort By: </Typography>
+          <Box marginTop={'.5em'}>
+            <Sort
               listings={listings}
-              filters={filters}
-              updateFilters={updateFilters}
-            />
-          </Box>
-          <Box marginRight={'1em'} marginTop={'.5em'}>
-            <RegionEndFilter
-              listings={listings}
-              filters={filters}
-              updateFilters={updateFilters}
+              filter={(listing) => filter(filters, listing)}
+              setFilteredListings={setFilteredListings}
             />
           </Box>
         </Box>
       </Box>
-      <Box>
-        <Box marginRight={'1em'}>
-          <Sort
-            listings={listings}
-            filter={(listing) => filter(filters, listing)}
-            setFilteredListings={setFilteredListings}
-          />
-        </Box>
+      <Box marginRight={'1em'} marginTop={'1em'} width={'100%'}>
+        <PriceFilter
+          listings={listings}
+          filters={filters}
+          updateFilters={updateFilters}
+        />
       </Box>
     </Box>
   );

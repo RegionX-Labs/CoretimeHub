@@ -25,14 +25,14 @@ const PriceFilter = ({ listings, filters, updateFilters }: FilterProps) => {
   };
 
   return (
-    <Box width={230}>
+    <Box>
       <Typography textAlign={'center'}>
         Price Limit: {`${priceLimit} ROC`}
       </Typography>
       <Slider
         defaultValue={70}
         max={maxValue()}
-        color='info'
+        color={'warning'}
         value={priceLimit}
         onChange={handleChange}
         aria-label='Always visible'

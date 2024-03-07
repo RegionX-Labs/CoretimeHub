@@ -23,4 +23,6 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
   );
 };
 
-export default () => { return <></> }
+export default () => {
+  return <></>;
+};

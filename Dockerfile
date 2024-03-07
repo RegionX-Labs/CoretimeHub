@@ -11,8 +11,8 @@ ENV WS_CONTRACTS_CHAIN="ws://127.0.0.1:9920"
 
 # Given that Coretime-Mock deploys the contract with no salt we can be sure
 # this is the address as long as it is not modified. 
-ENV CONTRACT_XC_REGIONS="a2a9qmcWWSBMxfTduoxWKKnVDWrqWTPkAqPoL2942k8Tkry"
-ENV CONTRACT_MARKET="a2a9qmcWWSBMxfTduoxWKKnVDWrqWTPkAqPoL2942k8Tkry"
+ENV CONTRACT_XC_REGIONS="Z6UFD3Z58WxVVoqggtsCAQoXxQwiZKUftmrd2QzrSbagr8r"
+ENV CONTRACT_MARKET="WMFn89f2V8xzfXwLfvHnhXS3jUettejFzqC4TWYir9hTkDd"
 
 RUN apk add --no-cache libc6-compat
 

@@ -134,9 +134,8 @@ const RegionDataProvider = ({ children }: Props) => {
     setRegions(
       _regions.filter(
         // Only user owned non-expired regions.
-        ({ region }) =>
-          region.getOwner() === activeAccount.address &&
-          region.consumed(context) < 1
+        ({ region, consumed }) =>
+          region.getOwner() === activeAccount.address && consumed < 1
       )
     );
     setLoading(false);
@@ -144,7 +143,7 @@ const RegionDataProvider = ({ children }: Props) => {
 
   useEffect(() => {
     fetchRegions();
-  }, [relayConnected, coretimeConnected, contractsConnected]);
+  }, [relayConnected, coretimeConnected, contractsConnected, context]);
 
   useEffect(() => {
     activeAccount && fetchRegions();
