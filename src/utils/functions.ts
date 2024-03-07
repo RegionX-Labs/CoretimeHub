@@ -1,7 +1,8 @@
 import { ApiPromise } from '@polkadot/api';
+import { formatBalance as format } from '@polkadot/util/format';
 import { CoreMask, RegionId } from 'coretime-utils';
 
-import { RELAY_CHAIN_BLOCK_TIME, UNIT_DECIMALS } from '@/models';
+import { RELAY_CHAIN_BLOCK_TIME } from '@/models';
 
 // parse human readable number string
 export const parseHNString = (str: string): number => {
@@ -74,7 +75,7 @@ export const timestampToTimeslice = async (
 };
 
 export const formatBalance = (balance: number) => {
-  return (balance / UNIT_DECIMALS).toPrecision(2);
+  return format(balance, { withUnit: false, withSi: false, withZero: false });
 };
 
 // TODO: should be queried from runtime api instead.

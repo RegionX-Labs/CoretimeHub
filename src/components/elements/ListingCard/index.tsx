@@ -5,7 +5,6 @@ import {
   Divider,
   LinearProgress,
   Paper,
-  Stack,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -78,7 +77,7 @@ const ListingCardInner = ({
   // Create formatter (English).
   const timeAgo = new TimeAgo('en-US');
 
-  const formatDuration = humanizer();
+  const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
   const { region, regionCoreOccupancy, regionConsumed } = listing;
   const theme = useTheme();
 
@@ -122,31 +121,7 @@ const ListingCardInner = ({
           fontSize={'18px'}
           variant='button'
         >{`Core Index: #${region.getCore()}`}</Typography>
-        <Box margin={'1em'} display={'flex'} justifyContent={'space-between'}>
-          <Typography>Begin: {timeAgo.format(beginTimestamp)}</Typography>
-          <Typography>End: {timeAgo.format(endTimestamp)}</Typography>
-        </Box>
-        <div
-          className={styles.duration}
-          style={{
-            borderColor: theme.palette.grey[200],
-            color: theme.palette.grey[200],
-            margin: '0 auto',
-          }}
-        >
-          <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
-          {`Duration: ${formatDuration(endTimestamp - beginTimestamp)}`}
-        </div>
       </Box>
-      <Divider sx={{ margin: '1em' }} orientation='horizontal' flexItem />
-      <Stack marginTop={'.5rem'} spacing={'.5em'} textAlign={'center'}>
-        <Typography fontSize={'1rem'} color={'black'}>
-          Total price: {formatBalance(listing.currentPrice)} ROC
-        </Typography>
-        <Typography fontSize={'1rem'} color={'black'}>
-          Price per timeslice: {formatBalance(listing.timeslicePrice)} ROC
-        </Typography>
-      </Stack>
       <Box
         sx={{
           display: 'flex',
@@ -186,9 +161,50 @@ const ListingCardInner = ({
           </Box>
         ))}
       </Box>
+      <Divider sx={{ margin: '1em' }} orientation='horizontal' flexItem />
+      <div
+        className={styles.duration}
+        style={{
+          borderColor: theme.palette.grey[200],
+          color: theme.palette.grey[200],
+        }}
+      >
+        <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
+        {`Duration: ${formatDuration(endTimestamp - beginTimestamp)}`}
+      </div>
+      <Box marginY={'1em'} display={'flex'} justifyContent={'space-between'}>
+        <Typography variant='h2'>
+          Begin: {timeAgo.format(beginTimestamp)}
+        </Typography>
+        <Typography variant='h2'>
+          End: {timeAgo.format(endTimestamp)}
+        </Typography>
+      </Box>
+      <Box>
+        <Box
+          display={'flex'}
+          justifyContent={'space-between'}
+          alignItems={'center'}
+        >
+          <Typography fontSize={'1rem'}>Price/timeslice:</Typography>
+          <Typography variant='h2'>
+            {formatBalance(listing.timeslicePrice)} ROC
+          </Typography>
+        </Box>
+        <Box
+          display={'flex'}
+          justifyContent={'space-between'}
+          alignItems={'center'}
+        >
+          <Typography fontSize={'1rem'}>Total:</Typography>
+          <Typography variant='h2'>
+            {formatBalance(listing.currentPrice)} ROC
+          </Typography>
+        </Box>
+      </Box>
       {!readOnly && (
         <Box
-          sx={{ marginTop: '2em' }}
+          sx={{ marginTop: '1em' }}
           display={'flex'}
           justifyContent={'center'}
         >
