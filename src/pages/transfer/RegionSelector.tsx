@@ -32,3 +32,5 @@ export const RegionSelector = ({
     </FormControl>
   );
 };
+
+export default () => { return <></> }

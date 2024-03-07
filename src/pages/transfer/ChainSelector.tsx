@@ -22,3 +22,5 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
     </FormControl>
   );
 };
+
+export default () => { return <></> }
