@@ -161,17 +161,6 @@ const RegionDataProvider = ({ children }: Props) => {
     localStorage.setItem(`region-${region.rawId}`, name);
   };
 
-  const fetchRegion = async (regionId: RegionId): Promise<Region | null> => {
-    if (!coretimeApi) return null;
-    const record: any = coretimeApi?.query.broker.get({
-      begin: regionId.begin,
-      core: regionId.core,
-      mask: regionId.mask.getMask(),
-    });
-
-    return new Region(regionId, record, 0);
-  };
-
   const determineRegionLocation = (
     xcRegionIds: string[],
     listedRegionIds: string[],
@@ -193,7 +182,8 @@ const RegionDataProvider = ({ children }: Props) => {
         loading,
         updateRegionName,
         fetchRegions,
-        fetchRegion,
+        fetchRegion: (_r: RegionId) =>
+          NativeRegions.fetchRegion(coretimeApi, _r),
       }}
     >
       {children}

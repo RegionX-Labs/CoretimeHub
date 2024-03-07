@@ -1,21 +1,22 @@
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
-import { contractTx } from '@scio-labs/use-inkathon';
-import { Region } from 'coretime-utils';
 
-import { ContractContext } from '@/models';
+import { Sender, TxHandlers } from '@/models';
 
 import {
   ContractsChain,
+  CoretimeChain,
+  CoretimeRegionFromContractsPerspective,
   CoretimeRegionFromCoretimePerspective,
 } from './consts';
 import { versionedNonfungibleAssetWrap, versionedWrap } from './utils';
 
-export function coretimeToContractsTransfer(
+export async function coretimeToContractsTransfer(
   coretimeApi: ApiPromise,
-  senderAddress: string,
+  sender: Sender,
   rawRegionId: BN,
-  receiver: string
+  receiver: Uint8Array,
+  handlers: TxHandlers
 ) {
   const beneficiary = {
     parents: 0,
@@ -44,54 +45,84 @@ export function coretimeToContractsTransfer(
       weightLimit
     );
 
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve, reject) => {
-    try {
-      const unsub = await reserveTransfer.signAndSend(
-        senderAddress,
-        (result: any) => {
-          unsub();
-          if (result.dispatchError !== undefined) {
-            reject(result.dispatchError);
-          } else {
-            resolve(result);
-          }
+  try {
+    reserveTransfer.signAndSend(
+      sender.address,
+      { signer: sender.signer },
+      ({ status, events }) => {
+        if (status.isReady) handlers.ready();
+        else if (status.isInBlock) handlers.inBlock();
+        else if (status.isFinalized) {
+          handlers.finalized();
+          events.forEach(({ event: { method } }) => {
+            if (method === 'ExtrinsicSuccess') {
+              handlers.success();
+            } else if (method === 'ExtrinsicFailed') {
+              handlers.error();
+            }
+          });
         }
-      );
-    } catch (e) {
-      reject(e);
-    }
-  });
+      }
+    );
+  } catch (e) {
+    handlers.error();
+  }
 }
 
-export async function initRegionMetadata(
-  contractsCtx: ContractContext,
-  sender: string,
-  region: Region
+export function contractsToCoretimeTransfer(
+  contractsApi: ApiPromise,
+  sender: Sender,
+  rawRegionId: BN,
+  receiver: Uint8Array,
+  handlers: TxHandlers
 ) {
-  const { contractsApi, xcRegionsContract } = contractsCtx;
-  if (!contractsApi || !xcRegionsContract) return;
+  const beneficiary = {
+    parents: 0,
+    interior: {
+      X1: {
+        AccountId32: {
+          chain: 'Any',
+          id: receiver,
+        },
+      },
+    },
+  };
+
+  const feeAssetItem = 0;
+  const weightLimit = 'Unlimited';
+
+  const reserveTransfer =
+    contractsApi.tx.polkadotXcm.limitedReserveTransferAssets(
+      versionedWrap(CoretimeChain),
+      versionedWrap(beneficiary),
+      versionedNonfungibleAssetWrap(
+        CoretimeRegionFromContractsPerspective,
+        rawRegionId.toString()
+      ),
+      feeAssetItem,
+      weightLimit
+    );
 
   try {
-    const rawRegionId = region.getEncodedRegionId(contractsApi);
-    const id = contractsApi.createType('Id', { U128: rawRegionId.toString() });
-
-    const regionMetadata = {
-      begin: region.getBegin(),
-      end: region.getEnd(),
-      core: region.getCore(),
-      mask: region.getMask().getMask(),
-    };
-
-    await contractTx(
-      contractsApi,
-      sender,
-      xcRegionsContract,
-      'regionMetadata::init',
-      {},
-      [id, regionMetadata]
+    reserveTransfer.signAndSend(
+      sender.address,
+      { signer: sender.signer },
+      ({ status, events }) => {
+        if (status.isReady) handlers.ready();
+        else if (status.isInBlock) handlers.inBlock();
+        else if (status.isFinalized) {
+          handlers.finalized();
+          events.forEach(({ event: { method } }) => {
+            if (method === 'ExtrinsicSuccess') {
+              handlers.success();
+            } else if (method === 'ExtrinsicFailed') {
+              handlers.error();
+            }
+          });
+        }
+      }
     );
-  } catch (e: any) {
-    throw new Error(`Region initialization failed: ${e}`);
+  } catch (e) {
+    handlers.error();
   }
 }

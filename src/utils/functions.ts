@@ -1,4 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
+import { CoreMask, RegionId } from 'coretime-utils';
 
 import { RELAY_CHAIN_BLOCK_TIME, UNIT_DECIMALS } from '@/models';
 
@@ -79,4 +80,29 @@ export const formatBalance = (balance: number) => {
 // TODO: should be queried from runtime api instead.
 export const leadinFactorAt = (when: number) => {
   return 2 - when;
+};
+
+export const extractRegionIdFromRaw = (rawRegionId: bigint): RegionId => {
+  // Extract 'begin' (top 32 bits) and explicitly cast to number
+  const begin = Number(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    (rawRegionId >> BigInt(96)) & BigInt(0xffffffff)
+  );
+
+  // Extract 'core' (next 16 bits) and explicitly cast to number
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const core = Number((rawRegionId >> BigInt(80)) & BigInt(0xffff));
+
+  // Extract 'mask' (lowest 80 bits)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const mask: bigint = rawRegionId & BigInt('0xFFFFFFFFFFFFFFFFFFFF');
+
+  return {
+    begin,
+    core,
+    mask: new CoreMask(('0x' + mask.toString(16)).padEnd(22, '0')),
+  };
 };
