@@ -33,7 +33,9 @@ export const fetchRegions = async (
             },
             0
           );
-        } catch (_e) { /** */ }
+        } catch (_e) {
+          /** */
+        }
       })
       .filter((entry) => !!entry) as Array<Region>;
     return brokerRegions;

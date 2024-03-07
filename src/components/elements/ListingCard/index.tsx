@@ -79,7 +79,7 @@ const ListingCardInner = ({
   const timeAgo = new TimeAgo('en-US');
 
   const formatDuration = humanizer();
-  const { region, regionConsumed, regionCoreOccupancy } = listing;
+  const { region, regionCoreOccupancy, regionConsumed } = listing;
   const theme = useTheme();
 
   const [beginTimestamp, setBeginTimestamp] = useState(0);
@@ -116,92 +116,91 @@ const ListingCardInner = ({
     },
   ];
   return (
-    <>
-      <div className={styles.regionInfo}>
+    <Box className={styles.listingInfo}>
+      <Box textAlign={'center'}>
+        <Typography
+          fontSize={'18px'}
+          variant='button'
+        >{`Core Index: #${region.getCore()}`}</Typography>
+        <Box margin={'1em'} display={'flex'} justifyContent={'space-between'}>
+          <Typography>Begin: {timeAgo.format(beginTimestamp)}</Typography>
+          <Typography>End: {timeAgo.format(endTimestamp)}</Typography>
+        </Box>
         <div
           className={styles.duration}
           style={{
             borderColor: theme.palette.grey[200],
             color: theme.palette.grey[200],
+            margin: '0 auto',
           }}
         >
           <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
           {`Duration: ${formatDuration(endTimestamp - beginTimestamp)}`}
         </div>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
-            color: theme.palette.grey[200],
-          }}
-        >
-          <Typography variant='h2'>{`Core Index: #${region.getCore()}`}</Typography>
-          <Typography variant='h2'>
-            Begin: {timeAgo.format(beginTimestamp)}
-          </Typography>
-          <Typography variant='h2'>
-            End: {timeAgo.format(endTimestamp)}
-          </Typography>
-        </Box>
-        {!readOnly && (
-          <Box sx={{ marginTop: '1em' }}>
-            <Button variant='outlined' onClick={() => onPurchase(listing)}>
-              Purchase
-            </Button>
-          </Box>
-        )}
-      </div>
-      <Divider orientation='vertical' flexItem />
-      <Box sx={{ color: theme.palette.grey[200] }}>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1.5rem',
-            mt: '2rem',
-          }}
-        >
-          {progress.map(({ label, value, color }, index) => (
-            <Box
-              key={index}
-              sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}
-            >
-              <LinearProgress
-                value={value * 100}
-                valueBuffer={100}
-                sx={{
-                  width: '8rem',
-                  height: '0.8em',
-                }}
-                variant='buffer'
-                color={color as 'warning' | 'success' | 'info'}
-              />
-              <Typography
-                variant='h2'
-                sx={{
-                  color: theme.palette.text.primary,
-                  width: '3rem',
-                  fontWeight: 400,
-                }}
-              >
-                {`${(value * 100).toFixed(2)}%`}
-              </Typography>
-              <Typography variant='h2' sx={{ fontWeight: 400 }}>
-                {label}
-              </Typography>
-            </Box>
-          ))}
-          <Stack marginTop={'.5rem'} spacing={'.5em'}>
-            <Typography fontSize={'1rem'} color={'black'}>
-              Total price: {formatBalance(listing.currentPrice)} ROC
-            </Typography>
-            <Typography fontSize={'1rem'} color={'black'}>
-              Price per timeslice: {formatBalance(listing.timeslicePrice)} ROC
-            </Typography>
-          </Stack>
-        </Box>
       </Box>
-    </>
+      <Divider sx={{ margin: '1em' }} orientation='horizontal' flexItem />
+      <Stack marginTop={'.5rem'} spacing={'.5em'} textAlign={'center'}>
+        <Typography fontSize={'1rem'} color={'black'}>
+          Total price: {formatBalance(listing.currentPrice)} ROC
+        </Typography>
+        <Typography fontSize={'1rem'} color={'black'}>
+          Price per timeslice: {formatBalance(listing.timeslicePrice)} ROC
+        </Typography>
+      </Stack>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1.5rem',
+          mt: '2rem',
+        }}
+      >
+        {progress.map(({ label, value, color }, index) => (
+          <Box
+            key={index}
+            sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}
+          >
+            <LinearProgress
+              value={value * 100}
+              valueBuffer={100}
+              sx={{
+                width: '8rem',
+                height: '0.8em',
+              }}
+              variant='buffer'
+              color={color as 'warning' | 'success' | 'info'}
+            />
+            <Typography
+              variant='h2'
+              sx={{
+                color: theme.palette.text.primary,
+                width: '3rem',
+                fontWeight: 400,
+              }}
+            >
+              {`${(value * 100).toFixed(2)}%`}
+            </Typography>
+            <Typography variant='h2' sx={{ fontWeight: 400 }}>
+              {label}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+      {!readOnly && (
+        <Box
+          sx={{ marginTop: '2em' }}
+          display={'flex'}
+          justifyContent={'center'}
+        >
+          <Button
+            sx={{ width: '100%' }}
+            variant='outlined'
+            onClick={() => onPurchase(listing)}
+          >
+            Purchase
+          </Button>
+        </Box>
+      )}
+    </Box>
   );
 };

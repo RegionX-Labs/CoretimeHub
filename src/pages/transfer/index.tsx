@@ -374,10 +374,7 @@ const Page = () => {
       <Box width={'60%'} margin={'2em auto'}>
         <Stack margin={'1em 0'} direction='column' gap={1}>
           <Typography>Origin chain:</Typography>
-          <ChainSelector
-            chain={originChain}
-            setChain={handleOriginChange}
-          />
+          <ChainSelector chain={originChain} setChain={handleOriginChange} />
         </Stack>
         <Stack margin={'1em 0'} direction='column' gap={1}>
           <Typography>Destination chain:</Typography>

@@ -157,7 +157,7 @@ export const SellModal = ({
               amount={regionPrice}
               title='Region price'
               caption='The price for the entire region'
-              currency='DOT'
+              currency='ROC'
               setAmount={setRegionPrice}
             />
           </Stack>

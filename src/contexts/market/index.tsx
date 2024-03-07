@@ -140,10 +140,7 @@ const MarketProvider = ({ children }: Props) => {
       */
 
       // Skip expired regions.
-      if (
-        context.relayBlockNumber * context.timeslicePeriod >
-        region.getEnd()
-      ) {
+      if (region.consumed(context) > 1) {
         continue;
       }
 
@@ -194,7 +191,14 @@ const MarketProvider = ({ children }: Props) => {
     if (!contractsApi || !activeAccount || !marketContract || !contractsReady)
       return;
     fetchMarket();
-  }, [contractsApi, regions, activeAccount, marketContract, contractsReady]);
+  }, [
+    context,
+    contractsApi,
+    regions,
+    activeAccount,
+    marketContract,
+    contractsReady,
+  ]);
 
   return (
     <MarketDataContext.Provider value={{ loading, listedRegions, fetchMarket }}>

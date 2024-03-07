@@ -54,7 +54,7 @@ const Page = () => {
         marginTop={'2rem'}
         display={'flex'}
         flexWrap={'wrap'}
-        justifyContent={'space-between'}
+        justifyContent={'space-around'}
       >
         {filteredListings.map((listing, indx) => (
           <Box key={indx} margin={'1em'}>
