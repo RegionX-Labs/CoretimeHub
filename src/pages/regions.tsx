@@ -106,7 +106,7 @@ const Dashboard = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', height: '100%', gap: '1rem' }}>
+    <Box sx={{ display: 'flex', height: '100%', gap: '1rem', justifyContent: 'space-between' }}>
       <Box sx={{ maxWidth: '45rem', flexGrow: 1, overflow: 'auto' }}>
         <Box>
           <Typography
@@ -158,13 +158,12 @@ const Dashboard = () => {
       </Box>
       <Box
         sx={{
-          position: 'fixed',
-          right: '7.5rem',
+          borderRadius: '.5rem',
           color: theme.palette.text.secondary,
           background: theme.palette.background.default,
           minWidth: 280,
           height: 500,
-          margin: 'auto',
+          marginTop: '2rem',
           padding: '2rem 3rem',
         }}
       >
