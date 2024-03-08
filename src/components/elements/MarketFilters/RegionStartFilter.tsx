@@ -47,7 +47,7 @@ const RegionStartFilter = ({ filters, updateFilters }: FilterProps) => {
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <Typography marginBottom={'.5em'}>Region Start</Typography>
+        <Typography marginBottom={'.5em'}>Region starts by</Typography>
         <DatePicker
           label='Select date'
           value={selectedStart}

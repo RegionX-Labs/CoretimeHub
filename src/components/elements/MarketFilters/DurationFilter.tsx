@@ -21,7 +21,7 @@ const DurationFilter = ({ filters, updateFilters }: FilterProps) => {
   };
 
   const options: Option[] = [
-    { duration: Number.MAX_VALUE, label: 'Show All' },
+    { duration: 0, label: 'Show All' },
     { duration: WEEK_IN_TIMESLICES, label: '1 week' },
     { duration: 2 * WEEK_IN_TIMESLICES, label: '2 weeks' },
     { duration: 3 * WEEK_IN_TIMESLICES, label: '3 weeks' },
@@ -38,13 +38,13 @@ const DurationFilter = ({ filters, updateFilters }: FilterProps) => {
     updateFilters({
       ...filters,
       durationFilter: (listing) =>
-        listing.region.getEnd() - listing.region.getBegin() <= duration,
+        listing.region.getEnd() - listing.region.getBegin() >= duration,
     });
   };
 
   return (
     <Box width={200}>
-      <Typography marginBottom={'.5em'}>Region Duration</Typography>
+      <Typography marginBottom={'.5em'}>Region duration at least</Typography>
       <FormControl fullWidth>
         <InputLabel id='range-dropdown-label'>Range</InputLabel>
         <Select

@@ -85,7 +85,7 @@ const RegionCardInner = ({
   // Create formatter (English).
   const timeAgo = new TimeAgo('en-US');
 
-  const formatDuration = humanizer();
+  const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
   const { region, taskId, location, currentUsage, consumed, coreOccupancy } =
     regionMetadata;
   const theme = useTheme();

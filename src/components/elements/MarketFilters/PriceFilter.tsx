@@ -26,9 +26,6 @@ const PriceFilter = ({ listings, filters, updateFilters }: FilterProps) => {
 
   return (
     <Box>
-      <Typography textAlign={'center'}>
-        Price Limit: {`${priceLimit} ROC`}
-      </Typography>
       <Slider
         defaultValue={70}
         max={maxValue()}
@@ -39,6 +36,9 @@ const PriceFilter = ({ listings, filters, updateFilters }: FilterProps) => {
         valueLabelDisplay='off'
         valueLabelFormat={(value) => `${value} ROC`}
       />
+      <Typography variant='h2' textAlign={'center'}>
+        Price Limit: {`${priceLimit} ROC`}
+      </Typography>
     </Box>
   );
 };
