@@ -108,7 +108,7 @@ export const SellModal = ({
       });
       const regionDuration = region.getEnd() - region.getBegin();
       const timeslicePrice = (
-        (Number(regionPrice) * CONTRACT_DECIMALS) /
+        (Number(regionPrice) * Math.pow(10, CONTRACT_DECIMALS)) /
         regionDuration /
         region.coreOccupancy()
       ).toFixed(0);

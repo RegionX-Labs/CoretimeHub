@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 
 import theme from '@/utils/muiTheme';
@@ -11,7 +11,7 @@ import { useMarket } from '@/contexts/market';
 import { Listing } from '@/models';
 
 const Page = () => {
-  const { listedRegions, fetchMarket, loading } = useMarket();
+  const { listedRegions, fetchMarket } = useMarket();
 
   const [purchaseModalOpen, openPurhcaseModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
@@ -54,7 +54,6 @@ const Page = () => {
         listings={listedRegions}
         setFilteredListings={setFilteredListings}
       />
-      {loading && <CircularProgress />}
       {filteredListings.length > 0 && (
         <Box
           marginTop={'2rem'}

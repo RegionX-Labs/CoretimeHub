@@ -171,18 +171,15 @@ const Purchase = () => {
   };
 
   useEffect(() => {
-    if (!api || !activeAccount) return;
-    fetchBalance(api, activeAccount);
+    if (!api || apiState !== ApiState.READY) return;
     fetchCurrentPhase(api);
     fetchCurreentPrice(api);
-  }, [
-    api,
-    apiState,
-    activeAccount,
-    fetchBalance,
-    fetchCurreentPrice,
-    fetchCurrentPhase,
-  ]);
+  }, [api, apiState, fetchCurreentPrice, fetchCurrentPhase]);
+
+  useEffect(() => {
+    if (!api || apiState !== ApiState.READY || !activeAccount) return;
+    fetchBalance(api, activeAccount);
+  }, [api, apiState, activeAccount, fetchBalance]);
 
   return (
     <Box>

@@ -1,7 +1,12 @@
 import { ApiPromise } from '@polkadot/api';
 import { CoreMask, RegionId } from 'coretime-utils';
+import Decimal from 'decimal.js';
 
-import { RELAY_CHAIN_BLOCK_TIME } from '@/models';
+import {
+  CONTRACT_DECIMALS,
+  CORETIME_DECIMALS,
+  RELAY_CHAIN_BLOCK_TIME,
+} from '@/models';
 
 // parse human readable number string
 export const parseHNString = (str: string): number => {
@@ -74,10 +79,17 @@ export const timestampToTimeslice = async (
 };
 
 export const formatBalance = (balance: string, contractChain: boolean) => {
-  if (contractChain) {
-    return (BigInt(balance) / BigInt(10 ** 18)).toString();
+  Decimal.config({ rounding: Decimal.ROUND_DOWN });
+  const decimals = contractChain ? CONTRACT_DECIMALS : CORETIME_DECIMALS;
+
+  if (new Decimal(balance).lt(new Decimal(10).pow(CONTRACT_DECIMALS))) {
+    return new Decimal(balance)
+      .dividedBy(new Decimal(10).pow(decimals))
+      .toPrecision(2);
   } else {
-    return (BigInt(balance) / BigInt(10 ** 12)).toString();
+    return new Decimal(balance)
+      .dividedBy(new Decimal(10).pow(decimals))
+      .toFixed(2);
   }
 };
 
