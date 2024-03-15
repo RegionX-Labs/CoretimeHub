@@ -59,26 +59,26 @@ const Sort = ({ listings, setFilteredListings, filter }: SortProps) => {
 
     switch (sortOption) {
       case SortOption.CheapestFirst: {
-        filteredListings.sort(
-          (a: Listing, b: Listing) => a.currentPrice - b.currentPrice
+        filteredListings.sort((a: Listing, b: Listing) =>
+          a.currentPrice.cmp(b.currentPrice)
         );
         break;
       }
       case SortOption.ExpensiveFirst: {
-        filteredListings.sort(
-          (a: Listing, b: Listing) => b.currentPrice - a.currentPrice
+        filteredListings.sort((a: Listing, b: Listing) =>
+          b.currentPrice.cmp(a.currentPrice)
         );
         break;
       }
       case SortOption.LowestPptFirst: {
-        filteredListings.sort(
-          (a: Listing, b: Listing) => a.timeslicePrice - b.timeslicePrice
+        filteredListings.sort((a: Listing, b: Listing) =>
+          a.timeslicePrice.cmp(b.timeslicePrice)
         );
         break;
       }
       case SortOption.HighestPptFirst: {
-        filteredListings.sort(
-          (a: Listing, b: Listing) => b.timeslicePrice - a.timeslicePrice
+        filteredListings.sort((a: Listing, b: Listing) =>
+          b.timeslicePrice.cmp(a.timeslicePrice)
         );
         break;
       }
