@@ -1,5 +1,5 @@
-import { Box, Typography } from '@mui/material';
-import { useState } from 'react';
+import { Box, CircularProgress, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 
 import theme from '@/utils/muiTheme';
 
@@ -11,7 +11,7 @@ import { useMarket } from '@/contexts/market';
 import { Listing } from '@/models';
 
 const Page = () => {
-  const { listedRegions } = useMarket();
+  const { listedRegions, fetchMarket, loading } = useMarket();
 
   const [purchaseModalOpen, openPurhcaseModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
@@ -22,6 +22,10 @@ const Page = () => {
     setSelectedListing(listing);
     openPurhcaseModal(true);
   };
+
+  useEffect(() => {
+    setFilteredListings(listedRegions);
+  }, [listedRegions]);
 
   return (
     <Box>
@@ -50,26 +54,34 @@ const Page = () => {
         listings={listedRegions}
         setFilteredListings={setFilteredListings}
       />
-      <Box
-        marginTop={'2rem'}
-        display={'flex'}
-        flexWrap={'wrap'}
-        justifyContent={'space-around'}
-      >
-        {filteredListings.map((listing, indx) => (
-          <Box key={indx} margin={'1em'}>
-            <ListingCard
-              listing={listing}
-              readOnly={false}
-              onPurchase={onPurchase}
-            />
-          </Box>
-        ))}
-      </Box>
+      {loading &&
+        <CircularProgress />
+      }
+      {filteredListings.length > 0 &&
+        <Box
+          marginTop={'2rem'}
+          display={'flex'}
+          flexWrap={'wrap'}
+          justifyContent={'space-around'}
+        >
+          {filteredListings.map((listing, indx) => (
+            <Box key={indx} margin={'1em'}>
+              <ListingCard
+                listing={listing}
+                readOnly={false}
+                onPurchase={onPurchase}
+              />
+            </Box>
+          ))}
+        </Box>
+      }
       {selectedListing && (
         <PurchaseModal
           open={purchaseModalOpen}
-          onClose={() => openPurhcaseModal(false)}
+          onClose={() => {
+            fetchMarket();
+            openPurhcaseModal(false);
+          }}
           listing={selectedListing}
         />
       )}

@@ -1,5 +1,4 @@
 import { ApiPromise } from '@polkadot/api';
-import { formatBalance as format } from '@polkadot/util/format';
 import { CoreMask, RegionId } from 'coretime-utils';
 
 import { RELAY_CHAIN_BLOCK_TIME } from '@/models';
@@ -74,8 +73,12 @@ export const timestampToTimeslice = async (
   }
 };
 
-export const formatBalance = (balance: number) => {
-  return format(balance, { withUnit: false, withSi: false, withZero: false });
+export const formatBalance = (balance: string, contractChain: boolean) => {
+  if (contractChain) {
+    return (BigInt(balance) / BigInt(10 ** 18)).toString();
+  } else {
+    return (BigInt(balance) / BigInt(10 ** 12)).toString();
+  }
 };
 
 // TODO: should be queried from runtime api instead.

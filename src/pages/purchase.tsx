@@ -207,16 +207,16 @@ const Purchase = () => {
           </Typography>
         </Box>
         <Typography variant='h6' sx={{ color: theme.palette.text.primary }}>
-          {`Your balance: ${formatBalance(balance)} ROC`}
+          {`Your balance: ${formatBalance(balance.toString(), false)} ROC`}
         </Typography>
       </Box>
       <Box>
         {loading ||
-        !currentPhase ||
-        !saleEnd ||
-        !currentBlockNumber ||
-        !progress ||
-        !saleEndTimestamp ? (
+          !currentPhase ||
+          !saleEnd ||
+          !currentBlockNumber ||
+          !progress ||
+          !saleEndTimestamp ? (
           <>
             <Typography variant='h5' align='center'>
               Connect your wallet

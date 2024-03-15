@@ -17,12 +17,11 @@ import AmountInput from '@/components/elements/AmountInput';
 import { RecipientSelector } from '@/components/elements/RecipientSelector';
 
 import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
-import { useMarket } from '@/contexts/market';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import MarketMetadata from '@/contracts/market.json';
 import XcRegionsMetadata from '@/contracts/xc_regions.json';
-import { LISTING_DEPOSIT, RegionMetadata, UNIT_DECIMALS } from '@/models';
+import { CONTRACT_DECIMALS,LISTING_DEPOSIT, RegionMetadata } from '@/models';
 
 interface SellModalProps {
   open: boolean;
@@ -47,7 +46,6 @@ export const SellModal = ({
   );
 
   const { fetchRegions } = useRegions();
-  const { fetchMarket } = useMarket();
   const { toastError, toastSuccess } = useToast();
 
   const [regionPrice, setRegionPrice] = useState('');
@@ -85,14 +83,10 @@ export const SellModal = ({
       );
 
       toastSuccess(`Successfully approved region to the market.`);
-      onClose();
-      fetchRegions();
-      fetchMarket();
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to approve the region. Error: ${
-          e.errorMessage === 'Error' ? 'Please check your balance.' : e
+        `Failed to approve the region. Error: ${e.errorMessage === 'Error' ? 'Please check your balance.' : e
         }`
       );
       setWorking(false);
@@ -113,7 +107,7 @@ export const SellModal = ({
       });
       const regionDuration = region.getEnd() - region.getBegin();
       const timeslicePrice = (
-        (Number(regionPrice) * UNIT_DECIMALS) /
+        (Number(regionPrice) * CONTRACT_DECIMALS) /
         regionDuration /
         region.coreOccupancy()
       ).toFixed(0);
@@ -124,7 +118,7 @@ export const SellModal = ({
         marketContract,
         'list_region',
         { value: LISTING_DEPOSIT },
-        [id, timeslicePrice, saleRecipient ? null : [saleRecipient]]
+        [id, timeslicePrice, saleRecipient ? saleRecipient : null]
       );
 
       toastSuccess(`Successfully listed region on sale.`);
@@ -133,10 +127,9 @@ export const SellModal = ({
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to list the region. Error: ${
-          e.errorMessage === 'Error'
-            ? 'Please check your balance.'
-            : e.errorMessage
+        `Failed to list the region. Error: ${e.errorMessage === 'Error'
+          ? 'Please check your balance.'
+          : e.errorMessage
         }`
       );
       setWorking(false);

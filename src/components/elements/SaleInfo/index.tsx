@@ -79,10 +79,10 @@ const SaleInfoGrid = ({
       </Box>
       <Box className={styles.gridItem}>
         <Typography variant='h6'>
-          {`Current price: ${formatBalance(currentPrice)}`} ROC
+          {`Current price: ${formatBalance(currentPrice.toString(), false)}`} ROC
         </Typography>
         <Typography>
-          {`Floor price: ${formatBalance(saleInfo.price)}`} ROC
+          {`Floor price: ${formatBalance(saleInfo.price.toString(), false)}`} ROC
         </Typography>
       </Box>
       <Box>

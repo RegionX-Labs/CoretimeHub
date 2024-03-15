@@ -1,3 +1,4 @@
+import { BN } from '@polkadot/util';
 import {
   contractQuery,
   decodeOutput,
@@ -13,7 +14,7 @@ import React, {
   useState,
 } from 'react';
 
-import { parseHNString, parseHNStringToString } from '@/utils/functions';
+import { parseHNStringToString } from '@/utils/functions';
 
 import { Listing } from '@/models';
 
@@ -160,15 +161,17 @@ const MarketProvider = ({ children }: Props) => {
           context,
           region,
           listingOutput.Ok.seller,
-          parseHNString(listingOutput.Ok.timeslicePrice),
-          parseHNString(priceOutput.Ok),
+          new BN(parseHNStringToString(listingOutput.Ok.timeslicePrice)),
+          new BN(parseHNStringToString(priceOutput.Ok)),
           listingOutput.Ok.saleRecepient
         )
       );
     }
 
     setListedRegions(_listedRegions);
-    setLoading(false);
+    if (_listedRegions.length > 0) {
+      setLoading(false);
+    }
   }, [contractsApi, marketContract, xcRegionsContract, context]);
 
   /// Returns true or false depending whether the metadata matches with the one stored
