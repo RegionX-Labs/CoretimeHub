@@ -169,9 +169,7 @@ const MarketProvider = ({ children }: Props) => {
     }
 
     setListedRegions(_listedRegions);
-    if (_listedRegions.length > 0) {
-      setLoading(false);
-    }
+    setLoading(false);
   }, [contractsApi, marketContract, xcRegionsContract, context]);
 
   /// Returns true or false depending whether the metadata matches with the one stored

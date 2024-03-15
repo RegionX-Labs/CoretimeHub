@@ -54,10 +54,8 @@ const Page = () => {
         listings={listedRegions}
         setFilteredListings={setFilteredListings}
       />
-      {loading &&
-        <CircularProgress />
-      }
-      {filteredListings.length > 0 &&
+      {loading && <CircularProgress />}
+      {filteredListings.length > 0 && (
         <Box
           marginTop={'2rem'}
           display={'flex'}
@@ -74,7 +72,7 @@ const Page = () => {
             </Box>
           ))}
         </Box>
-      }
+      )}
       {selectedListing && (
         <PurchaseModal
           open={purchaseModalOpen}

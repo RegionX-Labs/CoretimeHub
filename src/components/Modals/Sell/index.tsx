@@ -21,7 +21,7 @@ import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import MarketMetadata from '@/contracts/market.json';
 import XcRegionsMetadata from '@/contracts/xc_regions.json';
-import { CONTRACT_DECIMALS,LISTING_DEPOSIT, RegionMetadata } from '@/models';
+import { CONTRACT_DECIMALS, LISTING_DEPOSIT, RegionMetadata } from '@/models';
 
 interface SellModalProps {
   open: boolean;
@@ -86,7 +86,8 @@ export const SellModal = ({
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to approve the region. Error: ${e.errorMessage === 'Error' ? 'Please check your balance.' : e
+        `Failed to approve the region. Error: ${
+          e.errorMessage === 'Error' ? 'Please check your balance.' : e
         }`
       );
       setWorking(false);
@@ -127,9 +128,10 @@ export const SellModal = ({
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to list the region. Error: ${e.errorMessage === 'Error'
-          ? 'Please check your balance.'
-          : e.errorMessage
+        `Failed to list the region. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
         }`
       );
       setWorking(false);

@@ -212,11 +212,11 @@ const Purchase = () => {
       </Box>
       <Box>
         {loading ||
-          !currentPhase ||
-          !saleEnd ||
-          !currentBlockNumber ||
-          !progress ||
-          !saleEndTimestamp ? (
+        !currentPhase ||
+        !saleEnd ||
+        !currentBlockNumber ||
+        !progress ||
+        !saleEndTimestamp ? (
           <>
             <Typography variant='h5' align='center'>
               Connect your wallet

@@ -34,29 +34,31 @@ const Progress = ({ progress, sections }: ProgressProps) => {
   return (
     <Box position='relative' width='100%' height='20px'>
       <BorderLinearProgress variant='determinate' value={progress} />
-      {sections.map(({ name, value }, index) => (
-        <>
-          <Box
-            key={index}
-            position='absolute'
-            top='0'
-            borderRadius={5}
-            left={`${value}%`}
-            width='5px' // Width of the divisor line
-            height='100%'
-            bgcolor={theme.palette.primary['dark']}
-            zIndex='1'
-          />
-          <Box
-            position='absolute'
-            top='25px' // Position below the divisor
-            left={`${value}%`} // Adjust to center the text below the divisor
-            zIndex='2'
-          >
-            <Typography component='div'>{`${name}`}</Typography>
-          </Box>
-        </>
-      ))}
+      {sections
+        .filter((s) => s.value > 0)
+        .map(({ name, value }, index) => (
+          <>
+            <Box
+              key={index}
+              position='absolute'
+              top='0'
+              borderRadius={5}
+              left={`${value}%`}
+              width='5px'
+              height='100%'
+              bgcolor={theme.palette.primary['dark']}
+              zIndex='1'
+            />
+            <Box
+              position='absolute'
+              top='25px' // Position below the divisor
+              left={`${value > 0 ? value : -15}%`} // Adjust to center the text below the divisor
+              zIndex='2'
+            >
+              <Typography component='div'>{`${name}`}</Typography>
+            </Box>
+          </>
+        ))}
     </Box>
   );
 };
