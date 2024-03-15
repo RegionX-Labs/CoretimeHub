@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 import { parseHNString } from '@/utils/functions';
 
@@ -58,7 +64,7 @@ const SaleInfoProvider = ({ children }: Props) => {
     state: { api: coretimeApi, apiState: coretimeApiState },
   } = useCoretimeApi();
 
-  const fetchSaleInfo = async () => {
+  const fetchSaleInfo = useCallback(async () => {
     setLoading(true);
     if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
 
@@ -101,12 +107,11 @@ const SaleInfoProvider = ({ children }: Props) => {
     }
 
     setLoading(false);
-  };
+  }, [coretimeApi, coretimeApiState]);
 
   useEffect(() => {
-    if (!coretimeApi || coretimeApiState !== ApiState.READY) return;
     fetchSaleInfo();
-  }, [coretimeApi, coretimeApiState]);
+  }, [fetchSaleInfo]);
 
   return (
     <SaleDataContext.Provider

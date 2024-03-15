@@ -1,10 +1,12 @@
 import { LoadingButton } from '@mui/lab';
 import { Box, Button, Typography, useTheme } from '@mui/material';
+import { ApiPromise } from '@polkadot/api';
+import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { useInkathon } from '@scio-labs/use-inkathon';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
   formatBalance,
@@ -52,87 +54,89 @@ const Purchase = () => {
 
   const { fetchRegions } = useRegions();
 
-  useEffect(() => {
-    fetchBalance();
-    fetchCurrentPhase();
-    fetchCurreentPrice();
-  }, [api, apiState, saleInfo, activeAccount, loading]);
+  const fetchBalance = useCallback(
+    async (api: ApiPromise, activeAccount: InjectedAccount) => {
+      const account = (
+        await api.query.system.account(activeAccount.address)
+      ).toHuman() as any;
+      const balance = parseHNString(account.data.free.toString());
+      setBalance(balance);
+      if (balance == 0) {
+        toastWarning(
+          'The selected account does not have any ROC tokens on the Coretime chain.'
+        );
+      }
+    },
+    [toastWarning]
+  );
 
-  const fetchBalance = async () => {
-    if (!api || apiState !== ApiState.READY || !activeAccount) return;
-    const account = (
-      await api.query.system.account(activeAccount.address)
-    ).toHuman() as any;
-    const balance = parseHNString(account.data.free.toString());
-    setBalance(balance);
-    if (balance == 0) {
-      toastWarning(
-        'The selected account does not have any ROC tokens on the Coretime chain.'
+  const fetchCurrentPhase = useCallback(
+    async (api: ApiPromise) => {
+      const blockNumber = parseHNString(
+        ((await api.query.system.number()).toHuman() as any).toString()
       );
-    }
-  };
+      const lastCommittedTimeslice = parseHNString(
+        (
+          (await api.query.broker.status()).toHuman() as any
+        ).lastCommittedTimeslice.toString()
+      );
+      const end =
+        blockNumber + 80 * (saleInfo.regionBegin - lastCommittedTimeslice);
 
-  const fetchCurrentPhase = async () => {
-    if (!api || apiState !== ApiState.READY || loading) return;
-    const blockNumber = parseHNString(
-      ((await api.query.system.number()).toHuman() as any).toString()
-    );
-    const lastCommittedTimeslice = parseHNString(
-      (
-        (await api.query.broker.status()).toHuman() as any
-      ).lastCommittedTimeslice.toString()
-    );
-    const end =
-      blockNumber + 80 * (saleInfo.regionBegin - lastCommittedTimeslice);
+      setCurrentBlockNumber(blockNumber);
+      setSaleEnd(end);
+      getBlockTimestamp(api, end).then((value) => setSaleEndTimestamp(value));
 
-    setCurrentBlockNumber(blockNumber);
-    setSaleEnd(end);
-    getBlockTimestamp(api, end).then((value) => setSaleEndTimestamp(value));
+      const saleDuration = end - saleInfo.saleStart;
+      const elapsed =
+        blockNumber - (saleInfo.saleStart - config.interludeLength);
 
-    const saleDuration = end - saleInfo.saleStart;
-    const elapsed = blockNumber - (saleInfo.saleStart - config.interludeLength);
+      setProgress(
+        (elapsed / (end - (saleInfo.saleStart + config.interludeLength))) * 100
+      );
 
-    setProgress(
-      (elapsed / (end - (saleInfo.saleStart + config.interludeLength))) * 100
-    );
+      if (saleInfo.saleStart > blockNumber) {
+        setCurrentPhase(SalePhase.Interlude);
+      } else if (saleInfo.saleStart + saleInfo.leadinLength > blockNumber) {
+        setCurrentPhase(SalePhase.Leadin);
+      } else {
+        setCurrentPhase(SalePhase.Regular);
+      }
 
-    if (saleInfo.saleStart > blockNumber) {
-      setCurrentPhase(SalePhase.Interlude);
-    } else if (saleInfo.saleStart + saleInfo.leadinLength > blockNumber) {
-      setCurrentPhase(SalePhase.Leadin);
-    } else {
-      setCurrentPhase(SalePhase.Regular);
-    }
+      setSaleSections([
+        { name: 'Interlude', value: 0 },
+        {
+          name: 'Leadin phase',
+          value: (config.interludeLength / saleDuration) * 100,
+        },
+        {
+          name: 'Fixed price phase',
+          value:
+            ((config.interludeLength + config.leadinLength) / saleDuration) *
+            100,
+        },
+      ]);
+    },
+    [saleInfo, config]
+  );
 
-    setSaleSections([
-      { name: 'Interlude', value: 0 },
-      {
-        name: 'Leadin phase',
-        value: (config.interludeLength / saleDuration) * 100,
-      },
-      {
-        name: 'Fixed price phase',
-        value:
-          ((config.interludeLength + config.leadinLength) / saleDuration) * 100,
-      },
-    ]);
-  };
+  const fetchCurreentPrice = useCallback(
+    async (api: ApiPromise) => {
+      const blockNumber = parseHNString(
+        ((await api.query.system.number()).toHuman() as any).toString()
+      );
 
-  const fetchCurreentPrice = async () => {
-    if (!api || apiState !== ApiState.READY || loading) return;
-    const blockNumber = parseHNString(
-      ((await api.query.system.number()).toHuman() as any).toString()
-    );
-
-    const num = Math.min(
-      blockNumber - saleInfo.saleStart,
-      saleInfo.leadinLength
-    );
-    const through = num / saleInfo.leadinLength;
-    setCurrentPrice(
-      Number((leadinFactorAt(through) * saleInfo.price).toFixed())
-    );
-  };
+      const num = Math.min(
+        blockNumber - saleInfo.saleStart,
+        saleInfo.leadinLength
+      );
+      const through = num / saleInfo.leadinLength;
+      setCurrentPrice(
+        Number((leadinFactorAt(through) * saleInfo.price).toFixed())
+      );
+    },
+    [saleInfo]
+  );
 
   const purchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
@@ -165,6 +169,20 @@ const Purchase = () => {
       setWorking(false);
     }
   };
+
+  useEffect(() => {
+    if (!api || !activeAccount) return;
+    fetchBalance(api, activeAccount);
+    fetchCurrentPhase(api);
+    fetchCurreentPrice(api);
+  }, [
+    api,
+    apiState,
+    activeAccount,
+    fetchBalance,
+    fetchCurreentPrice,
+    fetchCurrentPhase,
+  ]);
 
   return (
     <Box>

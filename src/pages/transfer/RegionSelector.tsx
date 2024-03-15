@@ -33,6 +33,8 @@ export const RegionSelector = ({
   );
 };
 
-export default () => {
+const page = () => {
   return <></>;
 };
+
+export default page;

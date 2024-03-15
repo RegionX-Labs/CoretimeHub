@@ -40,12 +40,12 @@ const CoretimeApiContextProvider = (props: any) => {
 
   useEffect(() => {
     state.apiError && toastError(`Failed to connect to Coretime chain`);
-  }, [state.apiError]);
+  }, [state.apiError, toastError]);
 
   useEffect(() => {
     state.apiState === ApiState.READY &&
       toastSuccess('Successfully connected to the Coretime chain');
-  }, [state.apiState]);
+  }, [state.apiState, toastSuccess]);
 
   const connectCoretime = () =>
     connect(state, WS_CORETIME_CHAIN, dispatch, types);

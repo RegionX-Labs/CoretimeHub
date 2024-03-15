@@ -8,12 +8,13 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { ApiPromise } from '@polkadot/api';
 import clsx from 'clsx';
 import { humanizer } from 'humanize-duration';
 import TimeAgo from 'javascript-time-ago';
 // English.
 import en from 'javascript-time-ago/locale/en';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { formatBalance, timesliceToTimestamp } from '@/utils/functions';
 
@@ -89,18 +90,25 @@ const ListingCardInner = ({
   } = useRelayApi();
   const { timeslicePeriod } = useCommon();
 
+  const setTimestamps = useCallback(
+    (api: ApiPromise) => {
+      timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then(
+        (value) => setBeginTimestamp(value)
+      );
+      timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then(
+        (value) => setEndTimestamp(value)
+      );
+    },
+    [region, timeslicePeriod]
+  );
+
   useEffect(() => {
     if (!api || apiState !== ApiState.READY) {
       return;
     }
 
-    timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then(
-      (value) => setBeginTimestamp(value)
-    );
-    timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then((value) =>
-      setEndTimestamp(value)
-    );
-  }, [listing]);
+    setTimestamps(api);
+  }, [api, apiState, setTimestamps]);
 
   const progress = [
     {

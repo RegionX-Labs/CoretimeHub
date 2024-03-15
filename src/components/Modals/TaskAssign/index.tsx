@@ -117,7 +117,7 @@ export const TaskAssignModal = ({
     setWorking(false);
     setTaskId(undefined);
     setTaskName('');
-  }, [open]);
+  }, [open, tasks]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
