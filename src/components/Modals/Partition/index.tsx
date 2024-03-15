@@ -82,7 +82,7 @@ export const PartitionModal = ({
     const diff =
       regionMetadata.region.getEnd() - regionMetadata.region.getBegin();
     setDuration(diff * timeslicePeriod * RELAY_CHAIN_BLOCK_TIME);
-  }, []);
+  }, [timeslicePeriod, regionMetadata.region]);
 
   useEffect(() => {
     setUnitIdx(0);

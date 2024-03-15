@@ -1,5 +1,5 @@
 import { SnackbarProvider, useSnackbar } from 'notistack';
-import { createContext, useContext } from 'react';
+import { createContext, useCallback, useContext } from 'react';
 
 interface ToastManager {
   toastSuccess: (_msg: string, _duration?: number) => void;
@@ -32,33 +32,45 @@ interface Props {
 const ToastProviderWrapper = ({ children }: Props) => {
   const { enqueueSnackbar } = useSnackbar();
 
-  const toastSuccess = (message: string, duration = 3000) => {
-    enqueueSnackbar(message, {
-      variant: 'success',
-      autoHideDuration: duration,
-    });
-  };
+  const toastSuccess = useCallback(
+    (message: string, duration = 3000) => {
+      enqueueSnackbar(message, {
+        variant: 'success',
+        autoHideDuration: duration,
+      });
+    },
+    [enqueueSnackbar]
+  );
 
-  const toastError = (message: string, duration = 3000) => {
-    enqueueSnackbar(message, {
-      variant: 'error',
-      autoHideDuration: duration,
-    });
-  };
+  const toastError = useCallback(
+    (message: string, duration = 3000) => {
+      enqueueSnackbar(message, {
+        variant: 'error',
+        autoHideDuration: duration,
+      });
+    },
+    [enqueueSnackbar]
+  );
 
-  const toastInfo = (message: string, duration = 3000) => {
-    enqueueSnackbar(message, {
-      variant: 'info',
-      autoHideDuration: duration,
-    });
-  };
+  const toastInfo = useCallback(
+    (message: string, duration = 3000) => {
+      enqueueSnackbar(message, {
+        variant: 'info',
+        autoHideDuration: duration,
+      });
+    },
+    [enqueueSnackbar]
+  );
 
-  const toastWarning = (message: string, duration = 3000) => {
-    enqueueSnackbar(message, {
-      variant: 'warning',
-      autoHideDuration: duration,
-    });
-  };
+  const toastWarning = useCallback(
+    (message: string, duration = 3000) => {
+      enqueueSnackbar(message, {
+        variant: 'warning',
+        autoHideDuration: duration,
+      });
+    },
+    [enqueueSnackbar]
+  );
 
   return (
     <ToastContext.Provider

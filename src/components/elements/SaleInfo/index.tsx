@@ -1,7 +1,8 @@
 import { Box, Typography } from '@mui/material';
+import { ApiPromise } from '@polkadot/api';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { formatBalance, getBlockTimestamp } from '@/utils/functions';
 
@@ -42,16 +43,25 @@ const SaleInfoGrid = ({
     return phases[nextIndex];
   };
 
+  const setTimestamps = useCallback(
+    (api: ApiPromise) => {
+      getBlockTimestamp(api, saleInfo.saleStart).then((value) =>
+        setSaleStartTimestamp(value)
+      );
+      getBlockTimestamp(api, saleEnd).then((value) =>
+        setSaleEndTimestamp(value)
+      );
+    },
+    [saleInfo.saleStart, saleEnd]
+  );
+
   useEffect(() => {
     if (!api || apiState !== ApiState.READY) {
       return;
     }
 
-    getBlockTimestamp(api, saleInfo.saleStart).then((value) =>
-      setSaleStartTimestamp(value)
-    );
-    getBlockTimestamp(api, saleEnd).then((value) => setSaleEndTimestamp(value));
-  }, [api, apiState, saleEnd]);
+    setTimestamps(api);
+  }, [api, apiState, setTimestamps]);
 
   return (
     <Box className={styles.grid}>
@@ -69,10 +79,12 @@ const SaleInfoGrid = ({
       </Box>
       <Box className={styles.gridItem}>
         <Typography variant='h6'>
-          {`Current price: ${formatBalance(currentPrice)}`} ROC
+          {`Current price: ${formatBalance(currentPrice.toString(), false)}`}{' '}
+          ROC
         </Typography>
         <Typography>
-          {`Floor price: ${formatBalance(saleInfo.price)}`} ROC
+          {`Floor price: ${formatBalance(saleInfo.price.toString(), false)}`}{' '}
+          ROC
         </Typography>
       </Box>
       <Box>

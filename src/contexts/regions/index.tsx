@@ -1,14 +1,19 @@
 import { useContract, useInkathon } from '@scio-labs/use-inkathon';
 import { Region, RegionId } from 'coretime-utils';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 import { RegionLocation, RegionMetadata } from '@/models';
 
 import * as NativeRegions from './native';
 import * as XcRegions from './xc';
-import { useCoretimeApi, useRelayApi } from '../apis';
+import { useCoretimeApi } from '../apis';
 import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '../apis/consts';
-import { ApiState } from '../apis/types';
 import { useCommon } from '../common';
 import { useTasks } from '../tasks';
 import MarketMetadata from '../../contracts/market.json';
@@ -43,16 +48,9 @@ interface Props {
 
 const RegionDataProvider = ({ children }: Props) => {
   const {
-    state: { api: coretimeApi, apiState: coretimeApiState },
+    state: { api: coretimeApi },
   } = useCoretimeApi();
-  const {
-    state: { api: relayApi, apiState: relayApiState },
-  } = useRelayApi();
-  const {
-    api: contractsApi,
-    isConnected: contractsReady,
-    activeAccount,
-  } = useInkathon();
+  const { api: contractsApi, activeAccount } = useInkathon();
 
   const { contract: xcRegionsContract } = useContract(
     XcRegionsMetadata,
@@ -70,16 +68,11 @@ const RegionDataProvider = ({ children }: Props) => {
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
   const [loading, setLoading] = useState(false);
 
-  const relayConnected = relayApi && relayApiState === ApiState.READY;
-  const coretimeConnected = coretimeApi && coretimeApiState === ApiState.READY;
-  const contractsConnected = contractsApi && contractsReady;
-
-  const fetchRegions = async (): Promise<void> => {
-    if (!activeAccount || !relayApi) {
+  const fetchRegions = useCallback(async (): Promise<void> => {
+    if (!activeAccount) {
       setRegions([]);
       return;
     }
-
     setLoading(true);
 
     const tasks = await fetchTasks();
@@ -139,15 +132,19 @@ const RegionDataProvider = ({ children }: Props) => {
       )
     );
     setLoading(false);
-  };
+  }, [
+    activeAccount,
+    context,
+    coretimeApi,
+    contractsApi,
+    marketContract,
+    xcRegionsContract,
+    fetchTasks,
+  ]);
 
   useEffect(() => {
     fetchRegions();
-  }, [relayConnected, coretimeConnected, contractsConnected, context]);
-
-  useEffect(() => {
-    activeAccount && fetchRegions();
-  }, [activeAccount]);
+  }, [fetchRegions]);
 
   const updateRegionName = (index: number, name: string) => {
     const _regions = [...regions];

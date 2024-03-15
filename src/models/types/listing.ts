@@ -1,4 +1,5 @@
-import { Balance, ContextData, Region } from 'coretime-utils';
+import { BN } from '@polkadot/util';
+import { ContextData, Region } from 'coretime-utils';
 
 import { Percentage } from '../types';
 
@@ -12,9 +13,9 @@ export class Listing {
   /// The seller of the region.
   public seller: string;
   /// The price per timeslice set by the seller.
-  public timeslicePrice: Balance;
+  public timeslicePrice: BN;
   /// The current total price of the region.
-  public currentPrice: Balance;
+  public currentPrice: BN;
   /// The recepient of the sale.
   public saleRecepient: string | null;
 
@@ -22,8 +23,8 @@ export class Listing {
     context: ContextData,
     region: Region,
     seller: string,
-    timeslicePrice: Balance,
-    currentPrice: Balance,
+    timeslicePrice: BN,
+    currentPrice: BN,
     saleRecepient: string | null
   ): Listing {
     return new Listing(
@@ -42,8 +43,8 @@ export class Listing {
     regionConsumed: Percentage,
     regionCoreOccupancy: Percentage,
     seller: string,
-    timeslicePrice: Balance,
-    currentPrice: Balance,
+    timeslicePrice: BN,
+    currentPrice: BN,
     saleRecepient: string | null
   ) {
     this.region = region;

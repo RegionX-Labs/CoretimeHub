@@ -9,8 +9,10 @@ const PriceFilter = ({ listings, filters, updateFilters }: FilterProps) => {
   const maxValue = (): number => {
     if (listings.length < 1) return 0;
     const sortedListings = new Array(...listings);
-    sortedListings.sort((a, b) => b.currentPrice - a.currentPrice);
-    return Number(formatBalance(sortedListings[0].currentPrice));
+    sortedListings.sort((a, b) => b.currentPrice.cmp(a.currentPrice));
+    return Number(
+      formatBalance(sortedListings[0].currentPrice.toString(), true)
+    );
   };
 
   const [priceLimit, setPriceLimit] = useState(maxValue());
@@ -20,7 +22,8 @@ const PriceFilter = ({ listings, filters, updateFilters }: FilterProps) => {
     updateFilters({
       ...filters,
       priceFilter: (listing) =>
-        Number(formatBalance(listing.currentPrice)) <= (newValue as number),
+        Number(formatBalance(listing.currentPrice.toString(), true)) <=
+        (newValue as number),
     });
   };
 

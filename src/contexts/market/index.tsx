@@ -1,3 +1,4 @@
+import { BN } from '@polkadot/util';
 import {
   contractQuery,
   decodeOutput,
@@ -5,9 +6,15 @@ import {
   useInkathon,
 } from '@scio-labs/use-inkathon';
 import { CoreMask, Region } from 'coretime-utils';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
-import { parseHNString, parseHNStringToString } from '@/utils/functions';
+import { parseHNStringToString } from '@/utils/functions';
 
 import { Listing } from '@/models';
 
@@ -41,14 +48,10 @@ const MarketProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState(true);
   const [listedRegions, setListedRegions] = useState<Array<Listing>>([]);
 
-  const { regions, fetchRegion } = useRegions();
+  const { fetchRegion } = useRegions();
   const context = useCommon();
 
-  const {
-    api: contractsApi,
-    isConnected: contractsReady,
-    activeAccount,
-  } = useInkathon();
+  const { api: contractsApi } = useInkathon();
 
   const { contract: xcRegionsContract } = useContract(
     XcRegionsMetadata,
@@ -59,14 +62,9 @@ const MarketProvider = ({ children }: Props) => {
     CONTRACT_MARKET
   );
 
-  const fetchMarket = async () => {
+  const fetchMarket = useCallback(async () => {
     setLoading(true);
-    if (
-      !contractsApi ||
-      !marketContract ||
-      !xcRegionsContract ||
-      !activeAccount
-    ) {
+    if (!contractsApi || !marketContract || !xcRegionsContract) {
       return [];
     }
     const result = await contractQuery(
@@ -163,8 +161,8 @@ const MarketProvider = ({ children }: Props) => {
           context,
           region,
           listingOutput.Ok.seller,
-          parseHNString(listingOutput.Ok.timeslicePrice),
-          parseHNString(priceOutput.Ok),
+          new BN(parseHNStringToString(listingOutput.Ok.timeslicePrice)),
+          new BN(parseHNStringToString(priceOutput.Ok)),
           listingOutput.Ok.saleRecepient
         )
       );
@@ -172,7 +170,7 @@ const MarketProvider = ({ children }: Props) => {
 
     setListedRegions(_listedRegions);
     setLoading(false);
-  };
+  }, [contractsApi, marketContract, xcRegionsContract, context]);
 
   /// Returns true or false depending whether the metadata matches with the one stored
   /// on the coreitme chain.
@@ -188,17 +186,8 @@ const MarketProvider = ({ children }: Props) => {
   };
 
   useEffect(() => {
-    if (!contractsApi || !activeAccount || !marketContract || !contractsReady)
-      return;
     fetchMarket();
-  }, [
-    context,
-    contractsApi,
-    regions,
-    activeAccount,
-    marketContract,
-    contractsReady,
-  ]);
+  }, [fetchMarket]);
 
   return (
     <MarketDataContext.Provider value={{ loading, listedRegions, fetchMarket }}>

@@ -23,6 +23,8 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
   );
 };
 
-export default () => {
+const page = () => {
   return <></>;
 };
+
+export default page;

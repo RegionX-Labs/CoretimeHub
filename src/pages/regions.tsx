@@ -106,7 +106,14 @@ const Dashboard = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', height: '100%', gap: '1rem', justifyContent: 'space-between' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        height: '100%',
+        gap: '1rem',
+        justifyContent: 'space-between',
+      }}
+    >
       <Box sx={{ maxWidth: '45rem', flexGrow: 1, overflow: 'auto' }}>
         <Box>
           <Typography

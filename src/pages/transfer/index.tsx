@@ -9,10 +9,11 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { Keyring } from '@polkadot/api';
+import { ApiPromise, Keyring } from '@polkadot/api';
+import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { useContract, useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
   contractsToCoretimeTransfer,
@@ -70,32 +71,6 @@ const Page = () => {
       regions.filter((r) => r.location != RegionLocation.MARKET)
     );
   }, [regions]);
-
-  useEffect(() => {
-    let intervalId: any;
-    if (!working) {
-      intervalId = setInterval(() => {
-        handleNonWrappedRegions();
-      }, 5000);
-    }
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [working, activeAccount, coretimeApi]);
-
-  const handleNonWrappedRegions = async () => {
-    if (!activeAccount || !coretimeApi) return;
-    const nonWrappedRegions = await getNonWrappedRegions(
-      { contractsApi, xcRegionsContract: contract, marketContract: undefined },
-      coretimeApi,
-      activeAccount.address
-    );
-    nonWrappedRegions.forEach((region) => {
-      startInitializationProcess(region);
-    });
-  };
 
   const handleOriginChange = (newOrigin: string) => {
     setOriginChain(newOrigin);
@@ -286,74 +261,131 @@ const Page = () => {
     );
   };
 
-  const startInitializationProcess = async (region: Region) => {
-    approveRegionToContract(region, () => initMetadata(region));
-  };
+  const approveRegionToContract = useCallback(
+    async (region: Region, onSuccess: () => void) => {
+      if (!activeAccount || !activeSigner) return;
 
-  const approveRegionToContract = async (
-    region: Region,
-    onSuccess: () => void
-  ) => {
-    if (!activeAccount || !activeSigner || working) return;
+      setStatusLabel('Approving region to the xc-region contract...');
+      setWorking(true);
+      approveNonWrappedRegion(
+        {
+          contractsApi,
+          xcRegionsContract: contract,
+          marketContract: undefined,
+        },
+        { address: activeAccount.address, signer: activeSigner },
+        region,
+        CONTRACT_XC_REGIONS,
+        {
+          ready: () => toastInfo('Transaction was initiated.'),
+          inBlock: () => toastInfo(`In Block`),
+          finalized: () => {
+            /** */
+          },
+          success: () => {
+            toastSuccess('Successfully approved the region.');
+            onSuccess();
+          },
+          error: () => {
+            toastError(`Failed to approve the region.`);
+            setWorking(false);
+          },
+        }
+      );
+    },
+    [
+      activeAccount,
+      contractsApi,
+      activeSigner,
+      contract,
+      toastError,
+      toastInfo,
+      toastSuccess,
+    ]
+  );
 
-    setStatusLabel('Approving region to the xc-region contract...');
-    setWorking(true);
-    approveNonWrappedRegion(
-      {
-        contractsApi,
-        xcRegionsContract: contract,
-        marketContract: undefined,
-      },
-      { address: activeAccount.address, signer: activeSigner },
-      region,
-      CONTRACT_XC_REGIONS,
-      {
-        ready: () => toastInfo('Transaction was initiated.'),
-        inBlock: () => toastInfo(`In Block`),
-        finalized: () => {
-          /** */
+  const initMetadata = useCallback(
+    async (region: Region) => {
+      if (!activeAccount || !activeSigner) return;
+
+      setStatusLabel('Initializing metadata...');
+      setWorking(true);
+      initRegionMetadata(
+        {
+          contractsApi,
+          xcRegionsContract: contract,
+          marketContract: undefined,
         },
-        success: () => {
-          toastSuccess('Successfully approved the region.');
-          onSuccess();
+        { address: activeAccount.address, signer: activeSigner },
+        region,
+        {
+          ready: () => toastInfo('Transaction was initiated.'),
+          inBlock: () => toastInfo(`In Block`),
+          finalized: () => setWorking(false),
+          success: () => {
+            toastSuccess('Successfully initialized region metadata.');
+            setStatusLabel('');
+            fetchRegions();
+          },
+          error: () => {
+            toastError(`Failed to initialize the region metadata.`);
+            setWorking(false);
+          },
+        }
+      );
+    },
+    [
+      activeAccount,
+      activeSigner,
+      contractsApi,
+      contract,
+      toastError,
+      toastSuccess,
+      toastInfo,
+      fetchRegions,
+    ]
+  );
+
+  const startInitializationProcess = useCallback(
+    async (region: Region) => {
+      approveRegionToContract(region, () => initMetadata(region));
+    },
+    [approveRegionToContract, initMetadata]
+  );
+
+  const handleNonWrappedRegions = useCallback(
+    async (coretimeApi: ApiPromise, activeAccount: InjectedAccount) => {
+      const nonWrappedRegions = await getNonWrappedRegions(
+        {
+          contractsApi,
+          xcRegionsContract: contract,
+          marketContract: undefined,
         },
-        error: () => {
-          toastError(`Failed to approve the region.`);
-          setWorking(false);
-        },
+        coretimeApi,
+        activeAccount.address
+      );
+      nonWrappedRegions.forEach((region) => {
+        startInitializationProcess(region);
+      });
+    },
+    [contract, contractsApi, startInitializationProcess]
+  );
+
+  useEffect(() => {
+    let intervalId: any;
+    if (!working) {
+      intervalId = setInterval(() => {
+        coretimeApi &&
+          activeAccount &&
+          handleNonWrappedRegions(coretimeApi, activeAccount);
+      }, 5000);
+    }
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
       }
-    );
-  };
-
-  const initMetadata = async (region: Region) => {
-    if (!activeAccount || !activeSigner) return;
-
-    setStatusLabel('Initializing metadata...');
-    setWorking(true);
-    initRegionMetadata(
-      {
-        contractsApi,
-        xcRegionsContract: contract,
-        marketContract: undefined,
-      },
-      { address: activeAccount.address, signer: activeSigner },
-      region,
-      {
-        ready: () => toastInfo('Transaction was initiated.'),
-        inBlock: () => toastInfo(`In Block`),
-        finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess('Successfully initialized region metadata.');
-          setStatusLabel('');
-          fetchRegions();
-        },
-        error: () => {
-          toastError(`Failed to initialize the region metadata.`);
-          setWorking(false);
-        },
-      }
-    );
-  };
+    };
+  }, [working, activeAccount, coretimeApi, handleNonWrappedRegions]);
 
   return (
     <Box>

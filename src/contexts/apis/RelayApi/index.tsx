@@ -29,12 +29,12 @@ const RelayApiContextProvider = (props: any) => {
 
   useEffect(() => {
     state.apiError && toastError(`Failed to connect to relay chain`);
-  }, [state.apiError]);
+  }, [state.apiError, toastError]);
 
   useEffect(() => {
     state.apiState === ApiState.READY &&
       toastSuccess('Successfully connected to the relay chain');
-  }, [state.apiState]);
+  }, [state.apiState, toastSuccess]);
 
   const connectRelay = () => connect(state, WS_RELAY_CHAIN, dispatch);
   const disconnectRelay = () => disconnect(state);
@@ -49,7 +49,7 @@ const RelayApiContextProvider = (props: any) => {
       setParaIds(paraIds);
     };
     fetchParaIds();
-  }, [state.api, state.apiState]);
+  }, [state]);
 
   return (
     <RelayApiContext.Provider

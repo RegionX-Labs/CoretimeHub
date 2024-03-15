@@ -12,8 +12,6 @@ import { useState } from 'react';
 import { ListingCard } from '@/components/elements/ListingCard';
 
 import { CONTRACT_MARKET } from '@/contexts/apis/consts';
-import { useMarket } from '@/contexts/market';
-import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import MarketMetadata from '@/contracts/market.json';
 import { Listing } from '@/models';
@@ -35,9 +33,6 @@ export const PurchaseModal = ({
     MarketMetadata,
     CONTRACT_MARKET
   );
-
-  const { fetchRegions } = useRegions();
-  const { fetchMarket } = useMarket();
 
   const { toastError, toastSuccess } = useToast();
 
@@ -67,8 +62,6 @@ export const PurchaseModal = ({
 
       toastSuccess(`Successfully purchased region from sale.`);
       onClose();
-      fetchMarket();
-      fetchRegions();
       setWorking(false);
     } catch (e: any) {
       toastError(
