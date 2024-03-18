@@ -28,8 +28,7 @@ import {
   transferRegionOnCoretimeChain,
 } from '@/utils/native/transfer';
 
-import { RegionCard } from '@/components';
-import { RecipientSelector } from '@/components/elements/RecipientSelector';
+import { ChainSelector, RecipientSelector, RegionCard, RegionSelector } from '@/components';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
@@ -38,9 +37,6 @@ import { getNonWrappedRegions } from '@/contexts/regions/xc';
 import { useToast } from '@/contexts/toast';
 import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import { RegionLocation, RegionMetadata } from '@/models';
-
-import { ChainSelector } from './ChainSelector';
-import { RegionSelector } from './RegionSelector';
 
 const Page = () => {
   const { activeAccount, activeSigner, api: contractsApi } = useInkathon();

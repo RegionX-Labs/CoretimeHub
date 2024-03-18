@@ -12,7 +12,7 @@ import '../../styles/global.scss';
 import createEmotionCache from '@/utils/createEmotionCache';
 import theme from '@/utils/muiTheme';
 
-import { Layout } from '@/components/Layout';
+import { Layout } from '@/components';
 
 import {
   CoretimeApiContextProvider,

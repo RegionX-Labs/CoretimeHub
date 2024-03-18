@@ -14,7 +14,7 @@ import {
 import { useInkathon } from '@scio-labs/use-inkathon';
 import { useEffect, useState } from 'react';
 
-import { RegionCard } from '@/components/elements';
+import { RegionCard } from '@/components/Elements';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { useCommon } from '@/contexts/common';

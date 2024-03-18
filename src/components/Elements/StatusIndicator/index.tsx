@@ -9,6 +9,7 @@ interface StatusIndicatorProps {
   state: ApiState;
   label: string;
 }
+
 export const StatusIndicator = ({ state, label }: StatusIndicatorProps) => {
   const theme = useTheme();
   return (

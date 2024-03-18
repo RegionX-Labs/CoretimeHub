@@ -19,7 +19,7 @@ interface SaleInfoGridProps {
   saleEnd: number;
 }
 
-const SaleInfoGrid = ({
+export const SaleInfoGrid = ({
   saleInfo,
   currentPhase,
   currentPrice,
@@ -116,5 +116,3 @@ const SaleInfoGrid = ({
     </Box>
   );
 };
-
-export default SaleInfoGrid;

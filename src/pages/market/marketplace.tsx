@@ -3,9 +3,7 @@ import { useEffect, useState } from 'react';
 
 import theme from '@/utils/muiTheme';
 
-import { ListingCard } from '@/components/elements/ListingCard';
-import MarketFilters from '@/components/elements/MarketFilters';
-import { PurchaseModal } from '@/components/Modals/Purchase';
+import { ListingCard, MarketFilters, PurchaseModal } from '@/components';
 
 import { useMarket } from '@/contexts/market';
 import { Listing } from '@/models';

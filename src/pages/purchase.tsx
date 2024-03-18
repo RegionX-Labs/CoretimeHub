@@ -15,8 +15,7 @@ import {
   parseHNString,
 } from '@/utils/functions';
 
-import Progress, { Section } from '@/components/elements/Progress';
-import SaleInfoGrid from '@/components/elements/SaleInfo';
+import { Progress, SaleInfoGrid, Section } from '@/components';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
@@ -209,11 +208,11 @@ const Purchase = () => {
       </Box>
       <Box>
         {loading ||
-        !currentPhase ||
-        !saleEnd ||
-        !currentBlockNumber ||
-        !progress ||
-        !saleEndTimestamp ? (
+          !currentPhase ||
+          !saleEnd ||
+          !currentBlockNumber ||
+          !progress ||
+          !saleEndTimestamp ? (
           <>
             <Typography variant='h5' align='center'>
               Connect your wallet

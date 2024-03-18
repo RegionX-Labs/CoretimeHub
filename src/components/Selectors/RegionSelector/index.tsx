@@ -32,9 +32,3 @@ export const RegionSelector = ({
     </FormControl>
   );
 };
-
-const page = () => {
-  return <></>;
-};
-
-export default page;
