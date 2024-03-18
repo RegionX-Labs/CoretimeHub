@@ -18,7 +18,7 @@ import {
   transferRegionOnCoretimeChain,
 } from '@/utils/native/transfer';
 
-import { RegionCard } from '@/components/elements';
+import { RegionCard } from '@/components/Elements';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';

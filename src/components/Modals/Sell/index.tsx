@@ -12,9 +12,8 @@ import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
-import { RegionCard } from '@/components/elements';
-import AmountInput from '@/components/elements/AmountInput';
-import { RecipientSelector } from '@/components/elements/RecipientSelector';
+import { AmountInput, RegionCard } from '@/components/Elements';
+import { RecipientSelector } from '@/components/Selectors/RecipientSelector';
 
 import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
 import { useRegions } from '@/contexts/regions';
@@ -86,8 +85,7 @@ export const SellModal = ({
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to approve the region. Error: ${
-          e.errorMessage === 'Error' ? 'Please check your balance.' : e
+        `Failed to approve the region. Error: ${e.errorMessage === 'Error' ? 'Please check your balance.' : e
         }`
       );
       setWorking(false);
@@ -128,10 +126,9 @@ export const SellModal = ({
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to list the region. Error: ${
-          e.errorMessage === 'Error'
-            ? 'Please check your balance.'
-            : e.errorMessage
+        `Failed to list the region. Error: ${e.errorMessage === 'Error'
+          ? 'Please check your balance.'
+          : e.errorMessage
         }`
       );
       setWorking(false);

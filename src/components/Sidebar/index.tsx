@@ -12,7 +12,7 @@ import { ApiState } from '@/contexts/apis/types';
 import { TransferIcon } from '@/icons';
 
 import styles from './index.module.scss';
-import { StatusIndicator } from '../elements';
+import { StatusIndicator } from '../Elements';
 
 interface MenuItemProps {
   label: string;
@@ -27,9 +27,8 @@ const MenuItem = ({ label, enabled, route, icon }: MenuItemProps) => {
 
   return (
     <Box
-      className={`${styles.menuItem} ${
-        isActive ? styles.active : styles.inactive
-      } ${!enabled ? styles.disabled : ''}`}
+      className={`${styles.menuItem} ${isActive ? styles.active : styles.inactive
+        } ${!enabled ? styles.disabled : ''}`}
       onClick={() => enabled && route && push(route)}
     >
       {{

@@ -9,7 +9,7 @@ import {
 import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
 import { useState } from 'react';
 
-import { ListingCard } from '@/components/elements/ListingCard';
+import { ListingCard } from '@/components/Elements/ListingCard';
 
 import { CONTRACT_MARKET } from '@/contexts/apis/consts';
 import { useToast } from '@/contexts/toast';
@@ -65,10 +65,9 @@ export const PurchaseModal = ({
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to purchase region from sale. Error: ${
-          e.errorMessage === 'Error'
-            ? 'Please check your balance.'
-            : e.errorMessage
+        `Failed to purchase region from sale. Error: ${e.errorMessage === 'Error'
+          ? 'Please check your balance.'
+          : e.errorMessage
         }`
       );
       setWorking(false);

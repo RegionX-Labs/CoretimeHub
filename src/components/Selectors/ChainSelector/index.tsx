@@ -22,9 +22,3 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
     </FormControl>
   );
 };
-
-const page = () => {
-  return <></>;
-};
-
-export default page;

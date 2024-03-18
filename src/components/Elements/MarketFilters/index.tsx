@@ -29,7 +29,7 @@ type Filters = {
   regionEndFilter: (_listing: Listing) => boolean;
 };
 
-const MarketFilters = ({ listings, setFilteredListings }: Props) => {
+export const MarketFilters = ({ listings, setFilteredListings }: Props) => {
   const [filters, setFilters] = useState<Filters>({
     coreOccupancyFilter: () => true,
     durationFilter: () => true,
@@ -112,5 +112,3 @@ const MarketFilters = ({ listings, setFilteredListings }: Props) => {
     </Box>
   );
 };
-
-export default MarketFilters;

@@ -19,7 +19,7 @@ interface FeatureCardProps {
   href: string;
 }
 
-const FeatureCard = ({
+export const FeatureCard = ({
   title,
   buttonText,
   image,
@@ -50,5 +50,3 @@ const FeatureCard = ({
     </Card>
   );
 };
-
-export default FeatureCard;

@@ -7,7 +7,7 @@ interface BannerProps {
   severity: 'info' | 'error' | 'warning' | 'success';
 }
 
-const Banner = ({ content, severity }: BannerProps) => {
+export const Banner = ({ content, severity }: BannerProps) => {
   const [open, setOpen] = useState(true);
 
   const handleClose = () => {
@@ -36,5 +36,3 @@ const Banner = ({ content, severity }: BannerProps) => {
     </Alert>
   );
 };
-
-export default Banner;

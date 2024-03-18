@@ -10,7 +10,7 @@ interface AmountInputProps {
 
 // TODO: Fetch dot price and show how much is the currency amount worth.
 
-const AmountInput = ({
+export const AmountInput = ({
   amount,
   currency,
   title,
@@ -60,5 +60,3 @@ const AmountInput = ({
     </>
   );
 };
-
-export default AmountInput;

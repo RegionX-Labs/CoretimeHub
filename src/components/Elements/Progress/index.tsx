@@ -30,7 +30,7 @@ interface ProgressProps {
   sections: Section[];
 }
 
-const Progress = ({ progress, sections }: ProgressProps) => {
+export const Progress = ({ progress, sections }: ProgressProps) => {
   return (
     <Box position='relative' width='100%' height='20px'>
       <BorderLinearProgress variant='determinate' value={progress} />
@@ -62,5 +62,3 @@ const Progress = ({ progress, sections }: ProgressProps) => {
     </Box>
   );
 };
-
-export default Progress;

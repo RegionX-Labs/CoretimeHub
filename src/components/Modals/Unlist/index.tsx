@@ -10,7 +10,7 @@ import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 import { useState } from 'react';
 
-import { RegionCard } from '@/components/elements';
+import { RegionCard } from '@/components/Elements';
 
 import { CONTRACT_MARKET } from '@/contexts/apis/consts';
 import { useMarket } from '@/contexts/market';
@@ -72,10 +72,9 @@ export const UnlistModal = ({
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to unlist region from sale. Error: ${
-          e.errorMessage === 'Error'
-            ? 'Please check your balance.'
-            : e.errorMessage
+        `Failed to unlist region from sale. Error: ${e.errorMessage === 'Error'
+          ? 'Please check your balance.'
+          : e.errorMessage
         }`
       );
       setWorking(false);
