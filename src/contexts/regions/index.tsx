@@ -148,13 +148,9 @@ const RegionDataProvider = ({ children }: Props) => {
 
   const updateRegionName = (index: number, name: string) => {
     const _regions = [...regions];
-    const region = regions[index];
-    _regions[index] = {
-      ...region,
-      name,
-    };
+    _regions[index].name = name;
     setRegions(_regions);
-    localStorage.setItem(`region-${region.rawId}`, name);
+    localStorage.setItem(`region-${_regions[index].rawId}`, name);
   };
 
   const determineRegionLocation = (

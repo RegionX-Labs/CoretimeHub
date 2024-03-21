@@ -30,6 +30,7 @@ import {
   TransferIcon,
 } from '@/icons';
 import { RegionLocation } from '@/models';
+
 const Dashboard = () => {
   const theme = useTheme();
   const { regions, loading, updateRegionName } = useRegions();

@@ -90,7 +90,7 @@ export const Sidebar = () => {
     'secondary market': [
       {
         label: 'Explore the Market',
-        route: '/market/marketplace',
+        route: '/marketplace',
         enabled: true,
         icon: <ExploreIcon />,
       },

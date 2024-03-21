@@ -58,8 +58,10 @@ const Purchase = () => {
       const account = (
         await api.query.system.account(activeAccount.address)
       ).toHuman() as any;
+
       const balance = parseHNString(account.data.free.toString());
       setBalance(balance);
+
       if (balance == 0) {
         toastWarning(
           'The selected account does not have any ROC tokens on the Coretime chain.'
@@ -71,28 +73,22 @@ const Purchase = () => {
 
   const fetchCurrentPhase = useCallback(
     async (api: ApiPromise) => {
-      const blockNumber = parseHNString(
-        ((await api.query.system.number()).toHuman() as any).toString()
-      );
+      const blockNumber = (await api.query.system.number()).toJSON() as number;
       const lastCommittedTimeslice = parseHNString(
         (
           (await api.query.broker.status()).toHuman() as any
         ).lastCommittedTimeslice.toString()
       );
-      const end =
-        blockNumber + 80 * (saleInfo.regionBegin - lastCommittedTimeslice);
+      const end = blockNumber + 80 * (saleInfo.regionBegin - lastCommittedTimeslice);
 
       setCurrentBlockNumber(blockNumber);
       setSaleEnd(end);
       getBlockTimestamp(api, end).then((value) => setSaleEndTimestamp(value));
 
       const saleDuration = end - saleInfo.saleStart;
-      const elapsed =
-        blockNumber - (saleInfo.saleStart - config.interludeLength);
+      const elapsed = blockNumber - (saleInfo.saleStart - config.interludeLength);
 
-      setProgress(
-        (elapsed / (end - (saleInfo.saleStart + config.interludeLength))) * 100
-      );
+      setProgress((elapsed / (end - (saleInfo.saleStart + config.interludeLength))) * 100);
 
       if (saleInfo.saleStart > blockNumber) {
         setCurrentPhase(SalePhase.Interlude);
@@ -110,9 +106,7 @@ const Purchase = () => {
         },
         {
           name: 'Fixed price phase',
-          value:
-            ((config.interludeLength + config.leadinLength) / saleDuration) *
-            100,
+          value: ((config.interludeLength + config.leadinLength) / saleDuration) * 100,
         },
       ]);
     },
@@ -121,14 +115,9 @@ const Purchase = () => {
 
   const fetchCurreentPrice = useCallback(
     async (api: ApiPromise) => {
-      const blockNumber = parseHNString(
-        ((await api.query.system.number()).toHuman() as any).toString()
-      );
+      const blockNumber = (await api.query.system.number()).toJSON() as number;
 
-      const num = Math.min(
-        blockNumber - saleInfo.saleStart,
-        saleInfo.leadinLength
-      );
+      const num = Math.min(blockNumber - saleInfo.saleStart, saleInfo.leadinLength);
       const through = num / saleInfo.leadinLength;
       setCurrentPrice(
         Number((leadinFactorAt(through) * saleInfo.price).toFixed())
@@ -140,6 +129,7 @@ const Purchase = () => {
   const purchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
       return;
+
     const txPurchase = api.tx.broker.purchase(currentPrice);
 
     try {
@@ -171,12 +161,14 @@ const Purchase = () => {
 
   useEffect(() => {
     if (!api || apiState !== ApiState.READY) return;
+
     fetchCurrentPhase(api);
     fetchCurreentPrice(api);
   }, [api, apiState, fetchCurreentPrice, fetchCurrentPhase]);
 
   useEffect(() => {
     if (!api || apiState !== ApiState.READY || !activeAccount) return;
+
     fetchBalance(api, activeAccount);
   }, [api, apiState, activeAccount, fetchBalance]);
 
