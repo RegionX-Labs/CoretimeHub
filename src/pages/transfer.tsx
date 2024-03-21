@@ -28,7 +28,12 @@ import {
   transferRegionOnCoretimeChain,
 } from '@/utils/native/transfer';
 
-import { ChainSelector, RecipientSelector, RegionCard, RegionSelector } from '@/components';
+import {
+  ChainSelector,
+  RecipientSelector,
+  RegionCard,
+  RegionSelector,
+} from '@/components';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
@@ -38,7 +43,7 @@ import { useToast } from '@/contexts/toast';
 import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import { RegionLocation, RegionMetadata } from '@/models';
 
-const Page = () => {
+const TransferPage = () => {
   const { activeAccount, activeSigner, api: contractsApi } = useInkathon();
   const { contract } = useContract(XcRegionsMetadata, CONTRACT_XC_REGIONS);
 
@@ -70,11 +75,11 @@ const Page = () => {
 
   const handleOriginChange = (newOrigin: string) => {
     setOriginChain(newOrigin);
-    if (newOrigin === 'CoretimeChain')
+    if (newOrigin === 'CoretimeChain') {
       setFilteredRegions(
         regions.filter((r) => r.location == RegionLocation.CORETIME_CHAIN)
       );
-    else {
+    } else {
       setFilteredRegions(
         regions.filter((r) => r.location == RegionLocation.CONTRACTS_CHAIN)
       );
@@ -87,22 +92,14 @@ const Page = () => {
       return;
     }
 
-    if (
-      originChain === 'CoretimeChain' &&
-      destinationChain === 'CoretimeChain'
-    ) {
-      transferCoretimeRegion(selectedRegion.region);
-    } else if (
-      originChain === 'ContractsChain' &&
-      destinationChain === 'ContractsChain'
-    ) {
-      transferXcRegion(selectedRegion.region);
+    if (originChain === destinationChain) {
+      originChain === 'CoretimeChain'
+        ? transferCoretimeRegion(selectedRegion.region)
+        : transferXcRegion(selectedRegion.region);
     } else {
-      if (originChain === 'CoretimeChain') {
-        transferFromCoretimeChain(selectedRegion.region);
-      } else {
-        transferFromContractsChain(selectedRegion.region);
-      }
+      originChain === 'CoretimeChain'
+        ? transferFromCoretimeChain(selectedRegion.region)
+        : transferFromContractsChain(selectedRegion.region);
     }
   };
 
@@ -124,9 +121,7 @@ const Page = () => {
         ready: () => toastInfo('Transaction was initiated.'),
         inBlock: () => toastInfo(`In Block`),
         finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess('Successfully transferred the region.');
-        },
+        success: () => toastSuccess('Successfully transferred the region.'),
         error: () => {
           toastError(`Failed to transfer the region.`);
           setWorking(false);
@@ -150,9 +145,7 @@ const Page = () => {
         ready: () => toastInfo('Transaction was initiated.'),
         inBlock: () => toastInfo(`In Block`),
         finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess('Successfully transferred the region.');
-        },
+        success: () => toastSuccess('Successfully transferred the region.'),
         error: () => {
           toastError(`Failed to transfer the region.`);
           setWorking(false);
@@ -399,12 +392,12 @@ const Page = () => {
           Cross-Chain Transfer
         </Typography>
       </Box>
-      <Box width={'60%'} margin={'2em auto'}>
-        <Stack margin={'1em 0'} direction='column' gap={1}>
+      <Box width='60%' margin='2em auto'>
+        <Stack margin='1em 0' direction='column' gap={1}>
           <Typography>Origin chain:</Typography>
           <ChainSelector chain={originChain} setChain={handleOriginChange} />
         </Stack>
-        <Stack margin={'1em 0'} direction='column' gap={1}>
+        <Stack margin='1em 0' direction='column' gap={1}>
           <Typography>Destination chain:</Typography>
           <ChainSelector
             chain={destinationChain}
@@ -412,7 +405,7 @@ const Page = () => {
           />
         </Stack>
         {originChain && (
-          <Stack margin={'1em 0'} direction='column' gap={1}>
+          <Stack margin='1em 0' direction='column' gap={1}>
             <Typography>Region</Typography>
             <RegionSelector
               regions={filteredRegions}
@@ -431,7 +424,7 @@ const Page = () => {
             <RegionCard regionMetadata={selectedRegion} />
           </Box>
         )}
-        <Stack margin={'2em 0'} direction='column' gap={1} alignItems='center'>
+        <Stack margin='2em 0' direction='column' gap={1} alignItems='center'>
           <Typography>Transfer</Typography>
           <ArrowDownward />
         </Stack>
@@ -444,7 +437,7 @@ const Page = () => {
             {statusLabel}
           </Alert>
         )}
-        <Box margin={'2em 0'}>
+        <Box margin='2em 0'>
           <DialogActions>
             <Link href='/'>
               <Button variant='outlined'>Home</Button>
@@ -463,4 +456,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default TransferPage;

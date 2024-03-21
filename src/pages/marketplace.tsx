@@ -8,13 +8,12 @@ import { ListingCard, MarketFilters, PurchaseModal } from '@/components';
 import { useMarket } from '@/contexts/market';
 import { Listing } from '@/models';
 
-const Page = () => {
+const Marketplace = () => {
   const { listedRegions, fetchMarket } = useMarket();
 
   const [purchaseModalOpen, openPurhcaseModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
-  const [filteredListings, setFilteredListings] =
-    useState<Listing[]>(listedRegions);
+  const [filteredListings, setFilteredListings] = useState<Listing[]>(listedRegions);
 
   const onPurchase = (listing: Listing) => {
     setSelectedListing(listing);
@@ -54,13 +53,13 @@ const Page = () => {
       />
       {filteredListings.length > 0 && (
         <Box
-          marginTop={'2rem'}
-          display={'flex'}
-          flexWrap={'wrap'}
-          justifyContent={'space-around'}
+          marginTop='2rem'
+          display='flex'
+          flexWrap='wrap'
+          justifyContent='space-around'
         >
           {filteredListings.map((listing, indx) => (
-            <Box key={indx} margin={'1em'}>
+            <Box key={indx} margin='1em'>
               <ListingCard
                 listing={listing}
                 readOnly={false}
@@ -84,4 +83,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default Marketplace;
