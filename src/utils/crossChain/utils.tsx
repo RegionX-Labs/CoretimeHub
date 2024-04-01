@@ -1,8 +1,8 @@
-import { XCM_VERSION } from './consts';
+import { SAFE_XCM_VERSION } from "@/models";
 
 export const versionedWrap = (xcm: any) => {
   return {
-    [`V${XCM_VERSION}`]: xcm,
+    [`V${SAFE_XCM_VERSION}`]: xcm,
   };
 };
 
