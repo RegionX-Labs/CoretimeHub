@@ -13,7 +13,7 @@ import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
 import { AmountInput, RegionCard } from '@/components/Elements';
-import { RecipientSelector } from '@/components/Selectors/RecipientSelector';
+import { RecipientSelector } from '@/components/Elements/Selectors/RecipientSelector';
 
 import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
 import { useRegions } from '@/contexts/regions';
