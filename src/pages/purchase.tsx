@@ -79,16 +79,18 @@ const Purchase = () => {
           (await api.query.broker.status()).toHuman() as any
         ).lastCommittedTimeslice.toString()
       );
-      const end = blockNumber + 80 * (saleInfo.regionBegin - lastCommittedTimeslice);
+      const _saleStart = saleInfo.saleStart;
+      const _saleEnd = blockNumber + (80 * (saleInfo.regionBegin - lastCommittedTimeslice));
 
       setCurrentBlockNumber(blockNumber);
-      setSaleEnd(end);
-      getBlockTimestamp(api, end).then((value) => setSaleEndTimestamp(value));
+      setSaleEnd(_saleEnd);
+      getBlockTimestamp(api, _saleEnd).then((value) => setSaleEndTimestamp(value));
 
-      const saleDuration = end - saleInfo.saleStart;
-      const elapsed = blockNumber - (saleInfo.saleStart - config.interludeLength);
+      const saleDuration = _saleEnd - _saleStart;
+      const elapsed = blockNumber - _saleStart;
 
-      setProgress((elapsed / (end - (saleInfo.saleStart + config.interludeLength))) * 100);
+      const progress = elapsed / saleDuration;
+      setProgress(progress * 100);
 
       if (saleInfo.saleStart > blockNumber) {
         setCurrentPhase(SalePhase.Interlude);

@@ -37,7 +37,7 @@ export const Progress = ({ progress, sections }: ProgressProps) => {
       {sections
         .filter((s) => s.value > 0)
         .map(({ name, value }, index) => (
-          <>
+          <div key={index}>
             <Box
               key={index}
               position='absolute'
@@ -57,7 +57,7 @@ export const Progress = ({ progress, sections }: ProgressProps) => {
             >
               <Typography component='div'>{`${name}`}</Typography>
             </Box>
-          </>
+          </div>
         ))}
     </Box>
   );
