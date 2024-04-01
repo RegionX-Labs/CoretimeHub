@@ -1,13 +1,13 @@
 import { contractTx } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 
-import { ContractContext, Sender, TxHandlers } from '@/models';
+import { ContractContext, Sender, TxStatusHandlers } from '@/models';
 
 export async function initRegionMetadata(
   contractsCtx: ContractContext,
   sender: Sender,
   region: Region,
-  handlers: TxHandlers
+  handlers: TxStatusHandlers
 ) {
   const { contractsApi, xcRegionsContract } = contractsCtx;
   if (!contractsApi || !xcRegionsContract) return;

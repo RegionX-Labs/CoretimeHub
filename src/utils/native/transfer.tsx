@@ -3,7 +3,7 @@ import { Signer } from '@polkadot/types/types';
 import { contractTx } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 
-import { ContractContext, TxHandlers } from '@/models';
+import { ContractContext, TxStatusHandlers } from '@/models';
 
 export const transferRegionOnCoretimeChain = async (
   coretimeApi: ApiPromise,
@@ -11,7 +11,7 @@ export const transferRegionOnCoretimeChain = async (
   signer: Signer,
   senderAddress: string,
   newOwner: string,
-  handlers: TxHandlers
+  handlers: TxStatusHandlers
 ) => {
   const txTransfer = coretimeApi.tx.broker.transfer(
     region.getOnChainRegionId(),
@@ -47,7 +47,7 @@ export const transferRegionOnContractsChain = async (
   region: Region,
   senderAddress: string,
   newOwner: string,
-  handlers: TxHandlers
+  handlers: TxStatusHandlers
 ) => {
   const { contractsApi, xcRegionsContract } = contractCtx;
   if (!contractsApi || !xcRegionsContract) return;

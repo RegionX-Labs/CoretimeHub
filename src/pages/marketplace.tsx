@@ -13,7 +13,8 @@ const Marketplace = () => {
 
   const [purchaseModalOpen, openPurhcaseModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
-  const [filteredListings, setFilteredListings] = useState<Listing[]>(listedRegions);
+  const [filteredListings, setFilteredListings] =
+    useState<Listing[]>(listedRegions);
 
   const onPurchase = (listing: Listing) => {
     setSelectedListing(listing);

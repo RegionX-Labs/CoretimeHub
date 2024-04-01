@@ -79,16 +79,21 @@ const Purchase = () => {
           (await api.query.broker.status()).toHuman() as any
         ).lastCommittedTimeslice.toString()
       );
-      const end = blockNumber + 80 * (saleInfo.regionBegin - lastCommittedTimeslice);
+      const _saleStart = saleInfo.saleStart;
+      const _saleEnd =
+        blockNumber + 80 * (saleInfo.regionBegin - lastCommittedTimeslice);
 
       setCurrentBlockNumber(blockNumber);
-      setSaleEnd(end);
-      getBlockTimestamp(api, end).then((value) => setSaleEndTimestamp(value));
+      setSaleEnd(_saleEnd);
+      getBlockTimestamp(api, _saleEnd).then((value) =>
+        setSaleEndTimestamp(value)
+      );
 
-      const saleDuration = end - saleInfo.saleStart;
-      const elapsed = blockNumber - (saleInfo.saleStart - config.interludeLength);
+      const saleDuration = _saleEnd - _saleStart;
+      const elapsed = blockNumber - _saleStart;
 
-      setProgress((elapsed / (end - (saleInfo.saleStart + config.interludeLength))) * 100);
+      const progress = elapsed / saleDuration;
+      setProgress(progress * 100);
 
       if (saleInfo.saleStart > blockNumber) {
         setCurrentPhase(SalePhase.Interlude);
@@ -106,7 +111,9 @@ const Purchase = () => {
         },
         {
           name: 'Fixed price phase',
-          value: ((config.interludeLength + config.leadinLength) / saleDuration) * 100,
+          value:
+            ((config.interludeLength + config.leadinLength) / saleDuration) *
+            100,
         },
       ]);
     },
@@ -117,7 +124,10 @@ const Purchase = () => {
     async (api: ApiPromise) => {
       const blockNumber = (await api.query.system.number()).toJSON() as number;
 
-      const num = Math.min(blockNumber - saleInfo.saleStart, saleInfo.leadinLength);
+      const num = Math.min(
+        blockNumber - saleInfo.saleStart,
+        saleInfo.leadinLength
+      );
       const through = num / saleInfo.leadinLength;
       setCurrentPrice(
         Number((leadinFactorAt(through) * saleInfo.price).toFixed())
@@ -200,11 +210,11 @@ const Purchase = () => {
       </Box>
       <Box>
         {loading ||
-          !currentPhase ||
-          !saleEnd ||
-          !currentBlockNumber ||
-          !progress ||
-          !saleEndTimestamp ? (
+        !currentPhase ||
+        !saleEnd ||
+        !currentBlockNumber ||
+        !progress ||
+        !saleEndTimestamp ? (
           <>
             <Typography variant='h5' align='center'>
               Connect your wallet

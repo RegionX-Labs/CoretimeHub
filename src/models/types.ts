@@ -2,7 +2,15 @@ import { ApiPromise } from '@polkadot/api';
 import { ContractPromise } from '@polkadot/api-contract';
 import { Signer } from '@polkadot/types/types';
 import { BN } from '@polkadot/util';
-import { Balance, ContextData, CoreIndex, RawRegionId, Region, TaskId, Timeslice } from 'coretime-utils';
+import {
+  Balance,
+  ContextData,
+  CoreIndex,
+  RawRegionId,
+  Region,
+  TaskId,
+  Timeslice,
+} from 'coretime-utils';
 
 export type Percentage = number; // Percentage value between 0 and 1
 
@@ -21,7 +29,7 @@ export type ContractContext = {
   marketContract: ContractPromise | undefined;
 };
 
-export type TxHandlers = {
+export type TxStatusHandlers = {
   ready: () => void;
   inBlock: () => void;
   finalized: () => void;
@@ -186,7 +194,6 @@ export class RegionMetadata {
     this.taskId = taskId;
   }
 }
-
 
 export class Listing {
   /// The reigon listed on sale.
