@@ -1,4 +1,4 @@
-import { BROKER_PALLET_ID, CORETIME_CHAIN_PARA_ID } from "@/models";
+import { BROKER_PALLET_ID, CORETIME_CHAIN_PARA_ID } from '@/models';
 
 export const CoretimeChain = {
   parents: 1,
@@ -30,6 +30,9 @@ export const CoretimeRegionFromCoretimePerspective = {
 export const CoretimeRegionFromContractsPerspective = {
   parents: 1,
   interior: {
-    X2: [{ Parachain: CORETIME_CHAIN_PARA_ID }, { PalletInstance: BROKER_PALLET_ID }],
+    X2: [
+      { Parachain: CORETIME_CHAIN_PARA_ID },
+      { PalletInstance: BROKER_PALLET_ID },
+    ],
   },
 };

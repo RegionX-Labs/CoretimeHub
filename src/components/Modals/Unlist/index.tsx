@@ -72,9 +72,10 @@ export const UnlistModal = ({
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to unlist region from sale. Error: ${e.errorMessage === 'Error'
-          ? 'Please check your balance.'
-          : e.errorMessage
+        `Failed to unlist region from sale. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
         }`
       );
       setWorking(false);

@@ -80,11 +80,14 @@ const Purchase = () => {
         ).lastCommittedTimeslice.toString()
       );
       const _saleStart = saleInfo.saleStart;
-      const _saleEnd = blockNumber + (80 * (saleInfo.regionBegin - lastCommittedTimeslice));
+      const _saleEnd =
+        blockNumber + 80 * (saleInfo.regionBegin - lastCommittedTimeslice);
 
       setCurrentBlockNumber(blockNumber);
       setSaleEnd(_saleEnd);
-      getBlockTimestamp(api, _saleEnd).then((value) => setSaleEndTimestamp(value));
+      getBlockTimestamp(api, _saleEnd).then((value) =>
+        setSaleEndTimestamp(value)
+      );
 
       const saleDuration = _saleEnd - _saleStart;
       const elapsed = blockNumber - _saleStart;
@@ -108,7 +111,9 @@ const Purchase = () => {
         },
         {
           name: 'Fixed price phase',
-          value: ((config.interludeLength + config.leadinLength) / saleDuration) * 100,
+          value:
+            ((config.interludeLength + config.leadinLength) / saleDuration) *
+            100,
         },
       ]);
     },
@@ -119,7 +124,10 @@ const Purchase = () => {
     async (api: ApiPromise) => {
       const blockNumber = (await api.query.system.number()).toJSON() as number;
 
-      const num = Math.min(blockNumber - saleInfo.saleStart, saleInfo.leadinLength);
+      const num = Math.min(
+        blockNumber - saleInfo.saleStart,
+        saleInfo.leadinLength
+      );
       const through = num / saleInfo.leadinLength;
       setCurrentPrice(
         Number((leadinFactorAt(through) * saleInfo.price).toFixed())
@@ -202,11 +210,11 @@ const Purchase = () => {
       </Box>
       <Box>
         {loading ||
-          !currentPhase ||
-          !saleEnd ||
-          !currentBlockNumber ||
-          !progress ||
-          !saleEndTimestamp ? (
+        !currentPhase ||
+        !saleEnd ||
+        !currentBlockNumber ||
+        !progress ||
+        !saleEndTimestamp ? (
           <>
             <Typography variant='h5' align='center'>
               Connect your wallet

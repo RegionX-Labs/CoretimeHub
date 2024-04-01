@@ -85,7 +85,8 @@ export const SellModal = ({
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to approve the region. Error: ${e.errorMessage === 'Error' ? 'Please check your balance.' : e
+        `Failed to approve the region. Error: ${
+          e.errorMessage === 'Error' ? 'Please check your balance.' : e
         }`
       );
       setWorking(false);
@@ -126,9 +127,10 @@ export const SellModal = ({
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to list the region. Error: ${e.errorMessage === 'Error'
-          ? 'Please check your balance.'
-          : e.errorMessage
+        `Failed to list the region. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
         }`
       );
       setWorking(false);
