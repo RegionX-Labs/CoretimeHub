@@ -5,7 +5,7 @@ import {
   ContractContext,
   REGION_COLLECTION_ID,
   Sender,
-  TxHandlers,
+  TxStatusHandlers,
 } from '@/models';
 
 export const approveNonWrappedRegion = async (
@@ -13,7 +13,7 @@ export const approveNonWrappedRegion = async (
   sender: Sender,
   region: Region,
   who: string,
-  handlers: TxHandlers
+  handlers: TxStatusHandlers
 ) => {
   const { contractsApi } = ctx;
   if (!contractsApi) return;
@@ -53,7 +53,7 @@ export const approveXcRegion = async (
   sender: Sender,
   region: Region,
   who: string,
-  handlers: TxHandlers
+  handlers: TxStatusHandlers
 ) => {
   const { contractsApi, xcRegionsContract } = ctx;
   if (!contractsApi || !xcRegionsContract) {

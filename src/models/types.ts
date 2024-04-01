@@ -21,7 +21,7 @@ export type ContractContext = {
   marketContract: ContractPromise | undefined;
 };
 
-export type TxHandlers = {
+export type TxStatusHandlers = {
   ready: () => void;
   inBlock: () => void;
   finalized: () => void;

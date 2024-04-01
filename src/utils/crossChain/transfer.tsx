@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 
-import { Sender, TxHandlers } from '@/models';
+import { Sender, TxStatusHandlers } from '@/models';
 
 import {
   ContractsChain,
@@ -16,7 +16,7 @@ export async function coretimeToContractsTransfer(
   sender: Sender,
   rawRegionId: BN,
   receiver: Uint8Array,
-  handlers: TxHandlers
+  handlers: TxStatusHandlers
 ) {
   const beneficiary = {
     parents: 0,
@@ -74,7 +74,7 @@ export function contractsToCoretimeTransfer(
   sender: Sender,
   rawRegionId: BN,
   receiver: Uint8Array,
-  handlers: TxHandlers
+  handlers: TxStatusHandlers
 ) {
   const beneficiary = {
     parents: 0,
