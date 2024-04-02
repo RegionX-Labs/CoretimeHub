@@ -29,7 +29,7 @@ import {
   getSaleEndInBlocks,
   getSaleProgress,
   getSaleStartInBlocks,
-} from './util';
+} from '../../utils/sale/util';
 
 const Purchase = () => {
   const theme = useTheme();
