@@ -79,7 +79,7 @@ const Purchase = () => {
           (await api.query.broker.status()).toHuman() as any
         ).lastCommittedTimeslice.toString()
       );
-      const _saleStart = saleInfo.saleStart;
+      const _saleStart = saleInfo.saleStart - config.interludeLength;
       const _saleEnd =
         blockNumber + 80 * (saleInfo.regionBegin - lastCommittedTimeslice);
 
