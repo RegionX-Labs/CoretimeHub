@@ -7,7 +7,7 @@ on:
     branches: [master]
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,9 +34,3 @@ jobs:
       # Run tests
       - name: Run Tests
         run: npm run test
-
-  all:
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo Success
