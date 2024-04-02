@@ -8,7 +8,10 @@ export const RELAY_CHAIN_BLOCK_TIME = 6 * SECOND;
 
 export const CORETIME_DECIMALS = 12;
 export const CONTRACT_DECIMALS = 18;
-export const LISTING_DEPOSIT = 0 * CONTRACT_DECIMALS;
+
+export const CORETIME_TOKEN_UNIT = Math.pow(10, CORETIME_DECIMALS);
+export const CONTRACTS_TOKEN_UNIT = Math.pow(10, CONTRACT_DECIMALS);
+export const LISTING_DEPOSIT = 0 * CONTRACTS_TOKEN_UNIT;
 
 /// Given that a timeslice is 8 minutes;
 export const DAY_IN_TIMESLICES = 180;

@@ -23,6 +23,7 @@ import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
 import { SalePhase } from '@/models';
+import { getCurrentPhase } from './util';
 
 const Purchase = () => {
   const theme = useTheme();
@@ -89,19 +90,15 @@ const Purchase = () => {
         setSaleEndTimestamp(value)
       );
 
+      console.log(saleInfo);
+
       const saleDuration = _saleEnd - _saleStart;
       const elapsed = blockNumber - _saleStart;
 
       const progress = elapsed / saleDuration;
       setProgress(progress * 100);
 
-      if (saleInfo.saleStart > blockNumber) {
-        setCurrentPhase(SalePhase.Interlude);
-      } else if (saleInfo.saleStart + saleInfo.leadinLength > blockNumber) {
-        setCurrentPhase(SalePhase.Leadin);
-      } else {
-        setCurrentPhase(SalePhase.Regular);
-      }
+      setCurrentPhase(getCurrentPhase(saleInfo, blockNumber));
 
       setSaleSections([
         { name: 'Interlude', value: 0 },
