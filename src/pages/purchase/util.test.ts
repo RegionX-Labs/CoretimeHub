@@ -1,21 +1,39 @@
-import { CORETIME_TOKEN_UNIT, SaleInfo, SalePhase } from '@/models';
-import { getCurrentPhase } from './util';
+import { CORETIME_TOKEN_UNIT, SaleConfig, SaleInfo, SalePhase } from '@/models';
+
+import {
+  getCurrentPhase,
+  getCurrentPrice,
+  getSaleEndInBlocks,
+  getSaleProgress,
+  getSaleStartInBlocks,
+} from './util';
 
 describe('Purchase page', () => {
-  describe('getCurrentPhase', () => {
-    let mockSaleInfo: SaleInfo = {
-      coresOffered: 50,
-      coresSold: 0,
-      firstCore: 45,
-      idealCoresSold: 5,
-      leadinLength: 21600, // Block number
-      price: 50 * CORETIME_TOKEN_UNIT,
-      regionBegin: 124170, // Timeslice
-      regionEnd: 125430, // Timeslice
-      saleStart: 1001148, // Block number
-      selloutPrice: null,
-    };
+  const mockSaleInfo: SaleInfo = {
+    coresOffered: 50,
+    coresSold: 0,
+    firstCore: 45,
+    idealCoresSold: 5,
+    leadinLength: 21600, // Block number
+    price: 50 * CORETIME_TOKEN_UNIT,
+    regionBegin: 124170, // Timeslice
+    regionEnd: 125430, // Timeslice
+    saleStart: 1001148, // Block number
+    selloutPrice: null,
+  };
 
+  const mockConfig: SaleConfig = {
+    advanceNotice: 10, // RC block number
+    contributionTimeout: 1260, // Block number
+    idealBulkProportion: '40.00%',
+    interludeLength: 7200, // Block number
+    leadinLength: 21600, // Block number
+    limitCoresOffered: null,
+    regionLength: 1260, // Timeslice
+    renewalBump: '0.35%',
+  };
+
+  describe('getCurrentPhase', () => {
     it('Successfully recognizes interlude phase', () => {
       let blockNumber = mockSaleInfo.saleStart - 50;
       expect(getCurrentPhase(mockSaleInfo, blockNumber)).toBe(
@@ -55,6 +73,69 @@ describe('Purchase page', () => {
       blockNumber = mockSaleInfo.saleStart + mockSaleInfo.leadinLength + 50;
       expect(getCurrentPhase(mockSaleInfo, blockNumber)).toBe(
         SalePhase.Regular
+      );
+    });
+  });
+
+  describe('getSaleStartInBlocks', () => {
+    it('works', () => {
+      expect(getSaleStartInBlocks(mockSaleInfo, mockConfig)).toBe(
+        mockSaleInfo.saleStart - mockConfig.interludeLength
+      );
+    });
+  });
+
+  describe('getSaleEndInBlocks', () => {
+    it('works', () => {
+      const blockNumber = mockSaleInfo.saleStart;
+      const rcBlockNumber = 9_832_800;
+      const lastCommittedTimeslice = Math.floor(
+        (rcBlockNumber + mockConfig.advanceNotice) / 80
+      );
+
+      expect(
+        getSaleEndInBlocks(mockSaleInfo, blockNumber, lastCommittedTimeslice)
+      ).toBe(mockSaleInfo.saleStart + mockConfig.regionLength * 80);
+    });
+  });
+
+  describe('getSaleProgress', () => {
+    it('works', () => {
+      let blockNumber = mockSaleInfo.saleStart - mockConfig.interludeLength;
+      const rcBlockNumber = 9_832_800;
+      const lastCommittedTimeslice = Math.floor(
+        (rcBlockNumber + mockConfig.advanceNotice) / 80
+      );
+
+      expect(
+        getSaleProgress(
+          mockSaleInfo,
+          mockConfig,
+          blockNumber,
+          lastCommittedTimeslice
+        )
+      ).toBe(0);
+
+      blockNumber = mockSaleInfo.saleStart - mockConfig.interludeLength + 500;
+
+      expect(
+        getSaleProgress(
+          mockSaleInfo,
+          mockConfig,
+          blockNumber,
+          lastCommittedTimeslice
+        )
+      ).toBe(0.49); // 0.49 %
+    });
+  });
+
+  describe('getCurrentPrice', () => {
+    it('works', () => {
+      const blockNumber = mockSaleInfo.saleStart;
+
+      // leading factor is equal to 2 at the start of the sale.
+      expect(getCurrentPrice(mockSaleInfo, blockNumber)).toBe(
+        mockSaleInfo.price * 2
       );
     });
   });
