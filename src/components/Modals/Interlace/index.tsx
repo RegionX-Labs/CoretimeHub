@@ -45,20 +45,16 @@ export const InterlaceModal = ({
   const { fetchRegions } = useRegions();
 
   const currentMask = regionMetadata.region.getMask().toBin();
+  // Represents the first active bit in the bitmap.
   const oneStart = currentMask.indexOf('1');
+  // Represents the last active bit in the bitmap.
   const oneEnd = currentMask.lastIndexOf('1');
   const activeBits = oneEnd - oneStart + 1;
 
   const [working, setWorking] = useState(false);
   const [position, setPosition] = useState(oneStart);
 
-  const generateMask = (position: number): string => {
-    const mask = Array(COREMASK_BIT_LEN).fill('0');
-    for (let i = oneStart; i <= position; ++i) mask[i] = '1';
-    return mask.join('');
-  };
-
-  const newMask = generateMask(position);
+  const newMask = CoreMask.fromChunk(oneStart, position + 1).toBin();
 
   const onInterlace = async () => {
     if (!api || !activeAccount || !activeSigner) return;

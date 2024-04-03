@@ -6,7 +6,7 @@ import {
   getSaleEndInBlocks,
   getSaleProgress,
   getSaleStartInBlocks,
-} from './util';
+} from './utils';
 
 describe('Purchase page', () => {
   const mockSaleInfo: SaleInfo = {
