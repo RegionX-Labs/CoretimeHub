@@ -20,7 +20,7 @@ export async function initRegionMetadata(
       begin: region.getBegin(),
       end: region.getEnd(),
       core: region.getCore(),
-      mask: region.getMask().getMask(),
+      mask: region.getMask().toRawHex(),
     };
 
     await contractTx(
