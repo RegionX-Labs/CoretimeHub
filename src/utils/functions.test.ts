@@ -1,11 +1,10 @@
-import { CORETIME_TOKEN_UNIT } from '@/models';
+import { CoreMask, RegionId } from 'coretime-utils';
+
 import {
   extractRegionIdFromRaw,
-  formatBalance,
   parseHNString,
   parseHNStringToString,
 } from './functions';
-import { CoreMask, RegionId } from 'coretime-utils';
 
 describe('Util functions', () => {
   describe('parseHNString', () => {

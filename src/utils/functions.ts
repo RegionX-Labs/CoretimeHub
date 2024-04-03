@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
-import { CoreMask, RegionId } from 'coretime-utils';
 import { formatBalance as polkadotFormatBalance } from '@polkadot/util';
+import { CoreMask, RegionId } from 'coretime-utils';
 import Decimal from 'decimal.js';
 
 import {
