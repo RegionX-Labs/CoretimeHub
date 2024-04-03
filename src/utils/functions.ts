@@ -1,5 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 import { CoreMask, RegionId } from 'coretime-utils';
+import { formatBalance as polkadotFormatBalance } from '@polkadot/util';
 import Decimal from 'decimal.js';
 
 import {
@@ -82,18 +83,16 @@ export const formatBalance = (balance: string, contractChain: boolean) => {
   Decimal.config({ rounding: Decimal.ROUND_DOWN });
   const decimals = contractChain ? CONTRACT_DECIMALS : CORETIME_DECIMALS;
 
-  if (new Decimal(balance).lt(new Decimal(10).pow(CONTRACT_DECIMALS))) {
-    return new Decimal(balance)
-      .dividedBy(new Decimal(10).pow(decimals))
-      .toPrecision(2);
-  } else {
-    return new Decimal(balance)
-      .dividedBy(new Decimal(10).pow(decimals))
-      .toFixed(2);
-  }
+  return polkadotFormatBalance(balance, {
+    decimals,
+    withUnit: false,
+    withSiFull: true,
+  });
 };
 
 // TODO: should be queried from runtime api instead.
+//
+// https://github.com/paritytech/polkadot-sdk/pull/3485
 export const leadinFactorAt = (when: number) => {
   return 2 - when;
 };
