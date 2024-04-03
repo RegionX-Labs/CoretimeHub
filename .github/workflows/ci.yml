@@ -2,12 +2,12 @@ name: Corehub CI
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -31,8 +31,6 @@ jobs:
       - name: Check Prettier
         run: npm run format
 
-  all:
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo Success
+      # Run tests
+      - name: Run Tests
+        run: npm run test

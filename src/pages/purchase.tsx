@@ -11,7 +11,6 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   formatBalance,
   getBlockTimestamp,
-  leadinFactorAt,
   parseHNString,
 } from '@/utils/functions';
 
@@ -23,6 +22,14 @@ import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
 import { SalePhase } from '@/models';
+
+import {
+  getCurrentPhase,
+  getCurrentPrice,
+  getSaleEndInBlocks,
+  getSaleProgress,
+  getSaleStartInBlocks,
+} from '../utils/sale/utils';
 
 const Purchase = () => {
   const theme = useTheme();
@@ -79,9 +86,13 @@ const Purchase = () => {
           (await api.query.broker.status()).toHuman() as any
         ).lastCommittedTimeslice.toString()
       );
-      const _saleStart = saleInfo.saleStart;
-      const _saleEnd =
-        blockNumber + 80 * (saleInfo.regionBegin - lastCommittedTimeslice);
+
+      const _saleStart = getSaleStartInBlocks(saleInfo, config);
+      const _saleEnd = getSaleEndInBlocks(
+        saleInfo,
+        blockNumber,
+        lastCommittedTimeslice
+      );
 
       setCurrentBlockNumber(blockNumber);
       setSaleEnd(_saleEnd);
@@ -89,19 +100,17 @@ const Purchase = () => {
         setSaleEndTimestamp(value)
       );
 
+      const progress = getSaleProgress(
+        saleInfo,
+        config,
+        blockNumber,
+        lastCommittedTimeslice
+      );
+      setProgress(progress);
+
+      setCurrentPhase(getCurrentPhase(saleInfo, blockNumber));
+
       const saleDuration = _saleEnd - _saleStart;
-      const elapsed = blockNumber - _saleStart;
-
-      const progress = elapsed / saleDuration;
-      setProgress(progress * 100);
-
-      if (saleInfo.saleStart > blockNumber) {
-        setCurrentPhase(SalePhase.Interlude);
-      } else if (saleInfo.saleStart + saleInfo.leadinLength > blockNumber) {
-        setCurrentPhase(SalePhase.Leadin);
-      } else {
-        setCurrentPhase(SalePhase.Regular);
-      }
 
       setSaleSections([
         { name: 'Interlude', value: 0 },
@@ -124,14 +133,8 @@ const Purchase = () => {
     async (api: ApiPromise) => {
       const blockNumber = (await api.query.system.number()).toJSON() as number;
 
-      const num = Math.min(
-        blockNumber - saleInfo.saleStart,
-        saleInfo.leadinLength
-      );
-      const through = num / saleInfo.leadinLength;
-      setCurrentPrice(
-        Number((leadinFactorAt(through) * saleInfo.price).toFixed())
-      );
+      const price = getCurrentPrice(saleInfo, blockNumber);
+      setCurrentPrice(price);
     },
     [saleInfo]
   );
