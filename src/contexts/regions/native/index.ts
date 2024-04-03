@@ -54,7 +54,7 @@ export const fetchRegion = async (
     await coretimeApi.query.broker.regions({
       begin: regionId.begin,
       core: regionId.core,
-      mask: regionId.mask.getMask(),
+      mask: regionId.mask.toRawHex(),
     })
   ).toHuman();
 
