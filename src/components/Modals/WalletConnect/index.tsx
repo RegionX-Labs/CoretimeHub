@@ -26,7 +26,11 @@ interface WalletModalProps {
 }
 
 export const WalletModal = (props: WalletModalProps) => {
-  const { connect: connectContract, activeChain, isConnected } = useInkathon();
+  const {
+    connect: connectContract,
+    activeChain,
+    isInitialized,
+  } = useInkathon();
   const { connectRelay } = useRelayApi();
   const { connectCoretime } = useCoretimeApi();
 
@@ -45,7 +49,7 @@ export const WalletModal = (props: WalletModalProps) => {
     if (wallet) {
       onConnect(wallet);
     }
-  }, [isConnected]);
+  }, [isInitialized]);
 
   return (
     <Dialog {...props} fullWidth maxWidth='sm'>
