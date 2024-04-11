@@ -14,11 +14,11 @@ import {
   useInkathon,
 } from '@scio-labs/use-inkathon';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 
 import styles from './index.module.scss';
-import { useEffect, useState } from 'react';
 
 interface WalletModalProps {
   open: boolean;
