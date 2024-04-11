@@ -7,16 +7,9 @@ import {
   List,
   ListItemButton,
 } from '@mui/material';
-import { isWalletInstalled } from '@scio-labs/use-inkathon';
-import {
-  allSubstrateWallets,
-  SubstrateWallet,
-  useInkathon,
-} from '@scio-labs/use-inkathon';
+import { SubstrateWallet, isWalletInstalled } from '@scio-labs/use-inkathon';
+import { allSubstrateWallets, useInkathon } from '@scio-labs/use-inkathon';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-
-import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 
 import styles from './index.module.scss';
 
@@ -26,30 +19,12 @@ interface WalletModalProps {
 }
 
 export const WalletModal = (props: WalletModalProps) => {
-  const {
-    connect: connectContract,
-    activeChain,
-    isInitialized,
-  } = useInkathon();
-  const { connectRelay } = useRelayApi();
-  const { connectCoretime } = useCoretimeApi();
+  const { connect } = useInkathon();
 
-  const [wallet, setWallet] = useState<SubstrateWallet | null>(null);
-
-  const onConnect = async (wallet: SubstrateWallet) => {
-    setWallet(wallet);
-    if (!connectContract) return;
-    connectRelay();
-    connectCoretime();
-    connectContract(activeChain, wallet);
+  const onConnect = (wallet: SubstrateWallet) => {
+    connect?.(undefined, wallet);
     props.onClose();
   };
-
-  useEffect(() => {
-    if (wallet) {
-      onConnect(wallet);
-    }
-  }, [isInitialized]);
 
   return (
     <Dialog {...props} fullWidth maxWidth='sm'>

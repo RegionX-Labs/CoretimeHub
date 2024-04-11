@@ -33,13 +33,13 @@ const ContextDataProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const collectContextData = async () => {
-      if (!relayConnected) return;
+      if (!relayConnected || !relayApi.query.system) return;
       const currentBlockHeight = parseHNString(
         (await relayApi.query.system.number()).toString()
       );
       setRelayBlockNumber(currentBlockHeight);
 
-      if (!coretimeConnected) return;
+      if (!coretimeConnected || !coretimeApi.consts.broker) return;
 
       const timeslicePeriod = parseHNString(
         coretimeApi.consts.broker.timeslicePeriod.toString()
