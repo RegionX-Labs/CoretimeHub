@@ -29,7 +29,7 @@ export const Header = () => {
   useEffect(() => {
     connectRelay();
     connectCoretime();
-  }, []);
+  }, [connectRelay, connectCoretime]);
 
   const onDisconnect = () => {
     openAccounts(false);
