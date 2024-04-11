@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { useInkathon } from '@scio-labs/use-inkathon';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Logo from '@/assets/logo.png';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
@@ -20,16 +20,20 @@ import { WalletModal } from '../Modals/WalletConnect';
 export const Header = () => {
   const { activeAccount, disconnect, accounts, setActiveAccount } =
     useInkathon();
-  const { disconnectRelay } = useRelayApi();
-  const { disconnectCoretime } = useCoretimeApi();
   const [accountsOpen, openAccounts] = useState(false);
   const [walletModalOpen, openWalletModal] = useState(false);
+
+  const { connectRelay } = useRelayApi();
+  const { connectCoretime } = useCoretimeApi();
+
+  useEffect(() => {
+    connectRelay();
+    connectCoretime();
+  }, [connectRelay, connectCoretime]);
 
   const onDisconnect = () => {
     openAccounts(false);
     disconnect && disconnect();
-    disconnectRelay();
-    disconnectCoretime();
   };
 
   return (
