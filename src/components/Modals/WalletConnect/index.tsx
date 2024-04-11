@@ -14,6 +14,7 @@ import {
   useInkathon,
 } from '@scio-labs/use-inkathon';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 
@@ -25,16 +26,27 @@ interface WalletModalProps {
 }
 
 export const WalletModal = (props: WalletModalProps) => {
-  const { connect: connectContract, activeChain } = useInkathon();
+  const { connect: connectContract, activeChain, isConnected } = useInkathon();
   const { connectRelay } = useRelayApi();
   const { connectCoretime } = useCoretimeApi();
+
+  const [wallet, setWallet] = useState<SubstrateWallet | null>(null);
+
   const onConnect = async (wallet: SubstrateWallet) => {
+    setWallet(wallet);
     if (!connectContract) return;
     connectRelay();
     connectCoretime();
     connectContract(activeChain, wallet);
     props.onClose();
   };
+
+  useEffect(() => {
+    if (wallet) {
+      onConnect(wallet);
+    }
+  }, [isConnected]);
+
   return (
     <Dialog {...props} fullWidth maxWidth='sm'>
       <DialogTitle>Choose your wallet extension</DialogTitle>
