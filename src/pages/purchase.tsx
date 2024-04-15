@@ -160,14 +160,14 @@ const Purchase = () => {
                 toastSuccess('Transaction successful');
                 fetchRegions();
               } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to partition the region`);
+                toastError(`Failed to purchase the region`);
               }
             });
           }
         }
       );
     } catch (e) {
-      toastError(`Failed to partition the region. ${e}`);
+      toastError(`Failed to purchase the region. ${e}`);
       setWorking(false);
     }
   };
