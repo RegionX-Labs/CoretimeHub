@@ -7,7 +7,7 @@ import {
   List,
   ListItemButton,
 } from '@mui/material';
-import { isWalletInstalled,SubstrateWallet } from '@scio-labs/use-inkathon';
+import { isWalletInstalled, SubstrateWallet } from '@scio-labs/use-inkathon';
 import { allSubstrateWallets, useInkathon } from '@scio-labs/use-inkathon';
 import Image from 'next/image';
 

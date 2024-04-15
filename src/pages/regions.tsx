@@ -97,7 +97,7 @@ const Dashboard = () => {
       // regions on the coretime chain cannot be listed on sale. They first have to be
       // transferred to the contacts chain.
       return action === 'sell' || action === 'unlist';
-    } else if (selectedRegion.location === RegionLocation.CONTRACTS_CHAIN) {
+    } else if (selectedRegion.location === RegionLocation.REGIONX_CHAIN) {
       // XcRegions can only be transferred and listed on sale.
       return !(action === 'transfer' || action === 'sell');
     } else {

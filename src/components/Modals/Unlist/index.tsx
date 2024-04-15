@@ -6,17 +6,15 @@ import {
   DialogContent,
   Stack,
 } from '@mui/material';
-import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
+import { useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 import { useState } from 'react';
 
 import { RegionCard } from '@/components/Elements';
 
-import { CONTRACT_MARKET } from '@/contexts/apis/consts';
 import { useMarket } from '@/contexts/market';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import MarketMetadata from '@/contracts/market.json';
 import { RegionMetadata } from '@/models';
 
 interface UnlistModalProps {
@@ -30,12 +28,7 @@ export const UnlistModal = ({
   onClose,
   regionMetadata,
 }: UnlistModalProps) => {
-  const { activeAccount, api: contractsApi } = useInkathon();
-
-  const { contract: marketContract } = useContract(
-    MarketMetadata,
-    CONTRACT_MARKET
-  );
+  const { activeAccount, api } = useInkathon();
 
   const { fetchRegions } = useRegions();
   const { fetchMarket } = useMarket();
@@ -43,27 +36,15 @@ export const UnlistModal = ({
 
   const [working, setWorking] = useState(false);
 
-  const unlistRegion = async (region: Region) => {
-    if (!contractsApi || !activeAccount || !marketContract) {
+  const unlistRegion = async (_region: Region) => {
+    if (!api || !activeAccount) {
       return;
     }
 
     try {
       setWorking(true);
-      const rawRegionId = region.getEncodedRegionId(contractsApi);
 
-      const id = contractsApi.createType('Id', {
-        U128: rawRegionId.toString(),
-      });
-
-      await contractTx(
-        contractsApi,
-        activeAccount.address,
-        marketContract,
-        'unlist_region',
-        {},
-        [id]
-      );
+      // TODO
 
       toastSuccess(`Successfully unlisted region from sale.`);
       onClose();

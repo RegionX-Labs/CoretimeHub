@@ -4,14 +4,14 @@ import { BN } from '@polkadot/util';
 import { Sender, TxStatusHandlers } from '@/models';
 
 import {
-  ContractsChain,
   CoretimeChain,
-  CoretimeRegionFromContractsPerspective,
   CoretimeRegionFromCoretimePerspective,
+  CoretimeRegionFromRegionXPerspective,
+  RegionXChain,
 } from './consts';
 import { versionedNonfungibleAssetWrap, versionedWrap } from './utils';
 
-export async function coretimeToContractsTransfer(
+export async function coretimeToRegionXTransfer(
   coretimeApi: ApiPromise,
   sender: Sender,
   rawRegionId: BN,
@@ -35,7 +35,7 @@ export async function coretimeToContractsTransfer(
 
   const reserveTransfer =
     coretimeApi.tx.polkadotXcm.limitedReserveTransferAssets(
-      versionedWrap(ContractsChain),
+      versionedWrap(RegionXChain),
       versionedWrap(beneficiary),
       versionedNonfungibleAssetWrap(
         CoretimeRegionFromCoretimePerspective,
@@ -69,8 +69,8 @@ export async function coretimeToContractsTransfer(
   }
 }
 
-export function contractsToCoretimeTransfer(
-  contractsApi: ApiPromise,
+export function regionXToCoretimeTransfer(
+  api: ApiPromise,
   sender: Sender,
   rawRegionId: BN,
   receiver: Uint8Array,
@@ -91,17 +91,16 @@ export function contractsToCoretimeTransfer(
   const feeAssetItem = 0;
   const weightLimit = 'Unlimited';
 
-  const reserveTransfer =
-    contractsApi.tx.polkadotXcm.limitedReserveTransferAssets(
-      versionedWrap(CoretimeChain),
-      versionedWrap(beneficiary),
-      versionedNonfungibleAssetWrap(
-        CoretimeRegionFromContractsPerspective,
-        rawRegionId.toString()
-      ),
-      feeAssetItem,
-      weightLimit
-    );
+  const reserveTransfer = api.tx.polkadotXcm.limitedReserveTransferAssets(
+    versionedWrap(CoretimeChain),
+    versionedWrap(beneficiary),
+    versionedNonfungibleAssetWrap(
+      CoretimeRegionFromRegionXPerspective,
+      rawRegionId.toString()
+    ),
+    feeAssetItem,
+    weightLimit
+  );
 
   try {
     reserveTransfer.signAndSend(

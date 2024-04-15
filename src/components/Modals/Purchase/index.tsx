@@ -6,14 +6,12 @@ import {
   DialogContent,
   Stack,
 } from '@mui/material';
-import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
+import { useInkathon } from '@scio-labs/use-inkathon';
 import { useState } from 'react';
 
 import { ListingCard } from '@/components/Elements/ListingCard';
 
-import { CONTRACT_MARKET } from '@/contexts/apis/consts';
 import { useToast } from '@/contexts/toast';
-import MarketMetadata from '@/contracts/market.json';
 import { Listing } from '@/models';
 
 interface PurchaseModalProps {
@@ -27,38 +25,21 @@ export const PurchaseModal = ({
   onClose,
   listing,
 }: PurchaseModalProps) => {
-  const { activeAccount, api: contractsApi } = useInkathon();
-
-  const { contract: marketContract } = useContract(
-    MarketMetadata,
-    CONTRACT_MARKET
-  );
+  const { activeAccount, api } = useInkathon();
 
   const { toastError, toastSuccess } = useToast();
 
   const [working, setWorking] = useState(false);
 
   const purchaseRegion = async () => {
-    if (!contractsApi || !activeAccount || !marketContract) {
+    if (!api || !activeAccount) {
       return;
     }
 
     try {
       setWorking(true);
-      const rawRegionId = listing.region.getEncodedRegionId(contractsApi);
 
-      const id = contractsApi.createType('Id', {
-        U128: rawRegionId.toString(),
-      });
-
-      await contractTx(
-        contractsApi,
-        activeAccount.address,
-        marketContract,
-        'purchase_region',
-        { value: listing.currentPrice },
-        [id, listing.region.getMetadataVersion()]
-      );
+      // TODO
 
       toastSuccess(`Successfully purchased region from sale.`);
       onClose();

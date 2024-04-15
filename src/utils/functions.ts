@@ -4,8 +4,8 @@ import { CoreMask, RegionId } from 'coretime-utils';
 import Decimal from 'decimal.js';
 
 import {
-  CONTRACT_DECIMALS,
   CORETIME_DECIMALS,
+  REGIONX_DECIMALS,
   RELAY_CHAIN_BLOCK_TIME,
 } from '@/models';
 
@@ -79,9 +79,9 @@ export const timestampToTimeslice = async (
   }
 };
 
-export const formatBalance = (balance: string, contractChain: boolean) => {
+export const formatBalance = (balance: string, regionXChain: boolean) => {
   Decimal.config({ rounding: Decimal.ROUND_DOWN });
-  const decimals = contractChain ? CONTRACT_DECIMALS : CORETIME_DECIMALS;
+  const decimals = regionXChain ? REGIONX_DECIMALS : CORETIME_DECIMALS;
 
   return polkadotFormatBalance(balance, {
     decimals,

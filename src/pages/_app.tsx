@@ -18,7 +18,7 @@ import {
   CoretimeApiContextProvider,
   RelayApiContextProvider,
 } from '@/contexts/apis';
-import { WS_CONTRACTS_CHAIN } from '@/contexts/apis/consts';
+import { WS_CORETIME_CHAIN } from '@/contexts/apis/consts';
 import { ContextDataProvider } from '@/contexts/common';
 import { MarketProvider } from '@/contexts/market';
 import { RegionDataProvider } from '@/contexts/regions';
@@ -57,7 +57,7 @@ export default function MyApp(props: MyAppProps) {
                 defaultChain={{
                   network: '',
                   name: '',
-                  rpcUrls: [WS_CONTRACTS_CHAIN],
+                  rpcUrls: [WS_CORETIME_CHAIN],
                 }}
                 apiOptions={{ types: { Id } }}
               >

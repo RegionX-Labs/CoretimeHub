@@ -1,5 +1,3 @@
-import { ApiPromise } from '@polkadot/api';
-import { ContractPromise } from '@polkadot/api-contract';
 import { Signer } from '@polkadot/types/types';
 import { BN } from '@polkadot/util';
 import {
@@ -23,12 +21,6 @@ export type Sender = {
   signer: Signer;
 };
 
-export type ContractContext = {
-  contractsApi: ApiPromise | undefined;
-  xcRegionsContract: ContractPromise | undefined;
-  marketContract: ContractPromise | undefined;
-};
-
 export type TxStatusHandlers = {
   ready: () => void;
   inBlock: () => void;
@@ -41,7 +33,7 @@ export enum RegionLocation {
   // eslint-disable-next-line no-unused-vars
   CORETIME_CHAIN,
   // eslint-disable-next-line no-unused-vars
-  CONTRACTS_CHAIN,
+  REGIONX_CHAIN,
   // eslint-disable-next-line no-unused-vars
   MARKET,
 }
@@ -120,14 +112,14 @@ export type SaleConfig = {
 export class RegionMetadata {
   public region: Region;
 
-  // Indicates the location of the region. It can either be on the Coretime chain or on the contracts
-  // chain as an xc-region.
+  // Indicates the location of the region. It can either be on the Coretime chain, on the RegionX
+  // parachain or listed on the market.
   public location: RegionLocation;
 
   // u128 encoded RegionId.
   //
-  // This is used for interacting with the xc-regions contract or when conducting cross-chain transfers,
-  // where `regionId` needs to be represented as a u128.
+  // This is used for when conducting cross-chain transfers, where `regionId` needs to be represented
+  // as a u128.
   public rawId: RawRegionId;
 
   // A user set name for the region.

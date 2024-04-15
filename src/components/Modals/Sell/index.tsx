@@ -8,19 +8,16 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
+import { useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
 import { AmountInput, RegionCard } from '@/components/Elements';
 import { RecipientSelector } from '@/components/Elements/Selectors/RecipientSelector';
 
-import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import MarketMetadata from '@/contracts/market.json';
-import XcRegionsMetadata from '@/contracts/xc_regions.json';
-import { CONTRACT_DECIMALS, LISTING_DEPOSIT, RegionMetadata } from '@/models';
+import { RegionMetadata } from '@/models';
 
 interface SellModalProps {
   open: boolean;
@@ -33,16 +30,7 @@ export const SellModal = ({
   onClose,
   regionMetadata,
 }: SellModalProps) => {
-  const { activeAccount, api: contractsApi } = useInkathon();
-
-  const { contract: xcRegionsContract } = useContract(
-    XcRegionsMetadata,
-    CONTRACT_XC_REGIONS
-  );
-  const { contract: marketContract } = useContract(
-    MarketMetadata,
-    CONTRACT_MARKET
-  );
+  const { activeAccount, api } = useInkathon();
 
   const { fetchRegions } = useRegions();
   const { toastError, toastSuccess } = useToast();
@@ -62,24 +50,15 @@ export const SellModal = ({
     await listRegion(regionMetadata.region);
   };
 
-  const approveXcRegion = async (region: Region) => {
-    if (!contractsApi || !activeAccount || !xcRegionsContract) {
+  const approveXcRegion = async (_region: Region) => {
+    if (!api || !activeAccount) {
       return;
     }
 
     try {
       setWorking(true);
-      const rawRegionId = region.getEncodedRegionId(contractsApi);
-      const id = contractsApi.createType('Id', { U128: rawRegionId });
 
-      await contractTx(
-        contractsApi,
-        activeAccount.address,
-        xcRegionsContract,
-        'PSP34::approve',
-        {},
-        [CONTRACT_MARKET, id, true]
-      );
+      // TODO
 
       toastSuccess(`Successfully approved region to the market.`);
       setWorking(false);
@@ -93,33 +72,15 @@ export const SellModal = ({
     }
   };
 
-  const listRegion = async (region: Region) => {
-    if (!contractsApi || !activeAccount || !marketContract) {
+  const listRegion = async (_region: Region) => {
+    if (!api || !activeAccount) {
       return;
     }
 
     try {
       setWorking(true);
-      const rawRegionId = region.getEncodedRegionId(contractsApi);
 
-      const id = contractsApi.createType('Id', {
-        U128: rawRegionId.toString(),
-      });
-      const regionDuration = region.getEnd() - region.getBegin();
-      const timeslicePrice = (
-        (Number(regionPrice) * Math.pow(10, CONTRACT_DECIMALS)) /
-        regionDuration /
-        region.coreOccupancy()
-      ).toFixed(0);
-
-      await contractTx(
-        contractsApi,
-        activeAccount.address,
-        marketContract,
-        'list_region',
-        { value: LISTING_DEPOSIT },
-        [id, timeslicePrice, saleRecipient ? saleRecipient : null]
-      );
+      // TODO
 
       toastSuccess(`Successfully listed region on sale.`);
       onClose();

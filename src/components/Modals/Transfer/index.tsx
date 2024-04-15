@@ -9,22 +9,17 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useContract, useInkathon } from '@scio-labs/use-inkathon';
+import { useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
-import {
-  transferRegionOnContractsChain,
-  transferRegionOnCoretimeChain,
-} from '@/utils/native/transfer';
+import { transferRegionOnCoretimeChain } from '@/utils/native/transfer';
 
 import { RegionCard } from '@/components/Elements';
 
 import { useCoretimeApi } from '@/contexts/apis';
-import { CONTRACT_XC_REGIONS } from '@/contexts/apis/consts';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import XcRegionsMetadata from '@/contracts/xc_regions.json';
 import { RegionLocation, RegionMetadata } from '@/models';
 
 interface TransferModalProps {
@@ -38,8 +33,7 @@ export const TransferModal = ({
   onClose,
   regionMetadata,
 }: TransferModalProps) => {
-  const { activeAccount, activeSigner, api: contractsApi } = useInkathon();
-  const { contract } = useContract(XcRegionsMetadata, CONTRACT_XC_REGIONS);
+  const { activeAccount, activeSigner } = useInkathon();
 
   const { fetchRegions } = useRegions();
   const { toastError, toastInfo, toastSuccess } = useToast();
@@ -53,8 +47,6 @@ export const TransferModal = ({
   const onTransfer = () => {
     if (regionMetadata.location === RegionLocation.CORETIME_CHAIN) {
       transferCoretimeRegion(regionMetadata.region);
-    } else if (regionMetadata.location === RegionLocation.CONTRACTS_CHAIN) {
-      transferXcRegion(regionMetadata.region);
     }
   };
 
@@ -70,34 +62,6 @@ export const TransferModal = ({
       coretimeApi,
       region,
       activeSigner,
-      activeAccount.address,
-      newOwner,
-      {
-        ready: () => toastInfo('Transaction was initiated.'),
-        inBlock: () => toastInfo(`In Block`),
-        finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess('Successfully transferred the region.');
-          onClose();
-          fetchRegions();
-        },
-        error: () => {
-          toastError(`Failed to transfer the region.`);
-          setWorking(false);
-        },
-      }
-    );
-  };
-
-  const transferXcRegion = async (region: Region) => {
-    if (!contractsApi || !activeAccount || !contract) {
-      return;
-    }
-
-    setWorking(true);
-    transferRegionOnContractsChain(
-      { contractsApi, xcRegionsContract: contract, marketContract: undefined },
-      region,
       activeAccount.address,
       newOwner,
       {
