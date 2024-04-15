@@ -43,7 +43,7 @@ const TaskDataProvider = ({ children }: Props) => {
   const {
     state: { api: coretimeApi, apiState: coretimeApiState },
   } = useCoretimeApi();
-  const { api: contractsApi } = useInkathon();
+  const { api } = useInkathon();
 
   const STORAGE_ITEM_KEY = 'tasks';
 
@@ -71,7 +71,7 @@ const TaskDataProvider = ({ children }: Props) => {
           { end: 0, owner: '', paid: null },
           0
         );
-        tasks[region.getEncodedRegionId(contractsApi).toString()] = taskId
+        tasks[region.getEncodedRegionId(api).toString()] = taskId
           ? parseHNString(taskId)
           : null;
       });

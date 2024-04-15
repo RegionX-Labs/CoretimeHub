@@ -3,12 +3,10 @@ import ExploreIcon from '@mui/icons-material/Explore';
 import HomeIcon from '@mui/icons-material/Home';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Box, useTheme } from '@mui/material';
-import { useInkathon } from '@scio-labs/use-inkathon';
 import { useRouter } from 'next/router';
 import React from 'react';
 
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { TransferIcon } from '@/icons';
 
 import styles from './index.module.scss';
@@ -48,16 +46,6 @@ export const Sidebar = () => {
   const {
     state: { apiState: coretimeApiState },
   } = useCoretimeApi();
-  const { isConnected, isConnecting, error, api } = useInkathon();
-
-  const contractsApiState =
-    api && isConnected
-      ? ApiState.READY
-      : isConnecting
-        ? ApiState.CONNECTING
-        : error
-          ? ApiState.ERROR
-          : ApiState.DISCONNECTED;
 
   const menu = {
     general: [
@@ -120,7 +108,6 @@ export const Sidebar = () => {
       <div className={styles.statusContainer}>
         <StatusIndicator state={relayApiState} label='Relay chain' />
         <StatusIndicator state={coretimeApiState} label='Coretime chain' />
-        <StatusIndicator state={contractsApiState} label='Contracts chain' />
       </div>
     </div>
   );

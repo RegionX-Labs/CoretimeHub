@@ -38,31 +38,18 @@ export const PurchaseModal = ({
 
     try {
       setWorking(true);
-      const rawRegionId = listing.region.getEncodedRegionId(api);
 
-      const id = api.createType('Id', {
-        U128: rawRegionId.toString(),
-      });
-
-      /*
-      await contractTx(
-        api,
-        activeAccount.address,
-        marketContract,
-        'purchase_region',
-        { value: listing.currentPrice },
-        [id, listing.region.getMetadataVersion()]
-      );
-      */
+      // TODO
 
       toastSuccess(`Successfully purchased region from sale.`);
       onClose();
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to purchase region from sale. Error: ${e.errorMessage === 'Error'
-          ? 'Please check your balance.'
-          : e.errorMessage
+        `Failed to purchase region from sale. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
         }`
       );
       setWorking(false);

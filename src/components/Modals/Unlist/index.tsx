@@ -12,7 +12,6 @@ import { useState } from 'react';
 
 import { RegionCard } from '@/components/Elements';
 
-import { CONTRACT_MARKET } from '@/contexts/apis/consts';
 import { useMarket } from '@/contexts/market';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
@@ -45,22 +44,7 @@ export const UnlistModal = ({
     try {
       setWorking(true);
 
-      const rawRegionId = region.getEncodedRegionId(api);
-
-      const id = api.createType('Id', {
-        U128: rawRegionId.toString(),
-      });
-
-      /*
-      await contractTx(
-        api,
-        activeAccount.address,
-        marketContract,
-        'unlist_region',
-        {},
-        [id]
-      );
-      */
+      // TODO
 
       toastSuccess(`Successfully unlisted region from sale.`);
       onClose();
@@ -69,9 +53,10 @@ export const UnlistModal = ({
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to unlist region from sale. Error: ${e.errorMessage === 'Error'
-          ? 'Please check your balance.'
-          : e.errorMessage
+        `Failed to unlist region from sale. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
         }`
       );
       setWorking(false);

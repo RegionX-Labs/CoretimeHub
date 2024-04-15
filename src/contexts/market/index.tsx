@@ -1,11 +1,4 @@
-import { BN } from '@polkadot/util';
-import {
-  contractQuery,
-  decodeOutput,
-  useContract,
-  useInkathon,
-} from '@scio-labs/use-inkathon';
-import { CoreMask, Region } from 'coretime-utils';
+import { useInkathon } from '@scio-labs/use-inkathon';
 import React, {
   createContext,
   useCallback,
@@ -14,13 +7,8 @@ import React, {
   useState,
 } from 'react';
 
-import { parseHNStringToString } from '@/utils/functions';
-
 import { Listing } from '@/models';
-
-import { CONTRACT_MARKET, CONTRACT_XC_REGIONS } from '../apis/consts';
 import { useCommon } from '../common';
-import { useRegions } from '../regions';
 
 interface MarketData {
   loading: boolean;

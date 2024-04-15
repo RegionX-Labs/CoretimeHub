@@ -96,13 +96,7 @@ const RegionDataProvider = ({ children }: Props) => {
       )
     );
     setLoading(false);
-  }, [
-    activeAccount,
-    context,
-    coretimeApi,
-    api,
-    fetchTasks,
-  ]);
+  }, [activeAccount, context, coretimeApi, api, fetchTasks]);
 
   useEffect(() => {
     fetchRegions();

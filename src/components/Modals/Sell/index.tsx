@@ -17,7 +17,7 @@ import { RecipientSelector } from '@/components/Elements/Selectors/RecipientSele
 
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import { CONTRACT_DECIMALS, LISTING_DEPOSIT, RegionMetadata } from '@/models';
+import { RegionMetadata } from '@/models';
 
 interface SellModalProps {
   open: boolean;
@@ -50,67 +50,37 @@ export const SellModal = ({
     await listRegion(regionMetadata.region);
   };
 
-  const approveXcRegion = async (region: Region) => {
+  const approveXcRegion = async (_region: Region) => {
     if (!api || !activeAccount) {
       return;
     }
 
     try {
       setWorking(true);
-      const rawRegionId = region.getEncodedRegionId(api);
-      const id = api.createType('Id', { U128: rawRegionId });
 
-      /*
-      await contractTx(
-        api,
-        activeAccount.address,
-        xcRegionsContract,
-        'PSP34::approve',
-        {},
-        [CONTRACT_MARKET, id, true]
-      );
-      */
+      // TODO
 
       toastSuccess(`Successfully approved region to the market.`);
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to approve the region. Error: ${e.errorMessage === 'Error' ? 'Please check your balance.' : e
+        `Failed to approve the region. Error: ${
+          e.errorMessage === 'Error' ? 'Please check your balance.' : e
         }`
       );
       setWorking(false);
     }
   };
 
-  const listRegion = async (region: Region) => {
+  const listRegion = async (_region: Region) => {
     if (!api || !activeAccount) {
       return;
     }
 
     try {
       setWorking(true);
-      const rawRegionId = region.getEncodedRegionId(api);
 
-      const id = api.createType('Id', {
-        U128: rawRegionId.toString(),
-      });
-      const regionDuration = region.getEnd() - region.getBegin();
-      const timeslicePrice = (
-        (Number(regionPrice) * Math.pow(10, CONTRACT_DECIMALS)) /
-        regionDuration /
-        region.coreOccupancy()
-      ).toFixed(0);
-
-      /*
-      await contractTx(
-        api,
-        activeAccount.address,
-        marketContract,
-        'list_region',
-        { value: LISTING_DEPOSIT },
-        [id, timeslicePrice, saleRecipient ? saleRecipient : null]
-      );
-      */
+      // TODO
 
       toastSuccess(`Successfully listed region on sale.`);
       onClose();
@@ -118,9 +88,10 @@ export const SellModal = ({
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to list the region. Error: ${e.errorMessage === 'Error'
-          ? 'Please check your balance.'
-          : e.errorMessage
+        `Failed to list the region. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
         }`
       );
       setWorking(false);

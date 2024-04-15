@@ -17,7 +17,7 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
         onChange={(e) => setChain(e.target.value)}
       >
         <MenuItem value='CoretimeChain'>Coretime Chain</MenuItem>
-        <MenuItem value='ContractsChain'>Contracts Chain</MenuItem>
+        <MenuItem value='RegionXChain'>RegionX Chain</MenuItem>
       </Select>
     </FormControl>
   );

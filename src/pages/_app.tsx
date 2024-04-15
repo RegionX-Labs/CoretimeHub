@@ -18,7 +18,7 @@ import {
   CoretimeApiContextProvider,
   RelayApiContextProvider,
 } from '@/contexts/apis';
-import { WS_CONTRACTS_CHAIN, WS_CORETIME_CHAIN } from '@/contexts/apis/consts';
+import { WS_CORETIME_CHAIN } from '@/contexts/apis/consts';
 import { ContextDataProvider } from '@/contexts/common';
 import { MarketProvider } from '@/contexts/market';
 import { RegionDataProvider } from '@/contexts/regions';

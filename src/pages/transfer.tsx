@@ -14,9 +14,7 @@ import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
 import theme from '@/utils/muiTheme';
-import {
-  transferRegionOnCoretimeChain,
-} from '@/utils/native/transfer';
+import { transferRegionOnCoretimeChain } from '@/utils/native/transfer';
 
 import {
   ChainSelector,
@@ -67,7 +65,7 @@ const TransferPage = () => {
       );
     } else {
       setFilteredRegions(
-        regions.filter((r) => r.location == RegionLocation.CONTRACTS_CHAIN)
+        regions.filter((r) => r.location == RegionLocation.REGIONX_CHAIN)
       );
     }
   };
@@ -81,9 +79,9 @@ const TransferPage = () => {
     if (originChain === destinationChain) {
       originChain === 'CoretimeChain'
         ? transferCoretimeRegion(selectedRegion.region)
-        : toastWarning('Currently not supported')
+        : toastWarning('Currently not supported');
     } else {
-      toastWarning('Currently not supported')
+      toastWarning('Currently not supported');
     }
   };
 
