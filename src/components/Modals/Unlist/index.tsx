@@ -36,7 +36,7 @@ export const UnlistModal = ({
 
   const [working, setWorking] = useState(false);
 
-  const unlistRegion = async (region: Region) => {
+  const unlistRegion = async (_region: Region) => {
     if (!api || !activeAccount) {
       return;
     }

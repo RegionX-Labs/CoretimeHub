@@ -4,10 +4,10 @@ import { BN } from '@polkadot/util';
 import { Sender, TxStatusHandlers } from '@/models';
 
 import {
-  RegionXChain,
   CoretimeChain,
-  CoretimeRegionFromRegionXPerspective,
   CoretimeRegionFromCoretimePerspective,
+  CoretimeRegionFromRegionXPerspective,
+  RegionXChain,
 } from './consts';
 import { versionedNonfungibleAssetWrap, versionedWrap } from './utils';
 

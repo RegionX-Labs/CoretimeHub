@@ -4,8 +4,8 @@ import { CoreMask, RegionId } from 'coretime-utils';
 import Decimal from 'decimal.js';
 
 import {
-  REGIONX_DECIMALS,
   CORETIME_DECIMALS,
+  REGIONX_DECIMALS,
   RELAY_CHAIN_BLOCK_TIME,
 } from '@/models';
 

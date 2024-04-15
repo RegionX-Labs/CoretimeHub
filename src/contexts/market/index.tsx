@@ -1,4 +1,3 @@
-import { useInkathon } from '@scio-labs/use-inkathon';
 import React, {
   createContext,
   useCallback,
@@ -8,7 +7,6 @@ import React, {
 } from 'react';
 
 import { Listing } from '@/models';
-import { useCommon } from '../common';
 
 interface MarketData {
   loading: boolean;
@@ -34,15 +32,13 @@ const MarketProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState(true);
   const [listedRegions, setListedRegions] = useState<Array<Listing>>([]);
 
-  const context = useCommon();
-
-  const { api } = useInkathon();
-
   const fetchMarket = useCallback(async () => {
+    // TODO
+
     setLoading(false);
     setListedRegions([]);
     return [];
-  }, [api, context]);
+  }, []);
 
   useEffect(() => {
     fetchMarket();
