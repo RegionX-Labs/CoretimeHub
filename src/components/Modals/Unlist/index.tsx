@@ -6,7 +6,7 @@ import {
   DialogContent,
   Stack,
 } from '@mui/material';
-import { contractTx, useContract, useInkathon } from '@scio-labs/use-inkathon';
+import { useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 import { useState } from 'react';
 
@@ -16,7 +16,6 @@ import { CONTRACT_MARKET } from '@/contexts/apis/consts';
 import { useMarket } from '@/contexts/market';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import MarketMetadata from '@/contracts/market.json';
 import { RegionMetadata } from '@/models';
 
 interface UnlistModalProps {
@@ -30,12 +29,7 @@ export const UnlistModal = ({
   onClose,
   regionMetadata,
 }: UnlistModalProps) => {
-  const { activeAccount, api: contractsApi } = useInkathon();
-
-  const { contract: marketContract } = useContract(
-    MarketMetadata,
-    CONTRACT_MARKET
-  );
+  const { activeAccount, api } = useInkathon();
 
   const { fetchRegions } = useRegions();
   const { fetchMarket } = useMarket();
@@ -44,26 +38,29 @@ export const UnlistModal = ({
   const [working, setWorking] = useState(false);
 
   const unlistRegion = async (region: Region) => {
-    if (!contractsApi || !activeAccount || !marketContract) {
+    if (!api || !activeAccount) {
       return;
     }
 
     try {
       setWorking(true);
-      const rawRegionId = region.getEncodedRegionId(contractsApi);
 
-      const id = contractsApi.createType('Id', {
+      const rawRegionId = region.getEncodedRegionId(api);
+
+      const id = api.createType('Id', {
         U128: rawRegionId.toString(),
       });
 
+      /*
       await contractTx(
-        contractsApi,
+        api,
         activeAccount.address,
         marketContract,
         'unlist_region',
         {},
         [id]
       );
+      */
 
       toastSuccess(`Successfully unlisted region from sale.`);
       onClose();
@@ -72,10 +69,9 @@ export const UnlistModal = ({
       setWorking(false);
     } catch (e: any) {
       toastError(
-        `Failed to unlist region from sale. Error: ${
-          e.errorMessage === 'Error'
-            ? 'Please check your balance.'
-            : e.errorMessage
+        `Failed to unlist region from sale. Error: ${e.errorMessage === 'Error'
+          ? 'Please check your balance.'
+          : e.errorMessage
         }`
       );
       setWorking(false);
