@@ -160,14 +160,14 @@ const Purchase = () => {
                 toastSuccess('Transaction successful');
                 fetchRegions();
               } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to partition the region`);
+                toastError(`Failed to purchase the region`);
               }
             });
           }
         }
       );
     } catch (e) {
-      toastError(`Failed to partition the region. ${e}`);
+      toastError(`Failed to purchase the region. ${e}`);
       setWorking(false);
     }
   };
@@ -213,11 +213,11 @@ const Purchase = () => {
       </Box>
       <Box>
         {loading ||
-        !currentPhase ||
-        !saleEnd ||
-        !currentBlockNumber ||
-        !progress ||
-        !saleEndTimestamp ? (
+          !currentPhase ||
+          !saleEnd ||
+          !currentBlockNumber ||
+          !progress ||
+          !saleEndTimestamp ? (
           <>
             <Typography variant='h5' align='center'>
               Connect your wallet
