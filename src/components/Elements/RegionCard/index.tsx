@@ -157,10 +157,6 @@ const RegionCardInner = ({
     setName('');
   };
 
-  const getTaskName = (taskId: number) => {
-    return tasks.find(({ id }) => id === taskId)?.name || '';
-  };
-
   const locationToLabel = (location: RegionLocation): string => {
     if (location === RegionLocation.REGIONX_CHAIN) {
       return 'RegionX Chain';
@@ -169,6 +165,17 @@ const RegionCardInner = ({
     } else {
       return 'Coretime Chain';
     }
+  };
+
+  const getTask = (taskId: number | null): string => {
+    const getTaskName = (taskId: number) => {
+      return tasks.find(({ id }) => id === taskId)?.name || '';
+    };
+
+    if (taskId !== null) {
+      return getTaskName(taskId) ? getTaskName(taskId) : `Parachain: ${taskId}`;
+    }
+    return 'Unassigned';
   };
 
   return (
@@ -253,7 +260,7 @@ const RegionCardInner = ({
       <Box sx={{ color: theme.palette.grey[200] }}>
         {taskId !== null ? (
           <Typography variant='subtitle2'>
-            {`Task: ${taskId ? getTaskName(taskId) : 'Unassigned'}`}
+            {`Task: ${getTask(taskId)}`}
           </Typography>
         ) : (
           <></>

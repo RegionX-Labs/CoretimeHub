@@ -62,15 +62,15 @@ export default function MyApp(props: MyAppProps) {
                 apiOptions={{ types: { Id } }}
               >
                 <ContextDataProvider>
-                  <RegionDataProvider>
-                    <MarketProvider>
-                      <SaleInfoProvider>
-                        <TaskDataProvider>
+                  <TaskDataProvider>
+                    <RegionDataProvider>
+                      <MarketProvider>
+                        <SaleInfoProvider>
                           {getLayout(<Component {...pageProps} />)}
-                        </TaskDataProvider>
-                      </SaleInfoProvider>
-                    </MarketProvider>
-                  </RegionDataProvider>
+                        </SaleInfoProvider>
+                      </MarketProvider>
+                    </RegionDataProvider>
+                  </TaskDataProvider>
                 </ContextDataProvider>
               </UseInkathonProvider>
             </RelayApiContextProvider>
