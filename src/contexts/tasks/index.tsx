@@ -1,5 +1,5 @@
 import { useInkathon } from '@scio-labs/use-inkathon';
-import { CoreMask, Region } from 'coretime-utils';
+import { CoreIndex, CoreMask, Region } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
@@ -9,19 +9,27 @@ import { ScheduleItem, TaskMetadata } from '@/models';
 import { useCoretimeApi } from '../apis';
 import { ApiState } from '../apis/types';
 
-type Tasks = Record<string, number | null>;
+type Task = number | null;
+type Tasks = Record<string, Task>;
 
 interface TasksData {
   tasks: Array<TaskMetadata>;
-  fetchTasks: () => Promise<Tasks>;
+  fetchWorkplan: () => Promise<Tasks>;
+  fetchRegionWorkload: (_core: CoreIndex, _mask: CoreMask) => Promise<Task>;
   loadTasksFromLocalStorage: () => void;
   addTask: (_task: TaskMetadata) => void;
 }
 
 const defaultTasksData: TasksData = {
   tasks: [],
-  fetchTasks: async (): Promise<Tasks> => {
+  fetchWorkplan: async (): Promise<Tasks> => {
     return {};
+  },
+  fetchRegionWorkload: async (
+    _core: CoreIndex,
+    _mask: CoreMask
+  ): Promise<Task> => {
+    return null;
   },
   loadTasksFromLocalStorage: () => {
     /** */
@@ -47,7 +55,8 @@ const TaskDataProvider = ({ children }: Props) => {
 
   const STORAGE_ITEM_KEY = 'tasks';
 
-  const fetchTasks = async (): Promise<Tasks> => {
+  // The tasks which will run on Polkadot cores in the future.
+  const fetchWorkplan = async (): Promise<Tasks> => {
     if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
     const workplan = await coretimeApi.query.broker.workplan.entries();
     const tasks: Record<string, number | null> = {};
@@ -76,7 +85,31 @@ const TaskDataProvider = ({ children }: Props) => {
           : null;
       });
     }
+
     return tasks;
+  };
+
+  // The tasks currently running on a Polkadot core.
+  const fetchRegionWorkload = async (
+    core: CoreIndex,
+    regionMask: CoreMask
+  ): Promise<Task> => {
+    if (!coretimeApi || coretimeApiState !== ApiState.READY) return null;
+    const workload = (
+      (
+        await coretimeApi.query.broker.workload(core)
+      ).toHuman() as ScheduleItem[]
+    )[0];
+    if (workload.assignment && workload.assignment.Task) {
+      const {
+        assignment: { Task: taskId },
+        mask,
+      } = workload;
+
+      // Make the workload is for the specific region.
+      return mask == regionMask.toRawHex() ? parseHNString(taskId) : null;
+    }
+    return 0;
   };
 
   const loadTasksFromLocalStorage = () => {
@@ -105,7 +138,13 @@ const TaskDataProvider = ({ children }: Props) => {
 
   return (
     <TaskDataContext.Provider
-      value={{ tasks, fetchTasks, loadTasksFromLocalStorage, addTask }}
+      value={{
+        tasks,
+        fetchWorkplan,
+        fetchRegionWorkload,
+        loadTasksFromLocalStorage,
+        addTask,
+      }}
     >
       {children}
     </TaskDataContext.Provider>

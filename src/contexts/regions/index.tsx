@@ -1,5 +1,5 @@
 import { useInkathon } from '@scio-labs/use-inkathon';
-import { Region, RegionId } from 'coretime-utils';
+import { CoreIndex, CoreMask, Region, RegionId } from 'coretime-utils';
 import React, {
   createContext,
   useCallback,
@@ -48,12 +48,20 @@ const RegionDataProvider = ({ children }: Props) => {
   } = useCoretimeApi();
   const { api, activeAccount } = useInkathon();
 
-  const { fetchTasks } = useTasks();
+  const { fetchWorkplan, fetchRegionWorkload } = useTasks();
 
   const context = useCommon();
 
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
   const [loading, setLoading] = useState(false);
+
+  const _getTaskFromWorkloadId = useCallback(
+    async (core: CoreIndex, mask: CoreMask): Promise<number | null> => {
+      const task = await fetchRegionWorkload(core, mask);
+      return task;
+    },
+    [fetchRegionWorkload]
+  );
 
   const fetchRegions = useCallback(async (): Promise<void> => {
     if (!activeAccount) {
@@ -62,19 +70,30 @@ const RegionDataProvider = ({ children }: Props) => {
     }
     setLoading(true);
 
-    const tasks = await fetchTasks();
+    const tasks = await fetchWorkplan();
 
     const brokerRegions = await NativeRegions.fetchRegions(coretimeApi);
 
     const _regions: Array<RegionMetadata> = [];
 
     for await (const region of [...brokerRegions]) {
-      const rawId = region.getEncodedRegionId(api);
+      // Only user owned non-expired regions.
+      if (
+        region.getOwner() !== activeAccount.address ||
+        region.consumed(context) > 1
+      )
+        continue;
+
+      const rawId = region.getEncodedRegionId(api).toString();
       const location = RegionLocation.CORETIME_CHAIN;
 
       const name =
         localStorage.getItem(`region-${rawId}`) ??
         `Region #${_regions.length + 1}`;
+
+      const task = tasks[rawId.toString()]
+        ? tasks[rawId.toString()]
+        : await _getTaskFromWorkloadId(region.getCore(), region.getMask());
 
       _regions.push(
         RegionMetadata.construct(
@@ -83,20 +102,21 @@ const RegionDataProvider = ({ children }: Props) => {
           region,
           name,
           location,
-          tasks[rawId.toString()]
+          task
         )
       );
     }
 
-    setRegions(
-      _regions.filter(
-        // Only user owned non-expired regions.
-        ({ region, consumed }) =>
-          region.getOwner() === activeAccount.address && consumed < 1
-      )
-    );
+    setRegions(_regions);
     setLoading(false);
-  }, [activeAccount, context, coretimeApi, api, fetchTasks]);
+  }, [
+    activeAccount,
+    context,
+    coretimeApi,
+    api,
+    fetchWorkplan,
+    _getTaskFromWorkloadId,
+  ]);
 
   useEffect(() => {
     fetchRegions();
