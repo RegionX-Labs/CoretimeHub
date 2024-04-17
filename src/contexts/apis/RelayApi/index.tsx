@@ -7,7 +7,8 @@ import { useToast } from '@/contexts/toast';
 import { ParaId } from '@/models';
 
 import { connect, disconnect, initialState, reducer } from '../common';
-import { WS_RELAY_CHAIN } from '../consts';
+import { WS_ROCOCO_RELAY_CHAIN, WS_KUSAMA_RELAY_CHAIN } from '../consts';
+import { useNetwork } from '@/contexts/network';
 
 const defaultValue = {
   state: initialState,
@@ -26,6 +27,7 @@ const RelayApiContextProvider = (props: any) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { toastError, toastSuccess } = useToast();
   const [paraIds, setParaIds] = useState<ParaId[]>([]);
+  const { network } = useNetwork();
 
   useEffect(() => {
     state.apiError && toastError(`Failed to connect to relay chain`);
@@ -36,7 +38,12 @@ const RelayApiContextProvider = (props: any) => {
       toastSuccess('Successfully connected to the relay chain');
   }, [state.apiState, toastSuccess]);
 
-  const connectRelay = () => connect(state, WS_RELAY_CHAIN, dispatch);
+  const connectRelay = () =>
+    connect(
+      state,
+      network === 'rococo' ? WS_ROCOCO_RELAY_CHAIN : WS_KUSAMA_RELAY_CHAIN,
+      dispatch
+    );
   const disconnectRelay = () => disconnect(state);
 
   useEffect(() => {
@@ -51,7 +58,7 @@ const RelayApiContextProvider = (props: any) => {
       setParaIds(paraIds);
     };
     fetchParaIds();
-  }, [state]);
+  }, [state, network]);
 
   return (
     <RelayApiContext.Provider

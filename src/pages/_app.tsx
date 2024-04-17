@@ -18,13 +18,14 @@ import {
   CoretimeApiContextProvider,
   RelayApiContextProvider,
 } from '@/contexts/apis';
-import { WS_CORETIME_CHAIN } from '@/contexts/apis/consts';
+import { WS_ROCOCO_CORETIME_CHAIN } from '@/contexts/apis/consts';
 import { ContextDataProvider } from '@/contexts/common';
 import { MarketProvider } from '@/contexts/market';
 import { RegionDataProvider } from '@/contexts/regions';
 import { SaleInfoProvider } from '@/contexts/sales';
 import { TaskDataProvider } from '@/contexts/tasks';
 import { ToastProvider } from '@/contexts/toast';
+import { NetworkDataProvider } from '@/contexts/network';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -49,32 +50,34 @@ export default function MyApp(props: MyAppProps) {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <ToastProvider>
-          <CoretimeApiContextProvider>
-            <RelayApiContextProvider>
-              <UseInkathonProvider
-                appName='CoreHub'
-                connectOnInit={false}
-                defaultChain={{
-                  network: '',
-                  name: '',
-                  rpcUrls: [WS_CORETIME_CHAIN],
-                }}
-                apiOptions={{ types: { Id } }}
-              >
-                <ContextDataProvider>
-                  <TaskDataProvider>
-                    <RegionDataProvider>
-                      <MarketProvider>
-                        <SaleInfoProvider>
-                          {getLayout(<Component {...pageProps} />)}
-                        </SaleInfoProvider>
-                      </MarketProvider>
-                    </RegionDataProvider>
-                  </TaskDataProvider>
-                </ContextDataProvider>
-              </UseInkathonProvider>
-            </RelayApiContextProvider>
-          </CoretimeApiContextProvider>
+          <NetworkDataProvider>
+            <CoretimeApiContextProvider>
+              <RelayApiContextProvider>
+                <UseInkathonProvider
+                  appName='CoreHub'
+                  connectOnInit={false}
+                  defaultChain={{
+                    network: '',
+                    name: '',
+                    rpcUrls: [WS_ROCOCO_CORETIME_CHAIN],
+                  }}
+                  apiOptions={{ types: { Id } }}
+                >
+                  <ContextDataProvider>
+                    <TaskDataProvider>
+                      <RegionDataProvider>
+                        <MarketProvider>
+                          <SaleInfoProvider>
+                            {getLayout(<Component {...pageProps} />)}
+                          </SaleInfoProvider>
+                        </MarketProvider>
+                      </RegionDataProvider>
+                    </TaskDataProvider>
+                  </ContextDataProvider>
+                </UseInkathonProvider>
+              </RelayApiContextProvider>
+            </CoretimeApiContextProvider>
+          </NetworkDataProvider>
         </ToastProvider>
       </ThemeProvider>
     </CacheProvider>

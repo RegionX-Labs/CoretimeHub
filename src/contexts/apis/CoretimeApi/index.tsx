@@ -4,7 +4,8 @@ import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
 
 import { connect, disconnect, initialState, reducer } from '../common';
-import { WS_CORETIME_CHAIN } from '../consts';
+import { WS_ROCOCO_CORETIME_CHAIN, WS_KUSAMA_CORETIME_CHAIN } from '../consts';
+import { useNetwork } from '@/contexts/network';
 
 const types = {
   CoreIndex: 'u32',
@@ -36,6 +37,7 @@ const CoretimeApiContext = React.createContext(defaultValue);
 
 const CoretimeApiContextProvider = (props: any) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const { network } = useNetwork();
   const { toastError, toastSuccess } = useToast();
 
   useEffect(() => {
@@ -48,7 +50,14 @@ const CoretimeApiContextProvider = (props: any) => {
   }, [state.apiState, toastSuccess]);
 
   const connectCoretime = () =>
-    connect(state, WS_CORETIME_CHAIN, dispatch, types);
+    connect(
+      state,
+      network === 'rococo'
+        ? WS_ROCOCO_CORETIME_CHAIN
+        : WS_KUSAMA_CORETIME_CHAIN,
+      dispatch,
+      types
+    );
 
   const disconnectCoretime = () => disconnect(state);
 
