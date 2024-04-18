@@ -31,7 +31,7 @@ export const SaleInfoGrid = ({
   const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const {
-    state: { api, apiState },
+    state: { api, apiState, symbol },
   } = useCoretimeApi();
 
   const nextPhase = (): SalePhase => {
@@ -79,12 +79,10 @@ export const SaleInfoGrid = ({
       </Box>
       <Box className={styles.gridItem}>
         <Typography variant='h6'>
-          {`Current price: ${formatBalance(currentPrice.toString(), false)}`}{' '}
-          ROC
+          {`Current price: ${formatBalance(currentPrice.toString(), false)} ${symbol}`}
         </Typography>
         <Typography>
-          {`Floor price: ${formatBalance(saleInfo.price.toString(), false)}`}{' '}
-          ROC
+          {`Floor price: ${formatBalance(saleInfo.price.toString(), false)} ${symbol}`}
         </Typography>
       </Box>
       <Box>

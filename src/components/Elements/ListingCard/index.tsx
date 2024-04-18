@@ -86,7 +86,7 @@ const ListingCardInner = ({
   const [endTimestamp, setEndTimestamp] = useState(0);
 
   const {
-    state: { api, apiState },
+    state: { api, apiState, symbol },
   } = useRelayApi();
   const { timeslicePeriod } = useCommon();
 
@@ -196,7 +196,7 @@ const ListingCardInner = ({
         >
           <Typography fontSize={'1rem'}>Price/timeslice:</Typography>
           <Typography variant='h2'>
-            {formatBalance(listing.timeslicePrice.toString(), true)} ROC
+            {`${formatBalance(listing.timeslicePrice.toString(),true)} ${symbol}`}
           </Typography>
         </Box>
         <Box
@@ -206,7 +206,7 @@ const ListingCardInner = ({
         >
           <Typography fontSize={'1rem'}>Total:</Typography>
           <Typography variant='h2'>
-            {formatBalance(listing.currentPrice.toString(), true)} ROC
+            {`${formatBalance(listing.currentPrice.toString(), true)} ${symbol}`}
           </Typography>
         </Box>
       </Box>

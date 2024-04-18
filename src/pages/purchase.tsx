@@ -55,7 +55,7 @@ const Purchase = () => {
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const { saleInfo, config, loading } = useSaleInfo();
   const {
-    state: { api, apiState },
+    state: { api, apiState, symbol },
   } = useCoretimeApi();
 
   const { fetchRegions } = useRegions();
@@ -71,7 +71,7 @@ const Purchase = () => {
 
       if (balance == 0) {
         toastWarning(
-          'The selected account does not have any ROC tokens on the Coretime chain.'
+          `The selected account does not have any ${symbol} tokens on the Coretime chain.`
         );
       }
     },
@@ -208,7 +208,7 @@ const Purchase = () => {
           </Typography>
         </Box>
         <Typography variant='h6' sx={{ color: theme.palette.text.primary }}>
-          {`Your balance: ${formatBalance(balance.toString(), false)} ROC`}
+          {`Your balance: ${formatBalance(balance.toString(), false)} ${symbol}`}
         </Typography>
       </Box>
       <Box>
