@@ -17,7 +17,7 @@ const RelaySelect = () => {
   };
 
   return (
-    <FormControl sx={{ m: 2, minWidth: 200 }} fullWidth>
+    <FormControl sx={{ m: 2, minWidth: 150 }} fullWidth>
       <InputLabel>Network</InputLabel>
       <Select
         id='network-select'
