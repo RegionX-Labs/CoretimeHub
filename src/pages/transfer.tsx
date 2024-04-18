@@ -14,7 +14,10 @@ import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
 import theme from '@/utils/muiTheme';
-import { transferRegionOnCoretimeChain } from '@/utils/native/transfer';
+import {
+  transferNativeToken,
+  transferRegionOnCoretimeChain,
+} from '@/utils/native/transfer';
 
 import {
   ChainSelector,
@@ -26,7 +29,9 @@ import {
 import { useCoretimeApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import { RegionLocation, RegionMetadata } from '@/models';
+import { Asset, RegionLocation, RegionMetadata } from '@/models';
+import Balance from '@/components/Elements/Balance';
+import AssetSelector from '@/components/Elements/Selectors/AssetSelector';
 
 const TransferPage = () => {
   const { activeAccount, activeSigner } = useInkathon();
@@ -51,6 +56,19 @@ const TransferPage = () => {
     null
   );
 
+  const [asset, setAsset] = useState<Asset>('token');
+
+  const defaultHandlers = {
+    ready: () => toastInfo('Transaction was initiated.'),
+    inBlock: () => toastInfo(`In Block`),
+    finalized: () => setWorking(false),
+    success: () => toastSuccess('Successfully transferred the region.'),
+    error: () => {
+      toastError(`Failed to transfer the region.`);
+      setWorking(false);
+    },
+  };
+
   useEffect(() => {
     setFilteredRegions(
       regions.filter((r) => r.location != RegionLocation.MARKET)
@@ -71,6 +89,33 @@ const TransferPage = () => {
   };
 
   const handleTransfer = async () => {
+    if (asset == 'region') {
+      handleRegionTransfer();
+    } else if (asset == 'token') {
+      handleTokenTransfer();
+    }
+  };
+
+  const handleTokenTransfer = async () => {
+    if (!activeAccount || !activeSigner) return;
+    if (!newOwner) {
+      toastError('Recipient must be selected');
+      return;
+    }
+    if (originChain === destinationChain && originChain === 'CoretimeChain') {
+      coretimeApi &&
+        transferNativeToken(
+          coretimeApi,
+          activeSigner,
+          activeAccount.address,
+          newOwner,
+          '500',
+          defaultHandlers
+        );
+    }
+  };
+
+  const handleRegionTransfer = async () => {
     if (!selectedRegion) {
       toastError('Select a region');
       return;
@@ -78,7 +123,7 @@ const TransferPage = () => {
 
     if (originChain === destinationChain) {
       originChain === 'CoretimeChain'
-        ? transferCoretimeRegion(selectedRegion.region)
+        ? await transferCoretimeRegion(selectedRegion.region)
         : toastWarning('Currently not supported');
     } else {
       toastWarning('Currently not supported');
@@ -99,36 +144,33 @@ const TransferPage = () => {
       activeSigner,
       activeAccount.address,
       newOwner ? newOwner : activeAccount.address,
-      {
-        ready: () => toastInfo('Transaction was initiated.'),
-        inBlock: () => toastInfo(`In Block`),
-        finalized: () => setWorking(false),
-        success: () => toastSuccess('Successfully transferred the region.'),
-        error: () => {
-          toastError(`Failed to transfer the region.`);
-          setWorking(false);
-        },
-      }
+      defaultHandlers
     );
   };
 
   return (
     <Box>
-      <Box>
-        <Typography
-          variant='subtitle2'
-          sx={{ color: theme.palette.text.secondary }}
-        >
-          Cross-chain transfer regions
-        </Typography>
-        <Typography
-          variant='subtitle1'
-          sx={{ color: theme.palette.text.primary }}
-        >
-          Cross-Chain Transfer
-        </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Box>
+          <Typography
+            variant='subtitle2'
+            sx={{ color: theme.palette.text.secondary }}
+          >
+            Cross-chain transfer regions
+          </Typography>
+          <Typography
+            variant='subtitle1'
+            sx={{ color: theme.palette.text.primary }}
+          >
+            Cross-Chain Transfer
+          </Typography>
+        </Box>
+        <Balance />
       </Box>
       <Box width='60%' margin='2em auto'>
+        <Stack margin='1em 0' direction='column' gap={1}>
+          <AssetSelector asset={asset} setAsset={setAsset} />
+        </Stack>
         <Stack margin='1em 0' direction='column' gap={1}>
           <Typography>Origin chain:</Typography>
           <ChainSelector chain={originChain} setChain={handleOriginChange} />

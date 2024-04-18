@@ -16,6 +16,8 @@ export type ParaId = number;
 
 export type BlockNumber = number;
 
+export type Asset = 'token' | 'region';
+
 export type Sender = {
   address: string;
   signer: Signer;

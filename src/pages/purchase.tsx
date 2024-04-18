@@ -1,18 +1,13 @@
 import { LoadingButton } from '@mui/lab';
 import { Box, Button, Typography, useTheme } from '@mui/material';
 import { ApiPromise } from '@polkadot/api';
-import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { useInkathon } from '@scio-labs/use-inkathon';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
-import {
-  formatBalance,
-  getBlockTimestamp,
-  parseHNString,
-} from '@/utils/functions';
+import { getBlockTimestamp, parseHNString } from '@/utils/functions';
 
 import { Progress, SaleInfoGrid, Section } from '@/components';
 
@@ -30,12 +25,12 @@ import {
   getSaleProgress,
   getSaleStartInBlocks,
 } from '../utils/sale/utils';
+import Balance from '@/components/Elements/Balance';
 
 const Purchase = () => {
   const theme = useTheme();
 
   const [working, setWorking] = useState(false);
-  const [balance, setBalance] = useState<number>(0);
   const [currentPhase, setCurrentPhase] = useState<SalePhase | null>(null);
   const [currentPrice, setCurrentPrice] = useState(0);
   const [saleEnd, setSaleEnd] = useState<number | null>(null);
@@ -50,7 +45,7 @@ const Purchase = () => {
   const timeAgo = new TimeAgo('en-US');
 
   const { activeSigner, activeAccount } = useInkathon();
-  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast();
+  const { toastError, toastSuccess, toastInfo } = useToast();
 
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const { saleInfo, config, loading } = useSaleInfo();
@@ -59,24 +54,6 @@ const Purchase = () => {
   } = useCoretimeApi();
 
   const { fetchRegions } = useRegions();
-
-  const fetchBalance = useCallback(
-    async (api: ApiPromise, activeAccount: InjectedAccount) => {
-      const account = (
-        await api.query.system.account(activeAccount.address)
-      ).toHuman() as any;
-
-      const balance = parseHNString(account.data.free.toString());
-      setBalance(balance);
-
-      if (balance == 0) {
-        toastWarning(
-          'The selected account does not have any ROC tokens on the Coretime chain.'
-        );
-      }
-    },
-    [toastWarning]
-  );
 
   const fetchCurrentPhase = useCallback(
     async (api: ApiPromise) => {
@@ -179,12 +156,6 @@ const Purchase = () => {
     fetchCurreentPrice(api);
   }, [api, apiState, fetchCurreentPrice, fetchCurrentPhase]);
 
-  useEffect(() => {
-    if (!api || apiState !== ApiState.READY || !activeAccount) return;
-
-    fetchBalance(api, activeAccount);
-  }, [api, apiState, activeAccount, fetchBalance]);
-
   return (
     <Box>
       <Box
@@ -207,9 +178,7 @@ const Purchase = () => {
             Purchase a core
           </Typography>
         </Box>
-        <Typography variant='h6' sx={{ color: theme.palette.text.primary }}>
-          {`Your balance: ${formatBalance(balance.toString(), false)} ROC`}
-        </Typography>
+        <Balance />
       </Box>
       <Box>
         {loading ||

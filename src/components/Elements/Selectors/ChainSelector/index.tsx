@@ -16,6 +16,7 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
         label='Origin'
         onChange={(e) => setChain(e.target.value)}
       >
+        <MenuItem value='RelayChain'>Relay Chain</MenuItem>
         <MenuItem value='CoretimeChain'>Coretime Chain</MenuItem>
         <MenuItem value='RegionXChain'>RegionX Chain</MenuItem>
       </Select>
