@@ -1,19 +1,15 @@
 .layout {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: 100%;
   min-height: 100vh;
   max-height: 100vh;
-  padding: 2rem 3rem;
 }
 
 .content {
   display: flex;
   flex-grow: 1;
-}
-
-.sidebar {
-  width: 12rem;
+  flex-direction: column;
 }
 
 .main {

@@ -15,6 +15,7 @@ let theme = createTheme({
       default: '#f6f7fa',
     },
     primary: {
+      contrastText: '#ecedef',
       main: '#3868a9',
     },
     success: {
@@ -25,8 +26,8 @@ let theme = createTheme({
       200: '#8c8c8c',
     },
     text: {
-      primary: '#000',
-      secondary: '#7e8591',
+      primary: '#7e8591',
+      secondary: '#3868a9',
     },
     common: {
       white: '#fff',
@@ -34,6 +35,7 @@ let theme = createTheme({
     warning: {
       main: '#A93868',
     },
+    divider: '#efefef',
   },
   typography: {
     subtitle1: {
