@@ -14,7 +14,6 @@ import * as NativeRegions from './native';
 import { useCoretimeApi } from '../apis';
 import { useCommon } from '../common';
 import { useTasks } from '../tasks';
-import { useNetwork } from '../network';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
@@ -52,7 +51,6 @@ const RegionDataProvider = ({ children }: Props) => {
   const { fetchWorkplan, fetchRegionWorkload } = useTasks();
 
   const context = useCommon();
-  const { network } = useNetwork();
 
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
   const [loading, setLoading] = useState(false);
@@ -70,6 +68,7 @@ const RegionDataProvider = ({ children }: Props) => {
       setRegions([]);
       return;
     }
+    console.log('hey');
     setLoading(true);
 
     const tasks = await fetchWorkplan();
@@ -109,6 +108,8 @@ const RegionDataProvider = ({ children }: Props) => {
       );
     }
 
+    console.log(_regions);
+
     setRegions(_regions);
     setLoading(false);
   }, [
@@ -116,7 +117,6 @@ const RegionDataProvider = ({ children }: Props) => {
     context,
     coretimeApi,
     api,
-    network,
     fetchWorkplan,
     _getTaskFromWorkloadId,
   ]);

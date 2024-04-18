@@ -1,18 +1,23 @@
-import { useNetwork } from '@/contexts/network';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { useRouter } from 'next/router';
 
 const RelaySelect = () => {
-  const { network, setNetwork } = useNetwork();
+  const router = useRouter();
+  const { network } = router.query;
+
   const handleChange = (e: any) => {
-    setNetwork(e.target.value);
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, network: e.target.value }
+    }, undefined, { shallow: false });
   };
 
   return (
     <FormControl sx={{ m: 2, minWidth: 200 }} fullWidth>
-      <InputLabel id='demo-simple-select-label'>Network</InputLabel>
+      <InputLabel>Network</InputLabel>
       <Select
         id='network-select'
-        value={network}
+        value={network ? network : "rococo"}
         label='Relay chain'
         onChange={handleChange}
       >

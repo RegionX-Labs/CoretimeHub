@@ -16,13 +16,6 @@ export type ParaId = number;
 
 export type BlockNumber = number;
 
-export type Network = 'rococo' | 'kusama';
-
-export type NetworkContext = {
-  network: string;
-  setNetwork: (_n: Network) => void;
-};
-
 export type Sender = {
   address: string;
   signer: Signer;

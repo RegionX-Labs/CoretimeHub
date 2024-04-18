@@ -5,7 +5,7 @@ import { useToast } from '@/contexts/toast';
 
 import { connect, disconnect, initialState, reducer } from '../common';
 import { WS_ROCOCO_CORETIME_CHAIN, WS_KUSAMA_CORETIME_CHAIN } from '../consts';
-import { useNetwork } from '@/contexts/network';
+import { useRouter } from 'next/router';
 
 const types = {
   CoreIndex: 'u32',
@@ -37,8 +37,10 @@ const CoretimeApiContext = React.createContext(defaultValue);
 
 const CoretimeApiContextProvider = (props: any) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { network } = useNetwork();
   const { toastError, toastSuccess } = useToast();
+
+  const router = useRouter();
+  const { network } = router.query;
 
   useEffect(() => {
     state.apiError && toastError(`Failed to connect to Coretime chain`);
@@ -49,12 +51,22 @@ const CoretimeApiContextProvider = (props: any) => {
       toastSuccess('Successfully connected to the Coretime chain');
   }, [state.apiState, toastSuccess]);
 
+  const getUrl = (network: any): string => {
+    if (!network || network == "rococo") {
+      return WS_ROCOCO_CORETIME_CHAIN;
+    } else if (network == "kusama") {
+      return WS_KUSAMA_CORETIME_CHAIN;
+    } else {
+      console.error(`Network: ${network} not recognized`);
+      // Default to rococo.
+      return WS_ROCOCO_CORETIME_CHAIN;
+    }
+  }
+
   const connectCoretime = () =>
     connect(
       state,
-      network === 'rococo'
-        ? WS_ROCOCO_CORETIME_CHAIN
-        : WS_KUSAMA_CORETIME_CHAIN,
+      getUrl(network),
       dispatch,
       types
     );
