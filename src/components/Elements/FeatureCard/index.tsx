@@ -26,7 +26,7 @@ export const FeatureCard = ({
   enabled,
   href,
 }: FeatureCardProps) => {
-  const { push } = useRouter();
+  const { push, query } = useRouter();
 
   return (
     <Card className={styles.card}>
@@ -38,7 +38,7 @@ export const FeatureCard = ({
       </Typography>
       <CardActions>
         <Button
-          onClick={() => enabled && push(href)}
+          onClick={() => enabled && push({ pathname: href, query })}
           size='small'
           variant='text'
           disabled={!enabled}

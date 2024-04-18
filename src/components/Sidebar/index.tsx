@@ -21,7 +21,7 @@ interface MenuItemProps {
 }
 
 const MenuItem = ({ label, enabled, route, icon }: MenuItemProps) => {
-  const { pathname, push } = useRouter();
+  const { pathname, push, query } = useRouter();
   const isActive = pathname === route;
 
   return (
@@ -29,7 +29,7 @@ const MenuItem = ({ label, enabled, route, icon }: MenuItemProps) => {
       className={`${styles.menuItem} ${
         isActive ? styles.active : styles.inactive
       } ${!enabled ? styles.disabled : ''}`}
-      onClick={() => enabled && route && push(route)}
+      onClick={() => enabled && route && push({ pathname: route, query })}
     >
       {{
         ...icon,

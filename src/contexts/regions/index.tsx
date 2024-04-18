@@ -107,8 +107,6 @@ const RegionDataProvider = ({ children }: Props) => {
       );
     }
 
-    console.log(_regions);
-
     setRegions(_regions);
     setLoading(false);
   }, [

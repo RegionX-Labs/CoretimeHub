@@ -66,10 +66,15 @@ const SaleInfoProvider = ({ children }: Props) => {
 
   const fetchSaleInfo = useCallback(async () => {
     setLoading(true);
-    if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
+    if (
+      !coretimeApi ||
+      coretimeApiState !== ApiState.READY ||
+      !coretimeApi.query.broker
+    )
+      return {};
 
     const saleInfo: any = (await coretimeApi.query.broker.saleInfo()).toHuman();
-    if (Object.keys(saleInfo).length) {
+    if (saleInfo && Object.keys(saleInfo).length) {
       setSaleInfo({
         coresOffered: parseHNString(saleInfo.coresOffered.toString()),
         coresSold: parseHNString(saleInfo.coresSold.toString()),

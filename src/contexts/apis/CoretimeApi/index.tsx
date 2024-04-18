@@ -25,9 +25,6 @@ const types = {
 
 const defaultValue = {
   state: { ...initialState },
-  connectCoretime: (): void => {
-    /** */
-  },
   disconnectCoretime: (): void => {
     /** */
   },
@@ -63,15 +60,16 @@ const CoretimeApiContextProvider = (props: any) => {
     }
   };
 
-  const connectCoretime = () =>
-    connect(state, getUrl(network), dispatch, types);
-
   const disconnectCoretime = () => disconnect(state);
 
+  useEffect(() => {
+    if (!network || state.socket == getUrl(network)) return;
+    const updateNetwork = network != '' && state.socket != getUrl(network);
+    connect(state, getUrl(network), dispatch, updateNetwork, types);
+  }, [network]);
+
   return (
-    <CoretimeApiContext.Provider
-      value={{ state, connectCoretime, disconnectCoretime }}
-    >
+    <CoretimeApiContext.Provider value={{ state, disconnectCoretime }}>
       {props.children}
     </CoretimeApiContext.Provider>
   );
