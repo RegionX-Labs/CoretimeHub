@@ -11,7 +11,7 @@ import { TransferIcon } from '@/icons';
 
 import styles from './index.module.scss';
 import { StatusIndicator } from '../Elements';
-import RelaySelect from '../Elements/NetworkSelect';
+import NetworkSelect from '../Elements/NetworkSelect';
 
 interface MenuItemProps {
   label: string;
@@ -110,8 +110,8 @@ export const Sidebar = () => {
         <StatusIndicator state={relayApiState} label='Relay chain' />
         <StatusIndicator state={coretimeApiState} label='Coretime chain' />
       </div>
-      <div>
-        <RelaySelect />
+      <div className={styles.networkSelector}>
+        <NetworkSelect />
       </div>
     </div>
   );

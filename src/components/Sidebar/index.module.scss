@@ -34,7 +34,16 @@
 
 .statusContainer {
   position: fixed;
-  bottom: 2rem;
+  bottom: 8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.networkSelector {
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
