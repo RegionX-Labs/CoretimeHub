@@ -68,7 +68,6 @@ const RegionDataProvider = ({ children }: Props) => {
       setRegions([]);
       return;
     }
-    console.log('hey');
     setLoading(true);
 
     const tasks = await fetchWorkplan();
