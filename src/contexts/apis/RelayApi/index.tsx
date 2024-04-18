@@ -36,12 +36,7 @@ const RelayApiContextProvider = (props: any) => {
       toastSuccess('Successfully connected to the relay chain');
   }, [state.apiState, toastSuccess]);
 
-  const connectRelay = () =>
-    connect(
-      state,
-      WS_ROCOCO_RELAY_CHAIN,
-      dispatch
-    );
+  const connectRelay = () => connect(state, WS_ROCOCO_RELAY_CHAIN, dispatch);
   const disconnectRelay = () => disconnect(state);
 
   useEffect(() => {

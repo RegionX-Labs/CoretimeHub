@@ -18,7 +18,10 @@ import {
   CoretimeApiContextProvider,
   RelayApiContextProvider,
 } from '@/contexts/apis';
-import { WS_KUSAMA_CORETIME_CHAIN, WS_ROCOCO_CORETIME_CHAIN } from '@/contexts/apis/consts';
+import {
+  WS_KUSAMA_CORETIME_CHAIN,
+  WS_ROCOCO_CORETIME_CHAIN,
+} from '@/contexts/apis/consts';
 import { ContextDataProvider } from '@/contexts/common';
 import { MarketProvider } from '@/contexts/market';
 import { RegionDataProvider } from '@/contexts/regions';
@@ -45,16 +48,16 @@ export default function MyApp(props: MyAppProps) {
   const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>);
 
   const getUrl = (network: any): string => {
-    if (!network || network === "rococo") {
+    if (!network || network === 'rococo') {
       return WS_ROCOCO_CORETIME_CHAIN;
-    } else if (network === "kusama") {
+    } else if (network === 'kusama') {
       return WS_KUSAMA_CORETIME_CHAIN;
     } else {
       console.error(`Network: ${network} not recognized`);
       // default to rococo.
       return WS_ROCOCO_CORETIME_CHAIN;
     }
-  }
+  };
 
   return (
     <CacheProvider value={emotionCache}>

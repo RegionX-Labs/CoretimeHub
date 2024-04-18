@@ -52,24 +52,19 @@ const CoretimeApiContextProvider = (props: any) => {
   }, [state.apiState, toastSuccess]);
 
   const getUrl = (network: any): string => {
-    if (!network || network == "rococo") {
+    if (!network || network == 'rococo') {
       return WS_ROCOCO_CORETIME_CHAIN;
-    } else if (network == "kusama") {
+    } else if (network == 'kusama') {
       return WS_KUSAMA_CORETIME_CHAIN;
     } else {
       console.error(`Network: ${network} not recognized`);
       // Default to rococo.
       return WS_ROCOCO_CORETIME_CHAIN;
     }
-  }
+  };
 
   const connectCoretime = () =>
-    connect(
-      state,
-      getUrl(network),
-      dispatch,
-      types
-    );
+    connect(state, getUrl(network), dispatch, types);
 
   const disconnectCoretime = () => disconnect(state);
 

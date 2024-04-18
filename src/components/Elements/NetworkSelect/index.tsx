@@ -6,10 +6,14 @@ const RelaySelect = () => {
   const { network } = router.query;
 
   const handleChange = (e: any) => {
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, network: e.target.value }
-    }, undefined, { shallow: false });
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, network: e.target.value },
+      },
+      undefined,
+      { shallow: false }
+    );
   };
 
   return (
@@ -17,7 +21,7 @@ const RelaySelect = () => {
       <InputLabel>Network</InputLabel>
       <Select
         id='network-select'
-        value={network ? network : "rococo"}
+        value={network ? network : 'rococo'}
         label='Relay chain'
         onChange={handleChange}
       >
