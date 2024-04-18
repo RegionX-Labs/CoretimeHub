@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useReducer, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
@@ -7,8 +8,7 @@ import { useToast } from '@/contexts/toast';
 import { ParaId } from '@/models';
 
 import { connect, disconnect, initialState, reducer } from '../common';
-import { WS_ROCOCO_RELAY_CHAIN, WS_KUSAMA_RELAY_CHAIN } from '../consts';
-import { useRouter } from 'next/router';
+import { WS_KUSAMA_RELAY_CHAIN, WS_ROCOCO_RELAY_CHAIN } from '../consts';
 
 const defaultValue = {
   state: initialState,
@@ -45,6 +45,7 @@ const RelayApiContextProvider = (props: any) => {
     } else if (network == 'kusama') {
       return WS_KUSAMA_RELAY_CHAIN;
     } else {
+      /* eslint-disable no-console */
       console.error(`Network: ${network} not recognized`);
       // Default to rococo.
       return WS_ROCOCO_RELAY_CHAIN;
@@ -55,7 +56,7 @@ const RelayApiContextProvider = (props: any) => {
     if (!network || state.socket == getUrl(network)) return;
     const updateNetwork = network != '' && state.socket != getUrl(network);
     connect(state, getUrl(network), dispatch, updateNetwork);
-  }, [network]);
+  }, [network, state]);
 
   useEffect(() => {
     const { api, apiState } = state;

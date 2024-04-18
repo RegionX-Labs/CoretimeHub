@@ -1,11 +1,11 @@
+import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useReducer } from 'react';
 
 import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
 
 import { connect, disconnect, initialState, reducer } from '../common';
-import { WS_ROCOCO_CORETIME_CHAIN, WS_KUSAMA_CORETIME_CHAIN } from '../consts';
-import { useRouter } from 'next/router';
+import { WS_KUSAMA_CORETIME_CHAIN, WS_ROCOCO_CORETIME_CHAIN } from '../consts';
 
 const types = {
   CoreIndex: 'u32',
@@ -54,6 +54,7 @@ const CoretimeApiContextProvider = (props: any) => {
     } else if (network == 'kusama') {
       return WS_KUSAMA_CORETIME_CHAIN;
     } else {
+      /* eslint-disable no-console */
       console.error(`Network: ${network} not recognized`);
       // Default to rococo.
       return WS_ROCOCO_CORETIME_CHAIN;
@@ -66,7 +67,7 @@ const CoretimeApiContextProvider = (props: any) => {
     if (!network || state.socket == getUrl(network)) return;
     const updateNetwork = network != '' && state.socket != getUrl(network);
     connect(state, getUrl(network), dispatch, updateNetwork, types);
-  }, [network]);
+  }, [network, state]);
 
   return (
     <CoretimeApiContext.Provider value={{ state, disconnectCoretime }}>

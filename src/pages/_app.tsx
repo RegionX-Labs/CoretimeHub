@@ -6,6 +6,7 @@ import { Id } from 'coretime-utils';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import * as React from 'react';
 import '../../styles/global.scss';
 
@@ -28,7 +29,6 @@ import { RegionDataProvider } from '@/contexts/regions';
 import { SaleInfoProvider } from '@/contexts/sales';
 import { TaskDataProvider } from '@/contexts/tasks';
 import { ToastProvider } from '@/contexts/toast';
-import { useRouter } from 'next/router';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -53,6 +53,7 @@ export default function MyApp(props: MyAppProps) {
     } else if (network === 'kusama') {
       return WS_KUSAMA_CORETIME_CHAIN;
     } else {
+      /* eslint-disable no-console */
       console.error(`Network: ${network} not recognized`);
       // default to rococo.
       return WS_ROCOCO_CORETIME_CHAIN;
