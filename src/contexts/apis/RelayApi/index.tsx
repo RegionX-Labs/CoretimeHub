@@ -53,7 +53,7 @@ const RelayApiContextProvider = (props: any) => {
   };
 
   useEffect(() => {
-    if (!network || state.socket == getUrl(network)) return;
+    if (state.socket == getUrl(network)) return;
     const updateNetwork = network != '' && state.socket != getUrl(network);
     connect(state, getUrl(network), dispatch, updateNetwork);
   }, [network, state]);

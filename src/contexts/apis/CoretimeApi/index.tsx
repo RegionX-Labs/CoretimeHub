@@ -64,7 +64,7 @@ const CoretimeApiContextProvider = (props: any) => {
   const disconnectCoretime = () => disconnect(state);
 
   useEffect(() => {
-    if (!network || state.socket == getUrl(network)) return;
+    if (state.socket == getUrl(network)) return;
     const updateNetwork = network != '' && state.socket != getUrl(network);
     connect(state, getUrl(network), dispatch, updateNetwork, types);
   }, [network, state]);
