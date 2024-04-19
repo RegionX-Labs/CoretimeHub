@@ -45,12 +45,8 @@ export const AmountInput = ({
   return (
     <>
       <Stack alignItems='center' direction='row' gap={1}>
-        {title &&
-          <Typography variant='h6'>{title}</Typography>
-        }
-        {caption &&
-          <Typography>{caption}</Typography>
-        }
+        {title && <Typography variant='h6'>{title}</Typography>}
+        {caption && <Typography>{caption}</Typography>}
       </Stack>
       <TextField
         value={`${amount} ${currency}`}

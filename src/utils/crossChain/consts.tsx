@@ -9,6 +9,15 @@ export const CoretimeChain = {
   },
 };
 
+export const CoretimeChainFromRelayPerspective = {
+  parents: 0,
+  interior: {
+    X1: {
+      Parachain: CORETIME_PARA_ID,
+    },
+  },
+};
+
 export const RegionXChain = {
   parents: 1,
   interior: {
@@ -32,4 +41,19 @@ export const CoretimeRegionFromRegionXPerspective = {
   interior: {
     X2: [{ Parachain: CORETIME_PARA_ID }, { PalletInstance: BROKER_PALLET_ID }],
   },
+};
+
+export const RelayChainFromParachainPerspective = {
+  parents: 1,
+  interior: 'Here',
+};
+
+export const RcTokenFromParachainPerspective = {
+  parents: 1,
+  interior: 'Here',
+};
+
+export const RcTokenFromRelayPerspective = {
+  parents: 0,
+  interior: 'Here',
 };

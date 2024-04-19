@@ -30,11 +30,21 @@ import {
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import { Asset, CORETIME_DECIMALS, RegionLocation, RegionMetadata } from '@/models';
+import {
+  Asset,
+  CORETIME_DECIMALS,
+  RegionLocation,
+  RegionMetadata,
+} from '@/models';
 import Balance from '@/components/Elements/Balance';
 import AssetSelector from '@/components/Elements/Selectors/AssetSelector';
 import { ApiState } from '@/contexts/apis/types';
 import { fetchBalance } from '@/utils/functions';
+import {
+  transferTokensFromCoretimeToRelay,
+  transferTokensFromRelayToCoretime,
+} from '@/utils/crossChain/transfer';
+import { Keyring } from '@polkadot/api';
 
 const TransferPage = () => {
   const { activeAccount, activeSigner } = useInkathon();
@@ -68,31 +78,23 @@ const TransferPage = () => {
   const [coretimeBalance, setCoretimeBalance] = useState(0);
   const [relayBalance, setRelayBalance] = useState(0);
 
-  const defaultHandler = (onSuccess?: () => void) => {
-    return {
-      ready: () => toastInfo('Transaction was initiated.'),
-      inBlock: () => toastInfo(`In Block`),
-      finalized: () => setWorking(false),
-      success: () => {
-        onSuccess && onSuccess();
-        toastSuccess('Successfully transferred the region.');
-      },
-      error: () => {
-        toastError(`Failed to transfer the region.`);
-        setWorking(false);
-      },
-    }
+  const defaultHandler = {
+    ready: () => toastInfo('Transaction was initiated.'),
+    inBlock: () => toastInfo(`In Block`),
+    finalized: () => setWorking(false),
+    success: () => {
+      getBalances();
+      toastSuccess('Successfully transferred.');
+    },
+    error: () => {
+      toastError(`Failed to transfer.`);
+      setWorking(false);
+    },
   };
 
   useEffect(() => {
     getBalances();
-  }, [
-    relayApi,
-    relayApiState,
-    coretimeApi,
-    coretimeApiState,
-    activeAccount,
-  ]);
+  }, [relayApi, relayApiState, coretimeApi, coretimeApiState, activeAccount]);
 
   const getBalances = async () => {
     if (
@@ -109,7 +111,7 @@ const TransferPage = () => {
 
     setRelayBalance(rcBalance);
     setCoretimeBalance(ctBalance);
-  }
+  };
 
   useEffect(() => {
     setFilteredRegions(
@@ -131,6 +133,7 @@ const TransferPage = () => {
   };
 
   const handleTransfer = async () => {
+    if (!activeAccount) toastWarning('Connect wallet first');
     if (asset === 'region') {
       handleRegionTransfer();
     } else if (asset === 'token') {
@@ -140,12 +143,12 @@ const TransferPage = () => {
 
   const handleTokenTransfer = async () => {
     if (!activeAccount || !activeSigner || !coretimeApi) return;
-    if (!newOwner) {
-      toastError('Recipient must be selected');
-      return;
-    }
     const amount = Number(transferAmount) * Math.pow(10, CORETIME_DECIMALS);
     if (originChain === destinationChain && originChain === 'CoretimeChain') {
+      if (!newOwner) {
+        toastError('Recipient must be selected');
+        return;
+      }
       coretimeApi &&
         transferNativeToken(
           coretimeApi,
@@ -153,7 +156,54 @@ const TransferPage = () => {
           activeAccount.address,
           newOwner,
           amount.toString(),
-          defaultHandler(() => getBalances())
+          defaultHandler
+        );
+    } else if (
+      originChain === destinationChain &&
+      originChain === 'RelayChain'
+    ) {
+      relayApi &&
+        transferNativeToken(
+          relayApi,
+          activeSigner,
+          activeAccount.address,
+          newOwner,
+          amount.toString(),
+          defaultHandler
+        );
+    } else if (
+      originChain === 'CoretimeChain' &&
+      destinationChain === 'RelayChain'
+    ) {
+      const receiverKeypair = new Keyring();
+      receiverKeypair.addFromAddress(
+        newOwner ? newOwner : activeAccount.address
+      );
+
+      coretimeApi &&
+        transferTokensFromCoretimeToRelay(
+          coretimeApi,
+          { address: activeAccount.address, signer: activeSigner },
+          amount.toString(),
+          receiverKeypair.pairs[0].publicKey,
+          defaultHandler
+        );
+    } else if (
+      originChain === 'RelayChain' &&
+      destinationChain === 'CoretimeChain'
+    ) {
+      const receiverKeypair = new Keyring();
+      receiverKeypair.addFromAddress(
+        newOwner ? newOwner : activeAccount.address
+      );
+
+      relayApi &&
+        transferTokensFromRelayToCoretime(
+          relayApi,
+          { address: activeAccount.address, signer: activeSigner },
+          amount.toString(),
+          receiverKeypair.pairs[0].publicKey,
+          defaultHandler
         );
     }
   };
@@ -187,7 +237,7 @@ const TransferPage = () => {
       activeSigner,
       activeAccount.address,
       newOwner ? newOwner : activeAccount.address,
-      defaultHandler()
+      defaultHandler
     );
   };
 
@@ -208,7 +258,10 @@ const TransferPage = () => {
             Cross-Chain Transfer
           </Typography>
         </Box>
-        <Balance coretimeBalance={coretimeBalance} relayBalance={relayBalance} />
+        <Balance
+          coretimeBalance={coretimeBalance}
+          relayBalance={relayBalance}
+        />
       </Box>
       <Box width='60%' margin='2em auto'>
         <Stack margin='1em 0' direction='column' gap={1}>
@@ -225,7 +278,7 @@ const TransferPage = () => {
             setChain={setDestinationChain}
           />
         </Stack>
-        {asset === "region" && originChain && destinationChain && (
+        {asset === 'region' && originChain && destinationChain && (
           <Stack margin='1em 0' direction='column' gap={1}>
             <Typography>Region</Typography>
             <RegionSelector

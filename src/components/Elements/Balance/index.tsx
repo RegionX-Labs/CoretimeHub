@@ -2,9 +2,9 @@ import { Typography, useTheme } from '@mui/material';
 import { formatBalance } from '@/utils/functions';
 
 interface BalanceProps {
-  coretimeBalance: Number,
-  relayBalance: Number,
-};
+  coretimeBalance: Number;
+  relayBalance: Number;
+}
 
 const Balance = ({ relayBalance, coretimeBalance }: BalanceProps) => {
   const theme = useTheme();

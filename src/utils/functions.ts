@@ -122,10 +122,13 @@ export const extractRegionIdFromRaw = (rawRegionId: bigint): RegionId => {
   };
 };
 
-export const fetchBalance = async (api: ApiPromise, address: string): Promise<number> => {
+export const fetchBalance = async (
+  api: ApiPromise,
+  address: string
+): Promise<number> => {
   const coretimeAccount = (
     await api.query.system.account(address)
   ).toHuman() as any;
 
   return parseHNString(coretimeAccount.data.free.toString());
-}
+};
