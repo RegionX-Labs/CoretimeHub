@@ -25,7 +25,6 @@ import {
   getSaleProgress,
   getSaleStartInBlocks,
 } from '../utils/sale/utils';
-import Balance from '@/components/Elements/Balance';
 
 const Purchase = () => {
   const theme = useTheme();
@@ -50,7 +49,7 @@ const Purchase = () => {
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const { saleInfo, config, loading } = useSaleInfo();
   const {
-    state: { api, apiState, symbol },
+    state: { api, apiState },
   } = useCoretimeApi();
 
   const { fetchRegions } = useRegions();

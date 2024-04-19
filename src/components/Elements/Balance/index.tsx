@@ -1,9 +1,10 @@
 import { Typography, useTheme } from '@mui/material';
+
 import { formatBalance } from '@/utils/functions';
 
 interface BalanceProps {
-  coretimeBalance: Number;
-  relayBalance: Number;
+  coretimeBalance: number;
+  relayBalance: number;
   symbol: string;
 }
 
