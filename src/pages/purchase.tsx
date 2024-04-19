@@ -50,7 +50,7 @@ const Purchase = () => {
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const { saleInfo, config, loading } = useSaleInfo();
   const {
-    state: { api, apiState },
+    state: { api, apiState, symbol },
   } = useCoretimeApi();
 
   const { fetchRegions } = useRegions();
@@ -178,7 +178,6 @@ const Purchase = () => {
             Purchase a core
           </Typography>
         </Box>
-        <Balance />
       </Box>
       <Box>
         {loading ||
