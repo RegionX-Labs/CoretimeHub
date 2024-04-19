@@ -173,7 +173,9 @@ const TransferPage = () => {
       );
     } else {
       const receiverKeypair = new Keyring();
-      receiverKeypair.addFromAddress(newOwner ? newOwner : activeAccount.address);
+      receiverKeypair.addFromAddress(
+        newOwner ? newOwner : activeAccount.address
+      );
 
       (originChain === 'CoretimeChain'
         ? transferTokensFromCoretimeToRelay

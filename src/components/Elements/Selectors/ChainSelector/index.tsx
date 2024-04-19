@@ -1,4 +1,16 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+} from '@mui/material';
+import Image from 'next/image';
+
+import CoretimeIcon from '@/assets/networks/coretime.png';
+import KusamaIcon from '@/assets/networks/kusama.png';
+import RegionXIcon from '@/assets/networks/regionx.png';
 
 interface ChainSelectorProps {
   chain: string;
@@ -6,6 +18,24 @@ interface ChainSelectorProps {
 }
 
 export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
+  const menuItems = [
+    {
+      icon: KusamaIcon,
+      label: 'Relay Chain',
+      value: 'RelayChain',
+    },
+    {
+      icon: CoretimeIcon,
+      label: 'Coretime Chain',
+      value: 'CoretimeChain',
+    },
+
+    {
+      icon: RegionXIcon,
+      label: 'RegionX Chain',
+      value: 'RegionXChain',
+    },
+  ];
   return (
     <FormControl fullWidth>
       <InputLabel id='origin-selector-label'>Chain</InputLabel>
@@ -16,9 +46,20 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
         label='Origin'
         onChange={(e) => setChain(e.target.value)}
       >
-        <MenuItem value='RelayChain'>Relay Chain</MenuItem>
-        <MenuItem value='CoretimeChain'>Coretime Chain</MenuItem>
-        <MenuItem value='RegionXChain'>RegionX Chain</MenuItem>
+        {menuItems.map(({ icon, label, value }, index) => (
+          <MenuItem value={value} key={index}>
+            <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+              <Image
+                src={icon}
+                alt='icon'
+                style={{ width: '2rem', height: '2rem' }}
+              />
+              <Typography sx={{ lineHeight: 1.5, fontSize: '1.25rem' }}>
+                {label}
+              </Typography>
+            </Box>
+          </MenuItem>
+        ))}
       </Select>
     </FormControl>
   );
