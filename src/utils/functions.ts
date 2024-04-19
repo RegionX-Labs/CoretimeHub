@@ -1,4 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
+import { AddressOrPair, SubmittableExtrinsic } from '@polkadot/api/types';
+import { ISubmittableResult, Signer } from '@polkadot/types/types';
 import { formatBalance as polkadotFormatBalance } from '@polkadot/util';
 import { CoreMask, RegionId } from 'coretime-utils';
 import Decimal from 'decimal.js';
@@ -7,6 +9,7 @@ import {
   CORETIME_DECIMALS,
   REGIONX_DECIMALS,
   RELAY_CHAIN_BLOCK_TIME,
+  TxStatusHandlers,
 } from '@/models';
 
 // parse human readable number string
@@ -131,4 +134,30 @@ export const fetchBalance = async (
   ).toHuman() as any;
 
   return parseHNString(coretimeAccount.data.free.toString());
+};
+
+export const sendTx = (
+  tx: SubmittableExtrinsic<'promise', ISubmittableResult>,
+  account: AddressOrPair,
+  signer: Signer,
+  handlers: TxStatusHandlers
+) => {
+  try {
+    tx.signAndSend(account, { signer }, ({ status, events }) => {
+      if (status.isReady) handlers.ready();
+      else if (status.isInBlock) handlers.inBlock();
+      else if (status.isFinalized) {
+        handlers.finalized();
+        events.forEach(({ event: { method } }) => {
+          if (method === 'ExtrinsicSuccess') {
+            handlers.success();
+          } else if (method === 'ExtrinsicFailed') {
+            handlers.error();
+          }
+        });
+      }
+    });
+  } catch {
+    handlers.error();
+  }
 };

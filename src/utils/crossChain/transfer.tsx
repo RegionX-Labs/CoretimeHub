@@ -14,10 +14,11 @@ import {
   RelayChainFromParachainPerspective,
 } from './consts';
 import {
-  versionWrappeddNonfungibleAsset,
   versionWrap,
   versionWrappeddFungibleAsset,
+  versionWrappeddNonfungibleAsset,
 } from './utils';
+import { sendTx } from '../functions';
 
 export async function coretimeToRegionXTransfer(
   coretimeApi: ApiPromise,
@@ -53,28 +54,8 @@ export async function coretimeToRegionXTransfer(
       weightLimit
     );
 
-  try {
-    reserveTransfer.signAndSend(
-      sender.address,
-      { signer: sender.signer },
-      ({ status, events }) => {
-        if (status.isReady) handlers.ready();
-        else if (status.isInBlock) handlers.inBlock();
-        else if (status.isFinalized) {
-          handlers.finalized();
-          events.forEach(({ event: { method } }) => {
-            if (method === 'ExtrinsicSuccess') {
-              handlers.success();
-            } else if (method === 'ExtrinsicFailed') {
-              handlers.error();
-            }
-          });
-        }
-      }
-    );
-  } catch (e) {
-    handlers.error();
-  }
+  const { address, signer } = sender;
+  sendTx(reserveTransfer, address, signer, handlers);
 }
 
 export function regionXToCoretimeTransfer(
@@ -110,28 +91,8 @@ export function regionXToCoretimeTransfer(
     weightLimit
   );
 
-  try {
-    reserveTransfer.signAndSend(
-      sender.address,
-      { signer: sender.signer },
-      ({ status, events }) => {
-        if (status.isReady) handlers.ready();
-        else if (status.isInBlock) handlers.inBlock();
-        else if (status.isFinalized) {
-          handlers.finalized();
-          events.forEach(({ event: { method } }) => {
-            if (method === 'ExtrinsicSuccess') {
-              handlers.success();
-            } else if (method === 'ExtrinsicFailed') {
-              handlers.error();
-            }
-          });
-        }
-      }
-    );
-  } catch (e) {
-    handlers.error();
-  }
+  const { address, signer } = sender;
+  sendTx(reserveTransfer, address, signer, handlers);
 }
 
 export function transferTokensFromCoretimeToRelay(
@@ -164,28 +125,9 @@ export function transferTokensFromCoretimeToRelay(
     weightLimit
   );
 
-  try {
-    teleportTransfer.signAndSend(
-      sender.address,
-      { signer: sender.signer },
-      ({ status, events }) => {
-        if (status.isReady) handlers.ready();
-        else if (status.isInBlock) handlers.inBlock();
-        else if (status.isFinalized) {
-          handlers.finalized();
-          events.forEach(({ event: { method } }) => {
-            if (method === 'ExtrinsicSuccess') {
-              handlers.success();
-            } else if (method === 'ExtrinsicFailed') {
-              handlers.error();
-            }
-          });
-        }
-      }
-    );
-  } catch (e) {
-    handlers.error();
-  }
+  const { address, signer } = sender;
+
+  sendTx(teleportTransfer, address, signer, handlers);
 }
 
 export function transferTokensFromRelayToCoretime(
@@ -218,26 +160,7 @@ export function transferTokensFromRelayToCoretime(
     weightLimit
   );
 
-  try {
-    teleportTransfer.signAndSend(
-      sender.address,
-      { signer: sender.signer },
-      ({ status, events }) => {
-        if (status.isReady) handlers.ready();
-        else if (status.isInBlock) handlers.inBlock();
-        else if (status.isFinalized) {
-          handlers.finalized();
-          events.forEach(({ event: { method } }) => {
-            if (method === 'ExtrinsicSuccess') {
-              handlers.success();
-            } else if (method === 'ExtrinsicFailed') {
-              handlers.error();
-            }
-          });
-        }
-      }
-    );
-  } catch (e) {
-    handlers.error();
-  }
+  const { address, signer } = sender;
+
+  sendTx(teleportTransfer, address, signer, handlers);
 }

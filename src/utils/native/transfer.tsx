@@ -4,6 +4,8 @@ import { Region } from 'coretime-utils';
 
 import { TxStatusHandlers } from '@/models';
 
+import { sendTx } from '../functions';
+
 export const transferNativeToken = async (
   api: ApiPromise,
   signer: Signer,
@@ -13,29 +15,7 @@ export const transferNativeToken = async (
   handlers: TxStatusHandlers
 ) => {
   const txTransfer = api.tx.balances.transferKeepAlive(destination, amount);
-
-  try {
-    await txTransfer.signAndSend(
-      senderAddress,
-      { signer },
-      ({ status, events }) => {
-        if (status.isReady) handlers.ready();
-        else if (status.isInBlock) handlers.inBlock();
-        else if (status.isFinalized) {
-          handlers.finalized();
-          events.forEach(({ event: { method } }) => {
-            if (method === 'ExtrinsicSuccess') {
-              handlers.success();
-            } else if (method === 'ExtrinsicFailed') {
-              handlers.error();
-            }
-          });
-        }
-      }
-    );
-  } catch (e) {
-    handlers.error();
-  }
+  sendTx(txTransfer, senderAddress, signer, handlers);
 };
 
 export const transferRegionOnCoretimeChain = async (
@@ -50,27 +30,5 @@ export const transferRegionOnCoretimeChain = async (
     region.getOnChainRegionId(),
     newOwner
   );
-
-  try {
-    await txTransfer.signAndSend(
-      senderAddress,
-      { signer },
-      ({ status, events }) => {
-        if (status.isReady) handlers.ready();
-        else if (status.isInBlock) handlers.inBlock();
-        else if (status.isFinalized) {
-          handlers.finalized();
-          events.forEach(({ event: { method } }) => {
-            if (method === 'ExtrinsicSuccess') {
-              handlers.success();
-            } else if (method === 'ExtrinsicFailed') {
-              handlers.error();
-            }
-          });
-        }
-      }
-    );
-  } catch (e) {
-    handlers.error();
-  }
+  sendTx(txTransfer, senderAddress, signer, handlers);
 };
