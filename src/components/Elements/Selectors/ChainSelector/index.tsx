@@ -9,7 +9,7 @@ import {
 import Image from 'next/image';
 
 import CoretimeIcon from '@/assets/networks/coretime.png';
-import KusamaIcon from '@/assets/networks/kusama.png';
+// import KusamaIcon from '@/assets/networks/kusama.png';
 import RococoIcon from '@/assets/networks/rococo.png';
 import RegionXIcon from '@/assets/networks/regionx.png';
 
