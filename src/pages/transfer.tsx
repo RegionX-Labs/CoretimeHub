@@ -9,10 +9,16 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { Keyring } from '@polkadot/api';
 import { useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
+import {
+  transferTokensFromCoretimeToRelay,
+  transferTokensFromRelayToCoretime,
+} from '@/utils/crossChain/transfer';
+import { fetchBalance } from '@/utils/functions';
 import theme from '@/utils/muiTheme';
 import {
   transferNativeToken,
@@ -26,8 +32,11 @@ import {
   RegionCard,
   RegionSelector,
 } from '@/components';
+import Balance from '@/components/Elements/Balance';
+import AssetSelector from '@/components/Elements/Selectors/AssetSelector';
 
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import {
@@ -36,15 +45,6 @@ import {
   RegionLocation,
   RegionMetadata,
 } from '@/models';
-import Balance from '@/components/Elements/Balance';
-import AssetSelector from '@/components/Elements/Selectors/AssetSelector';
-import { ApiState } from '@/contexts/apis/types';
-import { fetchBalance } from '@/utils/functions';
-import {
-  transferTokensFromCoretimeToRelay,
-  transferTokensFromRelayToCoretime,
-} from '@/utils/crossChain/transfer';
-import { Keyring } from '@polkadot/api';
 
 const TransferPage = () => {
   const { activeAccount, activeSigner } = useInkathon();
@@ -121,19 +121,22 @@ const TransferPage = () => {
 
   const handleOriginChange = (newOrigin: string) => {
     setOriginChain(newOrigin);
-    if (newOrigin === 'CoretimeChain') {
-      setFilteredRegions(
-        regions.filter((r) => r.location == RegionLocation.CORETIME_CHAIN)
-      );
-    } else {
-      setFilteredRegions(
-        regions.filter((r) => r.location == RegionLocation.REGIONX_CHAIN)
-      );
-    }
+    setFilteredRegions(
+      regions.filter(
+        (r) =>
+          r.location ===
+          (newOrigin === 'CoretimeChain'
+            ? RegionLocation.CORETIME_CHAIN
+            : RegionLocation.REGIONX_CHAIN)
+      )
+    );
   };
 
   const handleTransfer = async () => {
-    if (!activeAccount) toastWarning('Connect wallet first');
+    if (!activeAccount || !activeSigner) {
+      toastWarning('Connect wallet first');
+      return;
+    }
     if (asset === 'region') {
       handleRegionTransfer();
     } else if (asset === 'token') {
@@ -142,69 +145,47 @@ const TransferPage = () => {
   };
 
   const handleTokenTransfer = async () => {
-    if (!activeAccount || !activeSigner || !coretimeApi) return;
+    if (!activeAccount || !activeSigner) return;
+    if (!originChain || !destinationChain) return;
+
+    if (!coretimeApi) {
+      toastError('Not connected to the Coretime chain');
+      return;
+    }
+    if (!relayApi) {
+      toastError('Not connected to the relay chain');
+      return;
+    }
+    if (!newOwner) {
+      toastError('Recipient must be selected');
+      return;
+    }
+
     const amount = Number(transferAmount) * Math.pow(10, CORETIME_DECIMALS);
-    if (originChain === destinationChain && originChain === 'CoretimeChain') {
-      if (!newOwner) {
-        toastError('Recipient must be selected');
-        return;
-      }
-      coretimeApi &&
-        transferNativeToken(
-          coretimeApi,
-          activeSigner,
-          activeAccount.address,
-          newOwner,
-          amount.toString(),
-          defaultHandler
-        );
-    } else if (
-      originChain === destinationChain &&
-      originChain === 'RelayChain'
-    ) {
-      relayApi &&
-        transferNativeToken(
-          relayApi,
-          activeSigner,
-          activeAccount.address,
-          newOwner,
-          amount.toString(),
-          defaultHandler
-        );
-    } else if (
-      originChain === 'CoretimeChain' &&
-      destinationChain === 'RelayChain'
-    ) {
-      const receiverKeypair = new Keyring();
-      receiverKeypair.addFromAddress(
-        newOwner ? newOwner : activeAccount.address
+    if (originChain === destinationChain) {
+      transferNativeToken(
+        originChain === 'CoretimeChain' ? coretimeApi : relayApi,
+        activeSigner,
+        activeAccount.address,
+        newOwner,
+        amount.toString(),
+        defaultHandler
       );
-
-      coretimeApi &&
-        transferTokensFromCoretimeToRelay(
-          coretimeApi,
-          { address: activeAccount.address, signer: activeSigner },
-          amount.toString(),
-          receiverKeypair.pairs[0].publicKey,
-          defaultHandler
-        );
-    } else if (
-      originChain === 'RelayChain' &&
-      destinationChain === 'CoretimeChain'
-    ) {
+    } else {
       const receiverKeypair = new Keyring();
-      receiverKeypair.addFromAddress(
-        newOwner ? newOwner : activeAccount.address
-      );
+      receiverKeypair.addFromAddress(newOwner ?? activeAccount.address);
 
-      relayApi &&
-        transferTokensFromRelayToCoretime(
-          relayApi,
-          { address: activeAccount.address, signer: activeSigner },
-          amount.toString(),
-          receiverKeypair.pairs[0].publicKey,
-          defaultHandler
-        );
+      (originChain === 'CoretimeChain'
+        ? transferTokensFromCoretimeToRelay
+        : transferTokensFromRelayToCoretime
+      ).call(
+        this,
+        originChain === 'CoretimeChain' ? coretimeApi : relayApi,
+        { address: activeAccount.address, signer: activeSigner },
+        amount.toString(),
+        receiverKeypair.pairs[0].publicKey,
+        defaultHandler
+      );
     }
   };
 
@@ -236,7 +217,7 @@ const TransferPage = () => {
       region,
       activeSigner,
       activeAccount.address,
-      newOwner ? newOwner : activeAccount.address,
+      newOwner ?? activeAccount.address,
       defaultHandler
     );
   };
@@ -292,8 +273,10 @@ const TransferPage = () => {
         {selectedRegion && (
           <Box
             sx={{
-              transform: 'scale(0.8)',
+              transform: 'scale(0.9)',
               transformOrigin: 'center',
+              display: 'flex',
+              justifyContent: 'center',
             }}
           >
             <RegionCard regionMetadata={selectedRegion} />
