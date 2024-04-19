@@ -4,18 +4,19 @@ import { formatBalance } from '@/utils/functions';
 interface BalanceProps {
   coretimeBalance: Number;
   relayBalance: Number;
+  symbol: string;
 }
 
-const Balance = ({ relayBalance, coretimeBalance }: BalanceProps) => {
+const Balance = ({ relayBalance, coretimeBalance, symbol }: BalanceProps) => {
   const theme = useTheme();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Typography sx={{ color: theme.palette.text.primary, my: '0.5em' }}>
-        {`Relay chain: ${formatBalance(relayBalance.toString(), false)} ROC`}
+        {`Relay chain: ${formatBalance(relayBalance.toString(), false)} ${symbol}`}
       </Typography>
       <Typography sx={{ color: theme.palette.text.primary, my: '0.5em' }}>
-        {`Coretime chain: ${formatBalance(coretimeBalance.toString(), false)} ROC`}
+        {`Coretime chain: ${formatBalance(coretimeBalance.toString(), false)} ${symbol}`}
       </Typography>
     </div>
   );

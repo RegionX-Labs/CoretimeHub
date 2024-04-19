@@ -51,7 +51,7 @@ const TransferPage = () => {
 
   const { toastError, toastInfo, toastWarning, toastSuccess } = useToast();
   const {
-    state: { api: coretimeApi, apiState: coretimeApiState },
+    state: { api: coretimeApi, apiState: coretimeApiState, symbol },
   } = useCoretimeApi();
   const {
     state: { api: relayApi, apiState: relayApiState },
@@ -259,13 +259,14 @@ const TransferPage = () => {
           </Typography>
         </Box>
         <Balance
+          symbol={symbol}
           coretimeBalance={coretimeBalance}
           relayBalance={relayBalance}
         />
       </Box>
       <Box width='60%' margin='2em auto'>
         <Stack margin='1em 0' direction='column' gap={1}>
-          <AssetSelector asset={asset} setAsset={setAsset} />
+          <AssetSelector symbol={symbol} asset={asset} setAsset={setAsset} />
         </Stack>
         <Stack margin='1em 0' direction='column' gap={1}>
           <Typography>Origin chain:</Typography>
@@ -311,7 +312,7 @@ const TransferPage = () => {
             <AmountInput
               amount={transferAmount}
               setAmount={setTransferAmount}
-              currency='ROC'
+              currency={symbol}
               caption='Transfer amount'
             />
           </Stack>
