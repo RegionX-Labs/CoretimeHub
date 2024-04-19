@@ -156,13 +156,13 @@ const TransferPage = () => {
       toastError('Not connected to the relay chain');
       return;
     }
-    if (!newOwner) {
-      toastError('Recipient must be selected');
-      return;
-    }
 
     const amount = Number(transferAmount) * Math.pow(10, CORETIME_DECIMALS);
     if (originChain === destinationChain) {
+      if (!newOwner) {
+        toastError('Recipient must be selected');
+        return;
+      }
       transferNativeToken(
         originChain === 'CoretimeChain' ? coretimeApi : relayApi,
         activeSigner,
@@ -173,7 +173,7 @@ const TransferPage = () => {
       );
     } else {
       const receiverKeypair = new Keyring();
-      receiverKeypair.addFromAddress(newOwner ?? activeAccount.address);
+      receiverKeypair.addFromAddress(newOwner ? newOwner : activeAccount.address);
 
       (originChain === 'CoretimeChain'
         ? transferTokensFromCoretimeToRelay
