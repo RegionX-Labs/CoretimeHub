@@ -10,6 +10,7 @@ import Image from 'next/image';
 
 import CoretimeIcon from '@/assets/networks/coretime.png';
 import KusamaIcon from '@/assets/networks/kusama.png';
+import RococoIcon from '@/assets/networks/rococo.png';
 import RegionXIcon from '@/assets/networks/regionx.png';
 
 interface ChainSelectorProps {
@@ -20,7 +21,7 @@ interface ChainSelectorProps {
 export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
   const menuItems = [
     {
-      icon: KusamaIcon,
+      icon: RococoIcon,
       label: 'Relay Chain',
       value: 'RelayChain',
     },
