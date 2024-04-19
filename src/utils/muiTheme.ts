@@ -39,10 +39,12 @@ let theme = createTheme({
   },
   typography: {
     subtitle1: {
-      fontSize: 27,
+      fontSize: 20,
+      fontWeight: 700,
     },
     subtitle2: {
       fontSize: 16,
+      fontWeight: 400,
     },
     h1: {
       fontSize: 20,
@@ -50,7 +52,7 @@ let theme = createTheme({
       lineHeight: 1,
     },
     h2: {
-      fontSize: 14,
+      fontSize: 13,
       fontWeight: 700,
       lineHeight: 1,
     },
