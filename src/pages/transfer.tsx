@@ -40,7 +40,8 @@ import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import {
-  Asset,
+  AssetType,
+  ChainType,
   CORETIME_DECIMALS,
   RegionLocation,
   RegionMetadata,
@@ -64,15 +65,17 @@ const TransferPage = () => {
   const [working, setWorking] = useState(false);
 
   const [newOwner, setNewOwner] = useState('');
-  const [originChain, setOriginChain] = useState('');
-  const [destinationChain, setDestinationChain] = useState('');
+  const [originChain, setOriginChain] = useState<ChainType>(ChainType.NONE);
+  const [destinationChain, setDestinationChain] = useState<ChainType>(
+    ChainType.NONE
+  );
   const [statusLabel, _setStatusLabel] = useState('');
 
   const [selectedRegion, setSelectedRegion] = useState<RegionMetadata | null>(
     null
   );
 
-  const [asset, setAsset] = useState<Asset>('token');
+  const [asset, setAsset] = useState<AssetType>(AssetType.TOKEN);
   const [transferAmount, setTransferAmount] = useState('');
 
   const [coretimeBalance, setCoretimeBalance] = useState(0);
@@ -119,17 +122,18 @@ const TransferPage = () => {
     );
   }, [regions]);
 
-  const handleOriginChange = (newOrigin: string) => {
+  const handleOriginChange = (newOrigin: ChainType) => {
     setOriginChain(newOrigin);
     setFilteredRegions(
       regions.filter(
         (r) =>
           r.location ===
-          (newOrigin === 'CoretimeChain'
+          (newOrigin === ChainType.CORETIME
             ? RegionLocation.CORETIME_CHAIN
             : RegionLocation.REGIONX_CHAIN)
       )
     );
+    if (newOrigin === ChainType.RELAY) setAsset(AssetType.TOKEN);
   };
 
   const handleTransfer = async () => {
@@ -137,9 +141,9 @@ const TransferPage = () => {
       toastWarning('Connect wallet first');
       return;
     }
-    if (asset === 'region') {
+    if (asset === AssetType.REGION) {
       handleRegionTransfer();
-    } else if (asset === 'token') {
+    } else if (asset === AssetType.TOKEN) {
       handleTokenTransfer();
     }
   };
@@ -164,7 +168,7 @@ const TransferPage = () => {
         return;
       }
       transferNativeToken(
-        originChain === 'CoretimeChain' ? coretimeApi : relayApi,
+        originChain === ChainType.CORETIME ? coretimeApi : relayApi,
         activeSigner,
         activeAccount.address,
         newOwner,
@@ -177,12 +181,12 @@ const TransferPage = () => {
         newOwner ? newOwner : activeAccount.address
       );
 
-      (originChain === 'CoretimeChain'
+      (originChain === ChainType.CORETIME
         ? transferTokensFromCoretimeToRelay
         : transferTokensFromRelayToCoretime
       ).call(
         this,
-        originChain === 'CoretimeChain' ? coretimeApi : relayApi,
+        originChain === ChainType.CORETIME ? coretimeApi : relayApi,
         { address: activeAccount.address, signer: activeSigner },
         amount.toString(),
         receiverKeypair.pairs[0].publicKey,
@@ -198,7 +202,7 @@ const TransferPage = () => {
     }
 
     if (originChain === destinationChain) {
-      originChain === 'CoretimeChain'
+      originChain === ChainType.CORETIME
         ? await transferCoretimeRegion(selectedRegion.region)
         : toastWarning('Currently not supported');
     } else {
@@ -226,7 +230,12 @@ const TransferPage = () => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
+      >
         <Box>
           <Typography
             variant='subtitle1'
@@ -247,10 +256,14 @@ const TransferPage = () => {
           relayBalance={relayBalance}
         />
       </Box>
-      <Box width='60%' margin='2em auto'>
-        <Stack margin='1em 0' direction='column' gap={1}>
-          <AssetSelector symbol={symbol} asset={asset} setAsset={setAsset} />
-        </Stack>
+      <Box
+        width='60%'
+        margin='2rem auto 0 auto'
+        sx={{
+          overflowY: 'auto',
+          '::-webkit-scrollbar': { display: 'none' },
+        }}
+      >
         <Stack margin='1em 0' direction='column' gap={1}>
           <Typography>Origin chain:</Typography>
           <ChainSelector chain={originChain} setChain={handleOriginChange} />
@@ -262,16 +275,29 @@ const TransferPage = () => {
             setChain={setDestinationChain}
           />
         </Stack>
-        {asset === 'region' && originChain && destinationChain && (
+        {originChain !== ChainType.NONE && (
           <Stack margin='1em 0' direction='column' gap={1}>
-            <Typography>Region</Typography>
-            <RegionSelector
-              regions={filteredRegions}
-              selectedRegion={selectedRegion}
-              handleRegionChange={(indx) => setSelectedRegion(regions[indx])}
+            <AssetSelector
+              symbol={symbol}
+              asset={asset}
+              setAsset={setAsset}
+              showRegion={originChain !== ChainType.RELAY}
             />
           </Stack>
         )}
+
+        {asset === AssetType.REGION &&
+          originChain !== ChainType.NONE &&
+          destinationChain !== ChainType.NONE && (
+            <Stack margin='1em 0' direction='column' gap={1}>
+              <Typography>Region</Typography>
+              <RegionSelector
+                regions={filteredRegions}
+                selectedRegion={selectedRegion}
+                handleRegionChange={(indx) => setSelectedRegion(regions[indx])}
+              />
+            </Stack>
+          )}
         {selectedRegion && (
           <Box
             sx={{
@@ -292,22 +318,24 @@ const TransferPage = () => {
           <Typography>Transfer to:</Typography>
           <RecipientSelector recipient={newOwner} setRecipient={setNewOwner} />
         </Stack>
-        {asset === 'token' && originChain && destinationChain && (
-          <Stack margin='2em 0' direction='column' gap={1}>
-            <AmountInput
-              amount={transferAmount}
-              setAmount={setTransferAmount}
-              currency={symbol}
-              caption='Transfer amount'
-            />
-          </Stack>
-        )}
+        {asset === AssetType.TOKEN &&
+          originChain !== ChainType.NONE &&
+          destinationChain !== ChainType.NONE && (
+            <Stack margin='2em 0' direction='column' gap={1}>
+              <AmountInput
+                amount={transferAmount}
+                setAmount={setTransferAmount}
+                currency={symbol}
+                caption='Transfer amount'
+              />
+            </Stack>
+          )}
         {statusLabel && (
           <Alert severity='info' sx={{ marginY: '2em' }}>
             {statusLabel}
           </Alert>
         )}
-        <Box margin='2em 0'>
+        <Box margin='2rem 0 0 0'>
           <DialogActions>
             <Link href='/'>
               <Button variant='outlined'>Home</Button>

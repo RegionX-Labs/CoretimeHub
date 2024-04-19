@@ -16,7 +16,25 @@ export type ParaId = number;
 
 export type BlockNumber = number;
 
-export type Asset = 'token' | 'region';
+export enum AssetType {
+  // eslint-disable-next-line no-unused-vars
+  NONE = 0,
+  // eslint-disable-next-line no-unused-vars
+  TOKEN = 1,
+  // eslint-disable-next-line no-unused-vars
+  REGION = 2,
+}
+
+export enum ChainType {
+  // eslint-disable-next-line no-unused-vars
+  NONE = 0,
+  // eslint-disable-next-line no-unused-vars
+  CORETIME = 1,
+  // eslint-disable-next-line no-unused-vars
+  RELAY = 2,
+  // eslint-disable-next-line no-unused-vars
+  REGIONX = 3,
+}
 
 export type Sender = {
   address: string;

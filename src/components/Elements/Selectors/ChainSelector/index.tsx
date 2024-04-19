@@ -9,13 +9,14 @@ import {
 import Image from 'next/image';
 
 import CoretimeIcon from '@/assets/networks/coretime.png';
+import RegionXIcon from '@/assets/networks/regionx.png';
 // import KusamaIcon from '@/assets/networks/kusama.png';
 import RococoIcon from '@/assets/networks/rococo.png';
-import RegionXIcon from '@/assets/networks/regionx.png';
+import { ChainType } from '@/models';
 
 interface ChainSelectorProps {
-  chain: string;
-  setChain: (_: string) => void;
+  chain: ChainType;
+  setChain: (_: ChainType) => void;
 }
 
 export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
@@ -23,18 +24,18 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
     {
       icon: RococoIcon,
       label: 'Relay Chain',
-      value: 'RelayChain',
+      value: ChainType.RELAY,
     },
     {
       icon: CoretimeIcon,
       label: 'Coretime Chain',
-      value: 'CoretimeChain',
+      value: ChainType.CORETIME,
     },
 
     {
       icon: RegionXIcon,
       label: 'RegionX Chain',
-      value: 'RegionXChain',
+      value: ChainType.REGIONX,
     },
   ];
   return (
@@ -45,7 +46,7 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
         id='origin-selector'
         value={chain}
         label='Origin'
-        onChange={(e) => setChain(e.target.value)}
+        onChange={(e) => setChain(e.target.value as ChainType)}
       >
         {menuItems.map(({ icon, label, value }, index) => (
           <MenuItem value={value} key={index}>
@@ -53,7 +54,7 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
               <Image
                 src={icon}
                 alt='icon'
-                style={{ width: '2rem', height: '2rem', borderRadius: "100%" }}
+                style={{ width: '2rem', height: '2rem', borderRadius: '100%' }}
               />
               <Typography sx={{ lineHeight: 1.5, fontSize: '1.25rem' }}>
                 {label}
