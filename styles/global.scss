@@ -1,7 +1,5 @@
-html {
-  zoom: 0.9;
-  -moz-transform: scale(0.9);
-  -moz-transform-origin: 0 0;
+body, html {
+  height: 100vh;
 }
 
 * {
@@ -10,5 +8,4 @@ html {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  font-size: 16px;
 }

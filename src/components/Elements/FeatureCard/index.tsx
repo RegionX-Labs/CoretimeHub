@@ -4,6 +4,7 @@ import {
   CardActions,
   CardContent,
   Typography,
+  useTheme,
 } from '@mui/material';
 import Image, { StaticImageData } from 'next/image';
 import { useRouter } from 'next/router';
@@ -27,13 +28,14 @@ export const FeatureCard = ({
   href,
 }: FeatureCardProps) => {
   const { push } = useRouter();
+  const theme = useTheme();
 
   return (
     <Card className={styles.card}>
       <CardContent>
         <Image className={styles.icon} src={image} alt='' />
       </CardContent>
-      <Typography variant='h5' component='h2' gutterBottom>
+      <Typography variant='h1' gutterBottom>
         {title}
       </Typography>
       <CardActions>
@@ -43,6 +45,10 @@ export const FeatureCard = ({
           variant='text'
           disabled={!enabled}
           className={styles.button}
+          sx={{
+            background: '#e8eff7',
+            color: theme.palette.text.secondary,
+          }}
         >
           {buttonText}
         </Button>

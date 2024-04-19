@@ -2,12 +2,15 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import ExploreIcon from '@mui/icons-material/Explore';
 import HomeIcon from '@mui/icons-material/Home';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { Box, useTheme } from '@mui/material';
+import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
+import { Box, Typography, useTheme } from '@mui/material';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
+import Logo from '@/assets/logo.png';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
-import { TransferIcon } from '@/icons';
 
 import styles from './index.module.scss';
 import { StatusIndicator } from '../Elements';
@@ -22,18 +25,44 @@ interface MenuItemProps {
 const MenuItem = ({ label, enabled, route, icon }: MenuItemProps) => {
   const { pathname, push } = useRouter();
   const isActive = pathname === route;
+  const theme = useTheme();
 
   return (
     <Box
-      className={`${styles.menuItem} ${
-        isActive ? styles.active : styles.inactive
-      } ${!enabled ? styles.disabled : ''}`}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        cursor: enabled ? 'pointer' : 'not-allowed',
+        padding: '0.5rem 0.75rem',
+        textTransform: 'capitalize',
+        color: enabled
+          ? theme.palette.text.primary
+          : theme.palette.text.disabled,
+        fontSize: '0.8rem',
+        marginBottom: '0.25rem',
+        ...(isActive
+          ? {
+              color: theme.palette.common.black,
+              background: theme.palette.primary.contrastText,
+              borderRadius: '1rem',
+            }
+          : {}),
+        ':hover': {
+          opacity: 0.8,
+        },
+      }}
       onClick={() => enabled && route && push(route)}
     >
-      {{
-        ...icon,
-      }}
-      <span>{label}</span>
+      <span className={styles.menuIcon}>{{ ...icon }}</span>
+      <span
+        className={`${styles.menuItem} ${!enabled ? 'disabled' : ''} ${
+          isActive ? 'active' : ''
+        }`}
+      >
+        {label}
+      </span>
+      {isActive && <span className={styles.active}></span>}
     </Box>
   );
 };
@@ -65,7 +94,7 @@ export const Sidebar = () => {
         label: 'Cross-chain transfer',
         route: '/transfer',
         enabled: true,
-        icon: <TransferIcon color='#7e8591' />,
+        icon: <SwapHorizOutlinedIcon />,
       },
     ],
     'primary market': [
@@ -88,27 +117,57 @@ export const Sidebar = () => {
 
   return (
     <div className={styles.sidebar}>
-      <div className={styles.menuContainer}>
-        {Object.entries(menu).map(([label, submenu], index) => (
-          <Box
-            key={index}
-            sx={{
-              color: theme.palette.text.secondary,
-              textTransform: 'capitalize',
-              marginBottom: '2em',
-            }}
-          >
-            {label}
-            {submenu.map((item, index) => (
-              <MenuItem key={index} {...item} />
-            ))}
-          </Box>
-        ))}
-      </div>
-      <div className={styles.statusContainer}>
-        <StatusIndicator state={relayApiState} label='Relay chain' />
-        <StatusIndicator state={coretimeApiState} label='Coretime chain' />
-      </div>
+      <Box
+        sx={{
+          display: 'flex',
+          borderBottom: `1px solid ${theme.palette.divider}`,
+          padding: '1rem 0 1rem 1.5rem',
+        }}
+      >
+        <Link href='/' className={styles.logo}>
+          <Image src={Logo} alt='logo' />
+        </Link>
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          flexGrow: 1,
+          fontSize: '1rem',
+          padding: '2rem 1.5rem',
+        }}
+      >
+        <div className={styles.menuContainer}>
+          {Object.entries(menu).map(([label, submenu], index) => (
+            <Box
+              key={index}
+              sx={{
+                color: theme.palette.text.secondary,
+                textTransform: 'capitalize',
+                marginBottom: '2rem',
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: '0.75em',
+                  textTransform: 'uppercase',
+                  color: theme.palette.text.primary,
+                  marginBottom: '1rem',
+                }}
+              >
+                {label}
+              </Typography>
+              {submenu.map((item, index) => (
+                <MenuItem key={index} {...item} />
+              ))}
+            </Box>
+          ))}
+        </div>
+        <div className={styles.statusContainer}>
+          <StatusIndicator state={relayApiState} label='Relay chain' />
+          <StatusIndicator state={coretimeApiState} label='Coretime chain' />
+        </div>
+      </Box>
     </div>
   );
 };

@@ -1,26 +1,22 @@
 .layout {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: 100%;
   min-height: 100vh;
   max-height: 100vh;
-  padding: 2rem 3rem;
 }
 
 .content {
   display: flex;
   flex-grow: 1;
-}
-
-.sidebar {
-  width: 12rem;
+  flex-direction: column;
 }
 
 .main {
   display: flex;
   flex-direction: column;
-  padding-left: 4rem;
-  padding-right: 5rem;
-  padding-top: 2rem;
+  padding: 2rem 4rem;
   flex-grow: 1;
+  min-height: calc(100vh - 9rem);
+  max-height: calc(100vh - 9rem);
 }
