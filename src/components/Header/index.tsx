@@ -9,11 +9,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useInkathon } from '@scio-labs/use-inkathon';
-import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
-
-import Logo from '@/assets/logo.png';
-import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+import React, { useState } from 'react';
 
 import styles from './index.module.scss';
 import { WalletModal } from '../Modals/WalletConnect';
