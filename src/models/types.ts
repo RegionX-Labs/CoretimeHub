@@ -29,6 +29,7 @@ export type TxStatusHandlers = {
   finalized: () => void;
   success: () => void;
   error: () => void;
+  finally?: () => void;
 };
 
 export enum RegionLocation {

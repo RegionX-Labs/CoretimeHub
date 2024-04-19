@@ -7,7 +7,7 @@ import en from 'javascript-time-ago/locale/en.json';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
-import { getBlockTimestamp, parseHNString } from '@/utils/functions';
+import { getBlockTimestamp, parseHNString, sendTx } from '@/utils/functions';
 
 import { Progress, SaleInfoGrid, Section } from '@/components';
 
@@ -105,7 +105,7 @@ const Purchase = () => {
     [saleInfo, config]
   );
 
-  const fetchCurreentPrice = useCallback(
+  const fetchCurrentPrice = useCallback(
     async (api: ApiPromise) => {
       const blockNumber = (await api.query.system.number()).toJSON() as number;
 
@@ -121,39 +121,26 @@ const Purchase = () => {
 
     const txPurchase = api.tx.broker.purchase(currentPrice);
 
-    try {
-      setWorking(true);
-      await txPurchase.signAndSend(
-        activeAccount.address,
-        { signer: activeSigner },
-        ({ status, events }) => {
-          if (status.isReady) toastInfo('Transaction was initiated');
-          else if (status.isInBlock) toastInfo(`In Block`);
-          else if (status.isFinalized) {
-            setWorking(false);
-            events.forEach(({ event: { method } }) => {
-              if (method === 'ExtrinsicSuccess') {
-                toastSuccess('Transaction successful');
-                fetchRegions();
-              } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to purchase the region`);
-              }
-            });
-          }
-        }
-      );
-    } catch (e) {
-      toastError(`Failed to purchase the region. ${e}`);
-      setWorking(false);
-    }
+    sendTx(txPurchase, activeAccount.address, activeSigner, {
+      ready: () => toastInfo('Transaction was initiated'),
+      inBlock: () => toastInfo(`In Block`),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Transaction successful');
+        fetchRegions();
+      },
+      error: () => {
+        toastError(`Failed to purchase the region`);
+      },
+    });
   };
 
   useEffect(() => {
     if (!api || apiState !== ApiState.READY) return;
 
     fetchCurrentPhase(api);
-    fetchCurreentPrice(api);
-  }, [api, apiState, fetchCurreentPrice, fetchCurrentPhase]);
+    fetchCurrentPrice(api);
+  }, [api, apiState, fetchCurrentPrice, fetchCurrentPhase]);
 
   return (
     <Box>

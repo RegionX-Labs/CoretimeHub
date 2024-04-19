@@ -159,5 +159,7 @@ export const sendTx = (
     });
   } catch {
     handlers.error();
+  } finally {
+    handlers.finally && handlers.finally();
   }
 };
