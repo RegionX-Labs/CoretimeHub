@@ -52,7 +52,7 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
               <Image
                 src={icon}
                 alt='icon'
-                style={{ width: '2rem', height: '2rem' }}
+                style={{ width: '2rem', height: '2rem', borderRadius: "100%" }}
               />
               <Typography sx={{ lineHeight: 1.5, fontSize: '1.25rem' }}>
                 {label}
