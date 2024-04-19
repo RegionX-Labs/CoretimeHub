@@ -13,6 +13,7 @@ export type State = {
   socket: string;
   apiError: any;
   apiState: ApiState;
+  symbol: string;
 };
 
 export const initialState: State = {
@@ -22,6 +23,7 @@ export const initialState: State = {
   socket: '',
   apiError: null,
   apiState: ApiState.DISCONNECTED,
+  symbol: '',
 };
 
 ///
@@ -48,6 +50,8 @@ export const reducer = (state: any, action: any) => {
       return { ...state, apiState: ApiState.ERROR, apiError: action.payload };
     case 'DISCONNECTED':
       return { ...state, apiState: ApiState.DISCONNECTED };
+    case 'SET_SYMBOL':
+      return { ...state, symbol: action.payload };
     default:
       throw new Error(`Unknown type: ${action.type}`);
   }
@@ -76,7 +80,17 @@ export const connect = (
   _api.on('connected', () => {
     dispatch({ type: 'CONNECT', payload: _api, socket });
     // `ready` event is not emitted upon reconnection and is checked explicitly here.
-    _api.isReady.then(() => dispatch({ type: 'CONNECT_SUCCESS' }));
+    _api.isReady.then(() => {
+      dispatch({ type: 'CONNECT_SUCCESS' });
+      const chainInfo = _api.registry.getChainProperties();
+      if (chainInfo?.tokenSymbol.isSome) {
+        const [symbol] = chainInfo.tokenSymbol.toHuman() as [string];
+        dispatch({
+          type: 'SET_SYMBOL',
+          payload: symbol,
+        });
+      }
+    });
   });
   _api.on('ready', () => dispatch({ type: 'CONNECT_SUCCESS' }));
   _api.on('error', (err) => dispatch({ type: 'CONNECT_ERROR', payload: err }));

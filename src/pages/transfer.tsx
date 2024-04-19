@@ -116,16 +116,16 @@ const TransferPage = () => {
     <Box>
       <Box>
         <Typography
-          variant='subtitle2'
-          sx={{ color: theme.palette.text.secondary }}
-        >
-          Cross-chain transfer regions
-        </Typography>
-        <Typography
           variant='subtitle1'
-          sx={{ color: theme.palette.text.primary }}
+          sx={{ color: theme.palette.common.black }}
         >
           Cross-Chain Transfer
+        </Typography>
+        <Typography
+          variant='subtitle2'
+          sx={{ color: theme.palette.text.primary }}
+        >
+          Cross-chain transfer regions
         </Typography>
       </Box>
       <Box width='60%' margin='2em auto'>

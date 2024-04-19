@@ -1,8 +1,7 @@
-import { Divider, Paper, useTheme } from '@mui/material';
+import { Paper } from '@mui/material';
 import React, { ReactElement } from 'react';
 
 import styles from './index.module.scss';
-import { Banner } from '../Elements';
 import { Header } from '../Header';
 import { Sidebar } from '../Sidebar';
 
@@ -11,33 +10,21 @@ interface Props {
 }
 
 export const Layout = ({ children }: Props) => {
-  const theme = useTheme();
   return (
     <div className={styles.layout}>
-      <Header />
-      <Banner
-        content='The UI is still under active development and is released only for testing purposes!'
-        severity='error'
-      />
+      <Sidebar />
       <div className={styles.content}>
-        <div className={styles.sidebar}>
-          <Sidebar />
-        </div>
+        <Header />
         <Paper
           color='secondary'
           sx={{
             display: 'flex',
             flexGrow: 1,
-            margin: '1rem 0.5rem 0 2rem',
-            borderTopLeftRadius: '1rem',
-            borderBottomLeftRadius: '1rem',
-            paddingTop: '1rem',
-            paddingBottom: '2rem',
+            margin: '1rem 2rem',
+            borderRadius: '1rem',
+            py: '1rem',
           }}
         >
-          <Divider
-            sx={{ borderWidth: '1px', borderColor: theme.palette.grey[100] }}
-          />
           <div className={styles.main}>{children}</div>
         </Paper>
       </div>

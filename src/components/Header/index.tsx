@@ -1,22 +1,26 @@
 import { ExpandMore } from '@mui/icons-material';
 import {
+  Box,
   Button,
   Collapse,
   Divider,
-  Link,
   List,
   ListItemButton,
+  useTheme,
 } from '@mui/material';
 import { useInkathon } from '@scio-labs/use-inkathon';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Logo from '@/assets/logo.png';
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 
 import styles from './index.module.scss';
 import { WalletModal } from '../Modals/WalletConnect';
 
 export const Header = () => {
+  const theme = useTheme();
+
   const { activeAccount, disconnect, accounts, setActiveAccount } =
     useInkathon();
   const [accountsOpen, openAccounts] = useState(false);
@@ -29,10 +33,14 @@ export const Header = () => {
 
   return (
     <>
-      <div className={styles.header}>
-        <Link href='/' className={styles.logo}>
-          <Image src={Logo} alt='logo' />
-        </Link>
+      <Box
+        sx={{
+          display: 'flex',
+          background: theme.palette.background.paper,
+          borderLeft: `1px solid ${theme.palette.divider}`,
+          borderBottom: `1px solid ${theme.palette.divider}`,
+        }}
+      >
         <div className={styles.menu}>
           {activeAccount ? (
             <List component='div' className={styles.listWrapper}>
@@ -71,7 +79,7 @@ export const Header = () => {
             </List>
           ) : (
             <Button
-              variant='outlined'
+              variant='contained'
               className={styles.connectWallet}
               onClick={() => openWalletModal(true)}
             >
@@ -79,7 +87,7 @@ export const Header = () => {
             </Button>
           )}
         </div>
-      </div>
+      </Box>
       <WalletModal
         open={walletModalOpen}
         onClose={() => openWalletModal(false)}

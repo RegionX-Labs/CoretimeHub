@@ -1,38 +1,40 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  justify-content: space-between;
+  width: 15rem;
+  background-color: white;
 }
 
-.menu-container {
+.logoContainer {
+  display: flex;
+  align-items: center;
+  height: 5rem;
+  padding: 1rem 0;
+}
+
+.logo {
+  width: 10rem;
+  height: 3rem;
+}
+
+.logo > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+
+.menuContainer {
   display: flex;
   flex-direction: column;
-  font-size: 16px;
-  gap: 2rem;
-  padding-left: 2rem;
-  padding-top: 1rem;
-}
-
-.menuItem {
-  display: flex;
-  gap: 10px;
-  cursor: pointer;
-  padding: 0;
-  margin: 0.75rem 0;
-  text-transform: capitalize;
-  font-weight: 700;
-}
-
-.active {
-  text-decoration: underline;
-}
-
-.menuItem:hover {
-  opacity: 0.8;
+  flex-grow: 1;
 }
 
 .statusContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
   position: fixed;
   bottom: 8rem;
   display: flex;
@@ -49,7 +51,18 @@
   gap: 0.5rem;
 }
 
-.menuItem.disabled {
-  color: #ccc;
-  cursor: not-allowed;
+.menuIcon {
+  width: 1.5rem;
+}
+
+.menuItem {
+  line-height: 1;
+  flex-grow: 1;
+}
+
+.active {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 100%;
+  background-color: black;
 }

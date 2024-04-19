@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import { AmountInput, RegionCard } from '@/components/Elements';
 import { RecipientSelector } from '@/components/Elements/Selectors/RecipientSelector';
 
+import { useCoretimeApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { RegionMetadata } from '@/models';
@@ -31,6 +32,7 @@ export const SellModal = ({
   regionMetadata,
 }: SellModalProps) => {
   const { activeAccount, api } = useInkathon();
+  const {state: {symbol}} = useCoretimeApi();
 
   const { fetchRegions } = useRegions();
   const { toastError, toastSuccess } = useToast();
@@ -112,7 +114,7 @@ export const SellModal = ({
               amount={regionPrice}
               title='Region price'
               caption='The price for the entire region'
-              currency='ROC'
+              currency={symbol}
               setAmount={setRegionPrice}
             />
           </Stack>

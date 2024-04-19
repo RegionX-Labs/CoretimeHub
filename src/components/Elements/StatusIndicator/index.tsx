@@ -15,15 +15,21 @@ export const StatusIndicator = ({ state, label }: StatusIndicatorProps) => {
   return (
     <div className={styles.container}>
       <Typography
-        variant='subtitle2'
-        sx={{ color: theme.palette.text.secondary }}
+        sx={{
+          color: theme.palette.text.primary,
+          fontSize: '0.8rem',
+          flexGrow: 1,
+        }}
       >
         {label}
       </Typography>
       {state === ApiState.CONNECTING || state === ApiState.CONNECT_INIT ? (
-        <CircularProgress size='1rem' />
+        <CircularProgress size='0.5rem' />
       ) : (
-        <CircleIcon color={state === ApiState.READY ? 'success' : 'error'} />
+        <CircleIcon
+          sx={{ width: '0.5rem', height: '0.5rem' }}
+          color={state === ApiState.READY ? 'success' : 'error'}
+        />
       )}
     </div>
   );
