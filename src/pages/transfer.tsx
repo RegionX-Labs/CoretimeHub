@@ -20,26 +20,32 @@ import {
 } from '@/utils/native/transfer';
 
 import {
+  AmountInput,
   ChainSelector,
   RecipientSelector,
   RegionCard,
   RegionSelector,
 } from '@/components';
 
-import { useCoretimeApi } from '@/contexts/apis';
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import { Asset, RegionLocation, RegionMetadata } from '@/models';
+import { Asset, CORETIME_DECIMALS, RegionLocation, RegionMetadata } from '@/models';
 import Balance from '@/components/Elements/Balance';
 import AssetSelector from '@/components/Elements/Selectors/AssetSelector';
+import { ApiState } from '@/contexts/apis/types';
+import { fetchBalance } from '@/utils/functions';
 
 const TransferPage = () => {
   const { activeAccount, activeSigner } = useInkathon();
 
   const { toastError, toastInfo, toastWarning, toastSuccess } = useToast();
   const {
-    state: { api: coretimeApi },
+    state: { api: coretimeApi, apiState: coretimeApiState },
   } = useCoretimeApi();
+  const {
+    state: { api: relayApi, apiState: relayApiState },
+  } = useRelayApi();
   const { regions } = useRegions();
 
   const [filteredRegions, setFilteredRegions] = useState<Array<RegionMetadata>>(
@@ -57,17 +63,53 @@ const TransferPage = () => {
   );
 
   const [asset, setAsset] = useState<Asset>('token');
+  const [transferAmount, setTransferAmount] = useState('');
 
-  const defaultHandlers = {
-    ready: () => toastInfo('Transaction was initiated.'),
-    inBlock: () => toastInfo(`In Block`),
-    finalized: () => setWorking(false),
-    success: () => toastSuccess('Successfully transferred the region.'),
-    error: () => {
-      toastError(`Failed to transfer the region.`);
-      setWorking(false);
-    },
+  const [coretimeBalance, setCoretimeBalance] = useState(0);
+  const [relayBalance, setRelayBalance] = useState(0);
+
+  const defaultHandler = (onSuccess?: () => void) => {
+    return {
+      ready: () => toastInfo('Transaction was initiated.'),
+      inBlock: () => toastInfo(`In Block`),
+      finalized: () => setWorking(false),
+      success: () => {
+        onSuccess && onSuccess();
+        toastSuccess('Successfully transferred the region.');
+      },
+      error: () => {
+        toastError(`Failed to transfer the region.`);
+        setWorking(false);
+      },
+    }
   };
+
+  useEffect(() => {
+    getBalances();
+  }, [
+    relayApi,
+    relayApiState,
+    coretimeApi,
+    coretimeApiState,
+    activeAccount,
+  ]);
+
+  const getBalances = async () => {
+    if (
+      !relayApi ||
+      relayApiState !== ApiState.READY ||
+      !coretimeApi ||
+      coretimeApiState !== ApiState.READY ||
+      !activeAccount
+    )
+      return;
+
+    const rcBalance = await fetchBalance(relayApi, activeAccount.address);
+    const ctBalance = await fetchBalance(coretimeApi, activeAccount.address);
+
+    setRelayBalance(rcBalance);
+    setCoretimeBalance(ctBalance);
+  }
 
   useEffect(() => {
     setFilteredRegions(
@@ -89,19 +131,20 @@ const TransferPage = () => {
   };
 
   const handleTransfer = async () => {
-    if (asset == 'region') {
+    if (asset === 'region') {
       handleRegionTransfer();
-    } else if (asset == 'token') {
+    } else if (asset === 'token') {
       handleTokenTransfer();
     }
   };
 
   const handleTokenTransfer = async () => {
-    if (!activeAccount || !activeSigner) return;
+    if (!activeAccount || !activeSigner || !coretimeApi) return;
     if (!newOwner) {
       toastError('Recipient must be selected');
       return;
     }
+    const amount = Number(transferAmount) * Math.pow(10, CORETIME_DECIMALS);
     if (originChain === destinationChain && originChain === 'CoretimeChain') {
       coretimeApi &&
         transferNativeToken(
@@ -109,8 +152,8 @@ const TransferPage = () => {
           activeSigner,
           activeAccount.address,
           newOwner,
-          '500',
-          defaultHandlers
+          amount.toString(),
+          defaultHandler(() => getBalances())
         );
     }
   };
@@ -144,7 +187,7 @@ const TransferPage = () => {
       activeSigner,
       activeAccount.address,
       newOwner ? newOwner : activeAccount.address,
-      defaultHandlers
+      defaultHandler()
     );
   };
 
@@ -165,7 +208,7 @@ const TransferPage = () => {
             Cross-Chain Transfer
           </Typography>
         </Box>
-        <Balance />
+        <Balance coretimeBalance={coretimeBalance} relayBalance={relayBalance} />
       </Box>
       <Box width='60%' margin='2em auto'>
         <Stack margin='1em 0' direction='column' gap={1}>
@@ -182,7 +225,7 @@ const TransferPage = () => {
             setChain={setDestinationChain}
           />
         </Stack>
-        {originChain && (
+        {asset === "region" && originChain && destinationChain && (
           <Stack margin='1em 0' direction='column' gap={1}>
             <Typography>Region</Typography>
             <RegionSelector
@@ -210,6 +253,16 @@ const TransferPage = () => {
           <Typography>Transfer to:</Typography>
           <RecipientSelector recipient={newOwner} setRecipient={setNewOwner} />
         </Stack>
+        {asset === 'token' && originChain && destinationChain && (
+          <Stack margin='2em 0' direction='column' gap={1}>
+            <AmountInput
+              amount={transferAmount}
+              setAmount={setTransferAmount}
+              currency='ROC'
+              caption='Transfer amount'
+            />
+          </Stack>
+        )}
         {statusLabel && (
           <Alert severity='info' sx={{ marginY: '2em' }}>
             {statusLabel}

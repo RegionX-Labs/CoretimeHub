@@ -3,8 +3,8 @@ import { Stack, TextField, Typography } from '@mui/material';
 interface AmountInputProps {
   amount: string;
   currency: string;
-  title: string;
-  caption: string;
+  title?: string;
+  caption?: string;
   setAmount: (_: string) => void;
 }
 
@@ -45,8 +45,12 @@ export const AmountInput = ({
   return (
     <>
       <Stack alignItems='center' direction='row' gap={1}>
-        <Typography variant='h6'>{title}</Typography>
-        <Typography>{caption}</Typography>
+        {title &&
+          <Typography variant='h6'>{title}</Typography>
+        }
+        {caption &&
+          <Typography>{caption}</Typography>
+        }
       </Stack>
       <TextField
         value={`${amount} ${currency}`}
