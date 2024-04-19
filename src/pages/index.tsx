@@ -14,16 +14,16 @@ const Home = () => {
     <Box>
       <Box>
         <Typography
-          variant='subtitle2'
-          sx={{ color: theme.palette.text.secondary }}
-        >
-          Explore all the possibilities RegionX offers
-        </Typography>
-        <Typography
           variant='subtitle1'
-          sx={{ color: theme.palette.text.primary }}
+          sx={{ color: theme.palette.common.black }}
         >
           Home
+        </Typography>
+        <Typography
+          variant='subtitle2'
+          sx={{ color: theme.palette.text.primary }}
+        >
+          Explore all the possibilities RegionX offers
         </Typography>
       </Box>
       <Box marginTop='2em'>

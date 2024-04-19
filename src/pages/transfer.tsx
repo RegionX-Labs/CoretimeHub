@@ -226,21 +226,19 @@ const TransferPage = () => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Box>
-          <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.secondary }}
-          >
-            Cross-chain transfer regions
-          </Typography>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.text.primary }}
-          >
-            Cross-Chain Transfer
-          </Typography>
-        </Box>
+      <Box>
+        <Typography
+          variant='subtitle1'
+          sx={{ color: theme.palette.common.black }}
+        >
+          Cross-Chain Transfer
+        </Typography>
+        <Typography
+          variant='subtitle2'
+          sx={{ color: theme.palette.text.primary }}
+        >
+          Cross-chain transfer regions
+        </Typography>
         <Balance
           symbol={symbol}
           coretimeBalance={coretimeBalance}

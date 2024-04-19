@@ -152,16 +152,16 @@ const Purchase = () => {
       >
         <Box>
           <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.secondary }}
-          >
-            Purchase a core directly from the Coretime chain
-          </Typography>
-          <Typography
             variant='subtitle1'
-            sx={{ color: theme.palette.text.primary }}
+            sx={{ color: theme.palette.common.black }}
           >
             Purchase a core
+          </Typography>
+          <Typography
+            variant='subtitle2'
+            sx={{ color: theme.palette.text.primary }}
+          >
+            Purchase a core directly from the Coretime chain
           </Typography>
         </Box>
       </Box>

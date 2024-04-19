@@ -110,37 +110,50 @@ const Dashboard = () => {
     <Box
       sx={{
         display: 'flex',
-        height: '100%',
-        gap: '1rem',
-        justifyContent: 'space-between',
+        flexDirection: 'column',
+        maxHeight: 'calc(100% - 2rem)',
       }}
     >
-      <Box sx={{ maxWidth: '45rem', flexGrow: 1, overflow: 'auto' }}>
-        <Box>
-          <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.secondary }}
-          >
-            Manage your cores
-          </Typography>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.text.primary }}
-          >
-            Regions Dashboard
-          </Typography>
-        </Box>
+      <Box>
+        <Typography
+          variant='subtitle1'
+          sx={{ color: theme.palette.common.black }}
+        >
+          Regions Dashboard
+        </Typography>
+        <Typography
+          variant='subtitle2'
+          sx={{ color: theme.palette.text.primary }}
+        >
+          Manage your cores
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          height: '100%',
+          justifyContent: 'space-between',
+        }}
+      >
         <Box
           sx={{
+            maxWidth: '50rem',
+            flexGrow: 1,
+            overflowY: 'auto',
             display: 'flex',
             flexDirection: 'column',
             gap: '2rem',
             mt: '1rem',
+            '::-webkit-scrollbar': {
+              display: 'none',
+            },
           }}
         >
-          <Backdrop open={loading}>
-            <CircularProgress />
-          </Backdrop>
+          {loading && (
+            <Backdrop open>
+              <CircularProgress />
+            </Backdrop>
+          )}
           {regions.length === 0 ? (
             <>
               <Typography>
@@ -163,84 +176,85 @@ const Dashboard = () => {
             </>
           )}
         </Box>
-      </Box>
-      <Box
-        sx={{
-          borderRadius: '.5rem',
-          color: theme.palette.text.secondary,
-          background: theme.palette.background.default,
-          minWidth: 280,
-          height: 500,
-          marginTop: '2rem',
-          padding: '2rem 3rem',
-        }}
-      >
-        <Typography variant='h1'>Manage</Typography>
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1.5rem',
-            marginTop: '3rem',
-            alignItems: 'flex-start',
+            borderRadius: '.5rem',
+            color: theme.palette.text.secondary,
+            background: theme.palette.background.default,
+            minWidth: 280,
+            height: 500,
+            padding: '2rem 3rem',
           }}
         >
-          {management.map(({ label, icon: Icon, onClick }, index) => (
-            <Button
-              key={index}
-              sx={{
-                color: theme.palette.text.secondary,
-                textTransform: 'capitalize',
-              }}
-              startIcon={
-                <Icon
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
-                  color={theme.palette.text.secondary}
-                />
-              }
-              disabled={isDisabled(label)}
-              onClick={onClick}
-            >
-              {label}
-            </Button>
-          ))}
+          <Typography variant='h1' color={theme.palette.text.primary}>
+            Manage
+          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.5rem',
+              marginTop: '3rem',
+              alignItems: 'flex-start',
+            }}
+          >
+            {management.map(({ label, icon: Icon, onClick }, index) => (
+              <Button
+                key={index}
+                sx={{
+                  color: theme.palette.text.primary,
+                  textTransform: 'capitalize',
+                }}
+                startIcon={
+                  <Icon
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    color={theme.palette.text.primary}
+                  />
+                }
+                disabled={isDisabled(label)}
+                onClick={onClick}
+              >
+                {label}
+              </Button>
+            ))}
+          </Box>
         </Box>
+        {regionSelected && (
+          <>
+            <PartitionModal
+              open={partitionModalOpen}
+              onClose={() => openPartitionModal(false)}
+              regionMetadata={selectedRegion}
+            />
+            <InterlaceModal
+              open={interlaceModalOpen}
+              onClose={() => openInterlaceModal(false)}
+              regionMetadata={selectedRegion}
+            />
+            <TaskAssignModal
+              open={assignModalOpen}
+              onClose={() => openAssignModal(false)}
+              regionMetadata={selectedRegion}
+            />
+            <TransferModal
+              open={transferModalOpen}
+              onClose={() => openTransferModal(false)}
+              regionMetadata={selectedRegion}
+            />
+            <SellModal
+              open={sellModalOpen}
+              onClose={() => openSellModal(false)}
+              regionMetadata={selectedRegion}
+            />
+            <UnlistModal
+              open={unlistModalOpen}
+              onClose={() => openUnlistModal(false)}
+              regionMetadata={selectedRegion}
+            />
+          </>
+        )}
       </Box>
-      {regionSelected && (
-        <>
-          <PartitionModal
-            open={partitionModalOpen}
-            onClose={() => openPartitionModal(false)}
-            regionMetadata={selectedRegion}
-          />
-          <InterlaceModal
-            open={interlaceModalOpen}
-            onClose={() => openInterlaceModal(false)}
-            regionMetadata={selectedRegion}
-          />
-          <TaskAssignModal
-            open={assignModalOpen}
-            onClose={() => openAssignModal(false)}
-            regionMetadata={selectedRegion}
-          />
-          <TransferModal
-            open={transferModalOpen}
-            onClose={() => openTransferModal(false)}
-            regionMetadata={selectedRegion}
-          />
-          <SellModal
-            open={sellModalOpen}
-            onClose={() => openSellModal(false)}
-            regionMetadata={selectedRegion}
-          />
-          <UnlistModal
-            open={unlistModalOpen}
-            onClose={() => openUnlistModal(false)}
-            regionMetadata={selectedRegion}
-          />
-        </>
-      )}
     </Box>
   );
 };
