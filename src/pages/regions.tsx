@@ -21,7 +21,8 @@ import {
 import { SellModal } from '@/components/Modals/Sell';
 import { UnlistModal } from '@/components/Modals/Unlist';
 
-import { useRegions } from '@/contexts/regions';
+import { RegionDataProvider, useRegions } from '@/contexts/regions';
+import { TaskDataProvider } from '@/contexts/tasks';
 import { useToast } from '@/contexts/toast';
 import {
   AssignmentIcon,
@@ -259,4 +260,14 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+const DashboardWrapped = () => {
+  return (
+    <TaskDataProvider>
+      <RegionDataProvider>
+        <Dashboard />
+      </RegionDataProvider>
+    </TaskDataProvider>
+  )
+}
+
+export default DashboardWrapped;

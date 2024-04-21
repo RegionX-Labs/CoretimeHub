@@ -24,7 +24,7 @@ import {
 } from '@/components';
 
 import { useCoretimeApi } from '@/contexts/apis';
-import { useRegions } from '@/contexts/regions';
+import { RegionDataProvider, useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { RegionLocation, RegionMetadata } from '@/models';
 
@@ -192,4 +192,12 @@ const TransferPage = () => {
   );
 };
 
-export default TransferPage;
+const TransferPageWrapped = () => {
+  return (
+    <RegionDataProvider>
+      <TransferPage />
+    </RegionDataProvider>
+  )
+}
+
+export default TransferPageWrapped;

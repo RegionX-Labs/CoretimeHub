@@ -19,7 +19,7 @@ import { Progress, SaleInfoGrid, Section } from '@/components';
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
-import { useSaleInfo } from '@/contexts/sales';
+import { SaleInfoProvider, useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
 import { SalePhase } from '@/models';
 
@@ -213,11 +213,11 @@ const Purchase = () => {
       </Box>
       <Box>
         {loading ||
-        !currentPhase ||
-        !saleEnd ||
-        !currentBlockNumber ||
-        !progress ||
-        !saleEndTimestamp ? (
+          !currentPhase ||
+          !saleEnd ||
+          !currentBlockNumber ||
+          !progress ||
+          !saleEndTimestamp ? (
           <>
             <Typography variant='h5' align='center'>
               Connect your wallet
@@ -275,4 +275,12 @@ const Purchase = () => {
   );
 };
 
-export default Purchase;
+const PurchaseWrapped = () => {
+  return (
+    <SaleInfoProvider>
+      <Purchase />
+    </SaleInfoProvider>
+  )
+}
+
+export default PurchaseWrapped;

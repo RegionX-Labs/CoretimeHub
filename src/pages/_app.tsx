@@ -20,10 +20,6 @@ import {
 } from '@/contexts/apis';
 import { WS_CORETIME_CHAIN } from '@/contexts/apis/consts';
 import { ContextDataProvider } from '@/contexts/common';
-import { MarketProvider } from '@/contexts/market';
-import { RegionDataProvider } from '@/contexts/regions';
-import { SaleInfoProvider } from '@/contexts/sales';
-import { TaskDataProvider } from '@/contexts/tasks';
 import { ToastProvider } from '@/contexts/toast';
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -62,15 +58,7 @@ export default function MyApp(props: MyAppProps) {
                 apiOptions={{ types: { Id } }}
               >
                 <ContextDataProvider>
-                  <TaskDataProvider>
-                    <RegionDataProvider>
-                      <MarketProvider>
-                        <SaleInfoProvider>
-                          {getLayout(<Component {...pageProps} />)}
-                        </SaleInfoProvider>
-                      </MarketProvider>
-                    </RegionDataProvider>
-                  </TaskDataProvider>
+                  {getLayout(<Component {...pageProps} />)}
                 </ContextDataProvider>
               </UseInkathonProvider>
             </RelayApiContextProvider>

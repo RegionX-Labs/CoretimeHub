@@ -10,7 +10,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@date-io/date-fns": "^3.0.0",
     "@emotion/cache": "^11.7.1",
     "@emotion/react": "^11.7.1",
     "@emotion/server": "^11.4.0",
@@ -28,7 +27,6 @@
     "@types/humanize-duration": "^3.27.3",
     "clsx": "^1.1.1",
     "coretime-utils": "^0.2.8",
-    "date-fns": "^3.3.1",
     "decimal.js": "^10.4.3",
     "humanize-duration": "^3.31.0",
     "javascript-time-ago": "^2.5.9",
