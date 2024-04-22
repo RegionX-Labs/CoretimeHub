@@ -1,151 +1,47 @@
 import { LoadingButton } from '@mui/lab';
 import { Box, Button, Typography, useTheme } from '@mui/material';
-import { ApiPromise } from '@polkadot/api';
-import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { useInkathon } from '@scio-labs/use-inkathon';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
 import Link from 'next/link';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import {
-  formatBalance,
-  getBlockTime,
-  getBlockTimestamp,
-  parseHNString,
-} from '@/utils/functions';
+import { formatBalance } from '@/utils/functions';
 
-import { Progress, SaleInfoGrid, Section } from '@/components';
+import { Progress, SaleInfoGrid } from '@/components';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
-import { SalePhase } from '@/models';
 
-import {
-  getCurrentPhase,
-  getCurrentPrice,
-  getSaleEndInBlocks,
-  getSaleProgress,
-  getSaleStartInBlocks,
-} from '../utils/sale/utils';
-import { useRouter } from 'next/router';
+import useBalance from '@/components/Hooks/balance';
+import useSalePhase from '@/components/Hooks/salePhase';
+import useSalePrice from '@/components/Hooks/salePrice';
 
 const Purchase = () => {
   const theme = useTheme();
 
   const [working, setWorking] = useState(false);
-  const [balance, setBalance] = useState<number>(0);
-  const [currentPhase, setCurrentPhase] = useState<SalePhase | null>(null);
-  const [currentPrice, setCurrentPrice] = useState(0);
-  const [saleEnd, setSaleEnd] = useState<number | null>(null);
-  const [currentBlockNumber, setCurrentBlockNumber] = useState<number | null>(
-    null
-  );
-  const [progress, setProgress] = useState<number | null>(0);
-  const [saleSections, setSaleSections] = useState<Section[]>([]);
-
   TimeAgo.addLocale(en);
   // Create formatter (English).
   const timeAgo = new TimeAgo('en-US');
 
   const { activeSigner, activeAccount } = useInkathon();
-  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast();
+  const { toastError, toastSuccess, toastInfo } = useToast();
 
-  const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
-  const { saleInfo, config, loading } = useSaleInfo();
+  const { saleInfo, loading } = useSaleInfo();
   const {
     state: { api, apiState, symbol },
   } = useCoretimeApi();
 
-  const router = useRouter();
-  const { network } = router.query;
-  const blockTime = getBlockTime(network);
-
   const { fetchRegions } = useRegions();
 
-  const fetchBalance = useCallback(
-    async (api: ApiPromise, activeAccount: InjectedAccount) => {
-      const account = (
-        await api.query.system.account(activeAccount.address)
-      ).toHuman() as any;
-
-      const balance = parseHNString(account.data.free.toString());
-      setBalance(balance);
-
-      if (balance == 0) {
-        toastWarning(
-          `The selected account does not have any ${symbol} tokens on the Coretime chain.`
-        );
-      }
-    },
-    [toastWarning]
-  );
-
-  const fetchCurrentPhase = useCallback(
-    async (api: ApiPromise) => {
-      const blockNumber = (await api.query.system.number()).toJSON() as number;
-      const lastCommittedTimeslice = parseHNString(
-        (
-          (await api.query.broker.status()).toHuman() as any
-        ).lastCommittedTimeslice.toString()
-      );
-
-      const _saleStart = getSaleStartInBlocks(saleInfo, config);
-      const _saleEnd = getSaleEndInBlocks(
-        saleInfo,
-        blockNumber,
-        lastCommittedTimeslice,
-        network
-      );
-
-      setCurrentBlockNumber(blockNumber);
-      setSaleEnd(_saleEnd);
-      getBlockTimestamp(api, _saleEnd, blockTime).then((value) =>
-        setSaleEndTimestamp(value)
-      );
-
-      const progress = getSaleProgress(
-        saleInfo,
-        config,
-        blockNumber,
-        lastCommittedTimeslice,
-        network
-      );
-      setProgress(progress);
-
-      setCurrentPhase(getCurrentPhase(saleInfo, blockNumber));
-
-      const saleDuration = _saleEnd - _saleStart;
-
-      setSaleSections([
-        { name: 'Interlude', value: 0 },
-        {
-          name: 'Leadin phase',
-          value: (config.interludeLength / saleDuration) * 100,
-        },
-        {
-          name: 'Fixed price phase',
-          value:
-            ((config.interludeLength + config.leadinLength) / saleDuration) *
-            100,
-        },
-      ]);
-    },
-    [saleInfo, config]
-  );
-
-  const fetchCurreentPrice = useCallback(
-    async (api: ApiPromise) => {
-      const blockNumber = (await api.query.system.number()).toJSON() as number;
-
-      const price = getCurrentPrice(saleInfo, blockNumber);
-      setCurrentPrice(price);
-    },
-    [saleInfo]
-  );
+  const balance = useBalance();
+  const currentPrice = useSalePrice();
+  const { currentPhase, progress, saleEnd, saleEndTimestamp, saleSections } =
+    useSalePhase();
 
   const purchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
@@ -180,19 +76,6 @@ const Purchase = () => {
     }
   };
 
-  useEffect(() => {
-    if (!api || apiState !== ApiState.READY) return;
-
-    fetchCurrentPhase(api);
-    fetchCurreentPrice(api);
-  }, [api, apiState, fetchCurreentPrice, fetchCurrentPhase]);
-
-  useEffect(() => {
-    if (!api || apiState !== ApiState.READY || !activeAccount) return;
-
-    fetchBalance(api, activeAccount);
-  }, [api, apiState, activeAccount, fetchBalance]);
-
   return (
     <Box>
       <Box
@@ -223,7 +106,6 @@ const Purchase = () => {
         {loading ||
         !currentPhase ||
         !saleEnd ||
-        !currentBlockNumber ||
         !progress ||
         !saleEndTimestamp ? (
           <>
