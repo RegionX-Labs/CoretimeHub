@@ -5,6 +5,8 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc';
 import { DefinitionRpcExt } from '@polkadot/types/types';
 
+import { parseHNString } from '@/utils/functions';
+
 import { ApiState } from './types';
 
 export type State = {
@@ -14,6 +16,7 @@ export type State = {
   apiError: any;
   apiState: ApiState;
   symbol: string;
+  blockTime: number; // In ms.
 };
 
 export const initialState: State = {
@@ -24,6 +27,7 @@ export const initialState: State = {
   apiError: null,
   apiState: ApiState.DISCONNECTED,
   symbol: '',
+  blockTime: 12000,
 };
 
 ///
@@ -52,12 +56,13 @@ export const reducer = (state: any, action: any) => {
       return { ...state, apiState: ApiState.DISCONNECTED };
     case 'SET_SYMBOL':
       return { ...state, symbol: action.payload };
+    case 'SET_BLOCKTIME':
+      return { ...state, blockTime: action.payload };
     default:
       throw new Error(`Unknown type: ${action.type}`);
   }
 };
 
-///
 // Connecting to the Substrate node
 
 export const connect = (
@@ -88,6 +93,15 @@ export const connect = (
         dispatch({
           type: 'SET_SYMBOL',
           payload: symbol,
+        });
+      }
+      if (_api.consts.aura?.slotDuration) {
+        const duration = parseHNString(
+          _api.consts.aura.slotDuration.toHuman() as string
+        );
+        dispatch({
+          type: 'SET_BLOCKTIME',
+          payload: duration,
         });
       }
     });

@@ -9,16 +9,15 @@ import { useState } from 'react';
 import { formatBalance } from '@/utils/functions';
 
 import { Progress, SaleInfoGrid } from '@/components';
+import useBalance from '@/components/Hooks/balance';
+import useSalePhase from '@/components/Hooks/salePhase';
+import useSalePrice from '@/components/Hooks/salePrice';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
-
-import useBalance from '@/components/Hooks/balance';
-import useSalePhase from '@/components/Hooks/salePhase';
-import useSalePrice from '@/components/Hooks/salePrice';
 
 const Purchase = () => {
   const theme = useTheme();
@@ -40,8 +39,13 @@ const Purchase = () => {
 
   const balance = useBalance();
   const currentPrice = useSalePrice();
-  const { currentPhase, progress, saleEnd, saleEndTimestamp, saleSections } =
-    useSalePhase();
+  const {
+    currentPhase,
+    progress,
+    saleStartTimestamp,
+    saleEndTimestamp,
+    saleSections,
+  } = useSalePhase();
 
   const purchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
@@ -105,8 +109,8 @@ const Purchase = () => {
       <Box>
         {loading ||
         !currentPhase ||
-        !saleEnd ||
         !progress ||
+        !saleStartTimestamp ||
         !saleEndTimestamp ? (
           <>
             <Typography variant='h5' align='center'>
@@ -124,7 +128,8 @@ const Purchase = () => {
                 currentPhase={currentPhase}
                 currentPrice={currentPrice}
                 saleInfo={saleInfo}
-                saleEnd={saleEnd}
+                saleStartTimestamp={saleStartTimestamp}
+                saleEndTimestamp={saleEndTimestamp}
               />
             </Box>
             <Box

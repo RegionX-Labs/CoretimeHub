@@ -1,47 +1,35 @@
 import { Box, Typography } from '@mui/material';
-import { ApiPromise } from '@polkadot/api';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
-import React, { useCallback, useEffect, useState } from 'react';
 
-import {
-  formatBalance,
-  getBlockTime,
-  getBlockTimestamp,
-} from '@/utils/functions';
+import { formatBalance } from '@/utils/functions';
 
 import { useCoretimeApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { SaleInfo, SalePhase } from '@/models';
 
 import styles from './index.module.scss';
-import { useRouter } from 'next/router';
 
 interface SaleInfoGridProps {
   saleInfo: SaleInfo;
   currentPhase: SalePhase;
   currentPrice: number;
-  saleEnd: number;
+  saleEndTimestamp: number;
+  saleStartTimestamp: number;
 }
 
 export const SaleInfoGrid = ({
   saleInfo,
   currentPhase,
   currentPrice,
-  saleEnd,
+  saleEndTimestamp,
+  saleStartTimestamp,
 }: SaleInfoGridProps) => {
   TimeAgo.addLocale(en);
   const timeAgo = new TimeAgo('en-US');
 
-  const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
-  const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const {
-    state: { api, apiState, symbol },
+    state: { symbol },
   } = useCoretimeApi();
-
-  const router = useRouter();
-  const { network } = router.query;
-  const blockTime = getBlockTime(network);
 
   const nextPhase = (): SalePhase => {
     const phases = Object.values(SalePhase);
@@ -51,26 +39,6 @@ export const SaleInfoGrid = ({
     const nextIndex = (currentIndex + 1) % phases.length;
     return phases[nextIndex];
   };
-
-  const setTimestamps = useCallback(
-    (api: ApiPromise) => {
-      getBlockTimestamp(api, saleInfo.saleStart, blockTime).then((value) =>
-        setSaleStartTimestamp(value)
-      );
-      getBlockTimestamp(api, saleEnd, blockTime).then((value) =>
-        setSaleEndTimestamp(value)
-      );
-    },
-    [saleInfo.saleStart, saleEnd]
-  );
-
-  useEffect(() => {
-    if (!api || apiState !== ApiState.READY) {
-      return;
-    }
-
-    setTimestamps(api);
-  }, [api, apiState, setTimestamps]);
 
   return (
     <Box className={styles.grid}>

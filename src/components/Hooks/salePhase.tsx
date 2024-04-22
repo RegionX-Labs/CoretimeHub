@@ -1,4 +1,7 @@
-import { SalePhase } from '@/models';
+import { ApiPromise } from '@polkadot/api';
+import { useRouter } from 'next/router';
+import { useCallback, useEffect, useState } from 'react';
+
 import { getBlockTimestamp, parseHNString } from '@/utils/functions';
 import {
   getCurrentPhase,
@@ -6,13 +9,13 @@ import {
   getSaleProgress,
   getSaleStartInBlocks,
 } from '@/utils/sale/utils';
-import { ApiPromise } from '@polkadot/api';
-import { useCallback, useEffect, useState } from 'react';
-import { Section } from '../Elements';
-import { useRouter } from 'next/router';
+
+import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useSaleInfo } from '@/contexts/sales';
-import { useCoretimeApi } from '@/contexts/apis';
+import { SalePhase } from '@/models';
+
+import { Section } from '../Elements';
 
 // Custom hook for fetching current phase
 const useSalePhase = () => {
@@ -23,8 +26,8 @@ const useSalePhase = () => {
 
   const [currentPhase, setCurrentPhase] = useState<SalePhase | null>(null);
 
-  const [saleEnd, setSaleEnd] = useState<number | null>(null);
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
+  const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
 
   const [progress, setProgress] = useState<number | null>(0);
   const [saleSections, setSaleSections] = useState<Section[]>([]);
@@ -49,9 +52,11 @@ const useSalePhase = () => {
         network
       );
 
-      setSaleEnd(_saleEnd);
       getBlockTimestamp(api, _saleEnd).then((value: number) =>
         setSaleEndTimestamp(value)
+      );
+      getBlockTimestamp(api, _saleStart).then((value: number) =>
+        setSaleStartTimestamp(value)
       );
 
       const progress = getSaleProgress(
@@ -88,11 +93,11 @@ const useSalePhase = () => {
     if (!api || apiState !== ApiState.READY) return;
 
     fetchCurrentPhase(api);
-  }, [fetchCurrentPhase, api, apiState]);
+  }, [fetchCurrentPhase, api, apiState, network]);
 
   return {
     currentPhase,
-    saleEnd,
+    saleStartTimestamp,
     saleEndTimestamp,
     progress,
     saleSections,

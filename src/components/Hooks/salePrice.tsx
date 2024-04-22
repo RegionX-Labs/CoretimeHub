@@ -1,8 +1,10 @@
+import { useCallback, useEffect, useState } from 'react';
+
+import { getCurrentPrice } from '@/utils/sale/utils';
+
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useSaleInfo } from '@/contexts/sales';
-import { getCurrentPrice } from '@/utils/sale/utils';
-import { useCallback, useEffect, useState } from 'react';
 
 const useSalePrice = () => {
   const {
@@ -18,7 +20,7 @@ const useSalePrice = () => {
       const price = getCurrentPrice(saleInfo, blockNumber);
       setCurrentPrice(price);
     }
-  }, [api, saleInfo]);
+  }, [api, apiState, saleInfo]);
 
   useEffect(() => {
     fetchCurrentPrice();

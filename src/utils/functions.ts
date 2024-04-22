@@ -17,7 +17,7 @@ export const parseHNStringToString = (str: string): string => {
 export const getBlockTimestamp = async (
   api: ApiPromise,
   height: number,
-  blockTime: number = 6000
+  blockTime = 6000
 ): Promise<number> => {
   const [resHeight, resTimestamp] = await Promise.all([
     api.query.system.number(),
@@ -115,12 +115,6 @@ export const extractRegionIdFromRaw = (rawRegionId: bigint): RegionId => {
     core,
     mask: new CoreMask(('0x' + mask.toString(16)).padEnd(22, '0')),
   };
-};
-
-export const getBlockTime = (network: any): number => {
-  // Coretime on Rococo has async backing and due to this it has a block time of 6 seconds.
-  const blockTime = !network || network == 'rococo' ? 6000 : 12000;
-  return blockTime;
 };
 
 export const rcBlockToParachainBlock = (

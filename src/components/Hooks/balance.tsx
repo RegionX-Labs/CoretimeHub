@@ -1,8 +1,9 @@
+import { useInkathon } from '@scio-labs/use-inkathon';
+import { useCallback, useEffect, useState } from 'react';
+
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
-import { useInkathon } from '@scio-labs/use-inkathon';
-import { useCallback, useEffect, useState } from 'react';
 
 // React hook for fetching balance.
 const useBalance = () => {
@@ -29,7 +30,7 @@ const useBalance = () => {
         );
       }
     }
-  }, [api, activeAccount, toastWarning, symbol]);
+  }, [api, apiState, activeAccount, toastWarning, symbol]);
 
   useEffect(() => {
     fetchBalance();
