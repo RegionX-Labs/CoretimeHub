@@ -1,5 +1,4 @@
 import { ApiPromise } from '@polkadot/api';
-import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 
 import {
@@ -13,12 +12,12 @@ import {
   getSaleStartInBlocks,
 } from '@/utils/sale/utils';
 
+import { Section } from '@/components/Elements';
+
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
-
-import { Section } from '@/components/Elements';
 
 // Custom hook for fetching current phase
 const useSalePhase = () => {
@@ -34,9 +33,6 @@ const useSalePhase = () => {
 
   const [progress, setProgress] = useState<number | null>(0);
   const [saleSections, setSaleSections] = useState<Section[]>([]);
-
-  const router = useRouter();
-  const { network } = router.query;
 
   const fetchCurrentPhase = useCallback(
     async (api: ApiPromise) => {
@@ -87,7 +83,7 @@ const useSalePhase = () => {
         },
       ]);
     },
-    [saleInfo, config, network]
+    [saleInfo, config]
   );
 
   useEffect(() => {

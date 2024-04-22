@@ -6,12 +6,12 @@ import en from 'javascript-time-ago/locale/en.json';
 import Link from 'next/link';
 import { useState } from 'react';
 
-import { formatBalance } from '@/utils/functions';
-
-import { Progress, SaleInfoGrid } from '@/components';
 import useBalance from '@/hooks/balance';
 import useSalePhase from '@/hooks/salePhase';
 import useSalePrice from '@/hooks/salePrice';
+import { formatBalance } from '@/utils/functions';
+
+import { Progress, SaleInfoGrid } from '@/components';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
