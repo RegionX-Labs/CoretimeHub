@@ -14,28 +14,24 @@ export const fetchRegions = async (
 
     const brokerRegions: Array<Region> = brokerEntries
       .map(([key, value]) => {
-        const keyTuple: any = key.toHuman();
+        const keyTuple: any = key.toHuman(undefined, true);
         const { begin, core, mask } = keyTuple[0] as any;
         const { end, owner, paid } = value.toHuman() as any;
 
-        try {
-          const regionId = {
-            begin: parseHNString(begin.toString()),
-            core: parseHNString(core.toString()),
-            mask: new CoreMask(mask),
-          };
-          return new Region(
-            regionId,
-            {
-              end: parseHNString(end),
-              owner,
-              paid: paid ? parseHNString(paid) : null,
-            },
-            0
-          );
-        } catch (_e) {
-          /** */
-        }
+        const regionId = {
+          begin: parseHNString(begin.toString()),
+          core: parseHNString(core.toString()),
+          mask: new CoreMask(mask),
+        };
+        return new Region(
+          regionId,
+          {
+            end: parseHNString(end),
+            owner,
+            paid: paid ? parseHNString(paid) : null,
+          },
+          0
+        );
       })
       .filter((entry) => !!entry) as Array<Region>;
     return brokerRegions;

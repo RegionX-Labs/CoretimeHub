@@ -63,30 +63,26 @@ const TaskDataProvider = ({ children }: Props) => {
 
     for await (const [key, value] of workplan) {
       const [[begin, core]] = key.toHuman() as [[number, number]];
-      const records = value.toHuman() as ScheduleItem[];
+      const records = value.toHuman(undefined, true) as ScheduleItem[];
 
       records.forEach((record) => {
-        try {
-          const {
-            assignment: { Task: taskId },
-            mask,
-          } = record;
+        const {
+          assignment: { Task: taskId },
+          mask,
+        } = record;
 
-          const region = new Region(
-            {
-              begin: parseHNString(begin.toString()),
-              core: parseHNString(core.toString()),
-              mask: new CoreMask(mask),
-            },
-            { end: 0, owner: '', paid: null },
-            0
-          );
-          tasks[region.getEncodedRegionId(api).toString()] = taskId
-            ? parseHNString(taskId)
-            : null;
-        } catch (_e) {
-          /** */
-        }
+        const region = new Region(
+          {
+            begin: parseHNString(begin.toString()),
+            core: parseHNString(core.toString()),
+            mask: new CoreMask(mask),
+          },
+          { end: 0, owner: '', paid: null },
+          0
+        );
+        tasks[region.getEncodedRegionId(api).toString()] = taskId
+          ? parseHNString(taskId)
+          : null;
       });
     }
 
