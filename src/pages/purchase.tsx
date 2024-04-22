@@ -6,12 +6,12 @@ import en from 'javascript-time-ago/locale/en.json';
 import Link from 'next/link';
 import { useState } from 'react';
 
+import useBalance from '@/hooks/balance';
+import useSalePhase from '@/hooks/salePhase';
+import useSalePrice from '@/hooks/salePrice';
 import { formatBalance } from '@/utils/functions';
 
 import { Progress, SaleInfoGrid } from '@/components';
-import useBalance from '@/components/Hooks/balance';
-import useSalePhase from '@/components/Hooks/salePhase';
-import useSalePrice from '@/components/Hooks/salePrice';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
@@ -108,10 +108,10 @@ const Purchase = () => {
       </Box>
       <Box>
         {loading ||
-        !currentPhase ||
-        !progress ||
-        !saleStartTimestamp ||
-        !saleEndTimestamp ? (
+          !currentPhase ||
+          !progress ||
+          !saleStartTimestamp ||
+          !saleEndTimestamp ? (
           <>
             <Typography variant='h5' align='center'>
               Connect your wallet

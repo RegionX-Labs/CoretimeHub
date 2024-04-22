@@ -68,7 +68,7 @@ const TaskDataProvider = ({ children }: Props) => {
 
     for await (const [key, value] of workplan) {
       const [[begin, core]] = key.toHuman() as [[number, number]];
-      const records = value.toHuman() as ScheduleItem[];
+      const records = value.toHuman(undefined, true) as ScheduleItem[];
 
       records.forEach((record) => {
         const {
