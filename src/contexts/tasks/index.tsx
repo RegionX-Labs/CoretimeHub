@@ -66,23 +66,27 @@ const TaskDataProvider = ({ children }: Props) => {
       const records = value.toHuman() as ScheduleItem[];
 
       records.forEach((record) => {
-        const {
-          assignment: { Task: taskId },
-          mask,
-        } = record;
+        try {
+          const {
+            assignment: { Task: taskId },
+            mask,
+          } = record;
 
-        const region = new Region(
-          {
-            begin: parseHNString(begin.toString()),
-            core: parseHNString(core.toString()),
-            mask: new CoreMask(mask),
-          },
-          { end: 0, owner: '', paid: null },
-          0
-        );
-        tasks[region.getEncodedRegionId(api).toString()] = taskId
-          ? parseHNString(taskId)
-          : null;
+          const region = new Region(
+            {
+              begin: parseHNString(begin.toString()),
+              core: parseHNString(core.toString()),
+              mask: new CoreMask(mask),
+            },
+            { end: 0, owner: '', paid: null },
+            0
+          );
+          tasks[region.getEncodedRegionId(api).toString()] = taskId
+            ? parseHNString(taskId)
+            : null;
+        } catch (_e) {
+          /** */
+        }
       });
     }
 
