@@ -2,7 +2,11 @@ import { ApiPromise } from '@polkadot/api';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 
-import { getBlockTimestamp, parseHNString } from '@/utils/functions';
+import {
+  getBlockTime,
+  getBlockTimestamp,
+  parseHNString,
+} from '@/utils/functions';
 import {
   getCurrentPhase,
   getSaleEndInBlocks,
@@ -34,6 +38,7 @@ const useSalePhase = () => {
 
   const router = useRouter();
   const { network } = router.query;
+  const blockTime = getBlockTime(network);
 
   const fetchCurrentPhase = useCallback(
     async (api: ApiPromise) => {
@@ -44,7 +49,7 @@ const useSalePhase = () => {
         ).lastCommittedTimeslice.toString()
       );
 
-      const _saleStart = getSaleStartInBlocks(saleInfo, config);
+      const _saleStart = getSaleStartInBlocks(saleInfo);
       const _saleEnd = getSaleEndInBlocks(
         saleInfo,
         blockNumber,
@@ -52,11 +57,11 @@ const useSalePhase = () => {
         network
       );
 
-      getBlockTimestamp(api, _saleEnd).then((value: number) =>
-        setSaleEndTimestamp(value)
-      );
-      getBlockTimestamp(api, _saleStart).then((value: number) =>
+      getBlockTimestamp(api, _saleStart, blockTime).then((value: number) =>
         setSaleStartTimestamp(value)
+      );
+      getBlockTimestamp(api, _saleEnd, blockTime).then((value: number) =>
+        setSaleEndTimestamp(value)
       );
 
       const progress = getSaleProgress(
@@ -86,7 +91,7 @@ const useSalePhase = () => {
         },
       ]);
     },
-    [saleInfo, config, network]
+    [saleInfo, config, network, blockTime]
   );
 
   useEffect(() => {

@@ -117,6 +117,12 @@ export const extractRegionIdFromRaw = (rawRegionId: bigint): RegionId => {
   };
 };
 
+export const getBlockTime = (network: any): number => {
+  // Coretime on Rococo has async backing and due to this it has a block time of 6 seconds.
+  const blockTime = !network || network == 'rococo' ? 6000 : 12000;
+  return blockTime;
+};
+
 export const rcBlockToParachainBlock = (
   network: any,
   blockNumber: number

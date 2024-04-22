@@ -15,7 +15,7 @@ const useSalePrice = () => {
   const [currentPrice, setCurrentPrice] = useState(0);
 
   const fetchCurrentPrice = useCallback(async () => {
-    if (api && apiState == ApiState.READY) {
+    if (api && apiState === ApiState.READY) {
       const blockNumber = (await api.query.system.number()).toJSON() as number;
       const price = getCurrentPrice(saleInfo, blockNumber);
       setCurrentPrice(price);

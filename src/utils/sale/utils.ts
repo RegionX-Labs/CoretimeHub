@@ -17,13 +17,10 @@ export const getCurrentPhase = (
   }
 };
 
-export const getSaleStartInBlocks = (
-  saleInfo: SaleInfo,
-  config: SaleConfig
-) => {
+export const getSaleStartInBlocks = (saleInfo: SaleInfo) => {
   // `saleInfo.saleStart` defines the start of the leadin phase.
   // However, we want to account for the interlude period as well.
-  return saleInfo.saleStart - config.interludeLength;
+  return saleInfo.saleStart;
 };
 
 export const getSaleEndInBlocks = (
@@ -47,7 +44,7 @@ export const getSaleProgress = (
   lastCommittedTimeslice: number,
   network: any
 ): number => {
-  const start = getSaleStartInBlocks(saleInfo, config);
+  const start = getSaleStartInBlocks(saleInfo) - config.interludeLength;
   const end = getSaleEndInBlocks(
     saleInfo,
     blockNumber,
