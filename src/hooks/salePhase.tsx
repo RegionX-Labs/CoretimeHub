@@ -2,6 +2,7 @@ import { ApiPromise } from '@polkadot/api';
 import { useCallback, useEffect, useState } from 'react';
 
 import {
+  getBlockTime,
   getBlockTimestamp,
   parseHNString,
 } from '@/utils/functions';
@@ -18,6 +19,7 @@ import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
+import { useRouter } from 'next/router';
 
 // Custom hook for fetching current phase
 const useSalePhase = () => {
@@ -34,6 +36,9 @@ const useSalePhase = () => {
   const [progress, setProgress] = useState<number | null>(0);
   const [saleSections, setSaleSections] = useState<Section[]>([]);
 
+  const router = useRouter();
+  const { network } = router.query;
+
   const fetchCurrentPhase = useCallback(
     async (api: ApiPromise) => {
       const blockNumber = (await api.query.system.number()).toJSON() as number;
@@ -43,17 +48,18 @@ const useSalePhase = () => {
         ).lastCommittedTimeslice.toString()
       );
 
-      const _saleStart = getSaleStartInBlocks(saleInfo, config);
+      const _saleStart = getSaleStartInBlocks(saleInfo);
       const _saleEnd = getSaleEndInBlocks(
         saleInfo,
         blockNumber,
         lastCommittedTimeslice,
+        network,
       );
 
-      getBlockTimestamp(api, _saleStart).then(
+      getBlockTimestamp(api, _saleStart, getBlockTime(network)).then(
         (value: number) => setSaleStartTimestamp(value)
       );
-      getBlockTimestamp(api, _saleEnd).then(
+      getBlockTimestamp(api, _saleEnd, getBlockTime(network)).then(
         (value: number) => setSaleEndTimestamp(value)
       );
 
@@ -62,6 +68,7 @@ const useSalePhase = () => {
         config,
         blockNumber,
         lastCommittedTimeslice,
+        network
       );
       setProgress(progress);
 
