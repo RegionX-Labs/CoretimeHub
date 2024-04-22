@@ -3,11 +3,7 @@ import { formatBalance as polkadotFormatBalance } from '@polkadot/util';
 import { CoreMask, RegionId } from 'coretime-utils';
 import Decimal from 'decimal.js';
 
-import {
-  CORETIME_DECIMALS,
-  REGIONX_DECIMALS,
-  RELAY_CHAIN_BLOCK_TIME,
-} from '@/models';
+import { CORETIME_DECIMALS, REGIONX_DECIMALS } from '@/models';
 
 // parse human readable number string
 export const parseHNString = (str: string): number => {
@@ -20,7 +16,8 @@ export const parseHNStringToString = (str: string): string => {
 
 export const getBlockTimestamp = async (
   api: ApiPromise,
-  height: number
+  height: number,
+  blockTime: number = 6000
 ): Promise<number> => {
   const [resHeight, resTimestamp] = await Promise.all([
     api.query.system.number(),
@@ -35,12 +32,10 @@ export const getBlockTimestamp = async (
       const timestamp = Number((await apiAt.query.timestamp.now()).toJSON());
       return timestamp;
     } catch (_) {
-      return (
-        currentTimestamp - (currentHeight - height) * RELAY_CHAIN_BLOCK_TIME
-      );
+      return currentTimestamp - (currentHeight - height) * blockTime;
     }
   } else {
-    return currentTimestamp + (height - currentHeight) * RELAY_CHAIN_BLOCK_TIME;
+    return currentTimestamp + (height - currentHeight) * blockTime;
   }
 };
 
@@ -120,4 +115,20 @@ export const extractRegionIdFromRaw = (rawRegionId: bigint): RegionId => {
     core,
     mask: new CoreMask(('0x' + mask.toString(16)).padEnd(22, '0')),
   };
+};
+
+export const getBlockTime = (network: any): number => {
+  // Coretime on Rococo has async backing and due to this it has a block time of 6 seconds.
+  const blockTime = !network || network == 'rococo' ? 6000 : 12000;
+  return blockTime;
+};
+
+export const rcBlockToParachainBlock = (
+  network: any,
+  blockNumber: number
+): number => {
+  // Coretime on Rococo has async backing and due to this it has a block time of 6 seconds.
+  return !network || network == 'rococo'
+    ? blockNumber
+    : Math.floor(blockNumber / 2);
 };

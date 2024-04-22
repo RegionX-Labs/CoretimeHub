@@ -32,7 +32,9 @@ export const SellModal = ({
   regionMetadata,
 }: SellModalProps) => {
   const { activeAccount, api } = useInkathon();
-  const {state: {symbol}} = useCoretimeApi();
+  const {
+    state: { symbol },
+  } = useCoretimeApi();
 
   const { fetchRegions } = useRegions();
   const { toastError, toastSuccess } = useToast();

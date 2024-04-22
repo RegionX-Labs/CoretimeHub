@@ -1,6 +1,6 @@
 import { Timeslice } from 'coretime-utils';
 
-import { leadinFactorAt } from '@/utils/functions';
+import { leadinFactorAt, rcBlockToParachainBlock } from '@/utils/functions';
 
 import { BlockNumber, SaleConfig, SaleInfo, SalePhase } from '@/models';
 
@@ -29,10 +29,14 @@ export const getSaleStartInBlocks = (
 export const getSaleEndInBlocks = (
   saleInfo: SaleInfo,
   blockNumber: BlockNumber,
-  lastCommittedTimeslice: Timeslice
+  lastCommittedTimeslice: Timeslice,
+  network: any
 ) => {
   const timeslicesUntilSaleEnd = saleInfo.regionBegin - lastCommittedTimeslice;
-  return blockNumber + 80 * timeslicesUntilSaleEnd;
+  return rcBlockToParachainBlock(
+    network,
+    blockNumber + 80 * timeslicesUntilSaleEnd
+  );
 };
 
 // Returns a range between 0 and 100.
@@ -40,10 +44,16 @@ export const getSaleProgress = (
   saleInfo: SaleInfo,
   config: SaleConfig,
   blockNumber: number,
-  lastCommittedTimeslice: number
+  lastCommittedTimeslice: number,
+  network: any
 ): number => {
   const start = getSaleStartInBlocks(saleInfo, config);
-  const end = getSaleEndInBlocks(saleInfo, blockNumber, lastCommittedTimeslice);
+  const end = getSaleEndInBlocks(
+    saleInfo,
+    blockNumber,
+    lastCommittedTimeslice,
+    network
+  );
 
   const saleDuration = end - start;
   const elapsed = blockNumber - start;

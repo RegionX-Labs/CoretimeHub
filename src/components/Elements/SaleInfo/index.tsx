@@ -4,13 +4,18 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { formatBalance, getBlockTimestamp } from '@/utils/functions';
+import {
+  formatBalance,
+  getBlockTime,
+  getBlockTimestamp,
+} from '@/utils/functions';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { SaleInfo, SalePhase } from '@/models';
 
 import styles from './index.module.scss';
+import { useRouter } from 'next/router';
 
 interface SaleInfoGridProps {
   saleInfo: SaleInfo;
@@ -34,6 +39,10 @@ export const SaleInfoGrid = ({
     state: { api, apiState, symbol },
   } = useCoretimeApi();
 
+  const router = useRouter();
+  const { network } = router.query;
+  const blockTime = getBlockTime(network);
+
   const nextPhase = (): SalePhase => {
     const phases = Object.values(SalePhase);
     const currentIndex = phases.indexOf(currentPhase);
@@ -45,10 +54,10 @@ export const SaleInfoGrid = ({
 
   const setTimestamps = useCallback(
     (api: ApiPromise) => {
-      getBlockTimestamp(api, saleInfo.saleStart).then((value) =>
+      getBlockTimestamp(api, saleInfo.saleStart, blockTime).then((value) =>
         setSaleStartTimestamp(value)
       );
-      getBlockTimestamp(api, saleEnd).then((value) =>
+      getBlockTimestamp(api, saleEnd, blockTime).then((value) =>
         setSaleEndTimestamp(value)
       );
     },

@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import {
   formatBalance,
+  getBlockTime,
   getBlockTimestamp,
   parseHNString,
 } from '@/utils/functions';
@@ -30,6 +31,7 @@ import {
   getSaleProgress,
   getSaleStartInBlocks,
 } from '../utils/sale/utils';
+import { useRouter } from 'next/router';
 
 const Purchase = () => {
   const theme = useTheme();
@@ -57,6 +59,10 @@ const Purchase = () => {
   const {
     state: { api, apiState, symbol },
   } = useCoretimeApi();
+
+  const router = useRouter();
+  const { network } = router.query;
+  const blockTime = getBlockTime(network);
 
   const { fetchRegions } = useRegions();
 
@@ -91,12 +97,13 @@ const Purchase = () => {
       const _saleEnd = getSaleEndInBlocks(
         saleInfo,
         blockNumber,
-        lastCommittedTimeslice
+        lastCommittedTimeslice,
+        network
       );
 
       setCurrentBlockNumber(blockNumber);
       setSaleEnd(_saleEnd);
-      getBlockTimestamp(api, _saleEnd).then((value) =>
+      getBlockTimestamp(api, _saleEnd, blockTime).then((value) =>
         setSaleEndTimestamp(value)
       );
 
@@ -104,7 +111,8 @@ const Purchase = () => {
         saleInfo,
         config,
         blockNumber,
-        lastCommittedTimeslice
+        lastCommittedTimeslice,
+        network
       );
       setProgress(progress);
 
