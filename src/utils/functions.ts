@@ -26,14 +26,7 @@ export const getBlockTimestamp = async (
   const currentHeight = parseHNString(resHeight.toString());
   const currentTimestamp = parseHNString(resTimestamp.toString());
   if (height <= currentHeight) {
-    try {
-      const hash = await api.rpc.chain.getBlockHash(height);
-      const apiAt = await api.at(hash);
-      const timestamp = Number((await apiAt.query.timestamp.now()).toJSON());
-      return timestamp;
-    } catch (_) {
-      return currentTimestamp - (currentHeight - height) * blockTime;
-    }
+    return currentTimestamp - (currentHeight - height) * blockTime;
   } else {
     return currentTimestamp + (height - currentHeight) * blockTime;
   }

@@ -108,10 +108,10 @@ const Purchase = () => {
       </Box>
       <Box>
         {loading ||
-          !currentPhase ||
-          !progress ||
-          !saleStartTimestamp ||
-          !saleEndTimestamp ? (
+        !currentPhase ||
+        !progress ||
+        !saleStartTimestamp ||
+        !saleEndTimestamp ? (
           <>
             <Typography variant='h5' align='center'>
               Connect your wallet

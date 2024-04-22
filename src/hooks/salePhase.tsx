@@ -1,4 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
+import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 
 import {
@@ -19,7 +20,6 @@ import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
-import { useRouter } from 'next/router';
 
 // Custom hook for fetching current phase
 const useSalePhase = () => {
@@ -53,7 +53,7 @@ const useSalePhase = () => {
         saleInfo,
         blockNumber,
         lastCommittedTimeslice,
-        network,
+        network
       );
 
       getBlockTimestamp(api, _saleStart, getBlockTime(network)).then(
@@ -90,7 +90,7 @@ const useSalePhase = () => {
         },
       ]);
     },
-    [saleInfo, config]
+    [saleInfo, config, network]
   );
 
   useEffect(() => {
