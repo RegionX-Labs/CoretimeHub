@@ -38,7 +38,6 @@ const useSalePhase = () => {
 
   const router = useRouter();
   const { network } = router.query;
-  const blockTime = getBlockTime(network);
 
   const fetchCurrentPhase = useCallback(
     async (api: ApiPromise) => {
@@ -57,11 +56,11 @@ const useSalePhase = () => {
         network
       );
 
-      getBlockTimestamp(api, _saleStart, blockTime).then((value: number) =>
-        setSaleStartTimestamp(value)
+      getBlockTimestamp(api, _saleStart, getBlockTime(network)).then(
+        (value: number) => setSaleStartTimestamp(value)
       );
-      getBlockTimestamp(api, _saleEnd, blockTime).then((value: number) =>
-        setSaleEndTimestamp(value)
+      getBlockTimestamp(api, _saleEnd, getBlockTime(network)).then(
+        (value: number) => setSaleEndTimestamp(value)
       );
 
       const progress = getSaleProgress(
@@ -91,14 +90,14 @@ const useSalePhase = () => {
         },
       ]);
     },
-    [saleInfo, config, network, blockTime]
+    [saleInfo, config, network]
   );
 
   useEffect(() => {
     if (!api || apiState !== ApiState.READY) return;
 
     fetchCurrentPhase(api);
-  }, [fetchCurrentPhase, api, apiState, network]);
+  }, [fetchCurrentPhase, api, apiState]);
 
   return {
     currentPhase,

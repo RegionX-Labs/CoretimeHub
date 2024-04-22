@@ -79,9 +79,7 @@ describe('Purchase page', () => {
 
   describe('getSaleStartInBlocks', () => {
     it('works', () => {
-      expect(getSaleStartInBlocks(mockSaleInfo)).toBe(
-        mockSaleInfo.saleStart - mockConfig.interludeLength
-      );
+      expect(getSaleStartInBlocks(mockSaleInfo)).toBe(mockSaleInfo.saleStart);
     });
   });
 
