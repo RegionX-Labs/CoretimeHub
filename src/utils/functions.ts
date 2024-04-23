@@ -5,7 +5,11 @@ import { formatBalance as polkadotFormatBalance } from '@polkadot/util';
 import { CoreMask, RegionId } from 'coretime-utils';
 import Decimal from 'decimal.js';
 
-import { CORETIME_DECIMALS, REGIONX_DECIMALS, TxStatusHandlers } from '@/models';
+import {
+  CORETIME_DECIMALS,
+  REGIONX_DECIMALS,
+  TxStatusHandlers,
+} from '@/models';
 
 // parse human readable number string
 export const parseHNString = (str: string): number => {
@@ -149,7 +153,7 @@ export const sendTx = (
   } finally {
     handlers.finally && handlers.finally();
   }
-}
+};
 
 export const getBlockTime = (network: any): number => {
   // Coretime on Rococo has async backing and due to this it has a block time of 6 seconds.

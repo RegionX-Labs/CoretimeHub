@@ -8,16 +8,16 @@ import { useState } from 'react';
 import useBalance from '@/hooks/balance';
 import useSalePhase from '@/hooks/salePhase';
 import useSalePrice from '@/hooks/salePrice';
-import { formatBalance, sendTx } from '@/utils/functions';
+import { sendTx } from '@/utils/functions';
 
 import { CoreDetailsPanel, ProgressButton, SaleInfoPanel } from '@/components';
+import Balance from '@/components/Elements/Balance';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
-import Balance from '@/components/Elements/Balance';
 
 const Purchase = () => {
   const theme = useTheme();
@@ -84,14 +84,18 @@ const Purchase = () => {
             Buy a core straight from the Coretime chain
           </Typography>
         </Box>
-        <Balance coretimeBalance={coretimeBalance} relayBalance={relayBalance} symbol={symbol} />
-      </Box >
+        <Balance
+          coretimeBalance={coretimeBalance}
+          relayBalance={relayBalance}
+          symbol={symbol}
+        />
+      </Box>
       <Box>
         {loading ||
-          !currentPhase ||
-          !progress ||
-          !saleStartTimestamp ||
-          !saleEndTimestamp ? (
+        !currentPhase ||
+        !progress ||
+        !saleStartTimestamp ||
+        !saleEndTimestamp ? (
           <>
             <Typography variant='h5' align='center'>
               Check your network conection and connect your wallet
@@ -128,7 +132,7 @@ const Purchase = () => {
           </Box>
         )}
       </Box>
-    </Box >
+    </Box>
   );
 };
 

@@ -14,11 +14,11 @@ import { useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
+import useBalance from '@/hooks/balance';
 import {
   transferTokensFromCoretimeToRelay,
   transferTokensFromRelayToCoretime,
 } from '@/utils/crossChain/transfer';
-import { fetchBalance } from '@/utils/functions';
 import theme from '@/utils/muiTheme';
 import {
   transferNativeToken,
@@ -78,42 +78,20 @@ const TransferPage = () => {
   const [asset, setAsset] = useState<AssetType>(AssetType.TOKEN);
   const [transferAmount, setTransferAmount] = useState('');
 
-  const [coretimeBalance, setCoretimeBalance] = useState(0);
-  const [relayBalance, setRelayBalance] = useState(0);
+  const { coretimeBalance, relayBalance, fetchBalances } = useBalance();
 
   const defaultHandler = {
     ready: () => toastInfo('Transaction was initiated.'),
     inBlock: () => toastInfo(`In Block`),
     finalized: () => setWorking(false),
     success: () => {
-      getBalances();
+      fetchBalances();
       toastSuccess('Successfully transferred.');
     },
     error: () => {
       toastError(`Failed to transfer.`);
       setWorking(false);
     },
-  };
-
-  useEffect(() => {
-    getBalances();
-  }, [relayApi, relayApiState, coretimeApi, coretimeApiState, activeAccount]);
-
-  const getBalances = async () => {
-    if (
-      !relayApi ||
-      relayApiState !== ApiState.READY ||
-      !coretimeApi ||
-      coretimeApiState !== ApiState.READY ||
-      !activeAccount
-    )
-      return;
-
-    const rcBalance = await fetchBalance(relayApi, activeAccount.address);
-    const ctBalance = await fetchBalance(coretimeApi, activeAccount.address);
-
-    setRelayBalance(rcBalance);
-    setCoretimeBalance(ctBalance);
   };
 
   useEffect(() => {
@@ -152,11 +130,11 @@ const TransferPage = () => {
     if (!activeAccount || !activeSigner) return;
     if (!originChain || !destinationChain) return;
 
-    if (!coretimeApi) {
+    if (!coretimeApi || coretimeApiState !== ApiState.READY) {
       toastError('Not connected to the Coretime chain');
       return;
     }
-    if (!relayApi) {
+    if (!relayApi || relayApiState !== ApiState.READY) {
       toastError('Not connected to the relay chain');
       return;
     }
@@ -275,15 +253,16 @@ const TransferPage = () => {
             setChain={setDestinationChain}
           />
         </Stack>
-        {originChain !== ChainType.NONE && destinationChain !== ChainType.NONE && (
-          <Stack margin='1em 0' direction='column' gap={1}>
-            <AssetSelector
-              symbol={symbol}
-              asset={asset}
-              setAsset={setAsset}
-            />
-          </Stack>
-        )}
+        {originChain !== ChainType.NONE &&
+          destinationChain !== ChainType.NONE && (
+            <Stack margin='1em 0' direction='column' gap={1}>
+              <AssetSelector
+                symbol={symbol}
+                asset={asset}
+                setAsset={setAsset}
+              />
+            </Stack>
+          )}
 
         {asset === AssetType.REGION &&
           originChain !== ChainType.NONE &&
