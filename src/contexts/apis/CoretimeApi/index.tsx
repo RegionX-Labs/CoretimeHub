@@ -1,8 +1,9 @@
-import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useReducer } from 'react';
 
 import { ApiState } from '@/contexts/apis/types';
+import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
+import { NetworkType } from '@/models';
 
 import { connect, disconnect, initialState, reducer } from '../common';
 import { WS_KUSAMA_CORETIME_CHAIN, WS_ROCOCO_CORETIME_CHAIN } from '../consts';
@@ -36,8 +37,7 @@ const CoretimeApiContextProvider = (props: any) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { toastError, toastSuccess } = useToast();
 
-  const router = useRouter();
-  const { network } = router.query;
+  const { network } = useNetwork();
 
   useEffect(() => {
     state.apiError && toastError(`Failed to connect to Coretime chain`);
@@ -45,28 +45,25 @@ const CoretimeApiContextProvider = (props: any) => {
 
   useEffect(() => {
     state.apiState === ApiState.READY &&
-      toastSuccess('Successfully connected to the Coretime chain');
-  }, [state.apiState, toastSuccess]);
+      state.name &&
+      toastSuccess(`Successfully connected to ${state.name}`);
+  }, [state.apiState, state.name, toastSuccess]);
 
   const getUrl = (network: any): string => {
-    if (!network || network == 'rococo') {
-      return WS_ROCOCO_CORETIME_CHAIN;
-    } else if (network == 'kusama') {
-      return WS_KUSAMA_CORETIME_CHAIN;
-    } else {
-      /* eslint-disable no-console */
-      console.error(`Network: ${network} not recognized`);
-      // Default to rococo.
-      return WS_ROCOCO_CORETIME_CHAIN;
-    }
+    return network === NetworkType.ROCOCO
+      ? WS_ROCOCO_CORETIME_CHAIN
+      : WS_KUSAMA_CORETIME_CHAIN;
   };
 
   const disconnectCoretime = () => disconnect(state);
 
   useEffect(() => {
-    if (state.socket == getUrl(network)) return;
-    const updateNetwork = network != '' && state.socket != getUrl(network);
-    connect(state, getUrl(network), dispatch, updateNetwork, types);
+    if (network === NetworkType.NONE || state.socket == getUrl(network)) return;
+    const updateNetwork = state.socket != getUrl(network);
+    if (updateNetwork) {
+      disconnectCoretime();
+      connect(state, getUrl(network), dispatch, updateNetwork, types);
+    }
   }, [network, state]);
 
   return (
