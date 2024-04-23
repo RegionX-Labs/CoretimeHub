@@ -21,7 +21,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-const NetworkProvider = ({ children }: Props): React.ReactNode => {
+const NetworkProvider = ({ children }: Props) => {
   const [activeNetwork, setActiveNetwork] = useState(NetworkType.NONE);
 
   const router = useRouter();

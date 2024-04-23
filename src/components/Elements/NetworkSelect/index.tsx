@@ -19,21 +19,21 @@ const RelaySelect = () => {
     );
   };
 
-  return (
-    network !== NetworkType.NONE && (
-      <FormControl sx={{ m: 2, minWidth: 150 }} fullWidth>
-        <InputLabel>Network</InputLabel>
-        <Select
-          id='network-select'
-          value={network}
-          label='Relay chain'
-          onChange={handleChange}
-        >
-          <MenuItem value={NetworkType.ROCOCO}>Rococo</MenuItem>
-          <MenuItem value={NetworkType.KUSAMA}>Kusama</MenuItem>
-        </Select>
-      </FormControl>
-    )
+  return network !== NetworkType.NONE ? (
+    <FormControl sx={{ m: 2, minWidth: 150 }} fullWidth>
+      <InputLabel>Network</InputLabel>
+      <Select
+        id='network-select'
+        value={network}
+        label='Relay chain'
+        onChange={handleChange}
+      >
+        <MenuItem value={NetworkType.ROCOCO}>Rococo</MenuItem>
+        <MenuItem value={NetworkType.KUSAMA}>Kusama</MenuItem>
+      </Select>
+    </FormControl>
+  ) : (
+    <></>
   );
 };
 
