@@ -1,7 +1,6 @@
 import { ExpandMore } from '@mui/icons-material';
 import {
   Box,
-  Button,
   Collapse,
   Divider,
   List,
@@ -12,6 +11,7 @@ import { useInkathon } from '@scio-labs/use-inkathon';
 import React, { useState } from 'react';
 
 import styles from './index.module.scss';
+import { ActionButton } from '../Elements';
 import { WalletModal } from '../Modals/WalletConnect';
 
 export const Header = () => {
@@ -37,20 +37,32 @@ export const Header = () => {
           borderBottom: `1px solid ${theme.palette.divider}`,
         }}
       >
-        <div className={styles.menu}>
+        <Box className={styles.menu}>
           {activeAccount ? (
             <List component='div' className={styles.listWrapper}>
               {!accountsOpen && (
                 <ListItemButton
                   onClick={() => openAccounts(true)}
-                  sx={{ justifyContent: 'space-between' }}
+                  sx={{
+                    justifyContent: 'space-between',
+                    background: theme.palette.background.default,
+                    borderRadius: 4,
+                  }}
                 >
                   {activeAccount.name}
                   <ExpandMore />
                 </ListItemButton>
               )}
 
-              <Collapse in={accountsOpen} className={styles.accountsWrapper}>
+              <Collapse
+                in={accountsOpen}
+                sx={{
+                  position: 'absolute',
+                  borderRadius: '0.5rem',
+                  top: 0,
+                  width: '100%',
+                }}
+              >
                 <List component='div' className={styles.accountsList}>
                   {accounts?.map(
                     (account, index) =>
@@ -61,28 +73,35 @@ export const Header = () => {
                             setActiveAccount && setActiveAccount(account);
                             openAccounts(false);
                           }}
+                          sx={{
+                            borderRadius: '0.5rem',
+                            background: theme.palette.grey['100'],
+                          }}
                         >
                           {account.name}
                         </ListItemButton>
                       )
                   )}
                 </List>
-                <Divider />
-                <ListItemButton onClick={onDisconnect}>
+                <Divider sx={{ borderColor: theme.palette.common.white }} />
+                <ListItemButton
+                  onClick={onDisconnect}
+                  sx={{
+                    borderRadius: '0.5rem',
+                    background: theme.palette.grey['100'],
+                  }}
+                >
                   Disconnect
                 </ListItemButton>
               </Collapse>
             </List>
           ) : (
-            <Button
-              variant='contained'
-              className={styles.connectWallet}
+            <ActionButton
               onClick={() => openWalletModal(true)}
-            >
-              Connect Wallet
-            </Button>
+              label='Connect Wallet'
+            />
           )}
-        </div>
+        </Box>
       </Box>
       <WalletModal
         open={walletModalOpen}

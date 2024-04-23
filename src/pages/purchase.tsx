@@ -1,4 +1,3 @@
-import { LoadingButton } from '@mui/lab';
 import { Box, Button, Typography, useTheme } from '@mui/material';
 import { useInkathon } from '@scio-labs/use-inkathon';
 import TimeAgo from 'javascript-time-ago';
@@ -11,7 +10,7 @@ import useSalePhase from '@/hooks/salePhase';
 import useSalePrice from '@/hooks/salePrice';
 import { formatBalance } from '@/utils/functions';
 
-import { Progress, SaleInfoGrid } from '@/components';
+import { CoreDetailsPanel, ProgressButton, SaleInfoPanel } from '@/components';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
@@ -25,7 +24,6 @@ const Purchase = () => {
   const [working, setWorking] = useState(false);
   TimeAgo.addLocale(en);
   // Create formatter (English).
-  const timeAgo = new TimeAgo('en-US');
 
   const { activeSigner, activeAccount } = useInkathon();
   const { toastError, toastSuccess, toastInfo } = useToast();
@@ -39,13 +37,8 @@ const Purchase = () => {
 
   const balance = useBalance();
   const currentPrice = useSalePrice();
-  const {
-    currentPhase,
-    progress,
-    saleStartTimestamp,
-    saleEndTimestamp,
-    saleSections,
-  } = useSalePhase();
+  const { currentPhase, progress, saleStartTimestamp, saleEndTimestamp } =
+    useSalePhase();
 
   const purchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
@@ -86,6 +79,7 @@ const Purchase = () => {
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
         <Box>
@@ -99,11 +93,14 @@ const Purchase = () => {
             variant='subtitle2'
             sx={{ color: theme.palette.text.primary }}
           >
-            Purchase a core directly from the Coretime chain
+            Buy a core straight from the Coretime chain
           </Typography>
         </Box>
         <Typography variant='h6' sx={{ color: theme.palette.text.primary }}>
-          {`Your balance: ${formatBalance(balance.toString(), false)} ${symbol}`}
+          {`Your balance: ${formatBalance(
+            balance.toString(),
+            false
+          )} ${symbol}`}
         </Typography>
       </Box>
       <Box>
@@ -114,40 +111,24 @@ const Purchase = () => {
         !saleEndTimestamp ? (
           <>
             <Typography variant='h5' align='center'>
-              Connect your wallet
+              Check your network conection and connect your wallet
             </Typography>
           </>
         ) : (
-          <>
-            <Box
-              sx={{
-                marginTop: '2em',
-              }}
-            >
-              <SaleInfoGrid
-                currentPhase={currentPhase}
-                currentPrice={currentPrice}
-                saleInfo={saleInfo}
-                saleStartTimestamp={saleStartTimestamp}
-                saleEndTimestamp={saleEndTimestamp}
-              />
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <SaleInfoPanel
+              currentPhase={currentPhase}
+              currentPrice={currentPrice}
+              saleInfo={saleInfo}
+              saleStartTimestamp={saleStartTimestamp}
+              saleEndTimestamp={saleEndTimestamp}
+            />
+            <Box sx={{ display: 'flex', gap: '1rem' }}>
+              <CoreDetailsPanel saleInfo={saleInfo} />
             </Box>
+
             <Box
               sx={{
-                marginTop: '2em',
-              }}
-            >
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant='h6'>Current Bulk Sale:</Typography>
-                <Typography>Ends {timeAgo.format(saleEndTimestamp)}</Typography>
-              </Box>
-              <Box sx={{ marginTop: '1em' }}>
-                <Progress progress={progress} sections={saleSections} />
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                marginTop: '4em',
                 display: 'flex',
                 justifyContent: 'space-between',
               }}
@@ -155,15 +136,13 @@ const Purchase = () => {
               <Link href='/regions'>
                 <Button variant='outlined'>Manage your regions</Button>
               </Link>
-              <LoadingButton
+              <ProgressButton
                 onClick={purchase}
-                variant='contained'
                 loading={working}
-              >
-                Purchase
-              </LoadingButton>
+                label='Purchase Core'
+              />
             </Box>
-          </>
+          </Box>
         )}
       </Box>
     </Box>

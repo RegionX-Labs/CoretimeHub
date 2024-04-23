@@ -1,4 +1,3 @@
-import { Paper } from '@mui/material';
 import React, { ReactElement } from 'react';
 
 import styles from './index.module.scss';
@@ -15,18 +14,7 @@ export const Layout = ({ children }: Props) => {
       <Sidebar />
       <div className={styles.content}>
         <Header />
-        <Paper
-          color='secondary'
-          sx={{
-            display: 'flex',
-            flexGrow: 1,
-            margin: '1rem 2rem',
-            borderRadius: '1rem',
-            py: '1rem',
-          }}
-        >
-          <div className={styles.main}>{children}</div>
-        </Paper>
+        <div className={styles.main}>{children}</div>
       </div>
     </div>
   );
