@@ -1,7 +1,6 @@
 import { ExpandMore } from '@mui/icons-material';
 import {
   Box,
-  Button,
   Collapse,
   Divider,
   List,
@@ -12,6 +11,7 @@ import { useInkathon } from '@scio-labs/use-inkathon';
 import React, { useState } from 'react';
 
 import styles from './index.module.scss';
+import { ActionButton } from '../Elements';
 import { WalletModal } from '../Modals/WalletConnect';
 
 export const Header = () => {
@@ -96,13 +96,10 @@ export const Header = () => {
               </Collapse>
             </List>
           ) : (
-            <Button
-              variant='contained'
-              className={styles.connectWallet}
+            <ActionButton
               onClick={() => openWalletModal(true)}
-            >
-              Connect Wallet
-            </Button>
+              label='Connect Wallet'
+            />
           )}
         </Box>
       </Box>

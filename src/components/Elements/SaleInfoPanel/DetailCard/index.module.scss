@@ -1,0 +1,31 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 2rem;
+  border-radius: .5rem;
+  gap: 1.5rem;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.iconWrapper {
+  margin: 0.5rem;
+  margin-left: 0;
+  width: 2rem;
+  height: 2rem;
+}
+
+.infoSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
