@@ -19,7 +19,7 @@ import {
   TaskAssignModal,
   TransferModal,
 } from '@/components';
-import { RenewModal } from '@/components/Modals/Renew/RenewModal';
+import { RenewModal } from '@/components/Modals/Renew';
 import { SellModal } from '@/components/Modals/Sell';
 import { UnlistModal } from '@/components/Modals/Unlist';
 

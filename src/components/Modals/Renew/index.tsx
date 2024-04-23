@@ -75,23 +75,25 @@ export const RenewModal = ({
     });
   };
 
-  const getRenewalPrice = useCallback(async (api: ApiPromise) => {
-    const renewalId = {
-      core: regionMetadata.region.getCore(),
-      when: regionMetadata.region.getEnd(),
-    };
-    const renewalInfo = (
-      await api.query.broker.allowedRenewals(renewalId)
-    ).toHuman() as any;
+  const getRenewalPrice = useCallback(
+    async (api: ApiPromise) => {
+      const renewalId = {
+        core: regionMetadata.region.getCore(),
+        when: regionMetadata.region.getEnd(),
+      };
+      const renewalInfo = (
+        await api.query.broker.allowedRenewals(renewalId)
+      ).toHuman() as any;
 
-    if (renewalInfo && renewalInfo.price) {
-      setRenewalPrice(parseHNStringToString(renewalInfo.price));
-    }
-  }, [regionMetadata]);
+      if (renewalInfo && renewalInfo.price) {
+        setRenewalPrice(parseHNStringToString(renewalInfo.price));
+      }
+    },
+    [regionMetadata]
+  );
 
   useEffect(() => {
-    if (!api || apiState !== ApiState.READY)
-      return;
+    if (!api || apiState !== ApiState.READY) return;
 
     getRenewalPrice(api);
   }, [getRenewalPrice, api, apiState]);
