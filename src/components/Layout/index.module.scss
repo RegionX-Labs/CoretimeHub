@@ -19,4 +19,9 @@
   flex-grow: 1;
   min-height: calc(100vh - 9rem);
   max-height: calc(100vh - 9rem);
+  overflow-y: scroll;
+}
+
+.main::-webkit-scrollbar {
+  display: none;
 }

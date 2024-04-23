@@ -8,9 +8,10 @@ import { useState } from 'react';
 import useBalance from '@/hooks/balance';
 import useSalePhase from '@/hooks/salePhase';
 import useSalePrice from '@/hooks/salePrice';
-import { formatBalance } from '@/utils/functions';
+import { sendTx } from '@/utils/functions';
 
 import { CoreDetailsPanel, ProgressButton, SaleInfoPanel } from '@/components';
+import Balance from '@/components/Elements/Balance';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
@@ -35,7 +36,7 @@ const Purchase = () => {
 
   const { fetchRegions } = useRegions();
 
-  const balance = useBalance();
+  const { coretimeBalance, relayBalance } = useBalance();
   const currentPrice = useSalePrice();
   const { currentPhase, progress, saleStartTimestamp, saleEndTimestamp } =
     useSalePhase();
@@ -46,31 +47,18 @@ const Purchase = () => {
 
     const txPurchase = api.tx.broker.purchase(currentPrice);
 
-    try {
-      setWorking(true);
-      await txPurchase.signAndSend(
-        activeAccount.address,
-        { signer: activeSigner },
-        ({ status, events }) => {
-          if (status.isReady) toastInfo('Transaction was initiated');
-          else if (status.isInBlock) toastInfo(`In Block`);
-          else if (status.isFinalized) {
-            setWorking(false);
-            events.forEach(({ event: { method } }) => {
-              if (method === 'ExtrinsicSuccess') {
-                toastSuccess('Transaction successful');
-                fetchRegions();
-              } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to purchase the region`);
-              }
-            });
-          }
-        }
-      );
-    } catch (e) {
-      toastError(`Failed to purchase the region. ${e}`);
-      setWorking(false);
-    }
+    sendTx(txPurchase, activeAccount.address, activeSigner, {
+      ready: () => toastInfo('Transaction was initiated'),
+      inBlock: () => toastInfo(`In Block`),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Transaction successful');
+        fetchRegions();
+      },
+      error: () => {
+        toastError(`Failed to purchase the region`);
+      },
+    });
   };
 
   return (
@@ -96,12 +84,11 @@ const Purchase = () => {
             Buy a core straight from the Coretime chain
           </Typography>
         </Box>
-        <Typography variant='h6' sx={{ color: theme.palette.text.primary }}>
-          {`Your balance: ${formatBalance(
-            balance.toString(),
-            false
-          )} ${symbol}`}
-        </Typography>
+        <Balance
+          coretimeBalance={coretimeBalance}
+          relayBalance={relayBalance}
+          symbol={symbol}
+        />
       </Box>
       <Box>
         {loading ||
