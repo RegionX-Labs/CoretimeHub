@@ -37,20 +37,32 @@ export const Header = () => {
           borderBottom: `1px solid ${theme.palette.divider}`,
         }}
       >
-        <div className={styles.menu}>
+        <Box className={styles.menu}>
           {activeAccount ? (
             <List component='div' className={styles.listWrapper}>
               {!accountsOpen && (
                 <ListItemButton
                   onClick={() => openAccounts(true)}
-                  sx={{ justifyContent: 'space-between' }}
+                  sx={{
+                    justifyContent: 'space-between',
+                    background: theme.palette.background.default,
+                    borderRadius: 4,
+                  }}
                 >
                   {activeAccount.name}
                   <ExpandMore />
                 </ListItemButton>
               )}
 
-              <Collapse in={accountsOpen} className={styles.accountsWrapper}>
+              <Collapse
+                in={accountsOpen}
+                sx={{
+                  position: 'absolute',
+                  borderRadius: '0.5rem',
+                  top: 0,
+                  width: '100%',
+                }}
+              >
                 <List component='div' className={styles.accountsList}>
                   {accounts?.map(
                     (account, index) =>
@@ -61,14 +73,24 @@ export const Header = () => {
                             setActiveAccount && setActiveAccount(account);
                             openAccounts(false);
                           }}
+                          sx={{
+                            borderRadius: '0.5rem',
+                            background: theme.palette.grey['100'],
+                          }}
                         >
                           {account.name}
                         </ListItemButton>
                       )
                   )}
                 </List>
-                <Divider />
-                <ListItemButton onClick={onDisconnect}>
+                <Divider sx={{ borderColor: theme.palette.common.white }} />
+                <ListItemButton
+                  onClick={onDisconnect}
+                  sx={{
+                    borderRadius: '0.5rem',
+                    background: theme.palette.grey['100'],
+                  }}
+                >
                   Disconnect
                 </ListItemButton>
               </Collapse>
@@ -82,7 +104,7 @@ export const Header = () => {
               Connect Wallet
             </Button>
           )}
-        </div>
+        </Box>
       </Box>
       <WalletModal
         open={walletModalOpen}
