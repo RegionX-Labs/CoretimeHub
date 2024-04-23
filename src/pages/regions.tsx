@@ -19,6 +19,7 @@ import {
   TaskAssignModal,
   TransferModal,
 } from '@/components';
+import { RenewModal } from '@/components/Modals/Renew/RenewModal';
 import { SellModal } from '@/components/Modals/Sell';
 import { UnlistModal } from '@/components/Modals/Unlist';
 
@@ -28,6 +29,7 @@ import {
   AssignmentIcon,
   InterlaceIcon,
   PartitionIcon,
+  RenewIcon,
   TransferIcon,
 } from '@/icons';
 import { RegionLocation } from '@/models';
@@ -41,6 +43,7 @@ const Dashboard = () => {
   const [interlaceModalOpen, openInterlaceModal] = useState(false);
   const [assignModalOpen, openAssignModal] = useState(false);
   const [sellModalOpen, openSellModal] = useState(false);
+  const [renewModal, openRenewModal] = useState(false);
   const [unlistModalOpen, openUnlistModal] = useState(false);
   const [transferModalOpen, openTransferModal] = useState(false);
   const { toastInfo } = useToast();
@@ -81,6 +84,11 @@ const Dashboard = () => {
       onClick: () => manage(openAssignModal),
     },
     {
+      label: 'renew',
+      icon: RenewIcon,
+      onClick: () => manage(openRenewModal),
+    },
+    {
       label: 'sell',
       icon: SellIcon,
       onClick: () => manage(openSellModal),
@@ -97,7 +105,11 @@ const Dashboard = () => {
     if (selectedRegion.location === RegionLocation.CORETIME_CHAIN) {
       // regions on the coretime chain cannot be listed on sale. They first have to be
       // transferred to the contacts chain.
-      return action === 'sell' || action === 'unlist';
+      return (
+        action === 'sell' ||
+        action === 'unlist' ||
+        !(selectedRegion.consumed >= 1 && action === 'renew')
+      );
     } else if (selectedRegion.location === RegionLocation.REGIONX_CHAIN) {
       // XcRegions can only be transferred and listed on sale.
       return !(action === 'transfer' || action === 'sell');
@@ -182,7 +194,6 @@ const Dashboard = () => {
             borderRadius: '.5rem',
             color: theme.palette.text.secondary,
             minWidth: 280,
-            height: 500,
             padding: '2rem 3rem',
           }}
         >
@@ -240,6 +251,11 @@ const Dashboard = () => {
             <TransferModal
               open={transferModalOpen}
               onClose={() => openTransferModal(false)}
+              regionMetadata={selectedRegion}
+            />
+            <RenewModal
+              open={renewModal}
+              onClose={() => openRenewModal(false)}
               regionMetadata={selectedRegion}
             />
             <SellModal

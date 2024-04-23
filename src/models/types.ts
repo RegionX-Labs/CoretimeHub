@@ -191,7 +191,7 @@ export class RegionMetadata {
       name,
       region.coreOccupancy(),
       currentUsage,
-      region.consumed(context),
+      Math.min(1, region.consumed(context)),
       task
     );
   }

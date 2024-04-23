@@ -80,7 +80,9 @@ const RegionDataProvider = ({ children }: Props) => {
       // Only user owned non-expired regions.
       if (
         region.getOwner() !== activeAccount.address ||
-        region.consumed(context) > 1
+        // Less than 2 because we want to show the regions from the last bulk period
+        // since they can be renewed.
+        region.consumed(context) < 2
       )
         continue;
 
