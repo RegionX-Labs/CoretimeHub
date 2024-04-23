@@ -17,6 +17,7 @@ import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
+import Balance from '@/components/Elements/Balance';
 
 const Purchase = () => {
   const theme = useTheme();
@@ -35,7 +36,7 @@ const Purchase = () => {
 
   const { fetchRegions } = useRegions();
 
-  const balance = useBalance();
+  const { coretimeBalance, relayBalance } = useBalance();
   const currentPrice = useSalePrice();
   const { currentPhase, progress, saleStartTimestamp, saleEndTimestamp } =
     useSalePhase();
@@ -83,12 +84,7 @@ const Purchase = () => {
             Buy a core straight from the Coretime chain
           </Typography>
         </Box>
-        <Typography variant='h6' sx={{ color: theme.palette.text.primary }}>
-          {`Your balance: ${formatBalance(
-            balance.toString(),
-            false
-          )} ${symbol}`}
-        </Typography>
+        <Balance coretimeBalance={coretimeBalance} relayBalance={relayBalance} symbol={symbol} />
       </Box >
       <Box>
         {loading ||

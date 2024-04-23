@@ -1,48 +1,42 @@
-import { useTheme } from '@mui/material';
+import { ToggleButton, ToggleButtonGroup, useTheme } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-
+import styles from './index.module.scss';
 import { AssetType } from '@/models';
 
 interface AssetSelectorProps {
   asset: AssetType;
   setAsset: (_: AssetType) => void;
   symbol: string;
-  showRegion?: boolean;
 }
 
 export default function AssetSelector({
   asset,
   setAsset,
   symbol,
-  showRegion = true,
 }: AssetSelectorProps) {
   const theme = useTheme();
   return (
     <FormControl>
-      <FormLabel sx={{ color: theme.palette.text.primary }}>Asset</FormLabel>
-      <RadioGroup
-        row
+      <ToggleButtonGroup
         value={asset}
-        onChange={(e) => setAsset(parseInt(e.target.value) as AssetType)}
-        sx={{ color: theme.palette.text.primary }}
+        exclusive // This ensures only one can be selected at a time
+        onChange={(e: any) => {
+          console.log(e.target.value);
+          setAsset(parseInt(e.target.value) as AssetType)
+        }}
+        className={styles.options}
       >
-        <FormControlLabel
-          value={AssetType.TOKEN}
-          control={<Radio />}
-          label={`${symbol} token`}
-        />
-        {showRegion && (
-          <FormControlLabel
-            value={AssetType.REGION}
-            control={<Radio />}
-            label='Region'
-          />
-        )}
-      </RadioGroup>
+        <ToggleButton className={styles.option}
+          sx={{ color: theme.palette.text.primary }}
+          value={AssetType.TOKEN}>
+          {symbol}
+        </ToggleButton>
+        <ToggleButton className={styles.option}
+          sx={{ color: theme.palette.text.primary }}
+          value={AssetType.REGION}>
+          Region
+        </ToggleButton>
+      </ToggleButtonGroup>
     </FormControl>
   );
 }

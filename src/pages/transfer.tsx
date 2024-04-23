@@ -275,13 +275,12 @@ const TransferPage = () => {
             setChain={setDestinationChain}
           />
         </Stack>
-        {originChain !== ChainType.NONE && (
+        {originChain !== ChainType.NONE && destinationChain !== ChainType.NONE && (
           <Stack margin='1em 0' direction='column' gap={1}>
             <AssetSelector
               symbol={symbol}
               asset={asset}
               setAsset={setAsset}
-              showRegion={originChain !== ChainType.RELAY}
             />
           </Stack>
         )}
