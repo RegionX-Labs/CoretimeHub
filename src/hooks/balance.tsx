@@ -65,7 +65,7 @@ const useBalance = () => {
 
   useEffect(() => {
     fetchBalances();
-  });
+  }, [fetchBalances]);
 
   return { coretimeBalance, relayBalance, fetchBalances };
 };
