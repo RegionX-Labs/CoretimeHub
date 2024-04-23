@@ -14,6 +14,7 @@ import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 
 import styles from './index.module.scss';
 import { StatusIndicator } from '../Elements';
+import NetworkSelect from '../Elements/NetworkSelect';
 
 interface MenuItemProps {
   label: string;
@@ -23,7 +24,7 @@ interface MenuItemProps {
 }
 
 const MenuItem = ({ label, enabled, route, icon }: MenuItemProps) => {
-  const { pathname, push } = useRouter();
+  const { pathname, push, query } = useRouter();
   const isActive = pathname === route;
   const theme = useTheme();
 
@@ -52,7 +53,7 @@ const MenuItem = ({ label, enabled, route, icon }: MenuItemProps) => {
           opacity: 0.8,
         },
       }}
-      onClick={() => enabled && route && push(route)}
+      onClick={() => enabled && route && push({ pathname: route, query })}
     >
       <span className={styles.menuIcon}>{{ ...icon }}</span>
       <span
@@ -168,6 +169,9 @@ export const Sidebar = () => {
           <StatusIndicator state={coretimeApiState} label='Coretime chain' />
         </div>
       </Box>
+      <div className={styles.networkSelector}>
+        <NetworkSelect />
+      </div>
     </div>
   );
 };

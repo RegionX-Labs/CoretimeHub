@@ -1,119 +1,44 @@
-import { LoadingButton } from '@mui/lab';
 import { Box, Button, Typography, useTheme } from '@mui/material';
-import { ApiPromise } from '@polkadot/api';
 import { useInkathon } from '@scio-labs/use-inkathon';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
 import Link from 'next/link';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { getBlockTimestamp, parseHNString, sendTx } from '@/utils/functions';
+import useBalance from '@/hooks/balance';
+import useSalePhase from '@/hooks/salePhase';
+import useSalePrice from '@/hooks/salePrice';
+import { formatBalance, sendTx } from '@/utils/functions';
 
-import { Progress, SaleInfoGrid, Section } from '@/components';
+import { CoreDetailsPanel, ProgressButton, SaleInfoPanel } from '@/components';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
-import { SalePhase } from '@/models';
-
-import {
-  getCurrentPhase,
-  getCurrentPrice,
-  getSaleEndInBlocks,
-  getSaleProgress,
-  getSaleStartInBlocks,
-} from '../utils/sale/utils';
 
 const Purchase = () => {
   const theme = useTheme();
 
   const [working, setWorking] = useState(false);
-  const [currentPhase, setCurrentPhase] = useState<SalePhase | null>(null);
-  const [currentPrice, setCurrentPrice] = useState(0);
-  const [saleEnd, setSaleEnd] = useState<number | null>(null);
-  const [currentBlockNumber, setCurrentBlockNumber] = useState<number | null>(
-    null
-  );
-  const [progress, setProgress] = useState<number | null>(0);
-  const [saleSections, setSaleSections] = useState<Section[]>([]);
-
   TimeAgo.addLocale(en);
   // Create formatter (English).
-  const timeAgo = new TimeAgo('en-US');
 
   const { activeSigner, activeAccount } = useInkathon();
   const { toastError, toastSuccess, toastInfo } = useToast();
 
-  const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
-  const { saleInfo, config, loading } = useSaleInfo();
+  const { saleInfo, loading } = useSaleInfo();
   const {
-    state: { api, apiState },
+    state: { api, apiState, symbol },
   } = useCoretimeApi();
 
   const { fetchRegions } = useRegions();
 
-  const fetchCurrentPhase = useCallback(
-    async (api: ApiPromise) => {
-      const blockNumber = (await api.query.system.number()).toJSON() as number;
-      const lastCommittedTimeslice = parseHNString(
-        (
-          (await api.query.broker.status()).toHuman() as any
-        ).lastCommittedTimeslice.toString()
-      );
-
-      const _saleStart = getSaleStartInBlocks(saleInfo, config);
-      const _saleEnd = getSaleEndInBlocks(
-        saleInfo,
-        blockNumber,
-        lastCommittedTimeslice
-      );
-
-      setCurrentBlockNumber(blockNumber);
-      setSaleEnd(_saleEnd);
-      getBlockTimestamp(api, _saleEnd).then((value) =>
-        setSaleEndTimestamp(value)
-      );
-
-      const progress = getSaleProgress(
-        saleInfo,
-        config,
-        blockNumber,
-        lastCommittedTimeslice
-      );
-      setProgress(progress);
-
-      setCurrentPhase(getCurrentPhase(saleInfo, blockNumber));
-
-      const saleDuration = _saleEnd - _saleStart;
-
-      setSaleSections([
-        { name: 'Interlude', value: 0 },
-        {
-          name: 'Leadin phase',
-          value: (config.interludeLength / saleDuration) * 100,
-        },
-        {
-          name: 'Fixed price phase',
-          value:
-            ((config.interludeLength + config.leadinLength) / saleDuration) *
-            100,
-        },
-      ]);
-    },
-    [saleInfo, config]
-  );
-
-  const fetchCurrentPrice = useCallback(
-    async (api: ApiPromise) => {
-      const blockNumber = (await api.query.system.number()).toJSON() as number;
-
-      const price = getCurrentPrice(saleInfo, blockNumber);
-      setCurrentPrice(price);
-    },
-    [saleInfo]
-  );
+  const balance = useBalance();
+  const currentPrice = useSalePrice();
+  const { currentPhase, progress, saleStartTimestamp, saleEndTimestamp } =
+    useSalePhase();
 
   const purchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
@@ -135,19 +60,13 @@ const Purchase = () => {
     });
   };
 
-  useEffect(() => {
-    if (!api || apiState !== ApiState.READY) return;
-
-    fetchCurrentPhase(api);
-    fetchCurrentPrice(api);
-  }, [api, apiState, fetchCurrentPrice, fetchCurrentPhase]);
-
   return (
     <Box>
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
         <Box>
@@ -161,52 +80,42 @@ const Purchase = () => {
             variant='subtitle2'
             sx={{ color: theme.palette.text.primary }}
           >
-            Purchase a core directly from the Coretime chain
+            Buy a core straight from the Coretime chain
           </Typography>
         </Box>
-      </Box>
+        <Typography variant='h6' sx={{ color: theme.palette.text.primary }}>
+          {`Your balance: ${formatBalance(
+            balance.toString(),
+            false
+          )} ${symbol}`}
+        </Typography>
+      </Box >
       <Box>
         {loading ||
-        !currentPhase ||
-        !saleEnd ||
-        !currentBlockNumber ||
-        !progress ||
-        !saleEndTimestamp ? (
+          !currentPhase ||
+          !progress ||
+          !saleStartTimestamp ||
+          !saleEndTimestamp ? (
           <>
             <Typography variant='h5' align='center'>
-              Connect your wallet
+              Check your network conection and connect your wallet
             </Typography>
           </>
         ) : (
-          <>
-            <Box
-              sx={{
-                marginTop: '2em',
-              }}
-            >
-              <SaleInfoGrid
-                currentPhase={currentPhase}
-                currentPrice={currentPrice}
-                saleInfo={saleInfo}
-                saleEnd={saleEnd}
-              />
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <SaleInfoPanel
+              currentPhase={currentPhase}
+              currentPrice={currentPrice}
+              saleInfo={saleInfo}
+              saleStartTimestamp={saleStartTimestamp}
+              saleEndTimestamp={saleEndTimestamp}
+            />
+            <Box sx={{ display: 'flex', gap: '1rem' }}>
+              <CoreDetailsPanel saleInfo={saleInfo} />
             </Box>
+
             <Box
               sx={{
-                marginTop: '2em',
-              }}
-            >
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant='h6'>Current Bulk Sale:</Typography>
-                <Typography>Ends {timeAgo.format(saleEndTimestamp)}</Typography>
-              </Box>
-              <Box sx={{ marginTop: '1em' }}>
-                <Progress progress={progress} sections={saleSections} />
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                marginTop: '4em',
                 display: 'flex',
                 justifyContent: 'space-between',
               }}
@@ -214,18 +123,16 @@ const Purchase = () => {
               <Link href='/regions'>
                 <Button variant='outlined'>Manage your regions</Button>
               </Link>
-              <LoadingButton
+              <ProgressButton
                 onClick={purchase}
-                variant='contained'
                 loading={working}
-              >
-                Purchase
-              </LoadingButton>
+                label='Purchase Core'
+              />
             </Box>
-          </>
+          </Box>
         )}
       </Box>
-    </Box>
+    </Box >
   );
 };
 

@@ -1,10 +1,11 @@
+import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useReducer } from 'react';
 
 import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
 
 import { connect, disconnect, initialState, reducer } from '../common';
-import { WS_CORETIME_CHAIN } from '../consts';
+import { WS_KUSAMA_CORETIME_CHAIN, WS_ROCOCO_CORETIME_CHAIN } from '../consts';
 
 const types = {
   CoreIndex: 'u32',
@@ -24,9 +25,6 @@ const types = {
 
 const defaultValue = {
   state: { ...initialState },
-  connectCoretime: (): void => {
-    /** */
-  },
   disconnectCoretime: (): void => {
     /** */
   },
@@ -38,6 +36,9 @@ const CoretimeApiContextProvider = (props: any) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { toastError, toastSuccess } = useToast();
 
+  const router = useRouter();
+  const { network } = router.query;
+
   useEffect(() => {
     state.apiError && toastError(`Failed to connect to Coretime chain`);
   }, [state.apiError, toastError]);
@@ -47,15 +48,29 @@ const CoretimeApiContextProvider = (props: any) => {
       toastSuccess('Successfully connected to the Coretime chain');
   }, [state.apiState, toastSuccess]);
 
-  const connectCoretime = () =>
-    connect(state, WS_CORETIME_CHAIN, dispatch, types);
+  const getUrl = (network: any): string => {
+    if (!network || network == 'rococo') {
+      return WS_ROCOCO_CORETIME_CHAIN;
+    } else if (network == 'kusama') {
+      return WS_KUSAMA_CORETIME_CHAIN;
+    } else {
+      /* eslint-disable no-console */
+      console.error(`Network: ${network} not recognized`);
+      // Default to rococo.
+      return WS_ROCOCO_CORETIME_CHAIN;
+    }
+  };
 
   const disconnectCoretime = () => disconnect(state);
 
+  useEffect(() => {
+    if (state.socket == getUrl(network)) return;
+    const updateNetwork = network != '' && state.socket != getUrl(network);
+    connect(state, getUrl(network), dispatch, updateNetwork, types);
+  }, [network, state]);
+
   return (
-    <CoretimeApiContext.Provider
-      value={{ state, connectCoretime, disconnectCoretime }}
-    >
+    <CoretimeApiContext.Provider value={{ state, disconnectCoretime }}>
       {props.children}
     </CoretimeApiContext.Provider>
   );

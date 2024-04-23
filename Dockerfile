@@ -5,8 +5,8 @@ WORKDIR /corehub
 COPY . .
 
 # Set the necessary environment variables
-ENV WS_CORETIME_CHAIN="ws://127.0.0.1:9910"
-ENV WS_RELAY_CHAIN="ws://127.0.0.1:9900"
+ENV WS_ROCOCO_CORETIME_CHAIN="ws://127.0.0.1:9910"
+ENV WS_ROCOCO_RELAY_CHAIN="ws://127.0.0.1:9900"
 
 RUN apk add --no-cache libc6-compat
 

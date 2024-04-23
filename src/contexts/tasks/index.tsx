@@ -57,13 +57,18 @@ const TaskDataProvider = ({ children }: Props) => {
 
   // The tasks which will run on Polkadot cores in the future.
   const fetchWorkplan = async (): Promise<Tasks> => {
-    if (!coretimeApi || coretimeApiState !== ApiState.READY) return {};
+    if (
+      !coretimeApi ||
+      coretimeApiState !== ApiState.READY ||
+      !coretimeApi.query.broker
+    )
+      return {};
     const workplan = await coretimeApi.query.broker.workplan.entries();
     const tasks: Record<string, number | null> = {};
 
     for await (const [key, value] of workplan) {
       const [[begin, core]] = key.toHuman() as [[number, number]];
-      const records = value.toHuman() as ScheduleItem[];
+      const records = value.toHuman(undefined, true) as ScheduleItem[];
 
       records.forEach((record) => {
         const {
@@ -94,7 +99,12 @@ const TaskDataProvider = ({ children }: Props) => {
     core: CoreIndex,
     regionMask: CoreMask
   ): Promise<Task> => {
-    if (!coretimeApi || coretimeApiState !== ApiState.READY) return null;
+    if (
+      !coretimeApi ||
+      coretimeApiState !== ApiState.READY ||
+      !coretimeApi.query.broker
+    )
+      return null;
     const workload = (
       (
         await coretimeApi.query.broker.workload(core)

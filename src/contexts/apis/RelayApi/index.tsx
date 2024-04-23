@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useReducer, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
@@ -7,13 +8,10 @@ import { useToast } from '@/contexts/toast';
 import { ParaId } from '@/models';
 
 import { connect, disconnect, initialState, reducer } from '../common';
-import { WS_RELAY_CHAIN } from '../consts';
+import { WS_KUSAMA_RELAY_CHAIN, WS_ROCOCO_RELAY_CHAIN } from '../consts';
 
 const defaultValue = {
   state: initialState,
-  connectRelay: (): void => {
-    /** */
-  },
   disconnectRelay: (): void => {
     /** */
   },
@@ -27,6 +25,9 @@ const RelayApiContextProvider = (props: any) => {
   const { toastError, toastSuccess } = useToast();
   const [paraIds, setParaIds] = useState<ParaId[]>([]);
 
+  const router = useRouter();
+  const { network } = router.query;
+
   useEffect(() => {
     state.apiError && toastError(`Failed to connect to relay chain`);
   }, [state.apiError, toastError]);
@@ -36,8 +37,26 @@ const RelayApiContextProvider = (props: any) => {
       toastSuccess('Successfully connected to the relay chain');
   }, [state.apiState, toastSuccess]);
 
-  const connectRelay = () => connect(state, WS_RELAY_CHAIN, dispatch);
   const disconnectRelay = () => disconnect(state);
+
+  const getUrl = (network: any): string => {
+    if (!network || network == 'rococo') {
+      return WS_ROCOCO_RELAY_CHAIN;
+    } else if (network == 'kusama') {
+      return WS_KUSAMA_RELAY_CHAIN;
+    } else {
+      /* eslint-disable no-console */
+      console.error(`Network: ${network} not recognized`);
+      // Default to rococo.
+      return WS_ROCOCO_RELAY_CHAIN;
+    }
+  };
+
+  useEffect(() => {
+    if (state.socket == getUrl(network)) return;
+    const updateNetwork = network != '' && state.socket != getUrl(network);
+    connect(state, getUrl(network), dispatch, updateNetwork);
+  }, [network, state]);
 
   useEffect(() => {
     const { api, apiState } = state;
@@ -54,9 +73,7 @@ const RelayApiContextProvider = (props: any) => {
   }, [state]);
 
   return (
-    <RelayApiContext.Provider
-      value={{ state, connectRelay, disconnectRelay, paraIds }}
-    >
+    <RelayApiContext.Provider value={{ state, disconnectRelay, paraIds }}>
       {props.children}
     </RelayApiContext.Provider>
   );

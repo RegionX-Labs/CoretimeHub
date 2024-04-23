@@ -196,7 +196,7 @@ const ListingCardInner = ({
         >
           <Typography fontSize={'1rem'}>Price/timeslice:</Typography>
           <Typography variant='h2'>
-            {`${formatBalance(listing.timeslicePrice.toString(),true)} ${symbol}`}
+            {`${formatBalance(listing.timeslicePrice.toString(), true)} ${symbol}`}
           </Typography>
         </Box>
         <Box

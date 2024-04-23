@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Paper,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -176,11 +177,10 @@ const Dashboard = () => {
             </>
           )}
         </Box>
-        <Box
+        <Paper
           sx={{
             borderRadius: '.5rem',
             color: theme.palette.text.secondary,
-            background: theme.palette.background.default,
             minWidth: 280,
             height: 500,
             padding: '2rem 3rem',
@@ -219,7 +219,7 @@ const Dashboard = () => {
               </Button>
             ))}
           </Box>
-        </Box>
+        </Paper>
         {regionSelected && (
           <>
             <PartitionModal
