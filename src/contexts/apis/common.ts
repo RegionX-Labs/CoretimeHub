@@ -10,6 +10,7 @@ import { ApiState } from './types';
 export type State = {
   jsonrpc: Record<string, Record<string, DefinitionRpcExt>>;
   api: ApiPromise | null;
+  socket: string;
   apiError: any;
   apiState: ApiState;
   symbol: string;
@@ -19,6 +20,7 @@ export const initialState: State = {
   // These are the states
   jsonrpc: { ...jsonrpc },
   api: null,
+  socket: '',
   apiError: null,
   apiState: ApiState.DISCONNECTED,
   symbol: '',
@@ -30,9 +32,18 @@ export const initialState: State = {
 export const reducer = (state: any, action: any) => {
   switch (action.type) {
     case 'CONNECT_INIT':
-      return { ...state, apiState: ApiState.CONNECT_INIT };
+      return {
+        ...state,
+        socket: action.socket,
+        apiState: ApiState.CONNECT_INIT,
+      };
     case 'CONNECT':
-      return { ...state, api: action.payload, apiState: ApiState.CONNECTING };
+      return {
+        ...state,
+        socket: action.socket,
+        api: action.payload,
+        apiState: ApiState.CONNECTING,
+      };
     case 'CONNECT_SUCCESS':
       return { ...state, apiState: ApiState.READY };
     case 'CONNECT_ERROR':
@@ -46,29 +57,27 @@ export const reducer = (state: any, action: any) => {
   }
 };
 
-///
 // Connecting to the Substrate node
 
 export const connect = (
   state: any,
   socket: string,
   dispatch: any,
+  newSocket: boolean,
   types?: any
 ) => {
   const { apiState, jsonrpc } = state;
+
   // We only want this function to be performed once
-  if (apiState !== ApiState.DISCONNECTED) return;
-
-  if (!socket) return;
-
-  dispatch({ type: 'CONNECT_INIT' });
+  if (apiState !== ApiState.DISCONNECTED && !newSocket) return;
 
   const provider = new WsProvider(socket);
   const _api = new ApiPromise({ provider, rpc: jsonrpc, types });
+  dispatch({ type: 'CONNECT_INIT', socket });
 
   // Set listeners for disconnection and reconnection event.
   _api.on('connected', () => {
-    dispatch({ type: 'CONNECT', payload: _api });
+    dispatch({ type: 'CONNECT', payload: _api, socket });
     // `ready` event is not emitted upon reconnection and is checked explicitly here.
     _api.isReady.then(() => {
       dispatch({ type: 'CONNECT_SUCCESS' });

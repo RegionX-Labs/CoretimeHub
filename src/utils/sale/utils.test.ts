@@ -79,9 +79,7 @@ describe('Purchase page', () => {
 
   describe('getSaleStartInBlocks', () => {
     it('works', () => {
-      expect(getSaleStartInBlocks(mockSaleInfo, mockConfig)).toBe(
-        mockSaleInfo.saleStart - mockConfig.interludeLength
-      );
+      expect(getSaleStartInBlocks(mockSaleInfo)).toBe(mockSaleInfo.saleStart);
     });
   });
 
@@ -94,7 +92,12 @@ describe('Purchase page', () => {
       );
 
       expect(
-        getSaleEndInBlocks(mockSaleInfo, blockNumber, lastCommittedTimeslice)
+        getSaleEndInBlocks(
+          mockSaleInfo,
+          blockNumber,
+          lastCommittedTimeslice,
+          'rococo'
+        )
       ).toBe(mockSaleInfo.saleStart + mockConfig.regionLength * 80);
     });
   });
@@ -112,7 +115,8 @@ describe('Purchase page', () => {
           mockSaleInfo,
           mockConfig,
           blockNumber,
-          lastCommittedTimeslice
+          lastCommittedTimeslice,
+          'rococo'
         )
       ).toBe(0);
 
@@ -123,7 +127,8 @@ describe('Purchase page', () => {
           mockSaleInfo,
           mockConfig,
           blockNumber,
-          lastCommittedTimeslice
+          lastCommittedTimeslice,
+          'rococo'
         )
       ).toBe(0.49); // 0.49 %
     });

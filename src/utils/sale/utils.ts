@@ -1,6 +1,6 @@
 import { Timeslice } from 'coretime-utils';
 
-import { leadinFactorAt } from '@/utils/functions';
+import { leadinFactorAt, rcBlockToParachainBlock } from '@/utils/functions';
 
 import { BlockNumber, SaleConfig, SaleInfo, SalePhase } from '@/models';
 
@@ -17,22 +17,23 @@ export const getCurrentPhase = (
   }
 };
 
-export const getSaleStartInBlocks = (
-  saleInfo: SaleInfo,
-  config: SaleConfig
-) => {
+export const getSaleStartInBlocks = (saleInfo: SaleInfo) => {
   // `saleInfo.saleStart` defines the start of the leadin phase.
   // However, we want to account for the interlude period as well.
-  return saleInfo.saleStart - config.interludeLength;
+  return saleInfo.saleStart;
 };
 
 export const getSaleEndInBlocks = (
   saleInfo: SaleInfo,
   blockNumber: BlockNumber,
-  lastCommittedTimeslice: Timeslice
+  lastCommittedTimeslice: Timeslice,
+  network: any
 ) => {
   const timeslicesUntilSaleEnd = saleInfo.regionBegin - lastCommittedTimeslice;
-  return blockNumber + 80 * timeslicesUntilSaleEnd;
+  return rcBlockToParachainBlock(
+    network,
+    blockNumber + 80 * timeslicesUntilSaleEnd
+  );
 };
 
 // Returns a range between 0 and 100.
@@ -40,10 +41,16 @@ export const getSaleProgress = (
   saleInfo: SaleInfo,
   config: SaleConfig,
   blockNumber: number,
-  lastCommittedTimeslice: number
+  lastCommittedTimeslice: number,
+  network: any
 ): number => {
-  const start = getSaleStartInBlocks(saleInfo, config);
-  const end = getSaleEndInBlocks(saleInfo, blockNumber, lastCommittedTimeslice);
+  const start = getSaleStartInBlocks(saleInfo) - config.interludeLength;
+  const end = getSaleEndInBlocks(
+    saleInfo,
+    blockNumber,
+    lastCommittedTimeslice,
+    network
+  );
 
   const saleDuration = end - start;
   const elapsed = blockNumber - start;
