@@ -125,7 +125,6 @@ const Purchase = () => {
             />
             <Box sx={{ display: 'flex', gap: '1rem' }}>
               <CoreDetailsPanel saleInfo={saleInfo} />
-              <CoreDetailsPanel saleInfo={saleInfo} />
             </Box>
 
             <Box
