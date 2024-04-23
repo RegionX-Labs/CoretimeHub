@@ -14,6 +14,7 @@ export type State = {
   apiError: any;
   apiState: ApiState;
   symbol: string;
+  name: string;
 };
 
 export const initialState: State = {
@@ -24,6 +25,7 @@ export const initialState: State = {
   apiError: null,
   apiState: ApiState.DISCONNECTED,
   symbol: '',
+  name: '',
 };
 
 ///
@@ -49,9 +51,16 @@ export const reducer = (state: any, action: any) => {
     case 'CONNECT_ERROR':
       return { ...state, apiState: ApiState.ERROR, apiError: action.payload };
     case 'DISCONNECTED':
-      return { ...state, apiState: ApiState.DISCONNECTED };
+      return {
+        ...state,
+        apiState: ApiState.DISCONNECTED,
+        symbol: '',
+        name: '',
+      };
     case 'SET_SYMBOL':
       return { ...state, symbol: action.payload };
+    case 'SET_NAME':
+      return { ...state, name: action.payload };
     default:
       throw new Error(`Unknown type: ${action.type}`);
   }
@@ -79,25 +88,31 @@ export const connect = (
   _api.on('connected', () => {
     dispatch({ type: 'CONNECT', payload: _api, socket });
     // `ready` event is not emitted upon reconnection and is checked explicitly here.
-    _api.isReady.then(() => {
-      dispatch({ type: 'CONNECT_SUCCESS' });
-      const chainInfo = _api.registry.getChainProperties();
-      if (chainInfo?.tokenSymbol.isSome) {
-        const [symbol] = chainInfo.tokenSymbol.toHuman() as [string];
-        dispatch({
-          type: 'SET_SYMBOL',
-          payload: symbol,
-        });
-      }
+    _api.isReady.then(() => dispatch({ type: 'CONNECT_SUCCESS' }));
+  });
+  _api.on('ready', async () => {
+    dispatch({ type: 'CONNECT_SUCCESS' });
+    const chainInfo = _api.registry.getChainProperties();
+    if (chainInfo?.tokenSymbol.isSome) {
+      const [symbol] = chainInfo.tokenSymbol.toHuman() as [string];
+      dispatch({
+        type: 'SET_SYMBOL',
+        payload: symbol,
+      });
+    }
+
+    const name = await _api.rpc.system.chain();
+    dispatch({
+      type: 'SET_NAME',
+      payload: name,
     });
   });
-  _api.on('ready', () => dispatch({ type: 'CONNECT_SUCCESS' }));
   _api.on('error', (err) => dispatch({ type: 'CONNECT_ERROR', payload: err }));
   _api.on('disconnected', () => dispatch({ type: 'DISCONNECTED' }));
 };
 
 export const disconnect = (state: any) => {
   const { api, apiState } = state;
-  if (apiState === ApiState.DISCONNECTED) return;
+  if (!api || apiState === ApiState.DISCONNECTED) return;
   api.disconnect();
 };

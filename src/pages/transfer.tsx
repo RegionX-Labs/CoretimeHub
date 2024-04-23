@@ -1,7 +1,6 @@
 import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
 import { LoadingButton } from '@mui/lab';
 import {
-  Alert,
   Box,
   Button,
   DialogActions,
@@ -65,12 +64,10 @@ const TransferPage = () => {
   const [working, setWorking] = useState(false);
 
   const [newOwner, setNewOwner] = useState('');
-  const [originChain, setOriginChain] = useState<ChainType>(ChainType.NONE);
+  const [originChain, setOriginChain] = useState<ChainType>(ChainType.CORETIME);
   const [destinationChain, setDestinationChain] = useState<ChainType>(
-    ChainType.NONE
+    ChainType.CORETIME
   );
-  const [statusLabel, _setStatusLabel] = useState('');
-
   const [selectedRegion, setSelectedRegion] = useState<RegionMetadata | null>(
     null
   );
@@ -308,11 +305,6 @@ const TransferPage = () => {
               />
             </Stack>
           )}
-        {statusLabel && (
-          <Alert severity='info' sx={{ marginY: '2em' }}>
-            {statusLabel}
-          </Alert>
-        )}
         <Box margin='2rem 0 0 0'>
           <DialogActions>
             <Link href='/'>

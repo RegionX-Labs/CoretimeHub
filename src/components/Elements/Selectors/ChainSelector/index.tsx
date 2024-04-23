@@ -1,5 +1,6 @@
 import {
   Box,
+  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
@@ -8,32 +9,61 @@ import {
 } from '@mui/material';
 import Image from 'next/image';
 
-import CoretimeIcon from '@/assets/networks/coretime.png';
-import RegionXIcon from '@/assets/networks/regionx.png';
-// import KusamaIcon from '@/assets/networks/kusama.png';
-import RococoIcon from '@/assets/networks/rococo.png';
-import { ChainType } from '@/models';
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+import { ChainType, NetworkType } from '@/models';
 
 interface ChainSelectorProps {
   chain: ChainType;
   setChain: (_: ChainType) => void;
 }
 
+import {
+  Kusama,
+  KusamaCoretime,
+  RegionX,
+  Rococo,
+  RococoCoretime,
+} from '@/assets/networks';
+import { ApiState } from '@/contexts/apis/types';
+import { useNetwork } from '@/contexts/network';
+
+const coretimeIcons = {
+  [NetworkType.NONE]: RococoCoretime,
+  [NetworkType.KUSAMA]: KusamaCoretime,
+  [NetworkType.ROCOCO]: RococoCoretime,
+};
+
+const relayIcons = {
+  [NetworkType.NONE]: Rococo,
+  [NetworkType.KUSAMA]: Kusama,
+  [NetworkType.ROCOCO]: Rococo,
+};
+
 export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
+  const { network } = useNetwork();
+  const {
+    state: { name: coretimeChain, apiState: coretimeState },
+  } = useCoretimeApi();
+  const {
+    state: { name: relayChain, apiState: relayState },
+  } = useRelayApi();
+
   const menuItems = [
     {
-      icon: RococoIcon,
-      label: 'Relay Chain',
+      icon: relayIcons[network],
+      label: relayChain,
       value: ChainType.RELAY,
+      loading: coretimeState !== ApiState.READY,
     },
     {
-      icon: CoretimeIcon,
-      label: 'Coretime Chain',
+      icon: coretimeIcons[network],
+      label: coretimeChain,
       value: ChainType.CORETIME,
+      loading: relayState !== ApiState.READY,
     },
 
     {
-      icon: RegionXIcon,
+      icon: RegionX,
       label: 'RegionX Chain',
       value: ChainType.REGIONX,
     },
@@ -48,17 +78,21 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
         label='Origin'
         onChange={(e) => setChain(e.target.value as ChainType)}
       >
-        {menuItems.map(({ icon, label, value }, index) => (
+        {menuItems.map(({ icon, label, value, loading }, index) => (
           <MenuItem value={value} key={index}>
-            <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+            <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <Image
                 src={icon}
                 alt='icon'
                 style={{ width: '2rem', height: '2rem', borderRadius: '100%' }}
               />
-              <Typography sx={{ lineHeight: 1.5, fontSize: '1.25rem' }}>
-                {label}
-              </Typography>
+              {loading ? (
+                <CircularProgress size={'1.5rem'} />
+              ) : (
+                <Typography sx={{ lineHeight: 1.5, fontSize: '1.25rem' }}>
+                  {label}
+                </Typography>
+              )}
             </Box>
           </MenuItem>
         ))}

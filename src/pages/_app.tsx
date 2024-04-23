@@ -25,6 +25,7 @@ import {
 } from '@/contexts/apis/consts';
 import { ContextDataProvider } from '@/contexts/common';
 import { MarketProvider } from '@/contexts/market';
+import { NetworkProvider } from '@/contexts/network';
 import { RegionDataProvider } from '@/contexts/regions';
 import { SaleInfoProvider } from '@/contexts/sales';
 import { TaskDataProvider } from '@/contexts/tasks';
@@ -69,32 +70,34 @@ export default function MyApp(props: MyAppProps) {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <ToastProvider>
-          <CoretimeApiContextProvider>
-            <RelayApiContextProvider>
-              <UseInkathonProvider
-                appName='CoreHub'
-                connectOnInit={false}
-                defaultChain={{
-                  network: '',
-                  name: '',
-                  rpcUrls: [getUrl(network)],
-                }}
-                apiOptions={{ types: { Id } }}
-              >
-                <ContextDataProvider>
-                  <TaskDataProvider>
-                    <RegionDataProvider>
-                      <MarketProvider>
-                        <SaleInfoProvider>
-                          {getLayout(<Component {...pageProps} />)}
-                        </SaleInfoProvider>
-                      </MarketProvider>
-                    </RegionDataProvider>
-                  </TaskDataProvider>
-                </ContextDataProvider>
-              </UseInkathonProvider>
-            </RelayApiContextProvider>
-          </CoretimeApiContextProvider>
+          <NetworkProvider>
+            <CoretimeApiContextProvider>
+              <RelayApiContextProvider>
+                <UseInkathonProvider
+                  appName='CoreHub'
+                  connectOnInit={false}
+                  defaultChain={{
+                    network: '',
+                    name: '',
+                    rpcUrls: [getUrl(network)],
+                  }}
+                  apiOptions={{ types: { Id } }}
+                >
+                  <ContextDataProvider>
+                    <TaskDataProvider>
+                      <RegionDataProvider>
+                        <MarketProvider>
+                          <SaleInfoProvider>
+                            {getLayout(<Component {...pageProps} />)}
+                          </SaleInfoProvider>
+                        </MarketProvider>
+                      </RegionDataProvider>
+                    </TaskDataProvider>
+                  </ContextDataProvider>
+                </UseInkathonProvider>
+              </RelayApiContextProvider>
+            </CoretimeApiContextProvider>
+          </NetworkProvider>
         </ToastProvider>
       </ThemeProvider>
     </CacheProvider>

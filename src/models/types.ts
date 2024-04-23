@@ -36,6 +36,15 @@ export enum ChainType {
   REGIONX = 3,
 }
 
+export enum NetworkType {
+  // eslint-disable-next-line no-unused-vars
+  NONE = 'none',
+  // eslint-disable-next-line no-unused-vars
+  ROCOCO = 'rococo',
+  // eslint-disable-next-line no-unused-vars
+  KUSAMA = 'kusama',
+}
+
 export type Sender = {
   address: string;
   signer: Signer;

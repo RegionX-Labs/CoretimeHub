@@ -1,11 +1,11 @@
-import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useReducer, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
 
 import { ApiState } from '@/contexts/apis/types';
+import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
-import { ParaId } from '@/models';
+import { NetworkType, ParaId } from '@/models';
 
 import { connect, disconnect, initialState, reducer } from '../common';
 import { WS_KUSAMA_RELAY_CHAIN, WS_ROCOCO_RELAY_CHAIN } from '../consts';
@@ -25,8 +25,7 @@ const RelayApiContextProvider = (props: any) => {
   const { toastError, toastSuccess } = useToast();
   const [paraIds, setParaIds] = useState<ParaId[]>([]);
 
-  const router = useRouter();
-  const { network } = router.query;
+  const { network } = useNetwork();
 
   useEffect(() => {
     state.apiError && toastError(`Failed to connect to relay chain`);
@@ -34,28 +33,25 @@ const RelayApiContextProvider = (props: any) => {
 
   useEffect(() => {
     state.apiState === ApiState.READY &&
-      toastSuccess('Successfully connected to the relay chain');
-  }, [state.apiState, toastSuccess]);
+      state.name &&
+      toastSuccess(`Successfully connected to ${state.name}`);
+  }, [state.apiState, state.name, toastSuccess]);
 
   const disconnectRelay = () => disconnect(state);
 
   const getUrl = (network: any): string => {
-    if (!network || network == 'rococo') {
-      return WS_ROCOCO_RELAY_CHAIN;
-    } else if (network == 'kusama') {
-      return WS_KUSAMA_RELAY_CHAIN;
-    } else {
-      /* eslint-disable no-console */
-      console.error(`Network: ${network} not recognized`);
-      // Default to rococo.
-      return WS_ROCOCO_RELAY_CHAIN;
-    }
+    return network === NetworkType.ROCOCO
+      ? WS_ROCOCO_RELAY_CHAIN
+      : WS_KUSAMA_RELAY_CHAIN;
   };
 
   useEffect(() => {
-    if (state.socket == getUrl(network)) return;
-    const updateNetwork = network != '' && state.socket != getUrl(network);
-    connect(state, getUrl(network), dispatch, updateNetwork);
+    if (network === NetworkType.NONE || state.socket == getUrl(network)) return;
+    const updateNetwork = state.socket != getUrl(network);
+    if (updateNetwork) {
+      disconnectRelay();
+      connect(state, getUrl(network), dispatch, updateNetwork);
+    }
   }, [network, state]);
 
   useEffect(() => {
