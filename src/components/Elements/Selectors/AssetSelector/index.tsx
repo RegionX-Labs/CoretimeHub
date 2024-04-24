@@ -17,6 +17,17 @@ export default function AssetSelector({
   symbol,
 }: AssetSelectorProps) {
   const theme = useTheme();
+  const items = [
+    {
+      value: AssetType.TOKEN,
+      label: symbol,
+    },
+    {
+      value: AssetType.REGION,
+      label: 'Region',
+    },
+  ];
+
   return (
     <FormControl>
       <ToggleButtonGroup
@@ -25,20 +36,19 @@ export default function AssetSelector({
         onChange={(e: any) => setAsset(parseInt(e.target.value) as AssetType)}
         className={styles.options}
       >
-        <ToggleButton
-          className={styles.option}
-          sx={{ color: theme.palette.text.primary }}
-          value={AssetType.TOKEN}
-        >
-          {symbol}
-        </ToggleButton>
-        <ToggleButton
-          className={styles.option}
-          sx={{ color: theme.palette.text.primary }}
-          value={AssetType.REGION}
-        >
-          Region
-        </ToggleButton>
+        {items.map(({ label, value }, index) => (
+          <ToggleButton
+            className={styles.option}
+            sx={{
+              color: theme.palette.text.primary,
+              border: `1px solid ${theme.palette.grey['200']}`,
+            }}
+            value={value}
+            key={index}
+          >
+            {label}
+          </ToggleButton>
+        ))}
       </ToggleButtonGroup>
     </FormControl>
   );

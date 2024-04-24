@@ -90,6 +90,13 @@ let theme = createTheme({
         },
       },
     },
+    MuiToggleButtonGroup: {
+      styleOverrides: {
+        lastButton: {
+          borderLeft: '1px solid',
+        },
+      },
+    },
   },
 });
 
