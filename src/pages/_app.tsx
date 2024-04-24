@@ -1,12 +1,9 @@
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
-import { UseInkathonProvider } from '@scio-labs/use-inkathon';
-import { Id } from 'coretime-utils';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import * as React from 'react';
 import '../../styles/global.scss';
 
@@ -15,14 +12,11 @@ import theme from '@/utils/muiTheme';
 
 import { Layout } from '@/components';
 
+import { AccountProvider } from '@/contexts/account';
 import {
   CoretimeApiContextProvider,
   RelayApiContextProvider,
 } from '@/contexts/apis';
-import {
-  WS_KUSAMA_CORETIME_CHAIN,
-  WS_ROCOCO_CORETIME_CHAIN,
-} from '@/contexts/apis/consts';
 import { ContextDataProvider } from '@/contexts/common';
 import { MarketProvider } from '@/contexts/market';
 import { NetworkProvider } from '@/contexts/network';
@@ -42,24 +36,8 @@ interface MyAppProps extends AppProps {
 }
 
 export default function MyApp(props: MyAppProps) {
-  const router = useRouter();
-  const { network } = router.query;
-
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>);
-
-  const getUrl = (network: any): string => {
-    if (!network || network === 'rococo') {
-      return WS_ROCOCO_CORETIME_CHAIN;
-    } else if (network === 'kusama') {
-      return WS_KUSAMA_CORETIME_CHAIN;
-    } else {
-      /* eslint-disable no-console */
-      console.error(`Network: ${network} not recognized`);
-      // default to rococo.
-      return WS_ROCOCO_CORETIME_CHAIN;
-    }
-  };
 
   return (
     <CacheProvider value={emotionCache}>
@@ -71,18 +49,9 @@ export default function MyApp(props: MyAppProps) {
         <CssBaseline />
         <ToastProvider>
           <NetworkProvider>
-            <CoretimeApiContextProvider>
-              <RelayApiContextProvider>
-                <UseInkathonProvider
-                  appName='CoreHub'
-                  connectOnInit={false}
-                  defaultChain={{
-                    network: '',
-                    name: '',
-                    rpcUrls: [getUrl(network)],
-                  }}
-                  apiOptions={{ types: { Id } }}
-                >
+            <AccountProvider>
+              <CoretimeApiContextProvider>
+                <RelayApiContextProvider>
                   <ContextDataProvider>
                     <TaskDataProvider>
                       <RegionDataProvider>
@@ -94,9 +63,9 @@ export default function MyApp(props: MyAppProps) {
                       </RegionDataProvider>
                     </TaskDataProvider>
                   </ContextDataProvider>
-                </UseInkathonProvider>
-              </RelayApiContextProvider>
-            </CoretimeApiContextProvider>
+                </RelayApiContextProvider>
+              </CoretimeApiContextProvider>
+            </AccountProvider>
           </NetworkProvider>
         </ToastProvider>
       </ThemeProvider>

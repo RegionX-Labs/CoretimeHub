@@ -12,11 +12,11 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useInkathon } from '@scio-labs/use-inkathon';
 import { useEffect, useState } from 'react';
 
 import { RegionCard } from '@/components/Elements';
 
+import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useTasks } from '@/contexts/tasks';
@@ -34,7 +34,9 @@ export const TaskAssignModal = ({
   onClose,
   regionMetadata,
 }: TaskAssignModalProps) => {
-  const { activeAccount, activeSigner } = useInkathon();
+  const {
+    state: { activeAccount, activeSigner },
+  } = useAccounts();
 
   const { paraIds } = useRelayApi();
   const {

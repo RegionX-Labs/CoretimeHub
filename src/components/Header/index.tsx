@@ -7,24 +7,27 @@ import {
   ListItemButton,
   useTheme,
 } from '@mui/material';
-import { useInkathon } from '@scio-labs/use-inkathon';
 import React, { useState } from 'react';
+
+import { useAccounts } from '@/contexts/account';
 
 import styles from './index.module.scss';
 import { ActionButton } from '../Elements';
-import { WalletModal } from '../Modals/WalletConnect';
 
 export const Header = () => {
   const theme = useTheme();
+  const {
+    state: { accounts, activeAccount },
+    setActiveAccount,
+    disconnectWallet,
+    connectWallet,
+  } = useAccounts();
 
-  const { activeAccount, disconnect, accounts, setActiveAccount } =
-    useInkathon();
   const [accountsOpen, openAccounts] = useState(false);
-  const [walletModalOpen, openWalletModal] = useState(false);
 
   const onDisconnect = () => {
     openAccounts(false);
-    disconnect && disconnect();
+    disconnectWallet();
   };
 
   return (
@@ -49,7 +52,7 @@ export const Header = () => {
                     borderRadius: 4,
                   }}
                 >
-                  {activeAccount.name}
+                  {activeAccount.meta.name}
                   <ExpandMore />
                 </ListItemButton>
               )}
@@ -70,7 +73,7 @@ export const Header = () => {
                         <ListItemButton
                           key={index}
                           onClick={() => {
-                            setActiveAccount && setActiveAccount(account);
+                            setActiveAccount(account);
                             openAccounts(false);
                           }}
                           sx={{
@@ -78,7 +81,7 @@ export const Header = () => {
                             background: theme.palette.grey['100'],
                           }}
                         >
-                          {account.name}
+                          {account.meta.name}
                         </ListItemButton>
                       )
                   )}
@@ -97,16 +100,12 @@ export const Header = () => {
             </List>
           ) : (
             <ActionButton
-              onClick={() => openWalletModal(true)}
+              onClick={() => connectWallet()}
               label='Connect Wallet'
             />
           )}
         </Box>
       </Box>
-      <WalletModal
-        open={walletModalOpen}
-        onClose={() => openWalletModal(false)}
-      />
     </>
   );
 };

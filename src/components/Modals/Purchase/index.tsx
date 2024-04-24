@@ -6,11 +6,11 @@ import {
   DialogContent,
   Stack,
 } from '@mui/material';
-import { useInkathon } from '@scio-labs/use-inkathon';
 import { useState } from 'react';
 
 import { ListingCard } from '@/components/Elements/ListingCard';
 
+import { useAccounts } from '@/contexts/account';
 import { useToast } from '@/contexts/toast';
 import { Listing } from '@/models';
 
@@ -25,22 +25,23 @@ export const PurchaseModal = ({
   onClose,
   listing,
 }: PurchaseModalProps) => {
-  const { activeAccount, api } = useInkathon();
+  const {
+    state: { activeAccount },
+  } = useAccounts();
 
   const { toastError, toastSuccess } = useToast();
 
   const [working, setWorking] = useState(false);
 
   const purchaseRegion = async () => {
-    if (!api || !activeAccount) {
+    if (!activeAccount) {
       return;
     }
 
     try {
       setWorking(true);
 
-      // TODO
-
+      // TODO:
       toastSuccess(`Successfully purchased region from sale.`);
       onClose();
       setWorking(false);

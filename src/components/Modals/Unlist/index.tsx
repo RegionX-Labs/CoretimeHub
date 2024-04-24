@@ -6,12 +6,12 @@ import {
   DialogContent,
   Stack,
 } from '@mui/material';
-import { useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 import { useState } from 'react';
 
 import { RegionCard } from '@/components/Elements';
 
+import { useAccounts } from '@/contexts/account';
 import { useMarket } from '@/contexts/market';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
@@ -28,7 +28,9 @@ export const UnlistModal = ({
   onClose,
   regionMetadata,
 }: UnlistModalProps) => {
-  const { activeAccount, api } = useInkathon();
+  const {
+    state: { activeAccount },
+  } = useAccounts();
 
   const { fetchRegions } = useRegions();
   const { fetchMarket } = useMarket();
@@ -37,7 +39,7 @@ export const UnlistModal = ({
   const [working, setWorking] = useState(false);
 
   const unlistRegion = async (_region: Region) => {
-    if (!api || !activeAccount) {
+    if (!activeAccount) {
       return;
     }
 

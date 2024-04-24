@@ -11,11 +11,11 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { useInkathon } from '@scio-labs/use-inkathon';
 import { useEffect, useState } from 'react';
 
 import { RegionCard } from '@/components/Elements';
 
+import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useCommon } from '@/contexts/common';
 import { useRegions } from '@/contexts/regions';
@@ -59,7 +59,9 @@ export const PartitionModal = ({
     },
   ];
 
-  const { activeSigner, activeAccount } = useInkathon();
+  const {
+    state: { activeSigner, activeAccount },
+  } = useAccounts();
 
   const theme = useTheme();
   const {
