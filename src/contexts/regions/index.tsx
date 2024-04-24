@@ -1,4 +1,3 @@
-import { useInkathon } from '@scio-labs/use-inkathon';
 import { CoreIndex, CoreMask, Region, RegionId } from 'coretime-utils';
 import React, {
   createContext,
@@ -11,6 +10,7 @@ import React, {
 import { RegionLocation, RegionMetadata } from '@/models';
 
 import * as NativeRegions from './native';
+import { useAccounts } from '../account';
 import { useCoretimeApi } from '../apis';
 import { useCommon } from '../common';
 import { useTasks } from '../tasks';
@@ -46,7 +46,9 @@ const RegionDataProvider = ({ children }: Props) => {
   const {
     state: { api: coretimeApi },
   } = useCoretimeApi();
-  const { api, activeAccount } = useInkathon();
+  const {
+    state: { activeAccount },
+  } = useAccounts();
 
   const { fetchWorkplan, fetchRegionWorkload } = useTasks();
 
@@ -84,7 +86,7 @@ const RegionDataProvider = ({ children }: Props) => {
       )
         continue;
 
-      const rawId = region.getEncodedRegionId(api).toString();
+      const rawId = region.getEncodedRegionId(coretimeApi).toString();
       const location = RegionLocation.CORETIME_CHAIN;
 
       const name =
@@ -106,7 +108,7 @@ const RegionDataProvider = ({ children }: Props) => {
       _regions.push(
         RegionMetadata.construct(
           context,
-          region.getEncodedRegionId(api),
+          region.getEncodedRegionId(coretimeApi),
           region,
           name,
           location,
@@ -121,7 +123,6 @@ const RegionDataProvider = ({ children }: Props) => {
     activeAccount,
     context,
     coretimeApi,
-    api,
     fetchWorkplan,
     _getTaskFromWorkloadId,
   ]);

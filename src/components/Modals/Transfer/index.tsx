@@ -9,7 +9,6 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
@@ -17,6 +16,7 @@ import { transferRegionOnCoretimeChain } from '@/utils/native/transfer';
 
 import { RegionCard } from '@/components/Elements';
 
+import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
@@ -33,7 +33,9 @@ export const TransferModal = ({
   onClose,
   regionMetadata,
 }: TransferModalProps) => {
-  const { activeAccount, activeSigner } = useInkathon();
+  const {
+    state: { activeAccount, activeSigner },
+  } = useAccounts();
 
   const { fetchRegions } = useRegions();
   const { toastError, toastInfo, toastSuccess } = useToast();

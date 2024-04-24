@@ -9,7 +9,6 @@ import {
   Typography,
 } from '@mui/material';
 import { Keyring } from '@polkadot/api';
-import { useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
@@ -34,6 +33,7 @@ import {
 import Balance from '@/components/Elements/Balance';
 import AssetSelector from '@/components/Elements/Selectors/AssetSelector';
 
+import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
@@ -47,7 +47,9 @@ import {
 } from '@/models';
 
 const TransferPage = () => {
-  const { activeAccount, activeSigner } = useInkathon();
+  const {
+    state: { activeAccount, activeSigner },
+  } = useAccounts();
 
   const { toastError, toastInfo, toastWarning, toastSuccess } = useToast();
   const {

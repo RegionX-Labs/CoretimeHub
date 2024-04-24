@@ -8,13 +8,13 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { useInkathon } from '@scio-labs/use-inkathon';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
 import { AmountInput, RegionCard } from '@/components/Elements';
 import { RecipientSelector } from '@/components/Elements/Selectors/RecipientSelector';
 
+import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
@@ -31,7 +31,9 @@ export const SellModal = ({
   onClose,
   regionMetadata,
 }: SellModalProps) => {
-  const { activeAccount, api } = useInkathon();
+  const {
+    state: { activeAccount },
+  } = useAccounts();
   const {
     state: { symbol },
   } = useCoretimeApi();
@@ -55,14 +57,14 @@ export const SellModal = ({
   };
 
   const approveXcRegion = async (_region: Region) => {
-    if (!api || !activeAccount) {
+    if (!activeAccount) {
       return;
     }
 
     try {
       setWorking(true);
 
-      // TODO
+      // TODO:
 
       toastSuccess(`Successfully approved region to the market.`);
       setWorking(false);
@@ -77,7 +79,7 @@ export const SellModal = ({
   };
 
   const listRegion = async (_region: Region) => {
-    if (!api || !activeAccount) {
+    if (!activeAccount) {
       return;
     }
 
