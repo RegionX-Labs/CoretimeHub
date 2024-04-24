@@ -258,13 +258,9 @@ const RegionCardInner = ({
       </div>
       <Divider orientation='vertical' flexItem />
       <Box sx={{ color: theme.palette.grey[200] }}>
-        {taskId !== null ? (
-          <Typography variant='subtitle2'>
-            {`Task: ${getTask(taskId)}`}
-          </Typography>
-        ) : (
-          <></>
-        )}
+        <Typography variant='subtitle2'>
+          {`Task: ${getTask(taskId)}`}
+        </Typography>
         <Box
           sx={{
             display: 'flex',

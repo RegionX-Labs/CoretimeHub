@@ -91,9 +91,17 @@ const RegionDataProvider = ({ children }: Props) => {
         localStorage.getItem(`region-${rawId}`) ??
         `Region #${_regions.length + 1}`;
 
-      const task = tasks[rawId.toString()]
-        ? tasks[rawId.toString()]
-        : await _getTaskFromWorkloadId(region.getCore(), region.getMask());
+      let task = tasks[rawId.toString()] ?? null;
+
+      // If the region isn't still active it cannot be in the workload.
+      if (region.consumed(context) != 0) {
+        if (!task) {
+          task = await _getTaskFromWorkloadId(
+            region.getCore(),
+            region.getMask()
+          );
+        }
+      }
 
       _regions.push(
         RegionMetadata.construct(
