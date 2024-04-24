@@ -10,7 +10,6 @@ import {
   Typography,
 } from '@mui/material';
 import { ApiPromise } from '@polkadot/api';
-import { useInkathon } from '@scio-labs/use-inkathon';
 import { useCallback, useEffect, useState } from 'react';
 
 import {
@@ -21,6 +20,7 @@ import {
 
 import { RegionCard } from '@/components/Elements';
 
+import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
@@ -38,7 +38,9 @@ export const RenewModal = ({
   onClose,
   regionMetadata,
 }: RenewModalProps) => {
-  const { activeAccount, activeSigner } = useInkathon();
+  const {
+    state: { activeAccount, activeSigner },
+  } = useAccounts();
   const {
     state: { symbol, api, apiState },
   } = useCoretimeApi();
