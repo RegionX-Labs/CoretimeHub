@@ -34,6 +34,24 @@ import {
 } from '@/icons';
 import { RegionLocation } from '@/models';
 
+// eslint-disable-next-line no-unused-vars
+enum Operations {
+  // eslint-disable-next-line no-unused-vars
+  PARTITION = 'partition',
+  // eslint-disable-next-line no-unused-vars
+  INTERLACE = 'interlace',
+  // eslint-disable-next-line no-unused-vars
+  TRANSFER = 'transfer',
+  // eslint-disable-next-line no-unused-vars
+  ASSIGN = 'assign',
+  // eslint-disable-next-line no-unused-vars
+  RENEW = 'renew',
+  // eslint-disable-next-line no-unused-vars
+  SELL = 'sell',
+  // eslint-disable-next-line no-unused-vars
+  UNLIST = 'unlist',
+}
+
 const Dashboard = () => {
   const theme = useTheme();
   const { regions, loading, updateRegionName } = useRegions();
@@ -67,52 +85,59 @@ const Dashboard = () => {
       label: 'partition',
       icon: PartitionIcon,
       onClick: () => manage(openPartitionModal),
+      action: Operations.PARTITION,
     },
     {
       label: 'interlace',
       icon: InterlaceIcon,
       onClick: () => manage(openInterlaceModal),
+      action: Operations.INTERLACE,
     },
     {
       label: 'transfer',
       icon: TransferIcon,
       onClick: () => manage(openTransferModal),
+      action: Operations.TRANSFER,
     },
     {
       label: 'assign',
       icon: AssignmentIcon,
       onClick: () => manage(openAssignModal),
+      action: Operations.ASSIGN,
     },
     {
       label: 'renew',
       icon: RenewIcon,
       onClick: () => manage(openRenewModal),
+      action: Operations.RENEW,
     },
     {
       label: 'sell',
       icon: SellIcon,
       onClick: () => manage(openSellModal),
+      action: Operations.SELL,
     },
     {
       label: 'unlist',
       icon: BackspaceIcon,
       onClick: () => manage(openUnlistModal),
+      action: Operations.UNLIST,
     },
   ];
 
-  const isDisabled = (action: string): boolean => {
+  const isDisabled = (action: Operations): boolean => {
     if (!selectedRegion) return false;
     if (selectedRegion.location === RegionLocation.CORETIME_CHAIN) {
       // regions on the coretime chain cannot be listed on sale. They first have to be
       // transferred to the contacts chain.
       return (
-        action === 'sell' ||
-        action === 'unlist' ||
-        !(selectedRegion.consumed >= 1 && action === 'renew')
+        action === Operations.SELL ||
+        action === Operations.UNLIST ||
+        !(selectedRegion.consumed >= 1 && action === Operations.RENEW)
       );
     } else if (selectedRegion.location === RegionLocation.REGIONX_CHAIN) {
       // XcRegions can only be transferred and listed on sale.
-      return !(action === 'transfer' || action === 'sell');
+      return !(action === Operations.TRANSFER || action === Operations.SELL);
     } else {
       // TODO: allow price updates as well.
       return !(action == 'unlist');
@@ -209,7 +234,7 @@ const Dashboard = () => {
               alignItems: 'flex-start',
             }}
           >
-            {management.map(({ label, icon: Icon, onClick }, index) => (
+            {management.map(({ label, icon: Icon, onClick, action }, index) => (
               <Button
                 key={index}
                 sx={{
@@ -223,7 +248,7 @@ const Dashboard = () => {
                     color={theme.palette.text.primary}
                   />
                 }
-                disabled={isDisabled(label)}
+                disabled={isDisabled(action)}
                 onClick={onClick}
               >
                 {label}
