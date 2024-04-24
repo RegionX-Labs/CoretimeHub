@@ -1,5 +1,4 @@
 import { Box, Button, Typography, useTheme } from '@mui/material';
-import { useInkathon } from '@scio-labs/use-inkathon';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
 import Link from 'next/link';
@@ -13,6 +12,7 @@ import { sendTx } from '@/utils/functions';
 import { CoreDetailsPanel, ProgressButton, SaleInfoPanel } from '@/components';
 import Balance from '@/components/Elements/Balance';
 
+import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
@@ -26,7 +26,9 @@ const Purchase = () => {
   TimeAgo.addLocale(en);
   // Create formatter (English).
 
-  const { activeSigner, activeAccount } = useInkathon();
+  const {
+    state: { activeSigner, activeAccount },
+  } = useAccounts();
   const { toastError, toastSuccess, toastInfo } = useToast();
 
   const { saleInfo, loading } = useSaleInfo();

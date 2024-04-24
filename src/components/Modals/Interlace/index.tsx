@@ -11,12 +11,12 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { useInkathon } from '@scio-labs/use-inkathon';
 import { CoreMask } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
 import { RegionCard } from '@/components/Elements';
 
+import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
@@ -36,7 +36,9 @@ export const InterlaceModal = ({
   regionMetadata,
 }: InterlaceModalProps) => {
   const theme = useTheme();
-  const { activeAccount, activeSigner } = useInkathon();
+  const {
+    state: { activeAccount, activeSigner },
+  } = useAccounts();
 
   const {
     state: { api },
@@ -94,7 +96,7 @@ export const InterlaceModal = ({
   };
 
   useEffect(() => {
-    setPosition(oneStart);
+    open && setPosition(oneStart);
   }, [open, oneStart]);
 
   return (

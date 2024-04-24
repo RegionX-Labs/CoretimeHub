@@ -1,4 +1,3 @@
-import { useInkathon } from '@scio-labs/use-inkathon';
 import { CoreIndex, CoreMask, Region } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
@@ -51,7 +50,6 @@ const TaskDataProvider = ({ children }: Props) => {
   const {
     state: { api: coretimeApi, apiState: coretimeApiState },
   } = useCoretimeApi();
-  const { api } = useInkathon();
 
   const STORAGE_ITEM_KEY = 'tasks';
 
@@ -85,7 +83,7 @@ const TaskDataProvider = ({ children }: Props) => {
           { end: 0, owner: '', paid: null },
           0
         );
-        tasks[region.getEncodedRegionId(api).toString()] = taskId
+        tasks[region.getEncodedRegionId(coretimeApi).toString()] = taskId
           ? parseHNString(taskId)
           : null;
       });

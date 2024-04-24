@@ -1,9 +1,9 @@
 import { ApiPromise } from '@polkadot/api';
-import { useInkathon } from '@scio-labs/use-inkathon';
 import { useCallback, useEffect, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
 
+import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
@@ -17,7 +17,9 @@ const useBalance = () => {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
 
-  const { activeAccount } = useInkathon();
+  const {
+    state: { activeAccount },
+  } = useAccounts();
 
   const [coretimeBalance, setCoretimeBalance] = useState(0);
   const [relayBalance, setRelayBalance] = useState(0);
@@ -26,7 +28,11 @@ const useBalance = () => {
 
   const fetchBalance = useCallback(
     async (api: ApiPromise): Promise<number | undefined> => {
-      if (!activeAccount) return;
+      if (!activeAccount) {
+        setCoretimeBalance(0);
+        setRelayBalance(0);
+        return;
+      }
 
       const accountData: any = (
         await api.query.system.account(activeAccount.address)
