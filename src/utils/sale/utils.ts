@@ -30,9 +30,8 @@ export const getSaleEndInBlocks = (
   network: any
 ) => {
   const timeslicesUntilSaleEnd = saleInfo.regionBegin - lastCommittedTimeslice;
-  return rcBlockToParachainBlock(
-    network,
-    blockNumber + 80 * timeslicesUntilSaleEnd
+  return (
+    blockNumber + rcBlockToParachainBlock(network, 80 * timeslicesUntilSaleEnd)
   );
 };
 
