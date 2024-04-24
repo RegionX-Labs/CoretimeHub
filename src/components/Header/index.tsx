@@ -9,15 +9,15 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 
-import { useAccounts } from '@/contexts/account';
+import { KeyringState, useAccounts } from '@/contexts/account';
 
 import styles from './index.module.scss';
-import { ActionButton } from '../Elements';
+import { ProgressButton } from '../Elements';
 
 export const Header = () => {
   const theme = useTheme();
   const {
-    state: { accounts, activeAccount },
+    state: { accounts, activeAccount, status },
     setActiveAccount,
     disconnectWallet,
     connectWallet,
@@ -52,7 +52,7 @@ export const Header = () => {
                     borderRadius: 4,
                   }}
                 >
-                  {activeAccount.meta.name}
+                  {`${activeAccount.meta.name}(${activeAccount.meta.source})`}
                   <ExpandMore />
                 </ListItemButton>
               )}
@@ -81,7 +81,7 @@ export const Header = () => {
                             background: theme.palette.grey['100'],
                           }}
                         >
-                          {account.meta.name}
+                          {`${account.meta.name}(${account.meta.source})`}
                         </ListItemButton>
                       )
                   )}
@@ -99,9 +99,10 @@ export const Header = () => {
               </Collapse>
             </List>
           ) : (
-            <ActionButton
+            <ProgressButton
               onClick={() => connectWallet()}
               label='Connect Wallet'
+              loading={status === KeyringState.LOADING}
             />
           )}
         </Box>

@@ -1,21 +1,16 @@
 import type { Signer } from '@polkadot/api/types';
-import {
-  web3Accounts,
-  web3Enable,
-  web3FromSource,
-} from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
 
 export enum KeyringState {
   // eslint-disable-next-line no-unused-vars
-  DISCONNECTED,
+  DISCONNECTED = 'disconnected',
   // eslint-disable-next-line no-unused-vars
-  LOADING,
+  LOADING = 'loading',
   // eslint-disable-next-line no-unused-vars
-  READY,
+  READY = 'ready',
   // eslint-disable-next-line no-unused-vars
-  ERROR,
+  ERROR = 'error',
 }
 
 type State = {
@@ -26,7 +21,7 @@ type State = {
 };
 
 const initialState: State = {
-  status: KeyringState.LOADING,
+  status: KeyringState.DISCONNECTED,
   accounts: [],
   activeAccount: null,
   activeSigner: null,
@@ -40,12 +35,8 @@ const reducer = (state: State, action: any) => {
   switch (action.type) {
     case 'LOAD_KEYRING':
       return { ...state, keyringState: KeyringState.LOADING };
-    case 'SET_KEYRING':
-      return {
-        ...state,
-        keyring: action.payload,
-        keyringState: KeyringState.READY,
-      };
+    case 'KEYRING_READY':
+      return { ...state, KeyringState: KeyringState.READY };
     case 'KEYRING_ERROR':
       return { ...state, keyring: null, keyringState: KeyringState.ERROR };
     case 'SET_ACCOUNTS':
@@ -92,16 +83,21 @@ const AccountProvider = ({ children }: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const setActiveAccount = (acct: any) => {
-    dispatch({ type: 'SET_CURRENT_ACCOUNT', payload: acct });
+    dispatch({ type: 'SET_ACTIVE_ACCOUNT', payload: acct });
   };
 
   const connectWallet = () => {
     dispatch({ type: 'LOAD_KEYRING' });
     const asyncLoadAccounts = async () => {
       try {
+        const extensionDapp = await import('@polkadot/extension-dapp');
+        const { web3Accounts, web3Enable } = extensionDapp;
         await web3Enable('Corehub');
         const accounts: InjectedAccountWithMeta[] = await web3Accounts();
+        dispatch({ type: 'KEYRING_READY' });
         dispatch({ type: 'SET_ACCOUNTS', payload: accounts });
+        if (accounts.length)
+          dispatch({ type: 'SET_ACTIVE_ACCOUNT', payload: accounts[0] });
       } catch (e) {
         dispatch({ type: 'KEYRING_ERROR' });
       }
@@ -112,6 +108,7 @@ const AccountProvider = ({ children }: Props) => {
   useEffect(() => {
     const getInjector = async () => {
       if (!state.activeAccount) return;
+      const { web3FromSource } = await import('@polkadot/extension-dapp');
       const injector = await web3FromSource(state.activeAccount.meta.source);
       dispatch({ type: 'SET_ACTIVE_SIGNER', payload: injector.signer });
     };
@@ -119,6 +116,7 @@ const AccountProvider = ({ children }: Props) => {
   }, [state.activeAccount]);
 
   const disconnectWallet = () => dispatch({ type: 'DISCONNECT' });
+
   return (
     <AccountDataContext.Provider
       value={{ state, setActiveAccount, connectWallet, disconnectWallet }}

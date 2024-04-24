@@ -96,7 +96,7 @@ export const InterlaceModal = ({
   };
 
   useEffect(() => {
-    setPosition(oneStart);
+    open && setPosition(oneStart);
   }, [open, oneStart]);
 
   return (

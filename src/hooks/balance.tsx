@@ -28,7 +28,11 @@ const useBalance = () => {
 
   const fetchBalance = useCallback(
     async (api: ApiPromise): Promise<number | undefined> => {
-      if (!activeAccount) return;
+      if (!activeAccount) {
+        setCoretimeBalance(0);
+        setRelayBalance(0);
+        return;
+      }
 
       const accountData: any = (
         await api.query.system.account(activeAccount.address)
