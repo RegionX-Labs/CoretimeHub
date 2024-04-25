@@ -14,10 +14,16 @@ const Balance = ({ relayBalance, coretimeBalance, symbol }: BalanceProps) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Typography sx={{ color: theme.palette.text.primary, my: '0.5em' }}>
-        {`Relay chain: ${formatBalance(relayBalance.toString(), false)} ${symbol}`}
+        {`Relay chain: ${formatBalance(
+          relayBalance.toString(),
+          false
+        )} ${symbol}`}
       </Typography>
       <Typography sx={{ color: theme.palette.text.primary, my: '0.5em' }}>
-        {`Coretime chain: ${formatBalance(coretimeBalance.toString(), false)} ${symbol}`}
+        {`Coretime chain: ${formatBalance(
+          coretimeBalance.toString(),
+          false
+        )} ${symbol}`}
       </Typography>
     </div>
   );

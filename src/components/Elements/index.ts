@@ -1,4 +1,5 @@
 export * from './AmountInput';
+export * from './Balance';
 export * from './Banner';
 export * from './Buttons';
 export * from './CoreDetailsPanel';
