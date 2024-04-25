@@ -29,6 +29,7 @@ const useSalePhase = () => {
   const { saleInfo, config } = useSaleInfo();
 
   const [currentPhase, setCurrentPhase] = useState<SalePhase | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
@@ -96,7 +97,12 @@ const useSalePhase = () => {
   useEffect(() => {
     if (!api || apiState !== ApiState.READY) return;
 
-    fetchCurrentPhase(api);
+    const asyncFetchCurrentPhase = async () => {
+      setLoading(true);
+      await fetchCurrentPhase(api);
+      setLoading(false);
+    };
+    asyncFetchCurrentPhase();
   }, [fetchCurrentPhase, api, apiState]);
 
   return {
@@ -105,6 +111,7 @@ const useSalePhase = () => {
     saleEndTimestamp,
     progress,
     saleSections,
+    loading,
   };
 };
 

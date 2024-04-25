@@ -12,6 +12,8 @@ import Image from 'next/image';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ChainType, NetworkType } from '@/models';
 
+import styles from './index.module.scss';
+
 interface ChainSelectorProps {
   chain: ChainType;
   setChain: (_: ChainType) => void;
@@ -80,18 +82,12 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
       >
         {menuItems.map(({ icon, label, value, loading }, index) => (
           <MenuItem value={value} key={index}>
-            <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <Image
-                src={icon}
-                alt='icon'
-                style={{ width: '2rem', height: '2rem', borderRadius: '100%' }}
-              />
+            <Box className={styles.chainItem}>
+              <Image src={icon} alt='icon' className={styles.icon} />
               {loading ? (
                 <CircularProgress size={'1.5rem'} />
               ) : (
-                <Typography sx={{ lineHeight: 1.5, fontSize: '1.25rem' }}>
-                  {label}
-                </Typography>
+                <Typography className={styles.label}>{label}</Typography>
               )}
             </Box>
           </MenuItem>

@@ -17,6 +17,7 @@ import {
   CoretimeApiContextProvider,
   RelayApiContextProvider,
 } from '@/contexts/apis';
+import { BalanceProvider } from '@/contexts/balance';
 import { ContextDataProvider } from '@/contexts/common';
 import { MarketProvider } from '@/contexts/market';
 import { NetworkProvider } from '@/contexts/network';
@@ -52,17 +53,19 @@ export default function MyApp(props: MyAppProps) {
             <AccountProvider>
               <CoretimeApiContextProvider>
                 <RelayApiContextProvider>
-                  <ContextDataProvider>
-                    <TaskDataProvider>
-                      <RegionDataProvider>
-                        <MarketProvider>
-                          <SaleInfoProvider>
-                            {getLayout(<Component {...pageProps} />)}
-                          </SaleInfoProvider>
-                        </MarketProvider>
-                      </RegionDataProvider>
-                    </TaskDataProvider>
-                  </ContextDataProvider>
+                  <BalanceProvider>
+                    <ContextDataProvider>
+                      <TaskDataProvider>
+                        <RegionDataProvider>
+                          <MarketProvider>
+                            <SaleInfoProvider>
+                              {getLayout(<Component {...pageProps} />)}
+                            </SaleInfoProvider>
+                          </MarketProvider>
+                        </RegionDataProvider>
+                      </TaskDataProvider>
+                    </ContextDataProvider>
+                  </BalanceProvider>
                 </RelayApiContextProvider>
               </CoretimeApiContextProvider>
             </AccountProvider>
