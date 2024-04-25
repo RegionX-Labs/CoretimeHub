@@ -1,4 +1,4 @@
-import { ToggleButton, ToggleButtonGroup, useTheme } from '@mui/material';
+import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 
 import { AssetType } from '@/models';
@@ -16,7 +16,6 @@ export default function AssetSelector({
   setAsset,
   symbol,
 }: AssetSelectorProps) {
-  const theme = useTheme();
   const items = [
     {
       value: AssetType.TOKEN,
@@ -38,11 +37,7 @@ export default function AssetSelector({
       >
         {items.map(({ label, value }, index) => (
           <ToggleButton
-            className={styles.option}
-            sx={{
-              color: theme.palette.text.primary,
-              border: `1px solid ${theme.palette.grey['200']}`,
-            }}
+            className={value === asset ? styles.activeOption : styles.option}
             value={value}
             key={index}
           >

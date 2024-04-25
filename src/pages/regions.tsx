@@ -22,6 +22,7 @@ import {
 import { SellModal } from '@/components/Modals/Sell';
 import { UnlistModal } from '@/components/Modals/Unlist';
 
+import { useAccounts } from '@/contexts/account';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import {
@@ -34,6 +35,9 @@ import { RegionLocation } from '@/models';
 
 const Dashboard = () => {
   const theme = useTheme();
+  const {
+    state: { activeAccount },
+  } = useAccounts();
   const { regions, loading, updateRegionName } = useRegions();
 
   const [currentRegionIndex, setCurrentRegionIndex] = useState<number>();
@@ -155,13 +159,13 @@ const Dashboard = () => {
               <CircularProgress />
             </Backdrop>
           )}
-          {regions.length === 0 ? (
-            <>
-              <Typography>
-                No regions owned. Go to <Link href='/purchase'>bulk sales</Link>{' '}
-                to make a purchase
-              </Typography>
-            </>
+          {!activeAccount ? (
+            <Typography>Please connect your wallet.</Typography>
+          ) : regions.length === 0 ? (
+            <Typography>
+              No regions owned. Go to <Link href='/purchase'>bulk sales</Link>{' '}
+              to make a purchase
+            </Typography>
           ) : (
             <>
               {regions.map((region, index) => (

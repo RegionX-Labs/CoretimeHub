@@ -1,0 +1,16 @@
+.chainItem {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 100%;
+}
+
+.label {
+  font-size: 1rem;
+  line-height: 1.5;
+}

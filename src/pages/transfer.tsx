@@ -1,5 +1,4 @@
 import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
-import { LoadingButton } from '@mui/lab';
 import {
   Box,
   Button,
@@ -12,7 +11,6 @@ import { Keyring } from '@polkadot/api';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
-import useBalance from '@/hooks/balance';
 import {
   transferTokensFromCoretimeToRelay,
   transferTokensFromRelayToCoretime,
@@ -26,6 +24,7 @@ import {
 import {
   AmountInput,
   ChainSelector,
+  ProgressButton,
   RecipientSelector,
   RegionCard,
   RegionSelector,
@@ -36,6 +35,7 @@ import AssetSelector from '@/components/Elements/Selectors/AssetSelector';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
+import { useBalances } from '@/contexts/balance';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import {
@@ -77,14 +77,13 @@ const TransferPage = () => {
   const [asset, setAsset] = useState<AssetType>(AssetType.TOKEN);
   const [transferAmount, setTransferAmount] = useState('');
 
-  const { coretimeBalance, relayBalance, fetchBalances } = useBalance();
+  const { balance } = useBalances();
 
   const defaultHandler = {
     ready: () => toastInfo('Transaction was initiated.'),
     inBlock: () => toastInfo(`In Block`),
     finalized: () => setWorking(false),
     success: () => {
-      fetchBalances();
       toastSuccess('Successfully transferred.');
     },
     error: () => {
@@ -229,8 +228,8 @@ const TransferPage = () => {
         </Box>
         <Balance
           symbol={symbol}
-          coretimeBalance={coretimeBalance}
-          relayBalance={relayBalance}
+          coretimeBalance={balance.coretime}
+          relayBalance={balance.relay}
         />
       </Box>
       <Box
@@ -242,11 +241,19 @@ const TransferPage = () => {
         }}
       >
         <Stack margin='1em 0' direction='column' gap={1}>
-          <Typography>Origin chain:</Typography>
+          <Typography
+            sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
+          >
+            Origin chain:
+          </Typography>
           <ChainSelector chain={originChain} setChain={handleOriginChange} />
         </Stack>
         <Stack margin='1em 0' direction='column' gap={1}>
-          <Typography>Destination chain:</Typography>
+          <Typography
+            sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
+          >
+            Destination chain:
+          </Typography>
           <ChainSelector
             chain={destinationChain}
             setChain={setDestinationChain}
@@ -292,7 +299,11 @@ const TransferPage = () => {
           <ArrowDownward />
         </Stack>
         <Stack direction='column' gap={1}>
-          <Typography>Transfer to:</Typography>
+          <Typography
+            sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
+          >
+            Transfer to:
+          </Typography>
           <RecipientSelector recipient={newOwner} setRecipient={setNewOwner} />
         </Stack>
         {asset === AssetType.TOKEN &&
@@ -310,15 +321,22 @@ const TransferPage = () => {
         <Box margin='2rem 0 0 0'>
           <DialogActions>
             <Link href='/'>
-              <Button variant='outlined'>Home</Button>
+              <Button
+                variant='outlined'
+                sx={{
+                  borderRadius: 100,
+                  bgcolor: theme.palette.common.white,
+                  textTransform: 'capitalize',
+                }}
+              >
+                Home
+              </Button>
             </Link>
-            <LoadingButton
+            <ProgressButton
+              label='Transfer'
               onClick={handleTransfer}
-              variant='contained'
               loading={working}
-            >
-              Transfer
-            </LoadingButton>
+            />
           </DialogActions>
         </Box>
       </Box>
