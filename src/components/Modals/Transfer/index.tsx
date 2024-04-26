@@ -1,26 +1,28 @@
-import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
-import { LoadingButton } from '@mui/lab';
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
-  Stack,
+  Paper,
   TextField,
   Typography,
+  useTheme,
 } from '@mui/material';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
 import { transferRegionOnCoretimeChain } from '@/utils/native/transfer';
 
-import { RegionCard } from '@/components/Elements';
+import { ProgressButton, SimpleRegionCard } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { RegionLocation, RegionMetadata } from '@/models';
+
+import styles from './index.module.scss';
 
 interface TransferModalProps {
   open: boolean;
@@ -33,6 +35,8 @@ export const TransferModal = ({
   onClose,
   regionMetadata,
 }: TransferModalProps) => {
+  const theme = useTheme();
+
   const {
     state: { activeAccount, activeSigner },
   } = useAccounts();
@@ -89,34 +93,47 @@ export const TransferModal = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
-      <DialogContent>
-        <Stack direction='column' gap={3}>
-          <RegionCard regionMetadata={regionMetadata} bordered={false} />
-          <Stack direction='column' gap={1} alignItems='center'>
-            <Typography>Transfer to</Typography>
-            <ArrowDownwardOutlinedIcon />
-          </Stack>
-          <Stack direction='column' gap={2}>
+      <DialogContent className={styles.container}>
+        <Box>
+          <Typography
+            variant='subtitle1'
+            sx={{ color: theme.palette.common.black }}
+          >
+            Transfer Region
+          </Typography>
+          <Typography
+            variant='subtitle2'
+            sx={{ color: theme.palette.text.primary }}
+          >
+            Here you can transfer region to new owner
+          </Typography>
+        </Box>
+        <Box className={styles.content}>
+          <SimpleRegionCard regionMetadata={regionMetadata} />
+          <Paper
+            className={styles.addressContainer}
+            sx={{ color: theme.palette.common.black }}
+          >
+            <Typography sx={{ fontWeight: 500 }}>Transfer to</Typography>
             <Typography>New owner:</Typography>
             <TextField
               value={newOwner}
               onChange={(e) => setNewOwner(e.target.value)}
               fullWidth
             />
-          </Stack>
-        </Stack>
+          </Paper>
+        </Box>
       </DialogContent>
-      <DialogActions>
-        <LoadingButton
-          onClick={onTransfer}
-          variant='contained'
-          loading={working}
-        >
-          Transfer
-        </LoadingButton>
+      <DialogActions className={styles.buttons}>
         <Button onClick={onClose} variant='outlined'>
           Cancel
         </Button>
+
+        <ProgressButton
+          onClick={onTransfer}
+          loading={working}
+          label='Transfer'
+        />
       </DialogActions>
     </Dialog>
   );

@@ -1,27 +1,29 @@
-import { LoadingButton } from '@mui/lab';
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
-  Divider,
-  Input,
   MenuItem,
+  Paper,
   Select,
   Stack,
-  TextField,
   Typography,
+  useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import { RegionCard } from '@/components/Elements';
+import { ProgressButton, SimpleRegionCard } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
-import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+import { useCoretimeApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useTasks } from '@/contexts/tasks';
 import { useToast } from '@/contexts/toast';
-import { RegionMetadata, TaskMetadata } from '@/models';
+import { RegionMetadata } from '@/models';
+
+import styles from './index.module.scss';
+import { AddTaskModal } from '../AddTask';
 
 interface TaskAssignModalProps {
   open: boolean;
@@ -34,22 +36,22 @@ export const TaskAssignModal = ({
   onClose,
   regionMetadata,
 }: TaskAssignModalProps) => {
+  const theme = useTheme();
+
   const {
     state: { activeAccount, activeSigner },
   } = useAccounts();
 
-  const { paraIds } = useRelayApi();
   const {
     state: { api: coretimeApi },
   } = useCoretimeApi();
   const { fetchRegions } = useRegions();
-  const { tasks, addTask } = useTasks();
+  const { tasks } = useTasks();
   const { toastError, toastInfo, toastSuccess } = useToast();
 
   const [working, setWorking] = useState(false);
   const [taskSelected, selectTask] = useState<number>();
-  const [taskId, setTaskId] = useState<number>();
-  const [taskName, setTaskName] = useState<string>('');
+  const [taskModalOpen, openTaskModal] = useState(false);
 
   const onAssign = async () => {
     if (!coretimeApi || !activeAccount || !activeSigner) return;
@@ -93,102 +95,87 @@ export const TaskAssignModal = ({
     }
   };
 
-  const onAdd = () => {
-    if (taskId === undefined) {
-      toastError('Please input the Para ID');
-      return;
-    }
-    if (!taskName) {
-      toastError('Invalid task name.');
-      return;
-    }
-    const existing = tasks.find((task) => task.id === taskId);
-    if (existing) {
-      toastError('Failed to add task. Duplicated ID');
-    } else if (!paraIds.includes(taskId)) {
-      toastError(`Para ID ${taskId} doesn't exist.`);
-    } else {
-      addTask({ id: taskId, usage: 0, name: taskName } as TaskMetadata);
-      setTaskId(undefined);
-      setTaskName('');
-    }
-  };
-
   useEffect(() => {
     selectTask(tasks[0]?.id);
     setWorking(false);
-    setTaskId(undefined);
-    setTaskName('');
+    openTaskModal(false);
   }, [open, tasks]);
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth='md'>
-      <DialogContent>
-        <Stack direction='column' gap={3}>
-          <RegionCard regionMetadata={regionMetadata} bordered={false} />
-          <Stack direction='column' gap={2}>
-            <Typography textAlign='center' fontWeight={'bold'}>
-              Select a task from:
-            </Typography>
-            <Select
-              value={taskSelected || ''}
-              onChange={(e) => selectTask(Number(e.target.value))}
-            >
-              {tasks.map(({ name, id }, index) => (
-                <MenuItem key={index} value={id}>
-                  {name}
-                </MenuItem>
-              ))}
-            </Select>
-          </Stack>
-          <Divider />
-          <Stack direction='column' gap={1}>
+    <>
+      {taskModalOpen && (
+        <AddTaskModal open onClose={() => openTaskModal(false)} />
+      )}
+      <Dialog open={open} onClose={onClose} maxWidth='md'>
+        <DialogContent className={styles.container}>
+          <Box>
             <Typography
-              marginBottom='1em'
-              textAlign='center'
-              fontWeight={'bold'}
+              variant='subtitle1'
+              sx={{ color: theme.palette.common.black }}
             >
-              Or add a new task:
+              Task Assignment
             </Typography>
-            <Stack direction='row' gap={1} alignItems='center'>
-              <Typography sx={{ width: '16rem' }}>TaskID / ParaID:</Typography>
-              <Input
-                type='number'
-                value={taskId || ''}
-                onChange={(e) => setTaskId(Number(e.target.value))}
-                size='small'
-                fullWidth
-                placeholder='Input TaskID / ParaID'
-              />
-            </Stack>
-            <Stack direction='row' gap={1} alignItems='center'>
-              <Typography sx={{ width: '16rem' }}>Name:</Typography>
-              <TextField
-                value={taskName}
-                onChange={(e) => setTaskName(e.target.value)}
-                size='small'
-                fullWidth
-              />
-            </Stack>
-            <Button
-              style={{ marginTop: '2rem' }}
-              fullWidth
-              variant='contained'
-              onClick={onAdd}
+            <Typography
+              variant='subtitle2'
+              sx={{ color: theme.palette.text.primary }}
             >
-              Add new task
-            </Button>
-          </Stack>
-        </Stack>
-      </DialogContent>
-      <DialogActions>
-        <LoadingButton onClick={onAssign} variant='contained' loading={working}>
-          Assign
-        </LoadingButton>
-        <Button onClick={onClose} variant='outlined'>
-          Cancel
-        </Button>
-      </DialogActions>
-    </Dialog>
+              Here you can transfer region to new owner
+            </Typography>
+          </Box>
+          <Box className={styles.content}>
+            <SimpleRegionCard regionMetadata={regionMetadata} />
+            <Paper className={styles.taskWrapper}>
+              <Stack
+                direction='row'
+                justifyContent='space-between'
+                alignItems='center'
+              >
+                <Typography
+                  sx={{ fontWeight: 700, color: theme.palette.common.black }}
+                >
+                  Tasks
+                </Typography>
+                <Button
+                  sx={{
+                    color: theme.palette.common.black,
+                    background: '#dcdcdc',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '2rem',
+                  }}
+                  onClick={() => openTaskModal(true)}
+                >
+                  Add Task
+                </Button>
+              </Stack>
+              <Stack direction='column' gap={2}>
+                <Typography sx={{ color: theme.palette.common.black }}>
+                  Select task
+                </Typography>
+                <Select
+                  value={taskSelected || ''}
+                  onChange={(e) => selectTask(Number(e.target.value))}
+                >
+                  {tasks.map(({ name, id }, index) => (
+                    <MenuItem key={index} value={id}>
+                      {name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Stack>
+            </Paper>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose} variant='outlined'>
+            Cancel
+          </Button>
+
+          <ProgressButton onClick={onAssign} label='Assign' loading={working} />
+        </DialogActions>
+      </Dialog>
+      {taskModalOpen && (
+        <AddTaskModal open onClose={() => openTaskModal(false)} />
+      )}
+    </>
   );
 };

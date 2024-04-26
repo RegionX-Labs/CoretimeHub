@@ -66,10 +66,28 @@ let theme = createTheme({
         },
       },
     },
+    MuiDialogActions: {
+      styleOverrides: {
+        root: {
+          display: 'flex',
+          gap: '1rem',
+          flexGrow: 1,
+          padding: '0 1.5rem 2rem 1.5rem',
+          '> button': {
+            flexGrow: 1,
+            borderRadius: '2rem',
+            height: '3rem',
+            textTransform: 'capitalize',
+          },
+        },
+      },
+    },
     MuiPaper: {
       styleOverrides: {
         root: {
           border: `1px solid #e8e9ed`,
+          boxShadow: '2px 2px 55px rgba(0, 0, 0, 0.08)',
+          borderRadius: '0.5rem',
         },
       },
     },

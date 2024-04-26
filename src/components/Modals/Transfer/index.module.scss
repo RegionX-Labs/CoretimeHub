@@ -1,7 +1,6 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
   min-width: 35rem;
 }
 
@@ -12,9 +11,9 @@
   margin: 2rem 0 1rem 0;
 }
 
-.taskWrapper {
+.addressContainer {
   display: flex;
   flex-direction: column;
-  padding: 1.25rem;
   gap: 1rem;
+  padding: 1.25rem;
 }

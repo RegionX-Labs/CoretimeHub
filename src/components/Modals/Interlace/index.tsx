@@ -1,4 +1,3 @@
-import { LoadingButton } from '@mui/lab';
 import {
   Box,
   Button,
@@ -6,15 +5,15 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  Paper,
   Slider,
-  Stack,
   Typography,
   useTheme,
 } from '@mui/material';
 import { CoreMask } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
-import { RegionCard } from '@/components/Elements';
+import { ProgressButton, SimpleRegionCard } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
@@ -101,20 +100,35 @@ export const InterlaceModal = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
-      <DialogContent>
-        <Stack direction='column' gap={3}>
-          <RegionCard regionMetadata={regionMetadata} bordered={false} />
-          <Stack direction='column' gap={2}>
-            <Typography
-              variant='h2'
-              sx={{ color: theme.palette.text.secondary }}
-            >
-              Current Mask:
-            </Typography>
-            <Typography>{currentMask}</Typography>
-          </Stack>
+      <DialogContent className={styles.container}>
+        <Box>
+          <Typography
+            variant='subtitle1'
+            sx={{ color: theme.palette.common.black }}
+          >
+            Region Interlacing
+          </Typography>
+          <Typography
+            variant='subtitle2'
+            sx={{ color: theme.palette.text.primary }}
+          >
+            Interlace your region
+          </Typography>
+        </Box>
+        <SimpleRegionCard regionMetadata={regionMetadata} />
+        <Paper className={styles.content}>
+          <Typography
+            variant='subtitle2'
+            sx={{
+              color: theme.palette.common.black,
+              fontWeight: 500,
+            }}
+          >
+            Current Mask:
+          </Typography>
+          <Typography className={styles.mask}>{currentMask}</Typography>
           {activeBits > 1 && (
-            <Stack direction='column' gap={2}>
+            <>
               <Box display='flex' justifyContent='center'>
                 <CoremaskCircularProgress
                   position={position}
@@ -137,29 +151,29 @@ export const InterlaceModal = ({
                 className={styles.slider}
               />
               <Typography
-                variant='h2'
-                sx={{ color: theme.palette.text.secondary }}
+                variant='subtitle2'
+                sx={{
+                  color: theme.palette.common.black,
+                  fontWeight: 500,
+                }}
               >
                 New Mask:
               </Typography>
-
-              <Typography>{newMask}</Typography>
-            </Stack>
+              <Typography className={styles.mask}>{newMask}</Typography>
+            </>
           )}
-        </Stack>
+        </Paper>
       </DialogContent>
       <DialogActions>
-        <LoadingButton
-          onClick={onInterlace}
-          variant='contained'
-          loading={working}
-          disabled={activeBits === 1}
-        >
-          Interlace
-        </LoadingButton>
         <Button onClick={onClose} variant='outlined'>
           Cancel
         </Button>
+        <ProgressButton
+          onClick={onInterlace}
+          loading={working}
+          disabled={activeBits === 1}
+          label='Interlace'
+        />
       </DialogActions>
     </Dialog>
   );
@@ -188,14 +202,14 @@ const CoremaskCircularProgress = ({
     <Box position='relative' display='inline-flex'>
       <CircularProgress
         className={styles.circular}
-        size='250px'
+        size='200px'
         variant='determinate'
         value={100}
         style={{ position: 'absolute', color: '#d3d3d3' }} // Secondary color
       />
       <CircularProgress
         className={styles.circular}
-        size='250px'
+        size='200px'
         variant='determinate'
         value={getCircularProgressValue(position, oneStart, oneEnd)}
       />
