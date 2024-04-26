@@ -11,6 +11,7 @@ import React from 'react';
 
 import Logo from '@/assets/logo.png';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+import { RenewIcon } from '@/icons';
 
 import styles from './index.module.scss';
 import { StatusIndicator } from '../Elements';
@@ -96,6 +97,14 @@ export const Sidebar = () => {
         route: '/transfer',
         enabled: true,
         icon: <SwapHorizOutlinedIcon />,
+      },
+    ],
+    'parachain management': [
+      {
+        label: 'Renew',
+        route: '/renewal',
+        enabled: true,
+        icon: <RenewIcon color={theme.palette.text.primary} />,
       },
     ],
     'primary market': [
