@@ -132,17 +132,21 @@ const Renewal = () => {
           </Select>
         </FormControl>
         <Stack direction='column' alignItems='center' mt={'2rem'} gap='1rem'>
-          <Box>{`Core number: ${parachains[paraId].core}`}</Box>
-          <Box>{`Renewal price: ${formatBalance(
+          <Typography
+            variant='h6'
+            color='black'
+          >{`Core number: ${parachains[paraId].core}`}</Typography>
+          <Typography color='black'>{`Renewal price: ${formatBalance(
             parachains[paraId].price.toString(),
             false
-          )} ${symbol}`}</Box>
+          )} ${symbol}`}</Typography>
         </Stack>
         <Stack
           direction='row'
           gap='1rem'
           alignItems='center'
-          justifyContent='flex-end'
+          marginTop='2em'
+          justifyContent='space-between'
         >
           <Link href='/'>
             <Button variant='outlined'>Home</Button>

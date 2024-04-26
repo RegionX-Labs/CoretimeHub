@@ -15,6 +15,7 @@ import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import styles from './index.module.scss';
 import { StatusIndicator } from '../Elements';
 import NetworkSelect from '../Elements/NetworkSelect';
+import { RenewIcon } from '@/icons';
 
 interface MenuItemProps {
   label: string;
@@ -96,6 +97,14 @@ export const Sidebar = () => {
         route: '/transfer',
         enabled: true,
         icon: <SwapHorizOutlinedIcon />,
+      },
+    ],
+    'parachain management': [
+      {
+        label: 'Renew',
+        route: '/renewal',
+        enabled: true,
+        icon: <RenewIcon color={theme.palette.text.primary} />,
       },
     ],
     'primary market': [
