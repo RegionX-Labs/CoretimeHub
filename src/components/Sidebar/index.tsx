@@ -11,11 +11,11 @@ import React from 'react';
 
 import Logo from '@/assets/logo.png';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+import { RenewIcon } from '@/icons';
 
 import styles from './index.module.scss';
 import { StatusIndicator } from '../Elements';
 import NetworkSelect from '../Elements/NetworkSelect';
-import { RenewIcon } from '@/icons';
 
 interface MenuItemProps {
   label: string;
