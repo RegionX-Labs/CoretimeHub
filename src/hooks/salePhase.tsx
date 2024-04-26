@@ -10,16 +10,20 @@ import {
 import {
   getCurrentPhase,
   getSaleEndInBlocks,
-  getSaleProgress,
   getSaleStartInBlocks,
 } from '@/utils/sale/utils';
-
-import { Section } from '@/components/Elements';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
+
+
+export type PhaseEndingPoints = {
+  interlude: number;
+  leadin: number;
+  fixed: number;
+};
 
 // Custom hook for fetching current phase
 const useSalePhase = () => {
@@ -34,8 +38,9 @@ const useSalePhase = () => {
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
 
-  const [progress, setProgress] = useState<number | null>(0);
-  const [saleSections, setSaleSections] = useState<Section[]>([]);
+  const [endingPoints, setEndingPoints] = useState<PhaseEndingPoints>({
+    interlude: 0, leadin: 0, fixed: 0
+  });
 
   const router = useRouter();
   const { network } = router.query;
@@ -57,39 +62,21 @@ const useSalePhase = () => {
         network
       );
 
-      getBlockTimestamp(api, _saleStart, getBlockTime(network)).then(
-        (value: number) => setSaleStartTimestamp(value)
-      );
-      getBlockTimestamp(api, _saleEnd, getBlockTime(network)).then(
-        (value: number) => setSaleEndTimestamp(value)
-      );
-
-      const progress = getSaleProgress(
-        saleInfo,
-        config,
-        blockNumber,
-        lastCommittedTimeslice,
-        network
-      );
-      setProgress(progress);
+      const _saleStartTimestamp = await getBlockTimestamp(api, _saleStart, getBlockTime(network));
+      setSaleStartTimestamp(_saleStartTimestamp);
+      const _saleEndTimestamp = await getBlockTimestamp(api, _saleEnd, getBlockTime(network));
+      setSaleEndTimestamp(_saleEndTimestamp);
 
       setCurrentPhase(getCurrentPhase(saleInfo, blockNumber));
 
-      const saleDuration = _saleEnd - _saleStart;
+      const _endingPoints = {
+        interlude: _saleStartTimestamp,
+        leadin: _saleStartTimestamp + (config.interludeLength * getBlockTime(network)),
+        fixed: _saleEndTimestamp
+      }
 
-      setSaleSections([
-        { name: 'Interlude', value: 0 },
-        {
-          name: 'Leadin phase',
-          value: (config.interludeLength / saleDuration) * 100,
-        },
-        {
-          name: 'Fixed price phase',
-          value:
-            ((config.interludeLength + config.leadinLength) / saleDuration) *
-            100,
-        },
-      ]);
+      console.log(_endingPoints);
+      setEndingPoints(_endingPoints);
     },
     [saleInfo, config, network]
   );
@@ -109,9 +96,8 @@ const useSalePhase = () => {
     currentPhase,
     saleStartTimestamp,
     saleEndTimestamp,
-    progress,
-    saleSections,
     loading,
+    endingPoints
   };
 };
 
