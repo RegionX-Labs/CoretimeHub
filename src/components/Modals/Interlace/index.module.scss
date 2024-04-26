@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  width: 35rem;
+  width: 40rem;
   padding-bottom: 0;
 }
 
@@ -30,5 +30,5 @@
 .mask {
   width: 100%;
   overflow-x: clip;
-  text-overflow: ellipsis;
+  font-size: 12px;
 }

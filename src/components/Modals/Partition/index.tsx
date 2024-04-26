@@ -87,10 +87,6 @@ export const PartitionModal = ({
   }, [timeslicePeriod, regionMetadata.region]);
 
   useEffect(() => {
-    setUnitIdx(0);
-  }, [open]);
-
-  useEffect(() => {
     setPivot(1);
   }, [unitIdx]);
 
