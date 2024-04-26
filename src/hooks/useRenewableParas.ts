@@ -29,7 +29,7 @@ export const useRenewableParachains = () => {
     }
 
     const asyncFetchParaIds = async () => {
-      if (!api) return;
+      if (!api || apiState !== ApiState.READY) return;
 
       setLoading(true);
 
