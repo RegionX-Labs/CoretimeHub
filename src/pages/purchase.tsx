@@ -1,10 +1,16 @@
-import { Box, Button, Typography, useTheme } from '@mui/material';
+import {
+  Backdrop,
+  Box,
+  Button,
+  CircularProgress,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
 import Link from 'next/link';
 import { useState } from 'react';
 
-import useBalance from '@/hooks/balance';
 import useSalePhase from '@/hooks/salePhase';
 import useSalePrice from '@/hooks/salePrice';
 import { sendTx } from '@/utils/functions';
@@ -15,6 +21,7 @@ import Balance from '@/components/Elements/Balance';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
+import { useBalances } from '@/contexts/balance';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
@@ -38,10 +45,15 @@ const Purchase = () => {
 
   const { fetchRegions } = useRegions();
 
-  const { coretimeBalance, relayBalance } = useBalance();
+  const { balance } = useBalances();
   const currentPrice = useSalePrice();
-  const { currentPhase, progress, saleStartTimestamp, saleEndTimestamp } =
-    useSalePhase();
+  const {
+    currentPhase,
+    progress,
+    saleStartTimestamp,
+    saleEndTimestamp,
+    loading: loadingSalePhase,
+  } = useSalePhase();
 
   const purchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
@@ -87,17 +99,20 @@ const Purchase = () => {
           </Typography>
         </Box>
         <Balance
-          coretimeBalance={coretimeBalance}
-          relayBalance={relayBalance}
+          coretimeBalance={balance.coretime}
+          relayBalance={balance.relay}
           symbol={symbol}
         />
       </Box>
       <Box>
-        {loading ||
-        !currentPhase ||
-        !progress ||
-        !saleStartTimestamp ||
-        !saleEndTimestamp ? (
+        {loading || loadingSalePhase ? (
+          <Backdrop open>
+            <CircularProgress />
+          </Backdrop>
+        ) : !currentPhase ||
+          !progress ||
+          !saleStartTimestamp ||
+          !saleEndTimestamp ? (
           <>
             <Typography variant='h5' align='center'>
               Check your network conection and connect your wallet
@@ -119,7 +134,8 @@ const Purchase = () => {
             <Box
               sx={{
                 display: 'flex',
-                justifyContent: 'space-between',
+                gap: '1rem',
+                justifyContent: 'flex-end',
               }}
             >
               <Link href='/regions'>

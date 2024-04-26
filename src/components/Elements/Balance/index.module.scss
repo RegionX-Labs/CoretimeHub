@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  gap: 1rem;
+}
+
+.balanceItem {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.balanceWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.5;
+  height: fit-content;
+  padding: 0.5rem 1.25rem;
+  border-radius: 2rem;
+  min-width: 8rem;
+  font-weight: 500;
+}
