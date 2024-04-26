@@ -11,4 +11,5 @@ export * from './Progress';
 export * from './RegionCard';
 export * from './SaleInfoPanel';
 export * from './Selectors';
+export * from './SimpleRegionCard';
 export * from './StatusIndicator';

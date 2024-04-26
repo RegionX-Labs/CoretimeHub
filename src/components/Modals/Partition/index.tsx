@@ -1,19 +1,17 @@
-import { LoadingButton } from '@mui/lab';
 import {
   Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
-  MenuItem,
-  Select,
+  Paper,
   Slider,
   Typography,
   useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import { RegionCard } from '@/components/Elements';
+import { ProgressButton, SimpleRegionCard } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
@@ -64,9 +62,11 @@ export const PartitionModal = ({
   } = useAccounts();
 
   const theme = useTheme();
+
   const {
     state: { api: coretimeApi },
   } = useCoretimeApi();
+
   const { fetchRegions } = useRegions();
   const { timeslicePeriod } = useCommon();
 
@@ -85,10 +85,6 @@ export const PartitionModal = ({
       regionMetadata.region.getEnd() - regionMetadata.region.getBegin();
     setDuration(diff * timeslicePeriod * RELAY_CHAIN_BLOCK_TIME);
   }, [timeslicePeriod, regionMetadata.region]);
-
-  useEffect(() => {
-    setUnitIdx(0);
-  }, [open]);
 
   useEffect(() => {
     setPivot(1);
@@ -134,51 +130,74 @@ export const PartitionModal = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
-      <DialogContent>
-        <RegionCard regionMetadata={regionMetadata} bordered={false} />
-        <Box className={styles.unitContainer}>
-          <Typography variant='h2' sx={{ color: theme.palette.text.secondary }}>
-            Time units
-          </Typography>
-          <Select
-            value={unitIdx}
-            onChange={(e) => setUnitIdx(Number(e.target.value))}
+      <DialogContent className={styles.container}>
+        <Box>
+          <Typography
+            variant='subtitle1'
+            sx={{ color: theme.palette.common.black }}
           >
-            {timeUnits
-              .filter(({ unit }) => unit < duration)
-              .map(({ label }, idx) => (
-                <MenuItem value={idx} key={idx}>
-                  {label}
-                </MenuItem>
-              ))}
-          </Select>
-          <Slider
-            min={1}
-            max={maxSteps}
-            step={1}
-            value={pivot}
-            onChange={(_e, v) => setPivot(v as number)}
-            marks
-            valueLabelDisplay='on'
-            valueLabelFormat={(v) =>
-              `Pivot: ${v} ${timeUnits[unitIdx].strUnit}${v > 1 ? 's' : ''}`
-            }
-            size='medium'
-            className={styles.timeSlider}
-          />
+            Region Partitioning
+          </Typography>
+          <Typography
+            variant='subtitle2'
+            sx={{ color: theme.palette.text.primary }}
+          >
+            Here you can split region into few small parts
+          </Typography>
+        </Box>
+        <Box className={styles.content}>
+          <SimpleRegionCard regionMetadata={regionMetadata} />
+          <Paper className={styles.timeContainer}>
+            <Box className={styles.unitWrapper}>
+              <Typography
+                variant='subtitle2'
+                sx={{ color: theme.palette.common.black, fontWeight: 500 }}
+              >
+                Time units
+              </Typography>
+              <Box className={styles.unitItems}>
+                {timeUnits.map(({ label }, index) => (
+                  <Typography
+                    key={index}
+                    className={
+                      index === unitIdx
+                        ? styles.activeUnitItem
+                        : styles.unitItem
+                    }
+                    onClick={() => setUnitIdx(index)}
+                  >
+                    {label}
+                  </Typography>
+                ))}
+              </Box>
+            </Box>
+
+            <Slider
+              min={1}
+              max={maxSteps}
+              step={1}
+              value={pivot}
+              onChange={(_e, v) => setPivot(v as number)}
+              marks
+              valueLabelDisplay='on'
+              valueLabelFormat={(v) =>
+                `${v} ${timeUnits[unitIdx].strUnit}${v > 1 ? 's' : ''}`
+              }
+              size='medium'
+              className={styles.timeSlider}
+            />
+          </Paper>
         </Box>
       </DialogContent>
       <DialogActions>
-        <LoadingButton
-          onClick={onPartition}
-          variant='contained'
-          loading={working}
-        >
-          Partition
-        </LoadingButton>
         <Button onClick={onClose} variant='outlined'>
           Cancel
         </Button>
+        <ProgressButton
+          onClick={onPartition}
+          loading={working}
+          label='Partition'
+        />
       </DialogActions>
     </Dialog>
   );

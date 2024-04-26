@@ -1,3 +1,4 @@
+export * from './AddTask';
 export * from './Interlace';
 export * from './Partition';
 export * from './Purchase';
