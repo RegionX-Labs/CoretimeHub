@@ -14,15 +14,17 @@ import {
 import Link from 'next/link';
 import { useState } from 'react';
 
-import useBalance from '@/hooks/balance';
 import { useRenewableParachains } from '@/hooks/useRenewableParas';
 import { formatBalance, sendTx } from '@/utils/functions';
 
 import { ProgressButton } from '@/components';
 import Balance from '@/components/Elements/Balance';
 
+import chainData from '@/chaindata';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
+import { useBalances } from '@/contexts/balance';
+import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
 
 const Renewal = () => {
@@ -31,12 +33,13 @@ const Renewal = () => {
   const {
     state: { activeAccount, activeSigner },
   } = useAccounts();
-  const { coretimeBalance, relayBalance } = useBalance();
+  const { balance } = useBalances();
   const { loading, parachains } = useRenewableParachains();
   const {
     state: { api, symbol },
   } = useCoretimeApi();
   const { toastError, toastInfo, toastSuccess } = useToast();
+  const { network } = useNetwork();
 
   const [paraId, setParaId] = useState<number>(0);
   const [working, setWorking] = useState(false);
@@ -94,8 +97,8 @@ const Renewal = () => {
           </Typography>
         </Box>
         <Balance
-          coretimeBalance={coretimeBalance}
-          relayBalance={relayBalance}
+          coretimeBalance={balance.coretime}
+          relayBalance={balance.relay}
           symbol={symbol}
         />
       </Box>
@@ -123,7 +126,7 @@ const Renewal = () => {
           >
             {parachains.map(({ paraID }, index) => (
               <MenuItem key={index} value={index}>
-                {paraID}
+                {`${paraID} ${chainData[network][paraID] || ''}`}
               </MenuItem>
             ))}
           </Select>
