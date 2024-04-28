@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 
 import useSalePhase from '@/hooks/salePhase';
 import useSalePrice from '@/hooks/salePrice';
-import { getBlockTimestamp, parseHNString, sendTx } from '@/utils/functions';
+import { parseHNString, sendTx } from '@/utils/functions';
 
 import { CoreDetailsPanel, ProgressButton, SaleInfoPanel } from '@/components';
 import Balance from '@/components/Elements/Balance';
@@ -48,7 +48,7 @@ const Purchase = () => {
   const { fetchRegions } = useRegions();
 
   const { balance } = useBalances();
-  let currentPrice = useSalePrice({ at });
+  const currentPrice = useSalePrice({ at });
   const {
     saleStart,
     currentPhase,
@@ -61,6 +61,7 @@ const Purchase = () => {
   useEffect(() => {
     if (!currentPhase) return;
 
+    // If the sale hasn't started yet, get the price from when the sale begins.
     if ((currentPhase as SalePhase) === SalePhase.Interlude) {
       setAt(saleStart);
     } else {
@@ -69,7 +70,7 @@ const Purchase = () => {
         setAt(parseHNString(height.toHuman() as string));
       });
     }
-  }, [saleStart, currentPhase]);
+  }, [api, apiState, saleStart, currentPhase]);
 
   const purchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)

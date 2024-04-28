@@ -7,7 +7,6 @@ import Decimal from 'decimal.js';
 
 import {
   CORETIME_DECIMALS,
-  NetworkType,
   REGIONX_DECIMALS,
   TxStatusHandlers,
 } from '@/models';
