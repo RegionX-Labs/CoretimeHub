@@ -48,7 +48,7 @@ const Purchase = () => {
   const { fetchRegions } = useRegions();
 
   const { balance } = useBalances();
-  const currentPrice = useSalePrice({ at });
+  let currentPrice = useSalePrice({ at });
   const {
     saleStart,
     currentPhase,
@@ -59,16 +59,16 @@ const Purchase = () => {
   } = useSalePhase();
 
   useEffect(() => {
-    if (!api || apiState !== ApiState.READY) return;
+    if (!currentPhase) return;
 
-    api.query.system.number().then((height) => {
-      if (currentPhase === SalePhase.Interlude) {
-        console.log(saleStart);
-        setAt(saleStart);
-      } else {
+    if ((currentPhase as SalePhase) === SalePhase.Interlude) {
+      setAt(saleStart);
+    } else {
+      if (!api || apiState !== ApiState.READY) return;
+      api.query.system.number().then((height) => {
         setAt(parseHNString(height.toHuman() as string));
-      }
-    });
+      });
+    }
   }, [saleStart, currentPhase]);
 
   const purchase = async () => {
