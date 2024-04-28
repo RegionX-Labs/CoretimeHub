@@ -20,7 +20,13 @@ const ItemContainer = ({ label, value }: ItemDetail) => {
   return (
     <Box className={styles.infoItem}>
       <Typography>{label}</Typography>
-      <Typography sx={{ color: theme.palette.common.black, fontWeight: 700 }}>
+      <Typography
+        sx={{
+          color: theme.palette.common.black,
+          fontWeight: 700,
+          marginRight: '0.2em',
+        }}
+      >
         {value}
       </Typography>
     </Box>

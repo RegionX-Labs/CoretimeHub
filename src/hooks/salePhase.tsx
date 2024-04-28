@@ -31,6 +31,8 @@ const useSalePhase = () => {
   const [currentPhase, setCurrentPhase] = useState<SalePhase | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const [saleStart, setSaleStart] = useState(0);
+  const [saleEnd, setSaleEnd] = useState(0);
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
 
@@ -56,6 +58,9 @@ const useSalePhase = () => {
         lastCommittedTimeslice,
         network
       );
+
+      setSaleStart(_saleStart);
+      setSaleEnd(_saleEnd);
 
       getBlockTimestamp(api, _saleStart, getBlockTime(network)).then(
         (value: number) => setSaleStartTimestamp(value)
@@ -106,6 +111,8 @@ const useSalePhase = () => {
   }, [fetchCurrentPhase, api, apiState]);
 
   return {
+    saleStart,
+    saleEnd,
     currentPhase,
     saleStartTimestamp,
     saleEndTimestamp,

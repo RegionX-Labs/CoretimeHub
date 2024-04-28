@@ -135,12 +135,21 @@ describe('Purchase page', () => {
   });
 
   describe('getCurrentPrice', () => {
-    it('works', () => {
+    it('works for rococo', () => {
       const blockNumber = mockSaleInfo.saleStart;
 
       // leading factor is equal to 2 at the start of the sale.
-      expect(getCurrentPrice(mockSaleInfo, blockNumber)).toBe(
+      expect(getCurrentPrice(mockSaleInfo, blockNumber, 'rococo')).toBe(
         mockSaleInfo.price * 2
+      );
+    });
+
+    it('works for kusama', () => {
+      const blockNumber = mockSaleInfo.saleStart;
+
+      // leading factor is equal to 2 at the start of the sale.
+      expect(getCurrentPrice(mockSaleInfo, blockNumber, 'kusama')).toBe(
+        mockSaleInfo.price * 5
       );
     });
   });
