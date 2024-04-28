@@ -73,7 +73,10 @@ export const SaleInfoPanel = ({
         icon={DollarIcon}
         title='Price details'
         left={{
-          label: 'Current price',
+          label:
+            (currentPhase as SalePhase) === SalePhase.Interlude
+              ? 'Start price'
+              : 'Current price',
           value: `${formatBalance(currentPrice.toString(), false)} ${symbol}`,
         }}
         right={{
