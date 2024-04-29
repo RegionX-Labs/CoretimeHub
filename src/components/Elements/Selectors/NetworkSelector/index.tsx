@@ -6,6 +6,7 @@ import {
   Select,
   Typography,
 } from '@mui/material';
+import { useTheme } from '@mui/material';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
@@ -29,6 +30,8 @@ const RelaySelect = () => {
     );
   };
 
+  const theme = useTheme();
+
   const menuItems = [
     {
       value: NetworkType.ROCOCO,
@@ -43,8 +46,8 @@ const RelaySelect = () => {
   ];
 
   return network !== NetworkType.NONE ? (
-    <FormControl sx={{ m: 2, minWidth: 150 }} fullWidth>
-      <InputLabel>Network</InputLabel>
+    <FormControl size='small'>
+      <InputLabel sx={{ color: theme.palette.grey[800] }}>Network</InputLabel>
       <Select
         id='network-select'
         value={network}
