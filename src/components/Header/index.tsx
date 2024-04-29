@@ -13,6 +13,7 @@ import { KeyringState, useAccounts } from '@/contexts/account';
 
 import styles from './index.module.scss';
 import { ProgressButton } from '../Elements';
+import NetworkSelector from '../Elements/Selectors/NetworkSelector';
 
 export const Header = () => {
   const theme = useTheme();
@@ -41,6 +42,9 @@ export const Header = () => {
         }}
       >
         <Box className={styles.menu}>
+          <div>
+            <NetworkSelector />
+          </div>
           {activeAccount ? (
             <List component='div' className={styles.listWrapper}>
               {!accountsOpen && (
