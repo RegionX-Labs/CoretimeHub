@@ -87,8 +87,11 @@ export const formatBalance = (balance: string, regionXChain: boolean) => {
 // TODO: should be queried from runtime api instead.
 //
 // https://github.com/paritytech/polkadot-sdk/pull/3485
-export const leadinFactorAt = (when: number) => {
-  return 2 - when;
+export const leadinFactorAt = (network: any, when: number) => {
+  if (!network || network === 'rococo') return 2 - when;
+  else {
+    return 5 - 4 * when;
+  }
 };
 
 export const extractRegionIdFromRaw = (rawRegionId: bigint): RegionId => {

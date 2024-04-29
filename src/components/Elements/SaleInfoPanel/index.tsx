@@ -56,11 +56,11 @@ export const SaleInfoPanel = ({
         title='Sale details'
         left={{
           label: 'Started at',
-          value: moment(saleStartTimestamp).format('D MMM yyyy'),
+          value: moment(saleStartTimestamp).format('D MMM HH:mm'),
         }}
         right={{
           label: 'End at',
-          value: moment(saleEndTimestamp).format('D MMM yyyy'),
+          value: moment(saleEndTimestamp).format('D MMMM HH:mm'),
         }}
       />
       <DetailCard
@@ -73,7 +73,10 @@ export const SaleInfoPanel = ({
         icon={DollarIcon}
         title='Price details'
         left={{
-          label: 'Current price',
+          label:
+            (currentPhase as SalePhase) === SalePhase.Interlude
+              ? 'Start price'
+              : 'Current price',
           value: `${formatBalance(currentPrice.toString(), false)} ${symbol}`,
         }}
         right={{

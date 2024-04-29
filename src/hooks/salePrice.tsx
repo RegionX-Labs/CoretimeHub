@@ -1,30 +1,35 @@
+import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 
 import { getCurrentPrice } from '@/utils/sale/utils';
 
-import { useCoretimeApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { useSaleInfo } from '@/contexts/sales';
 
-const useSalePrice = () => {
-  const {
-    state: { api, apiState },
-  } = useCoretimeApi();
+interface SalePriceProps {
+  at?: number;
+}
+
+const useSalePrice = ({ at }: SalePriceProps) => {
   const { saleInfo } = useSaleInfo();
 
   const [currentPrice, setCurrentPrice] = useState(0);
+  const router = useRouter();
+  const { network } = router.query;
 
-  const fetchCurrentPrice = useCallback(async () => {
-    if (api && apiState === ApiState.READY) {
-      const blockNumber = (await api.query.system.number()).toJSON() as number;
-      const price = getCurrentPrice(saleInfo, blockNumber);
-      setCurrentPrice(price);
-    }
-  }, [api, apiState, saleInfo]);
+  const fetchCurrentPrice = useCallback(
+    async (at: number) => {
+      if (at) {
+        const price = getCurrentPrice(saleInfo, at, network);
+        setCurrentPrice(price);
+      }
+    },
+    [network, saleInfo]
+  );
 
   useEffect(() => {
-    fetchCurrentPrice();
-  }, [fetchCurrentPrice]);
+    if (!at) return;
+    fetchCurrentPrice(at);
+  }, [at, fetchCurrentPrice]);
 
   return currentPrice;
 };

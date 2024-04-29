@@ -58,9 +58,13 @@ export const getSaleProgress = (
   return Number((progress * 100).toFixed(2));
 };
 
-export const getCurrentPrice = (saleInfo: SaleInfo, blockNumber: number) => {
+export const getCurrentPrice = (
+  saleInfo: SaleInfo,
+  blockNumber: number,
+  network: any
+) => {
   const num = Math.min(blockNumber - saleInfo.saleStart, saleInfo.leadinLength);
   const through = num / saleInfo.leadinLength;
 
-  return Number((leadinFactorAt(through) * saleInfo.price).toFixed());
+  return Number((leadinFactorAt(network, through) * saleInfo.price).toFixed());
 };

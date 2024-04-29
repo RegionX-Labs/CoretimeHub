@@ -9,11 +9,11 @@ import {
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import useSalePhase from '@/hooks/salePhase';
 import useSalePrice from '@/hooks/salePrice';
-import { sendTx } from '@/utils/functions';
+import { parseHNString, sendTx } from '@/utils/functions';
 
 import { CoreDetailsPanel, ProgressButton, SaleInfoPanel } from '@/components';
 import Balance from '@/components/Elements/Balance';
@@ -25,11 +25,13 @@ import { useBalances } from '@/contexts/balance';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
+import { SalePhase } from '@/models';
 
 const Purchase = () => {
   const theme = useTheme();
 
   const [working, setWorking] = useState(false);
+  const [at, setAt] = useState<number | undefined>(undefined);
   TimeAgo.addLocale(en);
   // Create formatter (English).
 
@@ -46,14 +48,29 @@ const Purchase = () => {
   const { fetchRegions } = useRegions();
 
   const { balance } = useBalances();
-  const currentPrice = useSalePrice();
+  const currentPrice = useSalePrice({ at });
   const {
+    saleStart,
     currentPhase,
     progress,
     saleStartTimestamp,
     saleEndTimestamp,
     loading: loadingSalePhase,
   } = useSalePhase();
+
+  useEffect(() => {
+    if (!currentPhase) return;
+
+    // If the sale hasn't started yet, get the price from when the sale begins.
+    if ((currentPhase as SalePhase) === SalePhase.Interlude) {
+      setAt(saleStart);
+    } else {
+      if (!api || apiState !== ApiState.READY) return;
+      api.query.system.number().then((height) => {
+        setAt(parseHNString(height.toHuman() as string));
+      });
+    }
+  }, [api, apiState, saleStart, currentPhase]);
 
   const purchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)

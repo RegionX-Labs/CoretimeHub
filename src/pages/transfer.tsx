@@ -1,12 +1,5 @@
 import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
-import {
-  Box,
-  Button,
-  DialogActions,
-  Link,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Link, Stack, Typography } from '@mui/material';
 import { Keyring } from '@polkadot/api';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
@@ -66,7 +59,7 @@ const TransferPage = () => {
   const [working, setWorking] = useState(false);
 
   const [newOwner, setNewOwner] = useState('');
-  const [originChain, setOriginChain] = useState<ChainType>(ChainType.CORETIME);
+  const [originChain, setOriginChain] = useState<ChainType>(ChainType.RELAY);
   const [destinationChain, setDestinationChain] = useState<ChainType>(
     ChainType.CORETIME
   );
@@ -318,26 +311,31 @@ const TransferPage = () => {
               />
             </Stack>
           )}
-        <Box margin='2rem 0 0 0'>
-          <DialogActions>
-            <Link href='/'>
-              <Button
-                variant='outlined'
-                sx={{
-                  borderRadius: 100,
-                  bgcolor: theme.palette.common.white,
-                  textTransform: 'capitalize',
-                }}
-              >
-                Home
-              </Button>
-            </Link>
-            <ProgressButton
-              label='Transfer'
-              onClick={handleTransfer}
-              loading={working}
-            />
-          </DialogActions>
+        <Box
+          margin='2rem 0 0 0'
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Link href='/'>
+            <Button
+              variant='outlined'
+              sx={{
+                borderRadius: 100,
+                bgcolor: theme.palette.common.white,
+                textTransform: 'capitalize',
+              }}
+            >
+              Home
+            </Button>
+          </Link>
+          <ProgressButton
+            label='Transfer'
+            onClick={handleTransfer}
+            loading={working}
+          />
         </Box>
       </Box>
     </Box>

@@ -15,7 +15,6 @@ import { RenewIcon } from '@/icons';
 
 import styles from './index.module.scss';
 import { StatusIndicator } from '../Elements';
-import NetworkSelect from '../Elements/NetworkSelect';
 
 interface MenuItemProps {
   label: string;
@@ -178,9 +177,6 @@ export const Sidebar = () => {
           <StatusIndicator state={coretimeApiState} label='Coretime chain' />
         </div>
       </Box>
-      <div className={styles.networkSelector}>
-        <NetworkSelect />
-      </div>
     </div>
   );
 };
