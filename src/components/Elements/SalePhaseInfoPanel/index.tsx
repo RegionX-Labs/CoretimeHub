@@ -93,7 +93,7 @@ export const SalePhaseInfoPanel = ({
     ((time % daySeconds) / hourSeconds) | 0;
   const getTimeDays = (time: number) => (time / daySeconds) | 0;
 
-  if (remainingTime <= 0) return;
+  if (remainingTime <= 0) return <></>;
 
   return (
     <Paper className={styles.container}>
