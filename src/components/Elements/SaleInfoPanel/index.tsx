@@ -12,6 +12,7 @@ import { useCoretimeApi } from '@/contexts/apis';
 import { SaleInfo, SalePhase } from '@/models';
 
 import { DetailCard } from './DetailCard';
+import styles from './index.module.scss';
 
 interface SaleInfoGridProps {
   saleInfo: SaleInfo;
@@ -43,14 +44,7 @@ export const SaleInfoPanel = ({
   };
 
   return (
-    <Box
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        mt: '2rem',
-        gap: '1rem',
-      }}
-    >
+    <Box className={styles.grid}>
       <DetailCard
         icon={ShoppingIcon}
         title='Sale details'

@@ -18,7 +18,6 @@ import { ApiState } from '@/contexts/apis/types';
 import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
 
-
 export type PhaseEndingPoints = {
   interlude: number;
   leadin: number;
@@ -41,7 +40,9 @@ const useSalePhase = () => {
   const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
 
   const [endingPoints, setEndingPoints] = useState<PhaseEndingPoints>({
-    interlude: 0, leadin: 0, fixed: 0
+    interlude: 0,
+    leadin: 0,
+    fixed: 0,
   });
 
   const router = useRouter();
@@ -67,20 +68,27 @@ const useSalePhase = () => {
       setSaleStart(_saleStart);
       setSaleEnd(_saleEnd);
 
-      const _saleStartTimestamp = await getBlockTimestamp(api, _saleStart, getBlockTime(network));
+      const _saleStartTimestamp = await getBlockTimestamp(
+        api,
+        _saleStart,
+        getBlockTime(network)
+      );
       setSaleStartTimestamp(_saleStartTimestamp);
-      const _saleEndTimestamp = await getBlockTimestamp(api, _saleEnd, getBlockTime(network));
+      const _saleEndTimestamp = await getBlockTimestamp(
+        api,
+        _saleEnd,
+        getBlockTime(network)
+      );
       setSaleEndTimestamp(_saleEndTimestamp);
 
       setCurrentPhase(getCurrentPhase(saleInfo, blockNumber));
 
       const _endingPoints = {
         interlude: _saleStartTimestamp,
-        leadin: _saleStartTimestamp + (config.interludeLength * getBlockTime(network)),
-        fixed: _saleEndTimestamp
-      }
-
-      console.log(_endingPoints);
+        leadin:
+          _saleStartTimestamp + config.interludeLength * getBlockTime(network),
+        fixed: _saleEndTimestamp,
+      };
       setEndingPoints(_endingPoints);
     },
     [saleInfo, config, network]
@@ -104,7 +112,7 @@ const useSalePhase = () => {
     saleStartTimestamp,
     saleEndTimestamp,
     loading,
-    endingPoints
+    endingPoints,
   };
 };
 

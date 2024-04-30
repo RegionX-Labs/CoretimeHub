@@ -9,6 +9,7 @@ export * from './ListingCard';
 export * from './MarketFilters';
 export * from './RegionCard';
 export * from './SaleInfoPanel';
+export * from './SalePhaseInfoPanel';
 export * from './Selectors';
 export * from './SimpleRegionCard';
 export * from './StatusIndicator';

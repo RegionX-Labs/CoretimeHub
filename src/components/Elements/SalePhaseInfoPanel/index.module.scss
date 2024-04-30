@@ -1,0 +1,71 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  gap: 2rem;
+  padding: 1.5rem;
+  flex-grow: 1;
+  box-shadow: 2px 2px 55px rgba(0, 0, 0, 0.08);
+}
+
+.titleWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chartWrapper {
+  display: inline-flex;
+  position: relative;
+  margin: 0 auto;
+}
+
+.progress {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.infoWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  top: -10%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+.currentPhase {
+  font-weight: 700;
+  margin: 0 auto;
+}
+
+.buttonWrapper {
+  padding: 0.5rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: auto;
+}
+
+.timerWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.countDown {
+  display: flex;
+  gap: 3px;
+}
+
+.timeElement {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
