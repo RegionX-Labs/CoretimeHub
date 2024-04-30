@@ -8,33 +8,53 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import { PhaseEndpoints } from '@/hooks/salePhase';
+import { SalePhase } from '@/models';
 
 import styles from './index.module.scss';
 
 interface SalePhaseInfoPanelProps {
   currentPhase: string;
-  duration: number;
   saleEndTimestamp: number;
   saleStartTimestamp: number;
+  endpoints: PhaseEndpoints;
 }
 
 export const SalePhaseInfoPanel = ({
   currentPhase,
-  duration,
-  saleEndTimestamp,
-  saleStartTimestamp,
+  endpoints,
 }: SalePhaseInfoPanelProps) => {
   const theme = useTheme();
   const router = useRouter();
 
   const onManage = () => {
-    router.push('/regions');
+    router.push({
+      pathname: '/regions',
+      query: { ...router.query },
+    });
   };
   const minuteSeconds = 60;
   const hourSeconds = 3600;
   const daySeconds = 86400;
 
-  const remainingTime = Math.floor((saleEndTimestamp - Date.now()) / 1000);
+  let remainingTime = 0;
+  let duration = 0;
+  let start = 0;
+
+  if (currentPhase == SalePhase.Interlude) {
+    remainingTime = Math.floor((endpoints.interlude.end - Date.now()) / 1000);
+    start = Math.floor(endpoints.interlude.start / 1000);
+    duration = Math.floor((endpoints.interlude.end - endpoints.interlude.start) / 1000);
+  } else if (currentPhase == SalePhase.Leadin) {
+    remainingTime = Math.floor((endpoints.leadin.end - Date.now()) / 1000);
+    start = Math.floor(endpoints.leadin.start / 1000);
+    duration = Math.floor((endpoints.leadin.end - endpoints.leadin.start) / 1000);
+  } else if (currentPhase == SalePhase.Regular) {
+    remainingTime = Math.floor((endpoints.fixed.end - Date.now()) / 1000);
+    start = Math.floor(endpoints.fixed.start / 1000);
+    duration = Math.floor((endpoints.fixed.end - endpoints.fixed.start) / 1000);
+  }
+
   const days = Math.ceil(remainingTime / daySeconds);
   const daysDuration = days * daySeconds;
 
@@ -108,12 +128,14 @@ export const SalePhaseInfoPanel = ({
           size='20rem'
           variant='determinate'
           value={100}
+          thickness={1}
           style={{ position: 'absolute', color: '#d3d3d3' }} // Secondary color
         />
         <CircularProgress
           size='20rem'
           variant='determinate'
-          value={((Date.now() - saleStartTimestamp) / duration) * 100}
+          thickness={1}
+          value={((Date.now() / 1000 - start) / duration) * 100}
         />
         <Box className={styles.infoWrapper}>
           <Typography className={styles.currentPhase}>
@@ -124,7 +146,7 @@ export const SalePhaseInfoPanel = ({
             <Box className={styles.countDown}>
               <CountdownCircleTimer
                 {...timerProps}
-                colors='#3868A9'
+                colors='#64A537'
                 duration={daysDuration}
                 initialRemainingTime={remainingTime}
               >
@@ -139,7 +161,7 @@ export const SalePhaseInfoPanel = ({
               </CountdownCircleTimer>
               <CountdownCircleTimer
                 {...timerProps}
-                colors='#3868A9'
+                colors='#64A537'
                 duration={daySeconds}
                 initialRemainingTime={remainingTime % daySeconds}
                 onComplete={(totalElapsedTime) => ({
@@ -157,7 +179,7 @@ export const SalePhaseInfoPanel = ({
               </CountdownCircleTimer>
               <CountdownCircleTimer
                 {...timerProps}
-                colors='#3868A9'
+                colors='#64A537'
                 duration={hourSeconds}
                 initialRemainingTime={remainingTime % hourSeconds}
                 onComplete={(totalElapsedTime) => ({
@@ -176,7 +198,7 @@ export const SalePhaseInfoPanel = ({
               </CountdownCircleTimer>
               <CountdownCircleTimer
                 {...timerProps}
-                colors='#3868A9'
+                colors='#64A537'
                 duration={minuteSeconds}
                 initialRemainingTime={remainingTime % minuteSeconds}
                 onComplete={(totalElapsedTime) => ({

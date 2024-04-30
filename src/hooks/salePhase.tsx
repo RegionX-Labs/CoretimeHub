@@ -18,10 +18,15 @@ import { ApiState } from '@/contexts/apis/types';
 import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
 
-export type PhaseEndingPoints = {
-  interlude: number;
-  leadin: number;
-  fixed: number;
+type Endpoint = {
+  start: number;
+  end: number;
+};
+
+export type PhaseEndpoints = {
+  interlude: Endpoint;
+  leadin: Endpoint;
+  fixed: Endpoint;
 };
 
 // Custom hook for fetching current phase
@@ -39,11 +44,7 @@ const useSalePhase = () => {
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
 
-  const [endingPoints, setEndingPoints] = useState<PhaseEndingPoints>({
-    interlude: 0,
-    leadin: 0,
-    fixed: 0,
-  });
+  const [endpoints, SetEndpoints] = useState<PhaseEndpoints | null>(null);
 
   const router = useRouter();
   const { network } = router.query;
@@ -83,13 +84,25 @@ const useSalePhase = () => {
 
       setCurrentPhase(getCurrentPhase(saleInfo, blockNumber));
 
-      const _endingPoints = {
-        interlude: _saleStartTimestamp,
-        leadin:
-          _saleStartTimestamp + config.interludeLength * getBlockTime(network),
-        fixed: _saleEndTimestamp,
+      const _endpoints = {
+        interlude: {
+          start:
+            _saleStartTimestamp -
+            config.interludeLength * getBlockTime(network),
+          end: _saleStartTimestamp,
+        },
+        leadin: {
+          start: _saleStartTimestamp,
+          end:
+            _saleStartTimestamp + config.leadinLength * getBlockTime(network),
+        },
+        fixed: {
+          start:
+            _saleStartTimestamp + config.leadinLength * getBlockTime(network),
+          end: _saleEndTimestamp,
+        },
       };
-      setEndingPoints(_endingPoints);
+      SetEndpoints(_endpoints);
     },
     [saleInfo, config, network]
   );
@@ -112,7 +125,7 @@ const useSalePhase = () => {
     saleStartTimestamp,
     saleEndTimestamp,
     loading,
-    endingPoints,
+    endpoints,
   };
 };
 

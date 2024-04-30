@@ -58,6 +58,7 @@ const Purchase = () => {
     saleStartTimestamp,
     saleEndTimestamp,
     loading: loadingSalePhase,
+    endpoints,
   } = useSalePhase();
 
   const duration = saleEndTimestamp - saleStartTimestamp;
@@ -149,14 +150,17 @@ const Purchase = () => {
             />
             <Box sx={{ display: 'flex', gap: '1rem' }}>
               <CoreDetailsPanel saleInfo={saleInfo} />
-              <SalePhaseInfoPanel
-                {...{
-                  currentPhase,
-                  duration,
-                  saleEndTimestamp,
-                  saleStartTimestamp,
-                }}
-              />
+              {endpoints && (
+                <SalePhaseInfoPanel
+                  {...{
+                    currentPhase,
+                    duration,
+                    saleEndTimestamp,
+                    saleStartTimestamp,
+                    endpoints,
+                  }}
+                />
+              )}
             </Box>
 
             <Box
