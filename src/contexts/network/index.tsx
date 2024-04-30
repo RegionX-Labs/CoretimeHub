@@ -32,13 +32,13 @@ const NetworkProvider = ({ children }: Props) => {
     if (network === 'rococo') setActiveNetwork(NetworkType.ROCOCO);
     else if (network === 'kusama') setActiveNetwork(NetworkType.KUSAMA);
     else {
-      // invalid network param. redirect to the default chain: rococo
+      // invalid network param. redirect to the default chain: kusama
       router.push(
         {
           pathname: router.pathname,
           query: {
             ...router.query,
-            network: 'rococo',
+            network: 'kusama',
           },
         },
         undefined,

@@ -88,7 +88,7 @@ export const formatBalance = (balance: string, regionXChain: boolean) => {
 //
 // https://github.com/paritytech/polkadot-sdk/pull/3485
 export const leadinFactorAt = (network: any, when: number) => {
-  if (!network || network === 'rococo') return 2 - when;
+  if (network === 'rococo') return 2 - when;
   else {
     return 5 - 4 * when;
   }
@@ -160,7 +160,7 @@ export const sendTx = (
 
 export const getBlockTime = (network: any): number => {
   // Coretime on Rococo has async backing and due to this it has a block time of 6 seconds.
-  const blockTime = !network || network == 'rococo' ? 6000 : 12000;
+  const blockTime = !network || network == 'kusama' ? 12000 : 6000;
   return blockTime;
 };
 
@@ -169,7 +169,7 @@ export const rcBlockToParachainBlock = (
   blockNumber: number
 ): number => {
   // Coretime on Rococo has async backing and due to this it has a block time of 6 seconds.
-  return !network || network == 'rococo'
+  return network == 'rococo'
     ? blockNumber
     : Math.floor(blockNumber / 2);
 };
