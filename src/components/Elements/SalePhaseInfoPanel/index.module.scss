@@ -14,27 +14,9 @@
   align-items: center;
 }
 
-.chartWrapper {
-  display: inline-flex;
-  position: relative;
-  margin: 0 auto;
-}
-
 .progress {
   margin-left: auto;
   margin-right: auto;
-}
-
-.infoWrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: absolute;
-  top: -10%;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
 }
 
 .currentPhase {
@@ -53,14 +35,14 @@
 .timerWrapper {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   gap: 0.5rem;
+  margin-top: 2rem;
 }
 
 .countDown {
   display: flex;
-  gap: 3px;
+  gap: 0.5rem;
 }
 
 .timeElement {

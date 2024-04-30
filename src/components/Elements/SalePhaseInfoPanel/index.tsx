@@ -1,14 +1,9 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Paper,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, Button, Paper, Typography, useTheme } from '@mui/material';
 import { useRouter } from 'next/router';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+
 import { PhaseEndpoints } from '@/hooks/salePhase';
+
 import { SalePhase } from '@/models';
 
 import styles from './index.module.scss';
@@ -38,21 +33,12 @@ export const SalePhaseInfoPanel = ({
   const daySeconds = 86400;
 
   let remainingTime = 0;
-  let duration = 0;
-  let start = 0;
-
   if (currentPhase == SalePhase.Interlude) {
     remainingTime = Math.floor((endpoints.interlude.end - Date.now()) / 1000);
-    start = Math.floor(endpoints.interlude.start / 1000);
-    duration = Math.floor((endpoints.interlude.end - endpoints.interlude.start) / 1000);
   } else if (currentPhase == SalePhase.Leadin) {
     remainingTime = Math.floor((endpoints.leadin.end - Date.now()) / 1000);
-    start = Math.floor(endpoints.leadin.start / 1000);
-    duration = Math.floor((endpoints.leadin.end - endpoints.leadin.start) / 1000);
   } else if (currentPhase == SalePhase.Regular) {
     remainingTime = Math.floor((endpoints.fixed.end - Date.now()) / 1000);
-    start = Math.floor(endpoints.fixed.start / 1000);
-    duration = Math.floor((endpoints.fixed.end - endpoints.fixed.start) / 1000);
   }
 
   const days = Math.ceil(remainingTime / daySeconds);
@@ -60,7 +46,7 @@ export const SalePhaseInfoPanel = ({
 
   const timerProps = {
     isPlaying: true,
-    size: 64,
+    size: 96,
     strokeWidth: 2,
   };
 
@@ -122,97 +108,70 @@ export const SalePhaseInfoPanel = ({
           Manage your regions
         </Button>
       </Box>
-      <Box className={styles.chartWrapper}>
-        <CircularProgress
-          className={styles.progress}
-          size='20rem'
-          variant='determinate'
-          value={100}
-          thickness={1}
-          style={{ position: 'absolute', color: '#d3d3d3' }} // Secondary color
-        />
-        <CircularProgress
-          size='20rem'
-          variant='determinate'
-          thickness={1}
-          value={((Date.now() / 1000 - start) / duration) * 100}
-        />
-        <Box className={styles.infoWrapper}>
-          <Typography className={styles.currentPhase}>
-            {currentPhase}
-          </Typography>
-          <Box className={styles.timerWrapper}>
-            <Typography>Ends in:</Typography>
-            <Box className={styles.countDown}>
-              <CountdownCircleTimer
-                {...timerProps}
-                colors='#64A537'
-                duration={daysDuration}
-                initialRemainingTime={remainingTime}
-              >
-                {({ elapsedTime, color }) => (
-                  <span style={{ color }}>
-                    {renderTime(
-                      'days',
-                      getTimeDays(daysDuration - elapsedTime)
-                    )}
-                  </span>
+      <Box className={styles.timerWrapper}>
+        <Typography className={styles.currentPhase}>{currentPhase}</Typography>
+        <Typography>Ends in:</Typography>
+        <Box className={styles.countDown}>
+          <CountdownCircleTimer
+            {...timerProps}
+            colors='#64A537'
+            duration={daysDuration}
+            initialRemainingTime={remainingTime}
+          >
+            {({ elapsedTime, color }) => (
+              <span style={{ color }}>
+                {renderTime('days', getTimeDays(daysDuration - elapsedTime))}
+              </span>
+            )}
+          </CountdownCircleTimer>
+          <CountdownCircleTimer
+            {...timerProps}
+            colors='#64A537'
+            duration={daySeconds}
+            initialRemainingTime={remainingTime % daySeconds}
+            onComplete={(totalElapsedTime) => ({
+              shouldRepeat: remainingTime - totalElapsedTime > hourSeconds,
+            })}
+          >
+            {({ elapsedTime, color }) => (
+              <span style={{ color }}>
+                {renderTime('hours', getTimeHours(daySeconds - elapsedTime))}
+              </span>
+            )}
+          </CountdownCircleTimer>
+          <CountdownCircleTimer
+            {...timerProps}
+            colors='#64A537'
+            duration={hourSeconds}
+            initialRemainingTime={remainingTime % hourSeconds}
+            onComplete={(totalElapsedTime) => ({
+              shouldRepeat: remainingTime - totalElapsedTime > minuteSeconds,
+            })}
+          >
+            {({ elapsedTime, color }) => (
+              <span style={{ color }}>
+                {renderTime(
+                  'minutes',
+                  getTimeMinutes(hourSeconds - elapsedTime)
                 )}
-              </CountdownCircleTimer>
-              <CountdownCircleTimer
-                {...timerProps}
-                colors='#64A537'
-                duration={daySeconds}
-                initialRemainingTime={remainingTime % daySeconds}
-                onComplete={(totalElapsedTime) => ({
-                  shouldRepeat: remainingTime - totalElapsedTime > hourSeconds,
-                })}
-              >
-                {({ elapsedTime, color }) => (
-                  <span style={{ color }}>
-                    {renderTime(
-                      'hours',
-                      getTimeHours(daySeconds - elapsedTime)
-                    )}
-                  </span>
-                )}
-              </CountdownCircleTimer>
-              <CountdownCircleTimer
-                {...timerProps}
-                colors='#64A537'
-                duration={hourSeconds}
-                initialRemainingTime={remainingTime % hourSeconds}
-                onComplete={(totalElapsedTime) => ({
-                  shouldRepeat:
-                    remainingTime - totalElapsedTime > minuteSeconds,
-                })}
-              >
-                {({ elapsedTime, color }) => (
-                  <span style={{ color }}>
-                    {renderTime(
-                      'minutes',
-                      getTimeMinutes(hourSeconds - elapsedTime)
-                    )}
-                  </span>
-                )}
-              </CountdownCircleTimer>
-              <CountdownCircleTimer
-                {...timerProps}
-                colors='#64A537'
-                duration={minuteSeconds}
-                initialRemainingTime={remainingTime % minuteSeconds}
-                onComplete={(totalElapsedTime) => ({
-                  shouldRepeat: remainingTime - totalElapsedTime > 0,
-                })}
-              >
-                {({ elapsedTime, color }) => (
-                  <span style={{ color }}>
-                    {renderTime('seconds', getTimeSeconds(elapsedTime))}
-                  </span>
-                )}
-              </CountdownCircleTimer>
-            </Box>
-          </Box>
+              </span>
+            )}
+          </CountdownCircleTimer>
+          <CountdownCircleTimer
+            {...timerProps}
+            colors='#64A537'
+            duration={minuteSeconds}
+            initialRemainingTime={remainingTime % minuteSeconds}
+            onComplete={(totalElapsedTime) => ({
+              shouldRepeat: remainingTime - totalElapsedTime > 0,
+            })}
+          >
+            {({ elapsedTime, color }) => (
+              <span style={{ color }}>
+                {renderTime('seconds', getTimeSeconds(elapsedTime))}
+              </span>
+            )}
+          </CountdownCircleTimer>
         </Box>
       </Box>
     </Paper>
