@@ -1,21 +1,24 @@
 import {
   Backdrop,
   Box,
-  Button,
   CircularProgress,
   Typography,
   useTheme,
 } from '@mui/material';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import useSalePhase from '@/hooks/salePhase';
 import useSalePrice from '@/hooks/salePrice';
 import { parseHNString, sendTx } from '@/utils/functions';
 
-import { CoreDetailsPanel, ProgressButton, SaleInfoPanel } from '@/components';
+import {
+  CoreDetailsPanel,
+  ProgressButton,
+  SaleInfoPanel,
+  SalePhaseInfoPanel,
+} from '@/components';
 import Balance from '@/components/Elements/Balance';
 
 import { useAccounts } from '@/contexts/account';
@@ -52,11 +55,13 @@ const Purchase = () => {
   const {
     saleStart,
     currentPhase,
-    progress,
     saleStartTimestamp,
     saleEndTimestamp,
     loading: loadingSalePhase,
+    endpoints,
   } = useSalePhase();
+
+  const duration = saleEndTimestamp - saleStartTimestamp;
 
   useEffect(() => {
     if (!currentPhase) return;
@@ -126,17 +131,16 @@ const Purchase = () => {
           <Backdrop open>
             <CircularProgress />
           </Backdrop>
-        ) : !currentPhase ||
-          !progress ||
-          !saleStartTimestamp ||
-          !saleEndTimestamp ? (
+        ) : !currentPhase || !saleStartTimestamp || !saleEndTimestamp ? (
           <>
             <Typography variant='h5' align='center'>
               Check your network conection and connect your wallet
             </Typography>
           </>
         ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <Box
+            sx={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
+          >
             <SaleInfoPanel
               currentPhase={currentPhase}
               currentPrice={currentPrice}
@@ -146,6 +150,17 @@ const Purchase = () => {
             />
             <Box sx={{ display: 'flex', gap: '1rem' }}>
               <CoreDetailsPanel saleInfo={saleInfo} />
+              {endpoints && (
+                <SalePhaseInfoPanel
+                  {...{
+                    currentPhase,
+                    duration,
+                    saleEndTimestamp,
+                    saleStartTimestamp,
+                    endpoints,
+                  }}
+                />
+              )}
             </Box>
 
             <Box
@@ -155,9 +170,6 @@ const Purchase = () => {
                 justifyContent: 'flex-end',
               }}
             >
-              <Link href='/regions'>
-                <Button variant='outlined'>Manage your regions</Button>
-              </Link>
               <ProgressButton
                 onClick={purchase}
                 loading={working}

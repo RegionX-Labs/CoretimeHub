@@ -1,12 +1,4 @@
-import {
-  Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-} from '@mui/material';
-import { useTheme } from '@mui/material';
+import { Box, FormControl, MenuItem, Select, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
@@ -30,8 +22,6 @@ const RelaySelect = () => {
     );
   };
 
-  const theme = useTheme();
-
   const menuItems = [
     {
       value: NetworkType.ROCOCO,
@@ -47,12 +37,23 @@ const RelaySelect = () => {
 
   return network !== NetworkType.NONE ? (
     <FormControl size='small'>
-      <InputLabel sx={{ color: theme.palette.grey[800] }}>Network</InputLabel>
       <Select
         id='network-select'
         value={network}
         label='Relay chain'
         onChange={handleChange}
+        sx={{
+          border: 'none', // Remove border
+          '& .MuiOutlinedInput-notchedOutline': {
+            border: 'none', // Ensure no border is shown
+          },
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            border: 'none', // Ensure no border on hover
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            border: 'none', // Ensure no border when focused
+          },
+        }}
       >
         {menuItems.map(({ value, label, icon }, index) => (
           <MenuItem value={value} key={index}>

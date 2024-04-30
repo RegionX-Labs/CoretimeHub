@@ -14,7 +14,7 @@ import {
 import Link from 'next/link';
 import { useState } from 'react';
 
-import { useRenewableParachains } from '@/hooks/useRenewableParas';
+import { useRenewableParachains } from '@/hooks/renewableParas';
 import { formatBalance, sendTx } from '@/utils/functions';
 
 import { ProgressButton } from '@/components';

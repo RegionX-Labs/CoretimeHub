@@ -58,6 +58,13 @@ let theme = createTheme({
     },
   },
   components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'capitalize',
+        },
+      },
+    },
     MuiDialog: {
       styleOverrides: {
         paper: {
