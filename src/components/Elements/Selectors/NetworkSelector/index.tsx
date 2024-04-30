@@ -1,12 +1,4 @@
-import {
-  Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-} from '@mui/material';
-import { useTheme } from '@mui/material';
+import { Box, FormControl, MenuItem, Select, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
@@ -29,8 +21,6 @@ const RelaySelect = () => {
       { shallow: false }
     );
   };
-
-  const theme = useTheme();
 
   const menuItems = [
     {
@@ -55,14 +45,14 @@ const RelaySelect = () => {
         sx={{
           border: 'none', // Remove border
           '& .MuiOutlinedInput-notchedOutline': {
-            border: 'none' // Ensure no border is shown
+            border: 'none', // Ensure no border is shown
           },
           '&:hover .MuiOutlinedInput-notchedOutline': {
-            border: 'none' // Ensure no border on hover
+            border: 'none', // Ensure no border on hover
           },
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            border: 'none' // Ensure no border when focused
-          }
+            border: 'none', // Ensure no border when focused
+          },
         }}
       >
         {menuItems.map(({ value, label, icon }, index) => (
