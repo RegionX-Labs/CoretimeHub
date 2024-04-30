@@ -1,5 +1,6 @@
 import { Box, Button, Paper, Typography, useTheme } from '@mui/material';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 
 import { PhaseEndpoints } from '@/hooks/salePhase';
@@ -32,17 +33,27 @@ export const SalePhaseInfoPanel = ({
   const hourSeconds = 3600;
   const daySeconds = 86400;
 
-  let remainingTime = 0;
-  if (currentPhase == SalePhase.Interlude) {
-    remainingTime = Math.floor((endpoints.interlude.end - Date.now()) / 1000);
-  } else if (currentPhase == SalePhase.Leadin) {
-    remainingTime = Math.floor((endpoints.leadin.end - Date.now()) / 1000);
-  } else if (currentPhase == SalePhase.Regular) {
-    remainingTime = Math.floor((endpoints.fixed.end - Date.now()) / 1000);
-  }
+  const [remainingTime, setRemainingTime] = useState(0);
+  const [daysDuration, setDaysDuration] = useState(0);
 
-  const days = Math.ceil(remainingTime / daySeconds);
-  const daysDuration = days * daySeconds;
+  useEffect(() => {
+    let _remainingTime;
+    if (currentPhase == SalePhase.Interlude) {
+      _remainingTime = Math.floor(
+        (endpoints.interlude.end - Date.now()) / 1000
+      );
+    } else if (currentPhase == SalePhase.Leadin) {
+      _remainingTime = Math.floor((endpoints.leadin.end - Date.now()) / 1000);
+    } else if (currentPhase == SalePhase.Regular) {
+      _remainingTime = Math.floor((endpoints.fixed.end - Date.now()) / 1000);
+    } else return;
+
+    const days = Math.ceil(_remainingTime / daySeconds);
+    const _daysDuration = days * daySeconds;
+
+    setDaysDuration(_daysDuration);
+    setRemainingTime(_remainingTime);
+  }, [endpoints, currentPhase]);
 
   const timerProps = {
     isPlaying: true,
@@ -81,6 +92,8 @@ export const SalePhaseInfoPanel = ({
   const getTimeHours = (time: number) =>
     ((time % daySeconds) / hourSeconds) | 0;
   const getTimeDays = (time: number) => (time / daySeconds) | 0;
+
+  if (remainingTime <= 0) return;
 
   return (
     <Paper className={styles.container}>
