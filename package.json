@@ -27,6 +27,7 @@
     "@polkadot/ui-keyring": "latest",
     "@polkadot/util": "latest",
     "@types/humanize-duration": "^3.27.3",
+    "@vercel/analytics": "^1.2.2",
     "clsx": "^1.1.1",
     "coretime-utils": "^0.2.8",
     "date-fns": "^3.3.1",

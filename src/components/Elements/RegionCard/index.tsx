@@ -173,7 +173,7 @@ const RegionCardInner = ({
     };
 
     if (taskId !== null) {
-      return getTaskName(taskId) ? getTaskName(taskId) : `Parachain: ${taskId}`;
+      return getTaskName(taskId) ? getTaskName(taskId) : `Parachain ${taskId}`;
     }
     return 'Unassigned';
   };

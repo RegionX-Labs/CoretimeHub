@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   Dialog,
@@ -49,11 +50,11 @@ export const TaskAssignModal = ({
   const { tasks } = useTasks();
   const { toastError, toastInfo, toastSuccess } = useToast();
 
-  const [working, setWorking] = useState(false);
+  const [working, setWorking] = useState<'Final' | 'Provisional' | null>(null);
   const [taskSelected, selectTask] = useState<number>();
   const [taskModalOpen, openTaskModal] = useState(false);
 
-  const onAssign = async () => {
+  const onAssign = async (final: boolean) => {
     if (!coretimeApi || !activeAccount || !activeSigner) return;
 
     if (taskSelected === undefined) {
@@ -64,11 +65,11 @@ export const TaskAssignModal = ({
     const txAssign = coretimeApi.tx.broker.assign(
       regionMetadata.region.getOnChainRegionId(),
       taskSelected,
-      'Provisional'
+      final ? 'Final' : 'Provisional'
     );
 
     try {
-      setWorking(true);
+      setWorking(final ? 'Final' : 'Provisional');
       await txAssign.signAndSend(
         activeAccount.address,
         { signer: activeSigner },
@@ -76,7 +77,7 @@ export const TaskAssignModal = ({
           if (status.isReady) toastInfo('Transaction was initiated');
           else if (status.isInBlock) toastInfo(`In Block`);
           else if (status.isFinalized) {
-            setWorking(false);
+            setWorking(null);
             events.forEach(({ event: { method } }) => {
               if (method === 'ExtrinsicSuccess') {
                 toastSuccess('Successfully assigned a task');
@@ -91,13 +92,13 @@ export const TaskAssignModal = ({
       );
     } catch (e) {
       toastError(`Failed to assign a task. ${e}`);
-      setWorking(false);
+      setWorking(null);
     }
   };
 
   useEffect(() => {
     selectTask(tasks[0]?.id);
-    setWorking(false);
+    setWorking(null);
     openTaskModal(false);
   }, [open, tasks]);
 
@@ -165,12 +166,28 @@ export const TaskAssignModal = ({
             </Paper>
           </Box>
         </DialogContent>
+        <Alert
+          sx={{ margin: '2rem', maxWidth: '500px', textAlign: 'center' }}
+          severity='info'
+        >
+          Finally assigned regions can no longer be managed. They will not be
+          displayed on the Region Management page anymore.
+        </Alert>
         <DialogActions>
           <Button onClick={onClose} variant='outlined'>
             Cancel
           </Button>
 
-          <ProgressButton onClick={onAssign} label='Assign' loading={working} />
+          <ProgressButton
+            onClick={() => onAssign(false)}
+            label='Provisional Assignment'
+            loading={working === 'Provisional'}
+          />
+          <ProgressButton
+            onClick={() => onAssign(true)}
+            label='Final Assignment'
+            loading={working === 'Final'}
+          />
         </DialogActions>
       </Dialog>
       {taskModalOpen && (

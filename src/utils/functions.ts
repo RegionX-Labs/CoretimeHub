@@ -169,7 +169,5 @@ export const rcBlockToParachainBlock = (
   blockNumber: number
 ): number => {
   // Coretime on Rococo has async backing and due to this it has a block time of 6 seconds.
-  return network == 'rococo'
-    ? blockNumber
-    : Math.floor(blockNumber / 2);
+  return network == 'rococo' ? blockNumber : Math.floor(blockNumber / 2);
 };

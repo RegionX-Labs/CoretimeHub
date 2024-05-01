@@ -1,6 +1,7 @@
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
+import { Analytics } from '@vercel/analytics/react';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -72,6 +73,7 @@ export default function MyApp(props: MyAppProps) {
           </NetworkProvider>
         </ToastProvider>
       </ThemeProvider>
+      <Analytics />
     </CacheProvider>
   );
 }
