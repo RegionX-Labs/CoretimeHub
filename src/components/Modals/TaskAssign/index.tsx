@@ -50,7 +50,7 @@ export const TaskAssignModal = ({
   const { tasks } = useTasks();
   const { toastError, toastInfo, toastSuccess } = useToast();
 
-  const [working, setWorking] = useState(false);
+  const [working, setWorking] = useState<'Final' | 'Provisional' | null>(null);
   const [taskSelected, selectTask] = useState<number>();
   const [taskModalOpen, openTaskModal] = useState(false);
 
@@ -69,7 +69,7 @@ export const TaskAssignModal = ({
     );
 
     try {
-      setWorking(true);
+      setWorking(final ? 'Final' : 'Provisional');
       await txAssign.signAndSend(
         activeAccount.address,
         { signer: activeSigner },
@@ -77,7 +77,7 @@ export const TaskAssignModal = ({
           if (status.isReady) toastInfo('Transaction was initiated');
           else if (status.isInBlock) toastInfo(`In Block`);
           else if (status.isFinalized) {
-            setWorking(false);
+            setWorking(null);
             events.forEach(({ event: { method } }) => {
               if (method === 'ExtrinsicSuccess') {
                 toastSuccess('Successfully assigned a task');
@@ -92,13 +92,13 @@ export const TaskAssignModal = ({
       );
     } catch (e) {
       toastError(`Failed to assign a task. ${e}`);
-      setWorking(false);
+      setWorking(null);
     }
   };
 
   useEffect(() => {
     selectTask(tasks[0]?.id);
-    setWorking(false);
+    setWorking(null);
     openTaskModal(false);
   }, [open, tasks]);
 
@@ -181,12 +181,12 @@ export const TaskAssignModal = ({
           <ProgressButton
             onClick={() => onAssign(false)}
             label='Provisional Assignment'
-            loading={working}
+            loading={working === 'Provisional'}
           />
           <ProgressButton
             onClick={() => onAssign(true)}
             label='Final Assignment'
-            loading={working}
+            loading={working === 'Final'}
           />
         </DialogActions>
       </Dialog>
