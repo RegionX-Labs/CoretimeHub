@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   Dialog,
@@ -53,7 +54,7 @@ export const TaskAssignModal = ({
   const [taskSelected, selectTask] = useState<number>();
   const [taskModalOpen, openTaskModal] = useState(false);
 
-  const onAssign = async () => {
+  const onAssign = async (final: boolean) => {
     if (!coretimeApi || !activeAccount || !activeSigner) return;
 
     if (taskSelected === undefined) {
@@ -64,7 +65,7 @@ export const TaskAssignModal = ({
     const txAssign = coretimeApi.tx.broker.assign(
       regionMetadata.region.getOnChainRegionId(),
       taskSelected,
-      'Provisional'
+      final ? 'Final' : 'Provisional'
     );
 
     try {
@@ -165,12 +166,28 @@ export const TaskAssignModal = ({
             </Paper>
           </Box>
         </DialogContent>
+        <Alert
+          sx={{ margin: '2rem', maxWidth: '500px', textAlign: 'center' }}
+          severity='info'
+        >
+          Finally assigned regions can no longer be managed. They will not be
+          displayed on the Region Management page anymore.
+        </Alert>
         <DialogActions>
           <Button onClick={onClose} variant='outlined'>
             Cancel
           </Button>
 
-          <ProgressButton onClick={onAssign} label='Assign' loading={working} />
+          <ProgressButton
+            onClick={() => onAssign(false)}
+            label='Provisional Assignment'
+            loading={working}
+          />
+          <ProgressButton
+            onClick={() => onAssign(true)}
+            label='Final Assignment'
+            loading={working}
+          />
         </DialogActions>
       </Dialog>
       {taskModalOpen && (
