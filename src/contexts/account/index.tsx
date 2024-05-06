@@ -2,6 +2,9 @@ import type { Signer } from '@polkadot/api/types';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
 
+const APP_NAME = 'Corehub';
+const LOCAL_STORAGE_ACCOUNTS = 'accounts';
+
 export enum KeyringState {
   // eslint-disable-next-line no-unused-vars
   DISCONNECTED = 'disconnected',
@@ -92,12 +95,10 @@ const AccountProvider = ({ children }: Props) => {
       try {
         const extensionDapp = await import('@polkadot/extension-dapp');
         const { web3Accounts, web3Enable } = extensionDapp;
-        await web3Enable('Corehub');
+        await web3Enable(APP_NAME);
         const accounts: InjectedAccountWithMeta[] = await web3Accounts();
         dispatch({ type: 'KEYRING_READY' });
         dispatch({ type: 'SET_ACCOUNTS', payload: accounts });
-        if (accounts.length)
-          dispatch({ type: 'SET_ACTIVE_ACCOUNT', payload: accounts[0] });
       } catch (e) {
         dispatch({ type: 'KEYRING_ERROR' });
       }
@@ -106,9 +107,21 @@ const AccountProvider = ({ children }: Props) => {
   };
 
   useEffect(() => {
+    const accounts = state.accounts;
+    if (accounts.length) {
+      dispatch({ type: 'SET_ACTIVE_ACCOUNT', payload: accounts[0] });
+
+      localStorage.setItem(LOCAL_STORAGE_ACCOUNTS, JSON.stringify(accounts));
+    }
+  }, [state.accounts]);
+
+  useEffect(() => {
     const getInjector = async () => {
       if (!state.activeAccount) return;
-      const { web3FromSource } = await import('@polkadot/extension-dapp');
+      const { web3FromSource, web3Enable } = await import(
+        '@polkadot/extension-dapp'
+      );
+      await web3Enable(APP_NAME);
       const injector = await web3FromSource(state.activeAccount.meta.source);
       dispatch({ type: 'SET_ACTIVE_SIGNER', payload: injector.signer });
     };
@@ -116,6 +129,21 @@ const AccountProvider = ({ children }: Props) => {
   }, [state.activeAccount]);
 
   const disconnectWallet = () => dispatch({ type: 'DISCONNECT' });
+
+  useEffect(() => {
+    const item = localStorage.getItem(LOCAL_STORAGE_ACCOUNTS);
+    if (!item) return;
+    try {
+      const accounts = JSON.parse(item) as InjectedAccountWithMeta[];
+      if (accounts.length > 0) {
+        // load accounts automatically
+        dispatch({ type: 'KEYRING_READY' });
+        dispatch({ type: 'SET_ACCOUNTS', payload: accounts });
+      }
+    } catch {
+      // error handling
+    }
+  }, []);
 
   return (
     <AccountDataContext.Provider
