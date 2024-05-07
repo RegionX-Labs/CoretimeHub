@@ -1,4 +1,4 @@
-import { CoreMask, RegionId } from 'coretime-utils';
+import { RegionId, completeMask } from 'coretime-utils';
 
 import {
   extractRegionIdFromRaw,
@@ -33,7 +33,7 @@ describe('Util functions', () => {
       const regionId: RegionId = {
         begin: 4,
         core: 0,
-        mask: CoreMask.completeMask(),
+        mask: completeMask(),
       };
       expect(extractRegionIdFromRaw(BigInt(raw))).toStrictEqual(regionId);
     });

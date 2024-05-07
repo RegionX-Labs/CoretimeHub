@@ -2,7 +2,7 @@ import { ApiPromise } from '@polkadot/api';
 import { AddressOrPair, SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult, Signer } from '@polkadot/types/types';
 import { formatBalance as polkadotFormatBalance } from '@polkadot/util';
-import { CoreMask, RegionId } from 'coretime-utils';
+import { RegionId } from 'coretime-utils';
 import Decimal from 'decimal.js';
 
 import {
@@ -115,7 +115,7 @@ export const extractRegionIdFromRaw = (rawRegionId: bigint): RegionId => {
   return {
     begin,
     core,
-    mask: new CoreMask(('0x' + mask.toString(16)).padEnd(22, '0')),
+    mask: ('0x' + mask.toString(16)).padEnd(22, '0'),
   };
 };
 

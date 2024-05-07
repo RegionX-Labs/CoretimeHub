@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
-import { CoreMask, Region, RegionId } from 'coretime-utils';
+import { Region, RegionId } from 'coretime-utils';
 
 import { parseHNString } from '@/utils/functions';
 
@@ -21,7 +21,7 @@ export const fetchRegions = async (
         const regionId = {
           begin: parseHNString(begin.toString()),
           core: parseHNString(core.toString()),
-          mask: new CoreMask(mask),
+          mask: mask,
         };
         return new Region(
           regionId,
@@ -30,7 +30,6 @@ export const fetchRegions = async (
             owner,
             paid: paid ? parseHNString(paid) : null,
           },
-          0
         );
       })
       .filter((entry) => !!entry) as Array<Region>;
@@ -47,11 +46,7 @@ export const fetchRegion = async (
   if (!coretimeApi) return null;
 
   const record: any = (
-    await coretimeApi.query.broker.regions({
-      begin: regionId.begin,
-      core: regionId.core,
-      mask: regionId.mask.toRawHex(),
-    })
+    await coretimeApi.query.broker.regions(regionId)
   ).toHuman();
 
   if (record) {
@@ -64,7 +59,6 @@ export const fetchRegion = async (
         owner,
         paid: paid ? parseHNString(paid) : null,
       },
-      0
     );
   } else {
     return null;
