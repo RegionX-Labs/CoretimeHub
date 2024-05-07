@@ -10,7 +10,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { CoreMask } from 'coretime-utils';
+import { maskFromBin, maskFromChunk, maskToBin } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
 import { ProgressButton, SimpleRegionCard } from '@/components/Elements';
@@ -45,7 +45,7 @@ export const InterlaceModal = ({
   const { toastError, toastSuccess, toastInfo } = useToast();
   const { fetchRegions } = useRegions();
 
-  const currentMask = regionMetadata.region.getMask().toBin();
+  const currentMask = maskToBin(regionMetadata.region.getMask());
   // Represents the first active bit in the bitmap.
   const oneStart = currentMask.indexOf('1');
   // Represents the last active bit in the bitmap.
@@ -55,12 +55,12 @@ export const InterlaceModal = ({
   const [working, setWorking] = useState(false);
   const [position, setPosition] = useState(oneStart);
 
-  const newMask = CoreMask.fromChunk(oneStart, position + 1).toBin();
+  const newMask = maskToBin(maskFromChunk(oneStart, position + 1));
 
   const onInterlace = async () => {
     if (!api || !activeAccount || !activeSigner) return;
 
-    const mask = CoreMask.fromBin(newMask).toRawHex();
+    const mask = maskFromBin(newMask);
 
     const txInterlace = api.tx.broker.interlace(
       regionMetadata.region.getOnChainRegionId(),

@@ -1,4 +1,3 @@
-import { CoreMask } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
@@ -10,7 +9,7 @@ type RenewableParachain = {
   core: number;
   paraID: number;
   price: number;
-  mask: CoreMask;
+  mask: string;
   when: number;
 };
 
@@ -58,7 +57,7 @@ export const useRenewableParachains = () => {
         parachains.push({
           core,
           price,
-          mask: new CoreMask(mask),
+          mask,
           paraID: parseHNString(Task),
           when,
         });

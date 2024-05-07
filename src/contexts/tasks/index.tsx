@@ -1,4 +1,4 @@
-import { CoreIndex, CoreMask, Region } from 'coretime-utils';
+import { CoreIndex, getEncodedRegionId } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
@@ -14,7 +14,7 @@ type Tasks = Record<string, Task>;
 interface TasksData {
   tasks: Array<TaskMetadata>;
   fetchWorkplan: () => Promise<Tasks>;
-  fetchRegionWorkload: (_core: CoreIndex, _mask: CoreMask) => Promise<Task>;
+  fetchRegionWorkload: (_core: CoreIndex, _mask: string) => Promise<Task>;
   loadTasksFromLocalStorage: () => void;
   addTask: (_task: TaskMetadata) => void;
 }
@@ -26,7 +26,7 @@ const defaultTasksData: TasksData = {
   },
   fetchRegionWorkload: async (
     _core: CoreIndex,
-    _mask: CoreMask
+    _mask: string
   ): Promise<Task> => {
     return null;
   },
@@ -74,16 +74,12 @@ const TaskDataProvider = ({ children }: Props) => {
           mask,
         } = record;
 
-        const region = new Region(
-          {
-            begin: parseHNString(begin.toString()),
-            core: parseHNString(core.toString()),
-            mask: new CoreMask(mask),
-          },
-          { end: 0, owner: '', paid: null },
-          0
-        );
-        tasks[region.getEncodedRegionId(coretimeApi).toString()] = taskId
+        const regionId = {
+          begin: parseHNString(begin.toString()),
+          core: parseHNString(core.toString()),
+          mask,
+        };
+        tasks[getEncodedRegionId(regionId, coretimeApi).toString()] = taskId
           ? parseHNString(taskId)
           : null;
       });
@@ -95,7 +91,7 @@ const TaskDataProvider = ({ children }: Props) => {
   // The tasks currently running on a Polkadot core.
   const fetchRegionWorkload = async (
     core: CoreIndex,
-    regionMask: CoreMask
+    regionMask: string
   ): Promise<Task> => {
     if (
       !coretimeApi ||
@@ -115,7 +111,7 @@ const TaskDataProvider = ({ children }: Props) => {
       } = workload;
 
       // Make the workload is for the specific region.
-      return mask == regionMask.toRawHex() ? parseHNString(taskId) : null;
+      return mask == regionMask ? parseHNString(taskId) : null;
     }
     return 0;
   };

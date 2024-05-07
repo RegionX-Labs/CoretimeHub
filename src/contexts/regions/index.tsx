@@ -1,4 +1,9 @@
-import { CoreIndex, CoreMask, Region, RegionId } from 'coretime-utils';
+import {
+  CoreIndex,
+  getEncodedRegionId,
+  Region,
+  RegionId,
+} from 'coretime-utils';
 import React, {
   createContext,
   useCallback,
@@ -58,7 +63,7 @@ const RegionDataProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState(false);
 
   const _getTaskFromWorkloadId = useCallback(
-    async (core: CoreIndex, mask: CoreMask): Promise<number | null> => {
+    async (core: CoreIndex, mask: string): Promise<number | null> => {
       const task = await fetchRegionWorkload(core, mask);
       return task;
     },
@@ -86,7 +91,10 @@ const RegionDataProvider = ({ children }: Props) => {
       )
         continue;
 
-      const rawId = region.getEncodedRegionId(coretimeApi).toString();
+      const rawId = getEncodedRegionId(
+        region.getRegionId(),
+        coretimeApi
+      ).toString();
       const location = RegionLocation.CORETIME_CHAIN;
 
       const name =
@@ -108,7 +116,7 @@ const RegionDataProvider = ({ children }: Props) => {
       _regions.push(
         RegionMetadata.construct(
           context,
-          region.getEncodedRegionId(coretimeApi),
+          getEncodedRegionId(region.getRegionId(), coretimeApi),
           region,
           name,
           location,
