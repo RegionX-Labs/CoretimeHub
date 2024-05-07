@@ -1,4 +1,9 @@
-import { CoreIndex, Region, RegionId, getEncodedRegionId } from 'coretime-utils';
+import {
+  CoreIndex,
+  getEncodedRegionId,
+  Region,
+  RegionId,
+} from 'coretime-utils';
 import React, {
   createContext,
   useCallback,
@@ -86,7 +91,10 @@ const RegionDataProvider = ({ children }: Props) => {
       )
         continue;
 
-      const rawId = getEncodedRegionId(region.getRegionId(), coretimeApi).toString();
+      const rawId = getEncodedRegionId(
+        region.getRegionId(),
+        coretimeApi
+      ).toString();
       const location = RegionLocation.CORETIME_CHAIN;
 
       const name =

@@ -1,4 +1,4 @@
-import { RegionId, completeMask } from 'coretime-utils';
+import { completeMask, RegionId } from 'coretime-utils';
 
 import {
   extractRegionIdFromRaw,

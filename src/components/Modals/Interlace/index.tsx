@@ -10,7 +10,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { maskFromChunk, maskToBin, maskFromBin } from 'coretime-utils';
+import { maskFromBin, maskFromChunk, maskToBin } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
 import { ProgressButton, SimpleRegionCard } from '@/components/Elements';

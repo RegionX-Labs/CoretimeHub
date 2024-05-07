@@ -23,14 +23,11 @@ export const fetchRegions = async (
           core: parseHNString(core.toString()),
           mask: mask,
         };
-        return new Region(
-          regionId,
-          {
-            end: parseHNString(end),
-            owner,
-            paid: paid ? parseHNString(paid) : null,
-          },
-        );
+        return new Region(regionId, {
+          end: parseHNString(end),
+          owner,
+          paid: paid ? parseHNString(paid) : null,
+        });
       })
       .filter((entry) => !!entry) as Array<Region>;
     return brokerRegions;
@@ -52,14 +49,11 @@ export const fetchRegion = async (
   if (record) {
     const { end, owner, paid } = record;
 
-    return new Region(
-      regionId,
-      {
-        end: parseHNString(end),
-        owner,
-        paid: paid ? parseHNString(paid) : null,
-      },
-    );
+    return new Region(regionId, {
+      end: parseHNString(end),
+      owner,
+      paid: paid ? parseHNString(paid) : null,
+    });
   } else {
     return null;
   }

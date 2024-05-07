@@ -1,4 +1,4 @@
-import { CoreIndex, Region, getEncodedRegionId } from 'coretime-utils';
+import { CoreIndex, getEncodedRegionId } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
@@ -77,7 +77,7 @@ const TaskDataProvider = ({ children }: Props) => {
         const regionId = {
           begin: parseHNString(begin.toString()),
           core: parseHNString(core.toString()),
-          mask
+          mask,
         };
         tasks[getEncodedRegionId(regionId, coretimeApi).toString()] = taskId
           ? parseHNString(taskId)
