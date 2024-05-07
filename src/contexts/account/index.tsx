@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useReducer } from 'react';
 
 const APP_NAME = 'Corehub';
 const LOCAL_STORAGE_ACCOUNTS = 'accounts';
+const LOCAL_STORAGE_ACTIVE_ACCOUNT = 'active-account';
 
 export enum KeyringState {
   // eslint-disable-next-line no-unused-vars
@@ -86,7 +87,8 @@ const AccountProvider = ({ children }: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const setActiveAccount = (acct: any) => {
-    dispatch({ type: 'SET_ACTIVE_ACCOUNT', payload: acct });
+    localStorage.setItem(LOCAL_STORAGE_ACTIVE_ACCOUNT, JSON.stringify(acct));
+    dispatch({ type: 'SET_ACTIVE_ACCOUNT', payload: acct.address });
   };
 
   const connectWallet = () => {
@@ -109,7 +111,13 @@ const AccountProvider = ({ children }: Props) => {
   useEffect(() => {
     const accounts = state.accounts;
     if (accounts.length) {
-      dispatch({ type: 'SET_ACTIVE_ACCOUNT', payload: accounts[0] });
+      const activeAccount = localStorage.getItem(LOCAL_STORAGE_ACTIVE_ACCOUNT);
+      const account = activeAccount
+        ? accounts.find((acc: any) => acc.address == activeAccount) ??
+          accounts[0]
+        : accounts[0];
+
+      dispatch({ type: 'SET_ACTIVE_ACCOUNT', payload: account });
 
       localStorage.setItem(LOCAL_STORAGE_ACCOUNTS, JSON.stringify(accounts));
     }
