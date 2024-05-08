@@ -1,10 +1,10 @@
 import { CacheProvider, EmotionCache } from '@emotion/react';
-import dynamic from 'next/dynamic';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import { Analytics } from '@vercel/analytics/react';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import * as React from 'react';
 import '../../styles/global.scss';
@@ -37,7 +37,10 @@ interface MyAppProps extends AppProps {
   Component: NextPageWithLayout;
 }
 
-const AccountProvider = dynamic(() => import("../contexts/account").then(a => a.AccountProvider), { ssr: false })
+const AccountProvider = dynamic(
+  () => import('../contexts/account').then((a) => a.AccountProvider),
+  { ssr: false }
+);
 
 export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
