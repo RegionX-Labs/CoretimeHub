@@ -96,8 +96,7 @@ const AccountProvider = ({ children }: Props) => {
     const asyncLoadAccounts = async () => {
       try {
         const extensionDapp = await import('@polkadot/extension-dapp');
-        const { web3Accounts, web3Enable } = extensionDapp;
-        await web3Enable(APP_NAME);
+        const { web3Accounts } = extensionDapp;
         const accounts: InjectedAccountWithMeta[] = await web3Accounts();
         dispatch({ type: 'KEYRING_READY' });
         dispatch({ type: 'SET_ACCOUNTS', payload: accounts });
@@ -126,10 +125,7 @@ const AccountProvider = ({ children }: Props) => {
   useEffect(() => {
     const getInjector = async () => {
       if (!state.activeAccount) return;
-      const { web3FromSource, web3Enable } = await import(
-        '@polkadot/extension-dapp'
-      );
-      await web3Enable(APP_NAME);
+      const { web3FromSource } = await import('@polkadot/extension-dapp');
       const injector = await web3FromSource(state.activeAccount.meta.source);
       dispatch({ type: 'SET_ACTIVE_SIGNER', payload: injector.signer });
     };
@@ -139,18 +135,25 @@ const AccountProvider = ({ children }: Props) => {
   const disconnectWallet = () => dispatch({ type: 'DISCONNECT' });
 
   useEffect(() => {
-    const item = localStorage.getItem(LOCAL_STORAGE_ACCOUNTS);
-    if (!item) return;
-    try {
-      const accounts = JSON.parse(item) as InjectedAccountWithMeta[];
-      if (accounts.length > 0) {
-        // load accounts automatically
-        dispatch({ type: 'KEYRING_READY' });
-        dispatch({ type: 'SET_ACCOUNTS', payload: accounts });
+    const asyncLoad = async () => {
+      const { web3Enable } = await import('@polkadot/extension-dapp');
+      await web3Enable(APP_NAME);
+
+      const item = localStorage.getItem(LOCAL_STORAGE_ACCOUNTS);
+      if (!item) return;
+      try {
+        const accounts = JSON.parse(item) as InjectedAccountWithMeta[];
+        if (accounts.length > 0) {
+          // load accounts automatically
+          dispatch({ type: 'KEYRING_READY' });
+          dispatch({ type: 'SET_ACCOUNTS', payload: accounts });
+        }
+      } catch {
+        // error handling
       }
-    } catch {
-      // error handling
-    }
+    };
+
+    if ((window as any).injectedWeb3) asyncLoad();
   }, []);
 
   return (
