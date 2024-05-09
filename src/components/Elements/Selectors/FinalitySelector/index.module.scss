@@ -1,0 +1,26 @@
+.options {
+  display: flex;
+  justify-content: center;
+}
+
+.option,
+.activeOption {
+  min-width: 15rem;
+  margin: 1rem 5rem;
+  border-radius: 0.5rem !important;
+  text-transform: capitalize;
+}
+
+.activeOption {
+  border: 1px solid #e84d68;
+  background: linear-gradient(180deg, #e84d68 0%, #ad2b49 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.option {
+  border: 1px solid #cccccc !important;
+  background-color: white;
+  color: black;
+}

@@ -12,7 +12,7 @@ import {
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
-import { transferRegionOnCoretimeChain } from '@/utils/native/transfer';
+import { transferRegionOnCoretimeChain } from '@/utils/transfers/native';
 
 import { ProgressButton, SimpleRegionCard } from '@/components/Elements';
 

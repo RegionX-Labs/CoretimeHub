@@ -196,7 +196,10 @@ const ListingCardInner = ({
         >
           <Typography fontSize={'1rem'}>Price/timeslice:</Typography>
           <Typography variant='h2'>
-            {`${formatBalance(listing.timeslicePrice.toString(), true)} ${symbol}`}
+            {`${formatBalance(
+              listing.timeslicePrice.toString(),
+              true
+            )} ${symbol}`}
           </Typography>
         </Box>
         <Box
@@ -206,7 +209,10 @@ const ListingCardInner = ({
         >
           <Typography fontSize={'1rem'}>Total:</Typography>
           <Typography variant='h2'>
-            {`${formatBalance(listing.currentPrice.toString(), true)} ${symbol}`}
+            {`${formatBalance(
+              listing.currentPrice.toString(),
+              true
+            )} ${symbol}`}
           </Typography>
         </Box>
       </Box>

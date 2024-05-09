@@ -45,6 +45,13 @@ export enum NetworkType {
   KUSAMA = 'kusama',
 }
 
+export enum FinalityType {
+  // eslint-disable-next-line no-unused-vars
+  FINAL = 'Final',
+  // eslint-disable-next-line no-unused-vars
+  PROVISIONAL = 'Provisional',
+}
+
 export type Sender = {
   address: string;
   signer: Signer;
@@ -76,9 +83,11 @@ export type TaskMetadata = {
 
 export type ScheduleItem = {
   mask: string;
-  assignment: {
-    Task: string;
-  };
+  assignment:
+    | {
+        Task: string;
+      }
+    | 'Pool';
 };
 
 export type SaleInfo = {

@@ -18,7 +18,7 @@ import {
   versionWrappeddFungibleAsset,
   versionWrappeddNonfungibleAsset,
 } from './utils';
-import { sendTx } from '../functions';
+import { sendTx } from '../../functions';
 
 export async function coretimeToRegionXTransfer(
   coretimeApi: ApiPromise,

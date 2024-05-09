@@ -23,3 +23,5 @@ export const REGIONX_PARA_ID = 2000;
 export const SAFE_XCM_VERSION = 3;
 
 export const BROKER_PALLET_ID = 50;
+
+export const POOLING_TASK_ID = 0;

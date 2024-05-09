@@ -4,7 +4,7 @@ import { Region } from 'coretime-utils';
 
 import { TxStatusHandlers } from '@/models';
 
-import { sendTx } from '../functions';
+import { sendTx } from '../../functions';
 
 export const transferNativeToken = async (
   api: ApiPromise,
