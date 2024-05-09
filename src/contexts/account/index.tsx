@@ -111,10 +111,7 @@ const AccountProvider = ({ children }: Props) => {
     const accounts = state.accounts;
     if (accounts.length) {
       const activeAccount = localStorage.getItem(LOCAL_STORAGE_ACTIVE_ACCOUNT);
-      const account = activeAccount
-        ? accounts.find((acc: any) => acc.address == activeAccount) ??
-          accounts[0]
-        : accounts[0];
+      const account = activeAccount ? JSON.parse(activeAccount) : accounts[0];
 
       dispatch({ type: 'SET_ACTIVE_ACCOUNT', payload: account });
 
