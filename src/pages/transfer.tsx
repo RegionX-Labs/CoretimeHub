@@ -4,15 +4,15 @@ import { Keyring } from '@polkadot/api';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
+import theme from '@/utils/muiTheme';
 import {
   transferTokensFromCoretimeToRelay,
   transferTokensFromRelayToCoretime,
-} from '@/utils/crossChain/transfer';
-import theme from '@/utils/muiTheme';
+} from '@/utils/transfers/crossChain';
 import {
   transferNativeToken,
   transferRegionOnCoretimeChain,
-} from '@/utils/native/transfer';
+} from '@/utils/transfers/native';
 
 import {
   AmountInput,

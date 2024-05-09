@@ -11,7 +11,7 @@ import {
   getCurrentPhase,
   getSaleEndInBlocks,
   getSaleStartInBlocks,
-} from '@/utils/sale/utils';
+} from '@/utils/sale';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';

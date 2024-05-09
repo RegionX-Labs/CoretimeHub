@@ -4,7 +4,7 @@ import {
   extractRegionIdFromRaw,
   parseHNString,
   parseHNStringToString,
-} from './functions';
+} from '.';
 
 describe('Util functions', () => {
   describe('parseHNString', () => {

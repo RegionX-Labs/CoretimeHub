@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 
-import { getCurrentPrice } from '@/utils/sale/utils';
+import { getCurrentPrice } from '@/utils/sale';
 
 import { useSaleInfo } from '@/contexts/sales';
 
