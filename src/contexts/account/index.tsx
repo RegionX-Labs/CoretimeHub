@@ -86,8 +86,8 @@ const AccountDataContext = createContext<AccountData>(defaultAccountData);
 const AccountProvider = ({ children }: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const setActiveAccount = (acct: any) => {
-    localStorage.setItem(LOCAL_STORAGE_ACTIVE_ACCOUNT, JSON.stringify(acct));
+  const setActiveAccount = (acct: InjectedAccountWithMeta) => {
+    localStorage.setItem(LOCAL_STORAGE_ACTIVE_ACCOUNT, acct.address);
     dispatch({ type: 'SET_ACTIVE_ACCOUNT', payload: acct });
   };
 
@@ -107,50 +107,73 @@ const AccountProvider = ({ children }: Props) => {
     asyncLoadAccounts();
   };
 
+  const disconnectWallet = () => dispatch({ type: 'DISCONNECT' });
+
   useEffect(() => {
-    const accounts = state.accounts;
+    const { accounts } = state;
+
     if (accounts.length) {
       const activeAccount = localStorage.getItem(LOCAL_STORAGE_ACTIVE_ACCOUNT);
-      const account = activeAccount ? JSON.parse(activeAccount) : accounts[0];
+      const account: InjectedAccountWithMeta = activeAccount
+        ? accounts.find((acc: any) => acc.address == activeAccount) ??
+          accounts[0]
+        : accounts[0];
 
-      dispatch({ type: 'SET_ACTIVE_ACCOUNT', payload: account });
-
+      setActiveAccount(account);
       localStorage.setItem(LOCAL_STORAGE_ACCOUNTS, JSON.stringify(accounts));
     }
   }, [state.accounts]);
 
   useEffect(() => {
     const getInjector = async () => {
-      if (!state.activeAccount) return;
+      const { activeAccount } = state;
+      if (!activeAccount) return;
+
       const { web3FromSource } = await import('@polkadot/extension-dapp');
-      const injector = await web3FromSource(state.activeAccount.meta.source);
+
+      const injector = await web3FromSource(activeAccount.meta.source);
       dispatch({ type: 'SET_ACTIVE_SIGNER', payload: injector.signer });
     };
     getInjector();
   }, [state.activeAccount]);
 
-  const disconnectWallet = () => dispatch({ type: 'DISCONNECT' });
-
   useEffect(() => {
-    const asyncLoad = async () => {
+    const asyncLoadAccounts = async () => {
       const { web3Enable } = await import('@polkadot/extension-dapp');
       await web3Enable(APP_NAME);
 
       const item = localStorage.getItem(LOCAL_STORAGE_ACCOUNTS);
       if (!item) return;
+
       try {
         const accounts = JSON.parse(item) as InjectedAccountWithMeta[];
-        if (accounts.length > 0) {
-          // load accounts automatically
-          dispatch({ type: 'KEYRING_READY' });
-          dispatch({ type: 'SET_ACCOUNTS', payload: accounts });
-        }
+        if (!accounts || accounts.length === 0) return;
+
+        let injectCounter = 0;
+        const injectedWeb3Interval = setInterval(() => {
+          if (++injectCounter === 10) {
+            clearInterval(injectedWeb3Interval);
+          } else {
+            // if injected is present
+            const injectedWeb3 = (window as any)?.injectedWeb3 || null;
+            if (injectedWeb3 !== null) {
+              clearInterval(injectedWeb3Interval);
+
+              dispatch({ type: 'KEYRING_READY' });
+              dispatch({ type: 'SET_ACCOUNTS', payload: accounts });
+            }
+          }
+        }, 500);
+
+        return () => {
+          clearInterval(injectedWeb3Interval);
+        };
       } catch {
         // error handling
       }
     };
 
-    if ((window as any).injectedWeb3) asyncLoad();
+    asyncLoadAccounts();
   }, []);
 
   return (
