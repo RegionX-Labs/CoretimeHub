@@ -18,14 +18,14 @@ interface ReserveModalProps {
   open: boolean;
   onClose: () => void;
   paraId: number;
-  reserveCost: string;
+  reservationCost: string;
 }
 
 export const ReserveModal = ({
   open,
   onClose,
   paraId,
-  reserveCost,
+  reservationCost,
 }: ReserveModalProps) => {
   const theme = useTheme();
 
@@ -42,7 +42,7 @@ export const ReserveModal = ({
     },
     {
       label: 'Reservation cost:',
-      value: reserveCost,
+      value: reservationCost,
     },
   ];
 

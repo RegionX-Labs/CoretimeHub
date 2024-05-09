@@ -32,7 +32,7 @@ const ParachainManagement = () => {
 
   const [parachains, setParachains] = useState<ParachainInfo[]>([]);
   const [nextParaId, setNextParaId] = useState<number>(0);
-  const [paraRegCost, setParaRegCost] = useState<string>('0');
+  const [reservationCost, setReservationCost] = useState<string>('0');
 
   const [reserveModalOpen, openReserveModal] = useState(false);
   const [registerModalOpen, openRegisterModal] = useState(false);
@@ -62,15 +62,14 @@ const ParachainManagement = () => {
         setNextParaId(id);
       };
 
-      const fetchParaRegCost = () => {
-        const costRaw = relayApi.consts.registrar.paraDeposit.toString();
-        setParaRegCost(costRaw);
+      const fetchReservationCost = () => {
+        setReservationCost(relayApi.consts.registrar.paraDeposit.toString());
       };
 
       await Promise.all([
         fetchParachainList(),
         fetchNextParaId(),
-        fetchParaRegCost(),
+        fetchReservationCost(),
       ]);
 
       setLoading(false);
@@ -127,8 +126,6 @@ const ParachainManagement = () => {
         </Backdrop>
       ) : (
         <Box>
-          <div>{`Next Para ID: ${nextParaId}`}</div>
-          <div>{`Para Registration cost: ${paraRegCost}`}</div>
           {parachains.map(({ id, state }, index) => (
             <div key={index}>
               {id} - {state}
@@ -137,8 +134,8 @@ const ParachainManagement = () => {
           <ReserveModal
             open={reserveModalOpen}
             onClose={() => openReserveModal(false)}
-            paraId={0}
-            reserveCost='0'
+            paraId={nextParaId}
+            reservationCost={reservationCost}
           />
           <RegisterModal
             open={registerModalOpen}
