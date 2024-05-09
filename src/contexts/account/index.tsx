@@ -149,12 +149,25 @@ const AccountProvider = ({ children }: Props) => {
         const accounts = JSON.parse(item) as InjectedAccountWithMeta[];
         if (!accounts || accounts.length === 0) return;
 
-        // if injected is present
-        const injectedWeb3 = (window as any)?.injectedWeb3 || null;
-        if (injectedWeb3) {
-          dispatch({ type: 'KEYRING_READY' });
-          dispatch({ type: 'SET_ACCOUNTS', payload: accounts });
-        }
+        let injectCounter = 0;
+        const injectedWeb3Interval = setInterval(() => {
+          if (++injectCounter === 10) {
+            clearInterval(injectedWeb3Interval);
+          } else {
+            // if injected is present
+            const injectedWeb3 = (window as any)?.injectedWeb3 || null;
+            if (injectedWeb3 !== null) {
+              clearInterval(injectedWeb3Interval);
+
+              dispatch({ type: 'KEYRING_READY' });
+              dispatch({ type: 'SET_ACCOUNTS', payload: accounts });
+            }
+          }
+        }, 500);
+
+        return () => {
+          clearInterval(injectedWeb3Interval);
+        };
       } catch {
         // error handling
       }
