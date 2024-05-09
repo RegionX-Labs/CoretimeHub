@@ -19,6 +19,7 @@ export interface FilterProps {
   filters: Filters;
   listings: Array<Listing>;
   updateFilters: (_filters: Filters) => void;
+  decimals: number;
 }
 
 type Filters = {

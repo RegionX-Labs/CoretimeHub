@@ -36,7 +36,7 @@ const Renewal = () => {
   const { balance } = useBalances();
   const { loading, parachains } = useRenewableParachains();
   const {
-    state: { api, symbol },
+    state: { api, decimals, symbol },
   } = useCoretimeApi();
   const { toastError, toastInfo, toastSuccess } = useToast();
   const { network } = useNetwork();
@@ -99,7 +99,6 @@ const Renewal = () => {
         <Balance
           coretimeBalance={balance.coretime}
           relayBalance={balance.relay}
-          symbol={symbol}
         />
       </Box>
 
@@ -136,10 +135,12 @@ const Renewal = () => {
             variant='h6'
             color='black'
           >{`Core number: ${parachains[paraId].core}`}</Typography>
-          <Typography color='black'>{`Renewal price: ${formatBalance(
-            parachains[paraId].price.toString(),
-            false
-          )} ${symbol}`}</Typography>
+          <Typography color='black'>
+            Renewal price: &nbsp;
+            {formatBalance(parachains[paraId].price.toString(), decimals)}
+            &nbsp;
+            {symbol}
+          </Typography>
         </Stack>
         <Stack
           direction='row'

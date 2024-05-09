@@ -2,13 +2,10 @@ import { ApiPromise } from '@polkadot/api';
 import { formatBalance as polkadotFormatBalance } from '@polkadot/util';
 import Decimal from 'decimal.js';
 
-import { CORETIME_DECIMALS, REGIONX_DECIMALS } from '@/models';
-
 import { parseHNString } from './common';
 
-export const formatBalance = (balance: string, regionXChain: boolean) => {
+export const formatBalance = (balance: string, decimals: number) => {
   Decimal.config({ rounding: Decimal.ROUND_DOWN });
-  const decimals = regionXChain ? REGIONX_DECIMALS : CORETIME_DECIMALS;
 
   return polkadotFormatBalance(balance, {
     decimals,

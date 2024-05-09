@@ -5,13 +5,18 @@ import { formatBalance } from '@/utils/functions';
 
 import { FilterProps } from '.';
 
-const PriceFilter = ({ listings, filters, updateFilters }: FilterProps) => {
+const PriceFilter = ({
+  listings,
+  filters,
+  updateFilters,
+  decimals,
+}: FilterProps) => {
   const maxValue = (): number => {
     if (listings.length < 1) return 0;
     const sortedListings = new Array(...listings);
     sortedListings.sort((a, b) => b.currentPrice.cmp(a.currentPrice));
     return Number(
-      formatBalance(sortedListings[0].currentPrice.toString(), true)
+      formatBalance(sortedListings[0].currentPrice.toString(), decimals)
     );
   };
 
@@ -22,7 +27,7 @@ const PriceFilter = ({ listings, filters, updateFilters }: FilterProps) => {
     updateFilters({
       ...filters,
       priceFilter: (listing) =>
-        Number(formatBalance(listing.currentPrice.toString(), true)) <=
+        Number(formatBalance(listing.currentPrice.toString(), decimals)) <=
         (newValue as number),
     });
   };

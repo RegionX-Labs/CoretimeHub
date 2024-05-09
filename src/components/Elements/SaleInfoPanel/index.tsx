@@ -31,7 +31,7 @@ export const SaleInfoPanel = ({
 }: SaleInfoGridProps) => {
   TimeAgo.addLocale(en);
   const {
-    state: { symbol },
+    state: { symbol, decimals },
   } = useCoretimeApi();
 
   const nextPhase = (): SalePhase => {
@@ -71,11 +71,17 @@ export const SaleInfoPanel = ({
             (currentPhase as SalePhase) === SalePhase.Interlude
               ? 'Start price'
               : 'Current price',
-          value: `${formatBalance(currentPrice.toString(), false)} ${symbol}`,
+          value: `${formatBalance(
+            currentPrice.toString(),
+            decimals
+          )} ${symbol}`,
         }}
         right={{
           label: 'Floor price',
-          value: `${formatBalance(saleInfo.price.toString(), false)} ${symbol}`,
+          value: `${formatBalance(
+            saleInfo.price.toString(),
+            decimals
+          )} ${symbol}`,
         }}
       />
     </Box>
