@@ -1,8 +1,8 @@
 import { Timeslice } from 'coretime-utils';
 
-import { leadinFactorAt, rcBlockToParachainBlock } from '@/utils/functions';
-
 import { BlockNumber, SaleConfig, SaleInfo, SalePhase } from '@/models';
+
+import { leadinFactorAt, rcBlockToParachainBlock } from '../coretime';
 
 export const getCurrentPhase = (
   saleInfo: SaleInfo,

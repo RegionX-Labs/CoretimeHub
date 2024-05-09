@@ -26,7 +26,7 @@ import { useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useCommon } from '@/contexts/common';
 import { useTasks } from '@/contexts/tasks';
-import { RegionLocation, RegionMetadata } from '@/models';
+import { POOLING_TASK_ID, RegionLocation, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 import { Label } from '..';
@@ -168,6 +168,7 @@ const RegionCardInner = ({
   };
 
   const getTask = (taskId: number | null): string => {
+    if (taskId === POOLING_TASK_ID) return 'Instantaneous Pool';
     const getTaskName = (taskId: number) => {
       return tasks.find(({ id }) => id === taskId)?.name || '';
     };
