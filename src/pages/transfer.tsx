@@ -18,7 +18,7 @@ import {
   AmountInput,
   ChainSelector,
   ProgressButton,
-  RecipientSelector,
+  RecipientInput,
   RegionCard,
   RegionSelector,
 } from '@/components';
@@ -297,7 +297,7 @@ const TransferPage = () => {
           >
             Transfer to:
           </Typography>
-          <RecipientSelector recipient={newOwner} setRecipient={setNewOwner} />
+          <RecipientInput recipient={newOwner} setRecipient={setNewOwner} />
         </Stack>
         {asset === AssetType.TOKEN &&
           originChain !== ChainType.NONE &&
