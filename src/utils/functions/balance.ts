@@ -14,6 +14,14 @@ export const formatBalance = (balance: string, decimals: number) => {
   });
 };
 
+export const getBalanceString = (
+  balance: string,
+  decimals: number,
+  symbol: string
+) => {
+  return `${formatBalance(balance, decimals)} ${symbol}`;
+};
+
 export const fetchBalance = async (
   api: ApiPromise,
   address: string

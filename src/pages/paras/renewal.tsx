@@ -15,7 +15,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { useRenewableParachains } from '@/hooks/renewableParas';
-import { formatBalance, sendTx } from '@/utils/functions';
+import { getBalanceString, sendTx } from '@/utils/functions';
 
 import { ProgressButton } from '@/components';
 import Balance from '@/components/Elements/Balance';
@@ -137,9 +137,11 @@ const Renewal = () => {
           >{`Core number: ${parachains[paraId].core}`}</Typography>
           <Typography color='black'>
             Renewal price: &nbsp;
-            {formatBalance(parachains[paraId].price.toString(), decimals)}
-            &nbsp;
-            {symbol}
+            {getBalanceString(
+              parachains[paraId].price.toString(),
+              decimals,
+              symbol
+            )}
           </Typography>
         </Stack>
         <Stack

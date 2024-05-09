@@ -16,7 +16,7 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { formatBalance, timesliceToTimestamp } from '@/utils/functions';
+import { getBalanceString, timesliceToTimestamp } from '@/utils/functions';
 
 import { useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
@@ -196,9 +196,11 @@ const ListingCardInner = ({
         >
           <Typography fontSize={'1rem'}>Price/timeslice:</Typography>
           <Typography variant='h2'>
-            {formatBalance(listing.timeslicePrice.toString(), decimals)}
-            &nbsp;
-            {symbol}
+            {getBalanceString(
+              listing.timeslicePrice.toString(),
+              decimals,
+              symbol
+            )}
           </Typography>
         </Box>
         <Box
@@ -208,9 +210,11 @@ const ListingCardInner = ({
         >
           <Typography fontSize={'1rem'}>Total:</Typography>
           <Typography variant='h2'>
-            {formatBalance(listing.currentPrice.toString(), decimals)}
-            &nbsp;
-            {symbol}
+            {getBalanceString(
+              listing.currentPrice.toString(),
+              decimals,
+              symbol
+            )}
           </Typography>
         </Box>
       </Box>

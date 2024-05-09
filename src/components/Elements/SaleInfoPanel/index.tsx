@@ -3,7 +3,7 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
 import moment from 'moment';
 
-import { formatBalance } from '@/utils/functions';
+import { getBalanceString } from '@/utils/functions';
 
 import DollarIcon from '@/assets/dollar.png';
 import ListIcon from '@/assets/list.png';
@@ -71,17 +71,11 @@ export const SaleInfoPanel = ({
             (currentPhase as SalePhase) === SalePhase.Interlude
               ? 'Start price'
               : 'Current price',
-          value: `${formatBalance(
-            currentPrice.toString(),
-            decimals
-          )} ${symbol}`,
+          value: getBalanceString(currentPrice.toString(), decimals, symbol),
         }}
         right={{
           label: 'Floor price',
-          value: `${formatBalance(
-            saleInfo.price.toString(),
-            decimals
-          )} ${symbol}`,
+          value: getBalanceString(saleInfo.price.toString(), decimals, symbol),
         }}
       />
     </Box>

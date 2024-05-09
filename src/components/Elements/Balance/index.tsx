@@ -1,6 +1,6 @@
 import { Box, Typography, useTheme } from '@mui/material';
 
-import { formatBalance } from '@/utils/functions';
+import { getBalanceString } from '@/utils/functions';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
@@ -53,7 +53,7 @@ const Balance = ({ relayBalance, coretimeBalance }: BalanceProps) => {
             }}
             className={styles.balanceWrapper}
           >
-            {`${formatBalance(value.toString(), decimals)} ${symbol}`}
+            {getBalanceString(value.toString(), decimals, symbol)}
           </Box>
         </Box>
       ))}
