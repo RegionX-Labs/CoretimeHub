@@ -11,8 +11,7 @@ import {
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
-import { AmountInput, RegionCard } from '@/components/Elements';
-import { RecipientSelector } from '@/components/Elements/Selectors/RecipientSelector';
+import { AmountInput, RecipientInput, RegionCard } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
@@ -123,7 +122,7 @@ export const SellModal = ({
             />
           </Stack>
           <Stack direction='column' gap={2}>
-            <RecipientSelector
+            <RecipientInput
               setRecipient={setSaleRecipient}
               recipient={saleRecipient}
             />
