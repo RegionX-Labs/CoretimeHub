@@ -16,11 +16,11 @@ import {
   InterlaceModal,
   PartitionModal,
   RegionCard,
+  SellModal,
   TaskAssignModal,
   TransferModal,
+  UnlistModal,
 } from '@/components';
-import { SellModal } from '@/components/Modals/Sell';
-import { UnlistModal } from '@/components/Modals/Unlist';
 
 import { useAccounts } from '@/contexts/account';
 import { useRegions } from '@/contexts/regions';
