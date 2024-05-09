@@ -10,7 +10,14 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
+import { getBalanceString } from '@/utils/functions';
+
 import { ProgressButton } from '@/components/Elements';
+
+import { useAccounts } from '@/contexts/account';
+import { useRelayApi } from '@/contexts/apis';
+import { ApiState } from '@/contexts/apis/types';
+import { useToast } from '@/contexts/toast';
 
 import styles from './index.module.scss';
 
@@ -28,11 +35,51 @@ export const ReserveModal = ({
   reservationCost,
 }: ReserveModalProps) => {
   const theme = useTheme();
+  const {
+    state: { activeAccount, activeSigner },
+  } = useAccounts();
+  const {
+    state: { api, apiState, decimals, symbol },
+  } = useRelayApi();
+  const { toastError, toastInfo, toastSuccess } = useToast();
 
-  const [loading, setLoading] = useState(false);
+  const [working, setWorking] = useState(false);
 
   const onReserve = async () => {
-    setLoading(true);
+    if (!api || apiState !== ApiState.READY) {
+      toastError('Please check the connection to the relay chain');
+      return;
+    }
+    if (!activeAccount || !activeSigner) {
+      toastError('Please connect your wallet');
+      return;
+    }
+    const tx = api.tx.registrar.reserve();
+    try {
+      setWorking(true);
+      await tx.signAndSend(
+        activeAccount.address,
+        { signer: activeSigner },
+        ({ status, events }) => {
+          if (status.isReady) toastInfo('Transaction was initiated');
+          else if (status.isInBlock) toastInfo(`In Block`);
+          else if (status.isFinalized) {
+            setWorking(false);
+            events.forEach(({ event: { method } }) => {
+              if (method === 'ExtrinsicSuccess') {
+                toastSuccess('Reservation success');
+                onClose();
+              } else if (method === 'ExtrinsicFailed') {
+                toastError(`Failed to reserve a parathread`);
+              }
+            });
+          }
+        }
+      );
+    } catch (e) {
+      toastError(`Failed to reserve.Error: ${e}`);
+      setWorking(false);
+    }
   };
 
   const items = [
@@ -42,7 +89,7 @@ export const ReserveModal = ({
     },
     {
       label: 'Reservation cost:',
-      value: reservationCost,
+      value: getBalanceString(reservationCost, decimals, symbol),
     },
   ];
 
@@ -82,7 +129,7 @@ export const ReserveModal = ({
           Cancel
         </Button>
 
-        <ProgressButton onClick={onReserve} label='Reserve' loading={loading} />
+        <ProgressButton onClick={onReserve} label='Reserve' loading={working} />
       </DialogActions>
     </Dialog>
   );
