@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
 
-import { ScheduleItem, TaskMetadata } from '@/models';
+import { POOLING_TASK_ID, ScheduleItem, TaskMetadata } from '@/models';
 
 import { useCoretimeApi } from '../apis';
 import { ApiState } from '../apis/types';
@@ -69,19 +69,20 @@ const TaskDataProvider = ({ children }: Props) => {
       const records = value.toHuman(undefined, true) as ScheduleItem[];
 
       records.forEach((record) => {
-        const {
-          assignment: { Task: taskId },
-          mask,
-        } = record;
-
+        const { assignment, mask } = record;
         const regionId = {
           begin: parseHNString(begin.toString()),
           core: parseHNString(core.toString()),
           mask,
         };
-        tasks[getEncodedRegionId(regionId, coretimeApi).toString()] = taskId
-          ? parseHNString(taskId)
-          : null;
+
+        if (assignment === 'Pool') {
+          tasks[getEncodedRegionId(regionId, coretimeApi).toString()] =
+            POOLING_TASK_ID;
+        } else {
+          tasks[getEncodedRegionId(regionId, coretimeApi).toString()] =
+            assignment.Task ? parseHNString(assignment.Task) : null;
+        }
       });
     }
 
@@ -104,7 +105,10 @@ const TaskDataProvider = ({ children }: Props) => {
         await coretimeApi.query.broker.workload(core)
       ).toHuman() as ScheduleItem[]
     )[0];
-    if (workload.assignment && workload.assignment.Task) {
+
+    if (workload.assignment === 'Pool') {
+      return POOLING_TASK_ID;
+    } else {
       const {
         assignment: { Task: taskId },
         mask,
@@ -113,7 +117,6 @@ const TaskDataProvider = ({ children }: Props) => {
       // Make the workload is for the specific region.
       return mask == regionMask ? parseHNString(taskId) : null;
     }
-    return 0;
   };
 
   const loadTasksFromLocalStorage = () => {

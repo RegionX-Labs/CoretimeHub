@@ -83,9 +83,11 @@ export type TaskMetadata = {
 
 export type ScheduleItem = {
   mask: string;
-  assignment: {
-    Task: string;
-  };
+  assignment:
+    | {
+        Task: string;
+      }
+    | 'Pool';
 };
 
 export type SaleInfo = {
