@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   Dialog,
@@ -134,6 +135,10 @@ export const PoolingModal = ({
             <Typography className={styles.optionKey}>Finality:</Typography>
             <FinalitySelector {...{ finality, setFinality }} />
           </Box>
+          <Alert className={styles.alert} severity='info'>
+            Finally pooled regions can no longer be managed. <br />
+            They will not be displayed on the Region Management page anymore.
+          </Alert>
           <Box className={styles.optionItem}>
             <Typography className={styles.optionKey}>Payee:</Typography>
             <Input
