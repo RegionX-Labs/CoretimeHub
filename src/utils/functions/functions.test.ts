@@ -1,10 +1,7 @@
 import { completeMask, RegionId } from 'coretime-utils';
 
-import {
-  extractRegionIdFromRaw,
-  parseHNString,
-  parseHNStringToString,
-} from './functions';
+import { parseHNString, parseHNStringToString } from '.';
+import { extractRegionIdFromRaw } from '../coretime';
 
 describe('Util functions', () => {
   describe('parseHNString', () => {

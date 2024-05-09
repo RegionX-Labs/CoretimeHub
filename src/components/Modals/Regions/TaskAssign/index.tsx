@@ -14,14 +14,18 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import { ProgressButton, SimpleRegionCard } from '@/components/Elements';
+import {
+  FinalitySelector,
+  ProgressButton,
+  SimpleRegionCard,
+} from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useTasks } from '@/contexts/tasks';
 import { useToast } from '@/contexts/toast';
-import { RegionMetadata } from '@/models';
+import { FinalityType, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 import { AddTaskModal } from '../AddTask';
@@ -50,11 +54,13 @@ export const TaskAssignModal = ({
   const { tasks } = useTasks();
   const { toastError, toastInfo, toastSuccess } = useToast();
 
-  const [working, setWorking] = useState<'Final' | 'Provisional' | null>(null);
+  const [working, setWorking] = useState(false);
   const [taskSelected, selectTask] = useState<number>();
   const [taskModalOpen, openTaskModal] = useState(false);
 
-  const onAssign = async (final: boolean) => {
+  const [finality, setFinality] = useState<FinalityType>(FinalityType.FINAL);
+
+  const onAssign = async () => {
     if (!coretimeApi || !activeAccount || !activeSigner) return;
 
     if (taskSelected === undefined) {
@@ -65,11 +71,11 @@ export const TaskAssignModal = ({
     const txAssign = coretimeApi.tx.broker.assign(
       regionMetadata.region.getOnChainRegionId(),
       taskSelected,
-      final ? 'Final' : 'Provisional'
+      finality
     );
 
     try {
-      setWorking(final ? 'Final' : 'Provisional');
+      setWorking(true);
       await txAssign.signAndSend(
         activeAccount.address,
         { signer: activeSigner },
@@ -77,7 +83,7 @@ export const TaskAssignModal = ({
           if (status.isReady) toastInfo('Transaction was initiated');
           else if (status.isInBlock) toastInfo(`In Block`);
           else if (status.isFinalized) {
-            setWorking(null);
+            setWorking(false);
             events.forEach(({ event: { method } }) => {
               if (method === 'ExtrinsicSuccess') {
                 toastSuccess('Successfully assigned a task');
@@ -92,13 +98,14 @@ export const TaskAssignModal = ({
       );
     } catch (e) {
       toastError(`Failed to assign a task. ${e}`);
-      setWorking(null);
+      setWorking(false);
     }
   };
 
   useEffect(() => {
     selectTask(tasks[0]?.id);
-    setWorking(null);
+    setWorking(false);
+    setFinality(FinalityType.FINAL);
     openTaskModal(false);
   }, [open, tasks]);
 
@@ -164,30 +171,30 @@ export const TaskAssignModal = ({
                 </Select>
               </Stack>
             </Paper>
+            <Paper className={styles.finalityWrapper}>
+              <Stack direction='row' gap='1rem' alignItems='center'>
+                <Typography
+                  sx={{ fontWeight: 700, color: theme.palette.common.black }}
+                >
+                  Finality:
+                </Typography>
+                <FinalitySelector {...{ finality, setFinality }} />
+              </Stack>
+              <Alert className={styles.alert} severity='info'>
+                Finally assigned regions can no longer be managed. <br />
+                They will not be displayed on the Region Management page
+                anymore.
+              </Alert>
+            </Paper>
           </Box>
         </DialogContent>
-        <Alert
-          sx={{ margin: '2rem', maxWidth: '500px', textAlign: 'center' }}
-          severity='info'
-        >
-          Finally assigned regions can no longer be managed. They will not be
-          displayed on the Region Management page anymore.
-        </Alert>
+
         <DialogActions>
           <Button onClick={onClose} variant='outlined'>
             Cancel
           </Button>
 
-          <ProgressButton
-            onClick={() => onAssign(false)}
-            label='Provisional Assignment'
-            loading={working === 'Provisional'}
-          />
-          <ProgressButton
-            onClick={() => onAssign(true)}
-            label='Final Assignment'
-            loading={working === 'Final'}
-          />
+          <ProgressButton onClick={onAssign} label='Assign' loading={working} />
         </DialogActions>
       </Dialog>
       {taskModalOpen && (

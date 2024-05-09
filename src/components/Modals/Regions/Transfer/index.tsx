@@ -12,7 +12,8 @@ import {
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
-import { transferRegionOnCoretimeChain } from '@/utils/native/transfer';
+import { isValidAddress } from '@/utils/functions';
+import { transferRegionOnCoretimeChain } from '@/utils/transfers/native';
 
 import { ProgressButton, SimpleRegionCard } from '@/components/Elements';
 
@@ -120,6 +121,8 @@ export const TransferModal = ({
               value={newOwner}
               onChange={(e) => setNewOwner(e.target.value)}
               fullWidth
+              placeholder='Address of the new owner'
+              error={newOwner.length > 0 && !isValidAddress(newOwner)}
             />
           </Paper>
         </Box>

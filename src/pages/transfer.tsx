@@ -4,21 +4,21 @@ import { Keyring } from '@polkadot/api';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
+import theme from '@/utils/muiTheme';
 import {
   transferTokensFromCoretimeToRelay,
   transferTokensFromRelayToCoretime,
-} from '@/utils/crossChain/transfer';
-import theme from '@/utils/muiTheme';
+} from '@/utils/transfers/crossChain';
 import {
   transferNativeToken,
   transferRegionOnCoretimeChain,
-} from '@/utils/native/transfer';
+} from '@/utils/transfers/native';
 
 import {
   AmountInput,
   ChainSelector,
   ProgressButton,
-  RecipientSelector,
+  RecipientInput,
   RegionCard,
   RegionSelector,
 } from '@/components';
@@ -297,7 +297,7 @@ const TransferPage = () => {
           >
             Transfer to:
           </Typography>
-          <RecipientSelector recipient={newOwner} setRecipient={setNewOwner} />
+          <RecipientInput recipient={newOwner} setRecipient={setNewOwner} />
         </Stack>
         {asset === AssetType.TOKEN &&
           originChain !== ChainType.NONE &&

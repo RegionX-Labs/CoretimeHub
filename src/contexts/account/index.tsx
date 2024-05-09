@@ -2,6 +2,10 @@ import type { Signer } from '@polkadot/api/types';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
 
+const APP_NAME = 'Corehub';
+const LOCAL_STORAGE_ACCOUNTS = 'accounts';
+const LOCAL_STORAGE_ACTIVE_ACCOUNT = 'active-account';
+
 export enum KeyringState {
   // eslint-disable-next-line no-unused-vars
   DISCONNECTED = 'disconnected',
@@ -82,7 +86,8 @@ const AccountDataContext = createContext<AccountData>(defaultAccountData);
 const AccountProvider = ({ children }: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const setActiveAccount = (acct: any) => {
+  const setActiveAccount = (acct: InjectedAccountWithMeta) => {
+    localStorage.setItem(LOCAL_STORAGE_ACTIVE_ACCOUNT, acct.address);
     dispatch({ type: 'SET_ACTIVE_ACCOUNT', payload: acct });
   };
 
@@ -91,13 +96,10 @@ const AccountProvider = ({ children }: Props) => {
     const asyncLoadAccounts = async () => {
       try {
         const extensionDapp = await import('@polkadot/extension-dapp');
-        const { web3Accounts, web3Enable } = extensionDapp;
-        await web3Enable('Corehub');
+        const { web3Accounts } = extensionDapp;
         const accounts: InjectedAccountWithMeta[] = await web3Accounts();
         dispatch({ type: 'KEYRING_READY' });
         dispatch({ type: 'SET_ACCOUNTS', payload: accounts });
-        if (accounts.length)
-          dispatch({ type: 'SET_ACTIVE_ACCOUNT', payload: accounts[0] });
       } catch (e) {
         dispatch({ type: 'KEYRING_ERROR' });
       }
@@ -105,17 +107,74 @@ const AccountProvider = ({ children }: Props) => {
     asyncLoadAccounts();
   };
 
+  const disconnectWallet = () => dispatch({ type: 'DISCONNECT' });
+
+  useEffect(() => {
+    const { accounts } = state;
+
+    if (accounts.length) {
+      const activeAccount = localStorage.getItem(LOCAL_STORAGE_ACTIVE_ACCOUNT);
+      const account: InjectedAccountWithMeta = activeAccount
+        ? accounts.find((acc: any) => acc.address == activeAccount) ??
+          accounts[0]
+        : accounts[0];
+
+      setActiveAccount(account);
+      localStorage.setItem(LOCAL_STORAGE_ACCOUNTS, JSON.stringify(accounts));
+    }
+  }, [state.accounts]);
+
   useEffect(() => {
     const getInjector = async () => {
-      if (!state.activeAccount) return;
+      const { activeAccount } = state;
+      if (!activeAccount) return;
+
       const { web3FromSource } = await import('@polkadot/extension-dapp');
-      const injector = await web3FromSource(state.activeAccount.meta.source);
+
+      const injector = await web3FromSource(activeAccount.meta.source);
       dispatch({ type: 'SET_ACTIVE_SIGNER', payload: injector.signer });
     };
     getInjector();
   }, [state.activeAccount]);
 
-  const disconnectWallet = () => dispatch({ type: 'DISCONNECT' });
+  useEffect(() => {
+    const asyncLoadAccounts = async () => {
+      const { web3Enable } = await import('@polkadot/extension-dapp');
+      await web3Enable(APP_NAME);
+
+      const item = localStorage.getItem(LOCAL_STORAGE_ACCOUNTS);
+      if (!item) return;
+
+      try {
+        const accounts = JSON.parse(item) as InjectedAccountWithMeta[];
+        if (!accounts || accounts.length === 0) return;
+
+        let injectCounter = 0;
+        const injectedWeb3Interval = setInterval(() => {
+          if (++injectCounter === 10) {
+            clearInterval(injectedWeb3Interval);
+          } else {
+            // if injected is present
+            const injectedWeb3 = (window as any)?.injectedWeb3 || null;
+            if (injectedWeb3 !== null) {
+              clearInterval(injectedWeb3Interval);
+
+              dispatch({ type: 'KEYRING_READY' });
+              dispatch({ type: 'SET_ACCOUNTS', payload: accounts });
+            }
+          }
+        }, 500);
+
+        return () => {
+          clearInterval(injectedWeb3Interval);
+        };
+      } catch {
+        // error handling
+      }
+    };
+
+    asyncLoadAccounts();
+  }, []);
 
   return (
     <AccountDataContext.Provider

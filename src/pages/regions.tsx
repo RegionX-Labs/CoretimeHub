@@ -1,3 +1,4 @@
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import BackspaceIcon from '@mui/icons-material/Backspace';
 import SellIcon from '@mui/icons-material/Sell';
 import {
@@ -15,6 +16,7 @@ import { useState } from 'react';
 import {
   InterlaceModal,
   PartitionModal,
+  PoolingModal,
   RegionCard,
   SellModal,
   TaskAssignModal,
@@ -44,6 +46,7 @@ const Dashboard = () => {
   const [partitionModalOpen, openPartitionModal] = useState(false);
   const [interlaceModalOpen, openInterlaceModal] = useState(false);
   const [assignModalOpen, openAssignModal] = useState(false);
+  const [poolingModalOpen, openPoolingModal] = useState(false);
   const [sellModalOpen, openSellModal] = useState(false);
   const [unlistModalOpen, openUnlistModal] = useState(false);
   const [transferModalOpen, openTransferModal] = useState(false);
@@ -85,6 +88,11 @@ const Dashboard = () => {
       onClick: () => manage(openAssignModal),
     },
     {
+      label: 'Pool',
+      icon: AddCircleIcon,
+      onClick: () => manage(openPoolingModal),
+    },
+    {
       label: 'sell',
       icon: SellIcon,
       onClick: () => manage(openSellModal),
@@ -100,7 +108,7 @@ const Dashboard = () => {
     if (!selectedRegion) return false;
     if (selectedRegion.location === RegionLocation.CORETIME_CHAIN) {
       // regions on the coretime chain cannot be listed on sale. They first have to be
-      // transferred to the contacts chain.
+      // transferred to the RegionX chain.
       return action === 'sell' || action === 'unlist';
     } else if (selectedRegion.location === RegionLocation.REGIONX_CHAIN) {
       // XcRegions can only be transferred and listed on sale.
@@ -185,8 +193,7 @@ const Dashboard = () => {
           sx={{
             borderRadius: '.5rem',
             color: theme.palette.text.secondary,
-            minWidth: 280,
-            height: 500,
+            minWidth: '18rem',
             padding: '2rem 3rem',
           }}
         >
@@ -254,6 +261,11 @@ const Dashboard = () => {
             <UnlistModal
               open={unlistModalOpen}
               onClose={() => openUnlistModal(false)}
+              regionMetadata={selectedRegion}
+            />
+            <PoolingModal
+              open={poolingModalOpen}
+              onClose={() => openPoolingModal(false)}
               regionMetadata={selectedRegion}
             />
           </>
