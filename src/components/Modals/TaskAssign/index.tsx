@@ -165,14 +165,12 @@ export const TaskAssignModal = ({
               </Stack>
             </Paper>
           </Box>
+          <Alert className={styles.alert} severity='info'>
+            Finally assigned regions can no longer be managed. <br />
+            They will not be displayed on the Region Management page anymore.
+          </Alert>
         </DialogContent>
-        <Alert
-          sx={{ margin: '2rem', maxWidth: '500px', textAlign: 'center' }}
-          severity='info'
-        >
-          Finally assigned regions can no longer be managed. They will not be
-          displayed on the Region Management page anymore.
-        </Alert>
+
         <DialogActions>
           <Button onClick={onClose} variant='outlined'>
             Cancel

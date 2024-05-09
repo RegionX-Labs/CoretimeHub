@@ -92,7 +92,7 @@ const Purchase = () => {
         fetchRegions();
       },
       error: () => {
-        toastError(`Failed to purchase the region`);
+        toastError(`Failed to purchase a region`);
       },
     });
   };

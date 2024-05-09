@@ -1,7 +1,8 @@
 import { ApiPromise } from '@polkadot/api';
 import { AddressOrPair, SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult, Signer } from '@polkadot/types/types';
-import { formatBalance as polkadotFormatBalance } from '@polkadot/util';
+import { formatBalance as polkadotFormatBalance, isHex } from '@polkadot/util';
+import { validateAddress } from '@polkadot/util-crypto';
 import { RegionId } from 'coretime-utils';
 import Decimal from 'decimal.js';
 
@@ -18,6 +19,16 @@ export const parseHNString = (str: string): number => {
 
 export const parseHNStringToString = (str: string): string => {
   return str.replace(/,/g, '');
+};
+
+export const isValidAddress = (chainAddress: string, ss58Prefix = 42) => {
+  if (isHex(chainAddress)) return false;
+  try {
+    validateAddress(chainAddress, true, ss58Prefix);
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 export const getBlockTimestamp = async (
