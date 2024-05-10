@@ -79,7 +79,7 @@ const ParachainManagement = () => {
   }, [relayApiState, relayApi]);
 
   return (
-    <Box>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Box>
           <Typography
@@ -125,7 +125,8 @@ const ParachainManagement = () => {
           <CircularProgress />
         </Backdrop>
       ) : (
-        <Box>
+        <Box sx={{ mt: '1rem', overflowY: 'auto' }}>
+          <div>{parachains.length}</div>
           {parachains.map(({ id, state }, index) => (
             <div key={index}>
               {id} - {state}
