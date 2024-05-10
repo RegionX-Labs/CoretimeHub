@@ -220,7 +220,6 @@ const TransferPage = () => {
           </Typography>
         </Box>
         <Balance
-          symbol={symbol}
           coretimeBalance={balance.coretime}
           relayBalance={balance.relay}
         />
@@ -233,7 +232,7 @@ const TransferPage = () => {
           '::-webkit-scrollbar': { display: 'none' },
         }}
       >
-        <Stack margin='1em 0' direction='column' gap={1}>
+        <Stack margin='0.5rem 0' direction='column' gap={1}>
           <Typography
             sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
           >
@@ -241,7 +240,7 @@ const TransferPage = () => {
           </Typography>
           <ChainSelector chain={originChain} setChain={handleOriginChange} />
         </Stack>
-        <Stack margin='1em 0' direction='column' gap={1}>
+        <Stack margin='0.5rem 0' direction='column' gap={1}>
           <Typography
             sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
           >
@@ -287,7 +286,12 @@ const TransferPage = () => {
             <RegionCard regionMetadata={selectedRegion} />
           </Box>
         )}
-        <Stack margin='2em 0' direction='column' gap={1} alignItems='center'>
+        <Stack
+          margin='0.5rem 0'
+          direction='column'
+          gap={0.5}
+          alignItems='center'
+        >
           <Typography>Transfer</Typography>
           <ArrowDownward />
         </Stack>
