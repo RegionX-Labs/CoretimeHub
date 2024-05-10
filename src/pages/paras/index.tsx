@@ -3,22 +3,36 @@ import {
   Box,
   CircularProgress,
   FormControlLabel,
+  Paper,
   Switch,
+  Table,
+  TableBody,
+  TableCell,
+  tableCellClasses,
+  TableContainer,
+  TableFooter,
+  TableHead,
+  TablePagination,
+  TableRow,
   Typography,
   useTheme,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { styled } from '@mui/material/styles';
+import React, { useEffect, useState } from 'react';
 
 import { ActionButton, RegisterModal, ReserveModal } from '@/components';
 
+import chainData from '@/chaindata';
 import { useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
+import { useNetwork } from '@/contexts/network';
 
 type ParaState = 'Parathread' | 'Parachain';
 
 type ParachainInfo = {
   id: number;
   state: ParaState;
+  name: string;
 };
 
 const ParachainManagement = () => {
@@ -26,6 +40,7 @@ const ParachainManagement = () => {
   const {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
+  const { network } = useNetwork();
 
   const [watchAll, watchAllParas] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -36,6 +51,45 @@ const ParachainManagement = () => {
 
   const [reserveModalOpen, openReserveModal] = useState(false);
   const [registerModalOpen, openRegisterModal] = useState(false);
+
+  // table pagination
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+      fontSize: '1rem',
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   useEffect(() => {
     const asyncLoad = async () => {
@@ -49,7 +103,8 @@ const ParachainManagement = () => {
           const [strId] = key.toHuman() as [string];
           const id = parseInt(strId.replace(/,/g, ''));
           const state = value.toString();
-          paras.push({ id, state } as ParachainInfo);
+          const name = chainData[network][id] ?? '';
+          paras.push({ id, state, name } as ParachainInfo);
         }
         paras.sort((a, b) => a.id - b.id);
 
@@ -76,7 +131,7 @@ const ParachainManagement = () => {
     };
 
     asyncLoad();
-  }, [relayApiState, relayApi]);
+  }, [relayApiState, relayApi, network]);
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -125,13 +180,54 @@ const ParachainManagement = () => {
           <CircularProgress />
         </Backdrop>
       ) : (
-        <Box sx={{ mt: '1rem', overflowY: 'auto' }}>
-          <div>{parachains.length}</div>
-          {parachains.map(({ id, state }, index) => (
-            <div key={index}>
-              {id} - {state}
-            </div>
-          ))}
+        <Box sx={{ mt: '2rem', overflowY: 'auto' }}>
+          <TableContainer component={Paper} sx={{ maxHeight: '100%' }}>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>Para ID</StyledTableCell>
+                  <StyledTableCell>Para Name</StyledTableCell>
+                  <StyledTableCell>State</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {(rowsPerPage > 0
+                  ? parachains.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : parachains
+                ).map(({ id, name, state }, index) => (
+                  <StyledTableRow key={index}>
+                    <StyledTableCell>{id}</StyledTableCell>
+                    <StyledTableCell>{name}</StyledTableCell>
+                    <StyledTableCell>{state}</StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TablePagination
+                    rowsPerPageOptions={[10, 25, { label: 'All', value: -1 }]}
+                    colSpan={3}
+                    count={parachains.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    slotProps={{
+                      select: {
+                        inputProps: {
+                          'aria-label': 'rows per page',
+                        },
+                        native: true,
+                      },
+                    }}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                  />
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </TableContainer>
           <ReserveModal
             open={reserveModalOpen}
             onClose={() => openReserveModal(false)}
