@@ -15,8 +15,10 @@ import React, {
 import { RegionLocation, RegionMetadata } from '@/models';
 
 import * as NativeRegions from './native';
+import * as RegionXRegions from './regionx';
 import { useAccounts } from '../account';
 import { useCoretimeApi } from '../apis';
+import { useRegionXApi } from '../apis/RegionXApi';
 import { useCommon } from '../common';
 import { useTasks } from '../tasks';
 
@@ -52,6 +54,9 @@ const RegionDataProvider = ({ children }: Props) => {
     state: { api: coretimeApi },
   } = useCoretimeApi();
   const {
+    state: { api: regionxApi },
+  } = useRegionXApi();
+  const {
     state: { activeAccount },
   } = useAccounts();
 
@@ -80,10 +85,11 @@ const RegionDataProvider = ({ children }: Props) => {
     const tasks = await fetchWorkplan();
 
     const brokerRegions = await NativeRegions.fetchRegions(coretimeApi);
+    const regionxRegions = await RegionXRegions.fetchRegions(regionxApi); // TODO
 
     const _regions: Array<RegionMetadata> = [];
 
-    for await (const region of [...brokerRegions]) {
+    for await (const region of [...brokerRegions, ...regionxRegions]) {
       // Only user owned non-expired regions.
       if (
         region.getOwner() !== activeAccount.address ||
@@ -95,7 +101,14 @@ const RegionDataProvider = ({ children }: Props) => {
         region.getRegionId(),
         coretimeApi
       ).toString();
-      const location = RegionLocation.CORETIME_CHAIN;
+      const location = brokerRegions.find(
+        (r) =>
+          JSON.stringify(r.getRegionId()) ===
+            JSON.stringify(region.getRegionId()) &&
+          r.getOwner() === region.getOwner()
+      )
+        ? RegionLocation.CORETIME_CHAIN
+        : RegionLocation.REGIONX_CHAIN;
 
       const name =
         localStorage.getItem(`region-${rawId}`) ??
