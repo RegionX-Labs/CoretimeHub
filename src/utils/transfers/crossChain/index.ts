@@ -14,6 +14,8 @@ import {
   RelayChainFromParachainPerspective,
 } from './consts';
 import {
+  fungibleAsset,
+  nonFungibleAsset,
   versionWrap,
   versionWrappeddFungibleAsset,
   versionWrappeddNonfungibleAsset,
@@ -46,10 +48,13 @@ export async function coretimeToRegionXTransfer(
     coretimeApi.tx.polkadotXcm.limitedReserveTransferAssets(
       versionWrap(RegionXChain),
       versionWrap(beneficiary),
-      versionWrappeddNonfungibleAsset(
-        CoretimeRegionFromCoretimePerspective,
-        rawRegionId.toString()
-      ),
+      versionWrap([
+        fungibleAsset(RcTokenFromParachainPerspective, '2500000000'), // Fee payment asset
+        nonFungibleAsset(
+          CoretimeRegionFromCoretimePerspective,
+          rawRegionId.toString()
+        ),
+      ]),
       feeAssetItem,
       weightLimit
     );

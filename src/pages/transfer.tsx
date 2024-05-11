@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 import theme from '@/utils/muiTheme';
 import {
+  coretimeToRegionXTransfer,
   transferTokensFromCoretimeToRelay,
   transferTokensFromRelayToCoretime,
 } from '@/utils/transfers/crossChain';
@@ -38,6 +39,7 @@ import {
   RegionLocation,
   RegionMetadata,
 } from '@/models';
+import { EXPERIMENTAL } from '@/contexts/apis/consts';
 
 const TransferPage = () => {
   const {
@@ -165,8 +167,14 @@ const TransferPage = () => {
   };
 
   const handleRegionTransfer = async () => {
+    if (!activeAccount || !activeSigner) return;
     if (!selectedRegion) {
       toastError('Select a region');
+      return;
+    }
+
+    if (!coretimeApi || coretimeApiState !== ApiState.READY) {
+      toastError('Not connected to the Coretime chain');
       return;
     }
 
@@ -174,6 +182,24 @@ const TransferPage = () => {
       originChain === ChainType.CORETIME
         ? await transferCoretimeRegion(selectedRegion.region)
         : toastWarning('Currently not supported');
+    } else if (
+      originChain === ChainType.CORETIME &&
+      destinationChain === ChainType.REGIONX
+    ) {
+      if (!EXPERIMENTAL) toastWarning('Currently not supported');
+      else {
+        const receiverKeypair = new Keyring();
+        receiverKeypair.addFromAddress(
+          newOwner ? newOwner : activeAccount.address
+        );
+        coretimeToRegionXTransfer(
+          coretimeApi,
+          { address: activeAccount.address, signer: activeSigner },
+          selectedRegion.rawId,
+          receiverKeypair.pairs[0].publicKey,
+          defaultHandler
+        );
+      }
     } else {
       toastWarning('Currently not supported');
     }
