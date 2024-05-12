@@ -18,6 +18,7 @@ import * as NativeRegions from './native';
 import * as RegionXRegions from './regionx';
 import { useAccounts } from '../account';
 import { useCoretimeApi } from '../apis';
+import { EXPERIMENTAL } from '../apis/consts';
 import { useRegionXApi } from '../apis/RegionXApi';
 import { useCommon } from '../common';
 import { useTasks } from '../tasks';
@@ -85,7 +86,9 @@ const RegionDataProvider = ({ children }: Props) => {
     const tasks = await fetchWorkplan();
 
     const brokerRegions = await NativeRegions.fetchRegions(coretimeApi);
-    const regionxRegions = await RegionXRegions.fetchRegions(regionxApi); // TODO
+    const regionxRegions = EXPERIMENTAL
+      ? await RegionXRegions.fetchRegions(regionxApi)
+      : [];
 
     const _regions: Array<RegionMetadata> = [];
 
@@ -97,10 +100,6 @@ const RegionDataProvider = ({ children }: Props) => {
       )
         continue;
 
-      const rawId = getEncodedRegionId(
-        region.getRegionId(),
-        coretimeApi
-      ).toString();
       const location = brokerRegions.find(
         (r) =>
           JSON.stringify(r.getRegionId()) ===
@@ -109,6 +108,11 @@ const RegionDataProvider = ({ children }: Props) => {
       )
         ? RegionLocation.CORETIME_CHAIN
         : RegionLocation.REGIONX_CHAIN;
+
+      const rawId = getEncodedRegionId(
+        region.getRegionId(),
+        location === RegionLocation.CORETIME_CHAIN ? coretimeApi : regionxApi
+      ).toString();
 
       const name =
         localStorage.getItem(`region-${rawId}`) ??
