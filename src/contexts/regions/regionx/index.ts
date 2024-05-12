@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
-import { Region, RegionId } from 'coretime-utils';
+import { Region } from 'coretime-utils';
 
 import { parseHNString } from '@/utils/functions';
 
@@ -36,28 +36,5 @@ export const fetchRegions = async (
     return regions;
   } catch (_) {
     return [];
-  }
-};
-
-export const fetchRegion = async (
-  regionxApi: ApiPromise | null,
-  regionId: RegionId
-): Promise<Region | null> => {
-  if (!regionxApi) return null;
-
-  const record: any = (
-    await regionxApi.query.regions.regions(regionId)
-  ).toHuman();
-
-  if (record) {
-    const { end, owner, paid } = record;
-
-    return new Region(regionId, {
-      end: parseHNString(end),
-      owner,
-      paid: paid ? parseHNString(paid) : null,
-    });
-  } else {
-    return null;
   }
 };

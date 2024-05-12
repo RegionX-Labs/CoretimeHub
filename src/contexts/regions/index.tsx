@@ -1,9 +1,4 @@
-import {
-  CoreIndex,
-  getEncodedRegionId,
-  Region,
-  RegionId,
-} from 'coretime-utils';
+import { CoreIndex, getEncodedRegionId } from 'coretime-utils';
 import React, {
   createContext,
   useCallback,
@@ -28,7 +23,6 @@ interface RegionsData {
   loading: boolean;
   updateRegionName: (_index: number, _name: string) => void;
   fetchRegions: () => Promise<void>;
-  fetchRegion: (_regionId: RegionId) => Promise<Region | null>;
 }
 const defaultRegionData: RegionsData = {
   regions: [],
@@ -38,9 +32,6 @@ const defaultRegionData: RegionsData = {
   },
   fetchRegions: async () => {
     /** */
-  },
-  fetchRegion: async () => {
-    return null;
   },
 };
 
@@ -170,8 +161,6 @@ const RegionDataProvider = ({ children }: Props) => {
         loading,
         updateRegionName,
         fetchRegions,
-        fetchRegion: (_r: RegionId) =>
-          NativeRegions.fetchRegion(coretimeApi, _r),
       }}
     >
       {children}
