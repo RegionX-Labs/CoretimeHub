@@ -13,11 +13,7 @@ import {
   RegionXChain,
   RelayChainFromParachainPerspective,
 } from './consts';
-import {
-  versionWrap,
-  versionWrappeddFungibleAsset,
-  versionWrappeddNonfungibleAsset,
-} from './utils';
+import { fungibleAsset, nonFungibleAsset, versionWrap } from './utils';
 import { sendTx } from '../../functions';
 
 export async function coretimeToRegionXTransfer(
@@ -46,10 +42,13 @@ export async function coretimeToRegionXTransfer(
     coretimeApi.tx.polkadotXcm.limitedReserveTransferAssets(
       versionWrap(RegionXChain),
       versionWrap(beneficiary),
-      versionWrappeddNonfungibleAsset(
-        CoretimeRegionFromCoretimePerspective,
-        rawRegionId.toString()
-      ),
+      versionWrap([
+        fungibleAsset(RcTokenFromParachainPerspective, '2500000000'), // Fee payment asset
+        nonFungibleAsset(
+          CoretimeRegionFromCoretimePerspective,
+          rawRegionId.toString()
+        ),
+      ]),
       feeAssetItem,
       weightLimit
     );
@@ -58,7 +57,7 @@ export async function coretimeToRegionXTransfer(
   sendTx(reserveTransfer, address, signer, handlers);
 }
 
-export function regionXToCoretimeTransfer(
+export function coretimeFromRegionXTransfer(
   api: ApiPromise,
   sender: Sender,
   rawRegionId: BN,
@@ -83,10 +82,13 @@ export function regionXToCoretimeTransfer(
   const reserveTransfer = api.tx.polkadotXcm.limitedReserveTransferAssets(
     versionWrap(CoretimeChain),
     versionWrap(beneficiary),
-    versionWrappeddNonfungibleAsset(
-      CoretimeRegionFromRegionXPerspective,
-      rawRegionId.toString()
-    ),
+    versionWrap([
+      fungibleAsset(RcTokenFromParachainPerspective, '2500000000'), // Fee payment asset
+      nonFungibleAsset(
+        CoretimeRegionFromRegionXPerspective,
+        rawRegionId.toString()
+      ),
+    ]),
     feeAssetItem,
     weightLimit
   );
@@ -120,7 +122,7 @@ export function transferTokensFromCoretimeToRelay(
   const teleportTransfer = coretimeApi.tx.polkadotXcm.limitedTeleportAssets(
     versionWrap(RelayChainFromParachainPerspective),
     versionWrap(beneficiary),
-    versionWrappeddFungibleAsset(RcTokenFromParachainPerspective, amount),
+    versionWrap([fungibleAsset(RcTokenFromParachainPerspective, amount)]),
     feeAssetItem,
     weightLimit
   );
@@ -155,7 +157,7 @@ export function transferTokensFromRelayToCoretime(
   const teleportTransfer = coretimeApi.tx.xcmPallet.limitedTeleportAssets(
     versionWrap(CoretimeChainFromRelayPerspective),
     versionWrap(beneficiary),
-    versionWrappeddFungibleAsset(RcTokenFromRelayPerspective, amount),
+    versionWrap([fungibleAsset(RcTokenFromRelayPerspective, amount)]),
     feeAssetItem,
     weightLimit
   );

@@ -1,9 +1,4 @@
-import {
-  CoreIndex,
-  getEncodedRegionId,
-  Region,
-  RegionId,
-} from 'coretime-utils';
+import { CoreIndex, getEncodedRegionId } from 'coretime-utils';
 import React, {
   createContext,
   useCallback,
@@ -15,8 +10,11 @@ import React, {
 import { RegionLocation, RegionMetadata } from '@/models';
 
 import * as NativeRegions from './native';
+import * as RegionXRegions from './regionx';
 import { useAccounts } from '../account';
 import { useCoretimeApi } from '../apis';
+import { EXPERIMENTAL } from '../apis/consts';
+import { useRegionXApi } from '../apis/RegionXApi';
 import { useCommon } from '../common';
 import { useTasks } from '../tasks';
 
@@ -25,7 +23,6 @@ interface RegionsData {
   loading: boolean;
   updateRegionName: (_index: number, _name: string) => void;
   fetchRegions: () => Promise<void>;
-  fetchRegion: (_regionId: RegionId) => Promise<Region | null>;
 }
 const defaultRegionData: RegionsData = {
   regions: [],
@@ -35,9 +32,6 @@ const defaultRegionData: RegionsData = {
   },
   fetchRegions: async () => {
     /** */
-  },
-  fetchRegion: async () => {
-    return null;
   },
 };
 
@@ -51,6 +45,9 @@ const RegionDataProvider = ({ children }: Props) => {
   const {
     state: { api: coretimeApi },
   } = useCoretimeApi();
+  const {
+    state: { api: regionxApi },
+  } = useRegionXApi();
   const {
     state: { activeAccount },
   } = useAccounts();
@@ -80,10 +77,13 @@ const RegionDataProvider = ({ children }: Props) => {
     const tasks = await fetchWorkplan();
 
     const brokerRegions = await NativeRegions.fetchRegions(coretimeApi);
+    const regionxRegions = EXPERIMENTAL
+      ? await RegionXRegions.fetchRegions(regionxApi)
+      : [];
 
     const _regions: Array<RegionMetadata> = [];
 
-    for await (const region of [...brokerRegions]) {
+    for await (const region of [...brokerRegions, ...regionxRegions]) {
       // Only user owned non-expired regions.
       if (
         region.getOwner() !== activeAccount.address ||
@@ -91,11 +91,19 @@ const RegionDataProvider = ({ children }: Props) => {
       )
         continue;
 
+      const location = brokerRegions.find(
+        (r) =>
+          JSON.stringify(r.getRegionId()) ===
+            JSON.stringify(region.getRegionId()) &&
+          r.getOwner() === region.getOwner()
+      )
+        ? RegionLocation.CORETIME_CHAIN
+        : RegionLocation.REGIONX_CHAIN;
+
       const rawId = getEncodedRegionId(
         region.getRegionId(),
-        coretimeApi
+        location === RegionLocation.CORETIME_CHAIN ? coretimeApi : regionxApi
       ).toString();
-      const location = RegionLocation.CORETIME_CHAIN;
 
       const name =
         localStorage.getItem(`region-${rawId}`) ??
@@ -153,8 +161,6 @@ const RegionDataProvider = ({ children }: Props) => {
         loading,
         updateRegionName,
         fetchRegions,
-        fetchRegion: (_r: RegionId) =>
-          NativeRegions.fetchRegion(coretimeApi, _r),
       }}
     >
       {children}

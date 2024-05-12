@@ -18,6 +18,8 @@ import {
   CoretimeApiContextProvider,
   RelayApiContextProvider,
 } from '@/contexts/apis';
+import { EXPERIMENTAL } from '@/contexts/apis/consts';
+import { RegionXApiContextProvider } from '@/contexts/apis/RegionXApi';
 import { BalanceProvider } from '@/contexts/balance';
 import { ContextDataProvider } from '@/contexts/common';
 import { MarketProvider } from '@/contexts/market';
@@ -41,6 +43,24 @@ export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>);
 
+  const Content = (
+    <RelayApiContextProvider>
+      <BalanceProvider>
+        <ContextDataProvider>
+          <TaskDataProvider>
+            <RegionDataProvider>
+              <MarketProvider>
+                <SaleInfoProvider>
+                  {getLayout(<Component {...pageProps} />)}
+                </SaleInfoProvider>
+              </MarketProvider>
+            </RegionDataProvider>
+          </TaskDataProvider>
+        </ContextDataProvider>
+      </BalanceProvider>
+    </RelayApiContextProvider>
+  );
+
   return (
     <CacheProvider value={emotionCache}>
       <Head>
@@ -53,21 +73,13 @@ export default function MyApp(props: MyAppProps) {
           <NetworkProvider>
             <AccountProvider>
               <CoretimeApiContextProvider>
-                <RelayApiContextProvider>
-                  <BalanceProvider>
-                    <ContextDataProvider>
-                      <TaskDataProvider>
-                        <RegionDataProvider>
-                          <MarketProvider>
-                            <SaleInfoProvider>
-                              {getLayout(<Component {...pageProps} />)}
-                            </SaleInfoProvider>
-                          </MarketProvider>
-                        </RegionDataProvider>
-                      </TaskDataProvider>
-                    </ContextDataProvider>
-                  </BalanceProvider>
-                </RelayApiContextProvider>
+                {EXPERIMENTAL ? (
+                  <RegionXApiContextProvider>
+                    {Content}
+                  </RegionXApiContextProvider>
+                ) : (
+                  <>{Content}</>
+                )}
               </CoretimeApiContextProvider>
             </AccountProvider>
           </NetworkProvider>
