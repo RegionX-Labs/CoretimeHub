@@ -4,7 +4,7 @@ import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
 
 import { connect, disconnect, initialState, reducer } from '../common';
-import { WS_REGIONX_CHAIN } from '../consts';
+import { EXPERIMENTAL, WS_REGIONX_CHAIN } from '../consts';
 
 const types = {
   CoreIndex: 'u32',
@@ -48,6 +48,7 @@ const RegionXApiContextProvider = (props: any) => {
   const disconnectRegionX = () => disconnect(state);
 
   useEffect(() => {
+    if (!EXPERIMENTAL) return;
     // TODO: currently we use the RegionX chain only when the experimental flag is on.
     //
     // For this reason we don't have different urls based on the network. However, this
