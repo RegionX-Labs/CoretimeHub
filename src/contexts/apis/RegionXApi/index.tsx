@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useReducer } from 'react';
 
 import { ApiState } from '@/contexts/apis/types';
-import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
-import { NetworkType } from '@/models';
 
 import { connect, disconnect, initialState, reducer } from '../common';
-import { WS_KUSAMA_REGIONX_CHAIN, WS_ROCOCO_CORETIME_CHAIN } from '../consts';
+import { WS_REGIONX_CHAIN } from '../consts';
 
 const types = {
   CoreIndex: 'u32',
@@ -37,8 +35,6 @@ const RegionXApiContextProvider = (props: any) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { toastError, toastSuccess } = useToast();
 
-  const { network } = useNetwork();
-
   useEffect(() => {
     state.apiError && toastError(`Failed to connect to RegionX chain`);
   }, [state.apiError, toastError]);
@@ -49,22 +45,15 @@ const RegionXApiContextProvider = (props: any) => {
       toastSuccess(`Successfully connected to ${state.name}`);
   }, [state.apiState, state.name, toastSuccess]);
 
-  const getUrl = (network: any): string => {
-    return network === NetworkType.ROCOCO
-      ? WS_ROCOCO_CORETIME_CHAIN // TODO
-      : WS_KUSAMA_REGIONX_CHAIN;
-  };
-
   const disconnectRegionX = () => disconnect(state);
 
   useEffect(() => {
-    if (network === NetworkType.NONE || state.socket == getUrl(network)) return;
-    const updateNetwork = state.socket != getUrl(network);
-    if (updateNetwork) {
-      disconnectRegionX();
-      connect(state, getUrl(network), dispatch, updateNetwork, types);
-    }
-  }, [network, state]);
+    // TODO: currently we use the RegionX chain only when the experimental flag is on.
+    //
+    // For this reason we don't have different urls based on the network. However, this
+    // should be updated once this is in production.
+    connect(state, WS_REGIONX_CHAIN, dispatch, false, types);
+  }, [state]);
 
   return (
     <RegionXApiContext.Provider value={{ state, disconnectRegionX }}>
