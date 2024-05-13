@@ -97,11 +97,16 @@ export const connect = (
   _api.on('ready', async () => {
     dispatch({ type: 'CONNECT_SUCCESS' });
     const chainInfo = _api.registry.getChainProperties();
-    if (chainInfo?.tokenSymbol.isSome) {
-      const [decimals] = chainInfo.tokenDecimals.toJSON() as [number];
-      const [symbol] = chainInfo.tokenSymbol.toHuman() as [string];
-      dispatch({ type: 'SET_SYMBOL', payload: symbol });
-      dispatch({ type: 'SET_DECIMALS', payload: decimals });
+    if (chainInfo) {
+      const { tokenDecimals, tokenSymbol } = chainInfo.toHuman() as any;
+      dispatch({
+        type: 'SET_SYMBOL',
+        payload: tokenSymbol ? tokenSymbol[0] : 'UNIT',
+      });
+      dispatch({
+        type: 'SET_DECIMALS',
+        payload: tokenDecimals ? tokenDecimals[0] : 12,
+      });
     }
 
     const name = await _api.rpc.system.chain();
