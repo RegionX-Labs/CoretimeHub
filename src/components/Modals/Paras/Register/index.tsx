@@ -1,3 +1,5 @@
+import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
+import CodeOutlinedIcon from '@mui/icons-material/CodeOutlined';
 import {
   Box,
   Button,
@@ -7,7 +9,8 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { useState } from 'react';
+import { styled } from '@mui/material/styles';
+import { useEffect, useState } from 'react';
 
 import { ProgressButton } from '@/components/Elements';
 
@@ -18,22 +21,44 @@ interface RegisterModalProps {
   onClose: () => void;
 
   paraId: number;
-  regCost: string;
 }
 
 export const RegisterModal = ({
   open,
   onClose,
   paraId,
-  regCost,
 }: RegisterModalProps) => {
   const theme = useTheme();
 
   const [loading, setLoading] = useState(false);
 
+  const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+  });
+
   const onRegister = async () => {
-    setLoading(true);
+    // TODO:
   };
+
+  const onUploadGenesisHead = () => {
+    // TODO:
+  };
+
+  const onUploadCode = () => {
+    // TODO:
+  };
+
+  useEffect(() => {
+    open && setLoading(false);
+  }, [open]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
@@ -70,12 +95,22 @@ export const RegisterModal = ({
               sx={{ color: theme.palette.common.black }}
               className={styles.itemValue}
             >
-              {regCost}
+              0 {/**FIXME: */}
             </Typography>
           </Box>
         </Box>
-        {/* TODO: buttons */}
-        <Box className={styles.buttons}></Box>
+        <Box className={styles.buttons}>
+          <Button className={styles.uploadButton} onClick={onUploadGenesisHead}>
+            <CloudUploadOutlinedIcon />
+            Upload Genesis Head
+            <VisuallyHiddenInput type='file' />
+          </Button>
+          <Button className={styles.uploadButton} onClick={onUploadCode}>
+            <CodeOutlinedIcon />
+            Upload Validation Code
+            {/* <VisuallyHiddenInput type='file' /> */}
+          </Button>
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} variant='outlined'>
