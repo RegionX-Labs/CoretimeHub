@@ -65,7 +65,7 @@ const run = async () => {
   await coretimeApi.isReady;
   await regionxApi.isReady;
 
-  const leafIndex = regionxApi.createType('LeafIndexQuery', { commitment: '0xf859581b626083b6566d0f6a34843528acd54f2eb9a903b3729b5c371dcadad1' });
+  const leafIndex = regionxApi.createType('LeafIndexQuery', { commitment: '0x86877987a6e3cdacfb6c80cd3c3149b55ebcd3f82bebbeaaf91efc024b281a41' });
   const requests = await regionxApi.rpc.ismp.queryRequests([leafIndex]);
   console.log(requests.toHuman());
 
@@ -80,12 +80,10 @@ const run = async () => {
 
   const stateMachineProof = regionxApi.createType('StateMachineProof', {
     hasher: 'Blake2',
-    storage_proof: proofData.proof.toHex()
+    storage_proof: proofData.proof
   });
 
-  console.log(stateMachineProof.toHuman());
-
-  const substrateStateProof = regionxApi.createType('SubstrateStateProof', { StateProof: stateMachineProof.toHex() });
+  const substrateStateProof = regionxApi.createType('SubstrateStateProof', { StateProof: stateMachineProof });
 
   console.log(substrateStateProof.toHuman());
 
