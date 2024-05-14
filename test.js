@@ -1,41 +1,32 @@
 const { ApiPromise, WsProvider } = require("@polkadot/api");
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
-
 const run = async () => {
-  const coretimeApi = new ApiPromise({
-    provider: new WsProvider('ws://127.0.0.1:9910'), types: {
+  const coretimeApi = new ApiPromise({ provider: new WsProvider('ws://127.0.0.1:9910') });
+
+  const regionxApi = new ApiPromise({
+    provider: new WsProvider('ws://127.0.0.1:9920'),
+    types: {
       HashAlgorithm: {
         _enum: ['Keccak', 'Blake2']
       },
       StateMachineProof: {
         hasher: 'HashAlgorithm',
-        storageProof: 'Vec<Vec<u8>>',
+        storage_proof: 'Vec<Vec<u8>>',
       },
-      SubstrateStatePoof: {
+      SubstrateStateProof: {
         _enum: {
           OverlayProof: 'StateMachineProof',
           StateProof: 'StateMachineProof',
         }
-      }
-    }
-  });
-
-  const regionxApi = new ApiPromise({
-    provider: new WsProvider('ws://127.0.0.1:9920'),
-    types: {
+      },
       LeafIndexQuery: {
         commitment: 'H256'
       },
       StateMachine: {
         _enum: {
-          Ethereum: 'u32',
+          Ethereum: {},
           Polkadot: 'u32',
           Kusama: 'u32',
-          Grandpa: 'u32',
-          Beefy: 'u32',
-          Polygon: 'u32',
-          Bsc: 'u32',
         }
       },
       Post: {},
@@ -78,43 +69,29 @@ const run = async () => {
   const requests = await regionxApi.rpc.ismp.queryRequests([leafIndex]);
   console.log(requests.toHuman());
 
-  const key = requests.toHuman().keys[0];
+  const key = requests.toHuman()[0].Get.keys[0];
+  console.log(key);
 
-  if (1 + 2 == 3) return;
   const proofData = await coretimeApi.rpc.state.getReadProof([key]);
-  const storageProof = proofData.proof.map(hex => coretimeApi.createType('Vec<u8>', hex));
 
-  const stateMachineProofData = {
+  console.log(proofData.proof.toHex());
+  const stateMachineProof = regionxApi.createType('StateMachineProof', {
     hasher: 'Blake2',
-    storageProof: storageProof
-  };
-
-  const stateMachineProof = coretimeApi.createType('StateMachineProof', stateMachineProofData);
+    storage_proof: proofData.proof
+  });
 
   console.log(stateMachineProof.toHuman());
+
+  const substrateStateProof = regionxApi.createType('SubstrateStateProof', { StateProof: stateMachineProof });
+
+  console.log(substrateStateProof.toHuman());
 
   // Was failing either because the proof is incorrect or because something else was incorrect.
   // Check: https://github.com/polytope-labs/hyperbridge/blob/0b346d34ad68cd7fe4b5cfb373b36a5764bcf641/modules/ismp/pallets/pallet/src/lib.rs#L686
   const response = regionxApi.tx.ismp.handleUnsigned([{
     Response: {
       datagram: {
-        Request: [
-          {
-            Get: {
-              source: {
-                Kusama: 2000
-              },
-              dest: {
-                Kusama: 1005
-              },
-              nonce: 0,
-              from: 'region-pallet',
-              keys: [key],
-              height: 85,
-              timeout_timestamp: 1715672538000 + 1000 // This isn't relative?
-            }
-          },
-        ]
+        Request: requests
       },
       proof: {
         height: {
@@ -124,9 +101,9 @@ const run = async () => {
             },
             consensusStateId: 'PARA'
           },
-          height: 85
+          height: 32
         },
-        stateMachineProof,
+        proof: substrateStateProof,
       },
       signer: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY' // alice address
     }
