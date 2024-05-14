@@ -352,7 +352,7 @@ const ParachainManagement = () => {
                           variant='outlined'
                           onClick={() => onUpgrade(id)}
                         >
-                          Upgrade to Parachain
+                          Upgrade(Buy Coretime)
                         </ParaActionButton>
                       ) : state === ParaState.IDLE_PARA ? (
                         <ParaActionButton
