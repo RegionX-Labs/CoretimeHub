@@ -22,6 +22,7 @@ import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
 
 import styles from './index.module.scss';
+import { compactAddLength } from '@polkadot/util';
 
 interface RegisterModalProps {
   open: boolean;
@@ -75,8 +76,8 @@ export const RegisterModal = ({
     }
     const tx = api.tx.registrar.register(
       paraId,
-      genesisHead.toString(),
-      wasmCode.toString()
+      compactAddLength(genesisHead),
+      compactAddLength(wasmCode)
     );
     try {
       setWorking(true);

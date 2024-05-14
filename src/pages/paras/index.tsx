@@ -194,7 +194,7 @@ const ParachainManagement = () => {
   // Upgrade a parathread to parachain
   const onUpgrade = (_paraId: number) => {
     router.push({
-      pathname: 'paras/purchase',
+      pathname: 'purchase',
       query: { ...router.query },
     });
   };
@@ -202,7 +202,7 @@ const ParachainManagement = () => {
   // Buy coretime for the given parachain
   const onBuy = (_paraId: number) => {
     router.push({
-      pathname: 'paras/purchase',
+      pathname: 'purchase',
       query: { ...router.query },
     });
   };
@@ -265,10 +265,10 @@ const ParachainManagement = () => {
           strState === 'Parathread'
             ? ParaState.PARATHREAD
             : isActive
-            ? ParaState.ACTIVE_PARA
-            : isInWorkplan
-            ? ParaState.SOON_ACTIVE
-            : ParaState.IDLE_PARA;
+              ? ParaState.ACTIVE_PARA
+              : isInWorkplan
+                ? ParaState.SOON_ACTIVE
+                : ParaState.IDLE_PARA;
 
         paras.push({ id, state, name } as ParachainInfo);
       }
@@ -405,9 +405,9 @@ const ParachainManagement = () => {
               <TableBody>
                 {(rowsPerPage > 0
                   ? parachains.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
                   : parachains
                 ).map(({ id, name, state }, index) => (
                   <StyledTableRow key={index}>
