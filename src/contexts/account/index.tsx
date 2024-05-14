@@ -2,6 +2,8 @@ import type { Signer } from '@polkadot/api/types';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
 
+import { isValidAddress } from '@/utils/functions';
+
 const APP_NAME = 'Corehub';
 const LOCAL_STORAGE_ACCOUNTS = 'accounts';
 const LOCAL_STORAGE_ACTIVE_ACCOUNT = 'active-account';
@@ -137,6 +139,30 @@ const AccountProvider = ({ children }: Props) => {
     getInjector();
   }, [state.activeAccount]);
 
+  const validate = (jsonStr: string): boolean => {
+    const items = JSON.parse(jsonStr);
+    const len = items.length;
+
+    if (len === 0 || len === undefined) return false;
+
+    for (const item of items) {
+      const keys = ['address', 'type', 'meta'];
+      const metaKeys = ['genesisHash', 'name', 'source'];
+
+      for (const key of keys) if (!Object.hasOwn(item, key)) return false;
+      for (const key of Object.keys(item))
+        if (keys.indexOf(key) === -1) return false;
+
+      if (!isValidAddress(item.address)) return false;
+
+      if (!Object.hasOwn(item.meta, 'source')) return false;
+      for (const key of Object.keys(item.meta))
+        if (metaKeys.indexOf(key) === -1) return false;
+    }
+
+    return true;
+  };
+
   useEffect(() => {
     const asyncLoadAccounts = async () => {
       const { web3Enable } = await import('@polkadot/extension-dapp');
@@ -146,8 +172,8 @@ const AccountProvider = ({ children }: Props) => {
       if (!item) return;
 
       try {
+        if (!validate(item)) return;
         const accounts = JSON.parse(item) as InjectedAccountWithMeta[];
-        if (!accounts || accounts.length === 0) return;
 
         let injectCounter = 0;
         const injectedWeb3Interval = setInterval(() => {
