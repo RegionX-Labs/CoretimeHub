@@ -212,6 +212,11 @@ const ParachainManagement = () => {
     fetchParaStates();
   };
 
+  const onRegistered = () => {
+    openRegisterModal(false);
+    fetchParaStates();
+  };
+
   const fetchParaStates = useCallback(async () => {
     if (relayApiState !== ApiState.READY || !relayApi) return;
     setLoading(true);
@@ -327,7 +332,7 @@ const ParachainManagement = () => {
 
     paras.push(
       ...reservedParas.filter(
-        ({ id }) => paras.find((v) => v.id === id) !== undefined
+        ({ id }) => paras.find((v) => v.id === id) === undefined
       )
     );
     paras.sort((a, b) => a.id - b.id);
@@ -487,7 +492,7 @@ const ParachainManagement = () => {
           />
           <RegisterModal
             open={registerModalOpen}
-            onClose={() => openRegisterModal(false)}
+            onClose={onRegistered}
             paraId={paraId2Reg}
             dataDepositPerByte={dataDepositPerByte}
             maxCodeSize={maxCodeSize}

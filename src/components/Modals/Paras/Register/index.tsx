@@ -9,6 +9,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { compactAddLength } from '@polkadot/util';
 import { useEffect, useState } from 'react';
 
 import { getBalanceString } from '@/utils/functions';
@@ -22,7 +23,6 @@ import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
 
 import styles from './index.module.scss';
-import { compactAddLength } from '@polkadot/util';
 
 interface RegisterModalProps {
   open: boolean;
