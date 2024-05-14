@@ -65,24 +65,27 @@ const run = async () => {
   await coretimeApi.isReady;
   await regionxApi.isReady;
 
-  const leafIndex = regionxApi.createType('LeafIndexQuery', { commitment: '0x65bfdc60ff5e244f8c877cca3d53b812abcdc479840054f1ff5116be2afb6317' });
+  const leafIndex = regionxApi.createType('LeafIndexQuery', { commitment: '0xf859581b626083b6566d0f6a34843528acd54f2eb9a903b3729b5c371dcadad1' });
   const requests = await regionxApi.rpc.ismp.queryRequests([leafIndex]);
   console.log(requests.toHuman());
 
   const key = requests.toHuman()[0].Get.keys[0];
-  console.log(key);
+  const height = requests.toHuman()[0].Get.height.toString();
+  const hashAt = await coretimeApi.query.system.blockHash(Number(height));
 
-  const proofData = await coretimeApi.rpc.state.getReadProof([key]);
+  console.log(`Key: ${key}`);
+  console.log(`At: ${hashAt}`);
 
-  console.log(proofData.proof.toHex());
+  const proofData = await coretimeApi.rpc.state.getReadProof([key], hashAt);
+
   const stateMachineProof = regionxApi.createType('StateMachineProof', {
     hasher: 'Blake2',
-    storage_proof: proofData.proof
+    storage_proof: proofData.proof.toHex()
   });
 
   console.log(stateMachineProof.toHuman());
 
-  const substrateStateProof = regionxApi.createType('SubstrateStateProof', { StateProof: stateMachineProof });
+  const substrateStateProof = regionxApi.createType('SubstrateStateProof', { StateProof: stateMachineProof.toHex() });
 
   console.log(substrateStateProof.toHuman());
 
