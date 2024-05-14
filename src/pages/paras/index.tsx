@@ -44,7 +44,7 @@ enum ParaState {
   // eslint-disable-next-line no-unused-vars
   IDLE_PARA = 'Parachain(Idle)',
   // eslint-disable-next-line no-unused-vars
-  ACTIVE_PARA = 'Parachain(Secured)',
+  ACTIVE_PARA = 'Parachain(Active)',
 }
 
 type ParachainInfo = {
