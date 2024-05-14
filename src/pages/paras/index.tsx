@@ -405,7 +405,8 @@ const ParachainManagement = () => {
                         >
                           Register
                         </ParaActionButton>
-                      ) : state === ParaState.ONBOARDING ? (
+                      ) : state === ParaState.ONBOARDING ||
+                        state === ParaState.SOON_ACTIVE ? (
                         <Typography sx={paraActionStyle}>
                           No action required
                         </Typography>
