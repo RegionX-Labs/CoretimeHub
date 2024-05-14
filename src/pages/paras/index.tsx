@@ -20,16 +20,15 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { useRenewableParachains } from '@/hooks/renewableParas';
 import { parseHNString } from '@/utils/functions';
 
 import { ActionButton, RegisterModal, ReserveModal } from '@/components';
 
 import chainData from '@/chaindata';
 import { useAccounts } from '@/contexts/account';
-import { useRelayApi } from '@/contexts/apis';
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 
@@ -45,6 +44,8 @@ enum ParaState {
   IDLE_PARA = 'Parachain(Idle)',
   // eslint-disable-next-line no-unused-vars
   ACTIVE_PARA = 'Parachain(Active)',
+  // eslint-disable-next-line no-unused-vars
+  SOON_ACTIVE = 'SOON ACTIVE',
 }
 
 type ParachainInfo = {
@@ -75,6 +76,11 @@ const StateCard = ({ state }: { state: ParaState }) => {
       color: '#9F53FF',
       background: '#EDDFFF',
     },
+    [ParaState.SOON_ACTIVE]: {
+      // FIXME: color and background
+      color: '#9F53FF',
+      background: '#EDDFFF',
+    },
   };
   return (
     <Typography
@@ -99,7 +105,9 @@ const ParachainManagement = () => {
   const {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
-  const { parachains: activeParas } = useRenewableParachains();
+  const {
+    state: { api: coretimeApi, apiState: coretimeApiState },
+  } = useCoretimeApi();
   const { network } = useNetwork();
   const {
     state: { activeAccount },
@@ -182,7 +190,10 @@ const ParachainManagement = () => {
 
   // Upgrade a parathread to parachain
   const onUpgrade = (_paraId: number) => {
-    // TODO:
+    router.push({
+      pathname: 'paras/purchase',
+      query: { ...router.query },
+    });
   };
 
   // Buy coretime for the given parachain
@@ -193,78 +204,126 @@ const ParachainManagement = () => {
     });
   };
 
-  useEffect(() => {
-    const asyncLoad = async () => {
-      if (relayApiState !== ApiState.READY || !relayApi) return;
-      setLoading(true);
+  const onReserved = () => {
+    openReserveModal(false);
+    fetchParaStates();
+  };
 
-      const fetchParachainList = async (): Promise<ParachainInfo[]> => {
-        const parasRaw = await relayApi.query.paras.paraLifecycles.entries();
-        const paras: ParachainInfo[] = [];
-        for (const [key, value] of parasRaw) {
-          const [strId] = key.toHuman() as [string];
-          const id = parseInt(strId.replace(/,/g, ''));
-          const strState = value.toString();
-          const name = chainData[network][id] ?? '';
-          const isActive =
-            activeParas.findIndex((para) => para.paraID === id) !== -1;
+  const fetchParaStates = useCallback(async () => {
+    if (relayApiState !== ApiState.READY || !relayApi) return;
+    setLoading(true);
 
-          const state =
-            strState === 'Parathread'
-              ? ParaState.PARATHREAD
-              : isActive
-              ? ParaState.ACTIVE_PARA
-              : ParaState.IDLE_PARA;
+    const fetchActiveParas = async (): Promise<number[]> => {
+      if (!coretimeApi || coretimeApiState !== ApiState.READY) return [];
 
-          paras.push({ id, state, name } as ParachainInfo);
-        }
-        return paras;
-      };
+      const workloads = await coretimeApi.query.broker.workload.entries();
+      const ids: number[] = [];
 
-      const fetchReservedParas = async (): Promise<ParachainInfo[]> => {
-        const records = await relayApi.query.registrar.paras.entries();
-        const paras: ParachainInfo[] = [];
-
-        for (const [key, value] of records) {
-          const id = parseHNString((key.toHuman() as any)[0]);
-          const { manager } = value.toJSON() as any;
-
-          if (manager === activeAccount?.address) {
-            paras.push({
-              id,
-              state: ParaState.RESERVED,
-              name: '',
-            });
-          }
-        }
-        return paras;
-      };
-
-      const fetchNextParaId = async () => {
-        const idRaw = await relayApi.query.registrar.nextFreeParaId();
-        const id = idRaw.toPrimitive() as number;
-        setNextParaId(id);
-      };
-
-      const fetchReservationCost = () => {
-        setReservationCost(relayApi.consts.registrar.paraDeposit.toString());
-      };
-
-      await Promise.all([fetchNextParaId(), fetchReservationCost()]);
-
-      const paras = await fetchParachainList();
-      const reservedParas = await fetchReservedParas();
-
-      paras.push(...reservedParas);
-      paras.sort((a, b) => a.id - b.id);
-
-      setParachains(paras);
-
-      setLoading(false);
+      for (const [_, value] of workloads) {
+        const {
+          assignment: { task },
+        } = (value.toJSON() as any)[0];
+        if (task !== undefined) ids.push(task as number);
+      }
+      return ids;
     };
 
-    asyncLoad();
-  }, [relayApiState, relayApi, network, activeAccount, activeParas]);
+    const fetchWorkplanParas = async (): Promise<number[]> => {
+      if (!coretimeApi || coretimeApiState !== ApiState.READY) return [];
+
+      const workloads = await coretimeApi.query.broker.workplan.entries();
+      const ids: number[] = [];
+
+      for (const [_, value] of workloads) {
+        const {
+          assignment: { task },
+        } = (value.toJSON() as any)[0];
+        if (task !== undefined) ids.push(task as number);
+      }
+      return ids;
+    };
+
+    const fetchParachainList = async (): Promise<ParachainInfo[]> => {
+      const parasRaw = await relayApi.query.paras.paraLifecycles.entries();
+      const paras: ParachainInfo[] = [];
+
+      const activeParas = await fetchActiveParas();
+      const workplanParas = await fetchWorkplanParas();
+
+      for (const [key, value] of parasRaw) {
+        const [strId] = key.toHuman() as [string];
+        const id = parseInt(strId.replace(/,/g, ''));
+        const strState = value.toString();
+        const name = chainData[network][id] ?? '';
+        const isActive = activeParas.indexOf(id) !== -1;
+        const isInWorkplan = workplanParas.indexOf(id) !== -1;
+
+        const state =
+          strState === 'Parathread'
+            ? ParaState.PARATHREAD
+            : isActive
+            ? ParaState.ACTIVE_PARA
+            : isInWorkplan
+            ? ParaState.SOON_ACTIVE
+            : ParaState.IDLE_PARA;
+
+        paras.push({ id, state, name } as ParachainInfo);
+      }
+      return paras;
+    };
+
+    const fetchReservedParas = async (): Promise<ParachainInfo[]> => {
+      const records = await relayApi.query.registrar.paras.entries();
+      const paras: ParachainInfo[] = [];
+
+      for (const [key, value] of records) {
+        const id = parseHNString((key.toHuman() as any)[0]);
+        const { manager } = value.toJSON() as any;
+
+        if (manager === activeAccount?.address) {
+          paras.push({
+            id,
+            state: ParaState.RESERVED,
+            name: '',
+          });
+        }
+      }
+      return paras;
+    };
+
+    const fetchNextParaId = async () => {
+      const idRaw = await relayApi.query.registrar.nextFreeParaId();
+      const id = idRaw.toPrimitive() as number;
+      setNextParaId(id);
+    };
+
+    const fetchReservationCost = () => {
+      setReservationCost(relayApi.consts.registrar.paraDeposit.toString());
+    };
+
+    await Promise.all([fetchNextParaId(), fetchReservationCost()]);
+
+    const paras = await fetchParachainList();
+    const reservedParas = await fetchReservedParas();
+
+    paras.push(...reservedParas);
+    paras.sort((a, b) => a.id - b.id);
+
+    setParachains(paras);
+
+    setLoading(false);
+  }, [
+    relayApi,
+    relayApiState,
+    activeAccount,
+    coretimeApi,
+    coretimeApiState,
+    network,
+  ]);
+
+  useEffect(() => {
+    fetchParaStates();
+  }, [fetchParaStates]);
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -403,7 +462,7 @@ const ParachainManagement = () => {
           </TableContainer>
           <ReserveModal
             open={reserveModalOpen}
-            onClose={() => openReserveModal(false)}
+            onClose={onReserved}
             paraId={nextParaId}
             reservationCost={reservationCost}
           />
