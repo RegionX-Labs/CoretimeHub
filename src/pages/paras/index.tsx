@@ -116,6 +116,9 @@ const ParachainManagement = () => {
   const [reserveModalOpen, openReserveModal] = useState(false);
   const [registerModalOpen, openRegisterModal] = useState(false);
 
+  const [dataDepositPerByte, setDataDepositPerByte] = useState(BigInt(0));
+  const [maxCodeSize, setMaxCodeSize] = useState(BigInt(BigInt(0)));
+
   // table pagination
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -250,7 +253,23 @@ const ParachainManagement = () => {
         setReservationCost(relayApi.consts.registrar.paraDeposit.toString());
       };
 
-      await Promise.all([fetchNextParaId(), fetchReservationCost()]);
+      const fetchRegistrationConsts = async () => {
+        const value = BigInt(
+          relayApi.consts.registrar.dataDepositPerByte.toString()
+        );
+        setDataDepositPerByte(value);
+
+        const { maxCodeSize } = (
+          await relayApi.query.configuration.activeConfig()
+        ).toJSON() as any;
+        setMaxCodeSize(BigInt(maxCodeSize));
+      };
+
+      await Promise.all([
+        fetchNextParaId(),
+        fetchReservationCost(),
+        fetchRegistrationConsts(),
+      ]);
 
       const paras = await fetchParachainList();
       const reservedParas = await fetchReservedParas();
@@ -411,6 +430,8 @@ const ParachainManagement = () => {
             open={registerModalOpen}
             onClose={() => openRegisterModal(false)}
             paraId={paraId2Reg}
+            dataDepositPerByte={dataDepositPerByte}
+            maxCodeSize={maxCodeSize}
           />
         </Box>
       )}

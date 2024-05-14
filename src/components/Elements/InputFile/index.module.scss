@@ -1,0 +1,52 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1 0 0;
+  width: 15rem;
+  height: 7.5rem;
+  position: relative;
+  background-color: #f6f7fa;
+  color: #000;
+  border: 1px solid #888;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-grow: 1;
+}
+
+.fileName,
+.fileSize {
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileSize {
+  font-size: 0.75rem;
+}
+
+.fileName {
+  margin: 0.25rem 0.5rem;
+}
+
+.hasFile {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1rem;
+}
+
+.closeIcon {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  padding: 0;
+}

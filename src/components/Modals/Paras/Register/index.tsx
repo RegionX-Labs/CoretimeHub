@@ -9,10 +9,17 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 
+import { getBalanceString } from '@/utils/functions';
+
 import { ProgressButton } from '@/components/Elements';
+import InputFile from '@/components/Elements/InputFile';
+
+import { useAccounts } from '@/contexts/account';
+import { useRelayApi } from '@/contexts/apis';
+import { ApiState } from '@/contexts/apis/types';
+import { useToast } from '@/contexts/toast';
 
 import styles from './index.module.scss';
 
@@ -21,43 +28,88 @@ interface RegisterModalProps {
   onClose: () => void;
 
   paraId: number;
+  dataDepositPerByte: bigint;
+  maxCodeSize: bigint;
 }
 
 export const RegisterModal = ({
   open,
   onClose,
   paraId,
+  dataDepositPerByte,
+  maxCodeSize,
 }: RegisterModalProps) => {
   const theme = useTheme();
 
-  const [loading, setLoading] = useState(false);
+  const {
+    state: { api, apiState, decimals, symbol },
+  } = useRelayApi();
+  const {
+    state: { activeAccount, activeSigner },
+  } = useAccounts();
+  const { toastError, toastInfo, toastSuccess } = useToast();
 
-  const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-  });
+  const [working, setWorking] = useState(false);
+  const [genesisHead, setGenesisHead] = useState<Uint8Array>();
+  const [wasmCode, setWasmCode] = useState<Uint8Array>();
+
+  const regCost =
+    dataDepositPerByte * (BigInt(genesisHead?.length ?? 0) + maxCodeSize);
 
   const onRegister = async () => {
-    // TODO:
-  };
-
-  const onUploadGenesisHead = () => {
-    // TODO:
-  };
-
-  const onUploadCode = () => {
-    // TODO:
+    if (!genesisHead) {
+      toastError('Please upload genesis head');
+      return;
+    }
+    if (!wasmCode) {
+      toastError('Please upload validation code');
+      return;
+    }
+    if (!api || apiState !== ApiState.READY) {
+      toastError('Please check the connection to the relay chain');
+      return;
+    }
+    if (!activeAccount || !activeSigner) {
+      toastError('Please connect your wallet');
+      return;
+    }
+    const tx = api.tx.registrar.register(
+      paraId,
+      genesisHead.toString(),
+      wasmCode.toString()
+    );
+    try {
+      setWorking(true);
+      await tx.signAndSend(
+        activeAccount.address,
+        { signer: activeSigner },
+        ({ status, events }) => {
+          if (status.isReady) toastInfo('Transaction was initiated');
+          else if (status.isInBlock) toastInfo(`In Block`);
+          else if (status.isFinalized) {
+            setWorking(false);
+            events.forEach(({ event: { method } }) => {
+              if (method === 'ExtrinsicSuccess') {
+                toastSuccess('Registration success');
+                onClose();
+              } else if (method === 'ExtrinsicFailed') {
+                toastError(`Failed to register`);
+              }
+            });
+          }
+        }
+      );
+    } catch (e) {
+      toastError(`Failed to register.Error: ${e}`);
+      setWorking(false);
+    }
   };
 
   useEffect(() => {
-    open && setLoading(false);
+    if (!open) return;
+    setWorking(false);
+    setWasmCode(undefined);
+    setGenesisHead(undefined);
   }, [open]);
 
   return (
@@ -95,21 +147,23 @@ export const RegisterModal = ({
               sx={{ color: theme.palette.common.black }}
               className={styles.itemValue}
             >
-              0 {/**FIXME: */}
+              {getBalanceString(regCost.toString(), decimals, symbol)}
             </Typography>
           </Box>
         </Box>
         <Box className={styles.buttons}>
-          <Button className={styles.uploadButton} onClick={onUploadGenesisHead}>
-            <CloudUploadOutlinedIcon />
-            Upload Genesis Head
-            <VisuallyHiddenInput type='file' />
-          </Button>
-          <Button className={styles.uploadButton} onClick={onUploadCode}>
-            <CodeOutlinedIcon />
-            Upload Validation Code
-            {/* <VisuallyHiddenInput type='file' /> */}
-          </Button>
+          <InputFile
+            label='Upload Genesis Head'
+            icon={<CloudUploadOutlinedIcon />}
+            onChange={(data) => setGenesisHead(data)}
+            onCancel={() => setGenesisHead(new Uint8Array())}
+          />
+          <InputFile
+            label='Upload Validation Code'
+            icon={<CodeOutlinedIcon />}
+            onChange={(data) => setWasmCode(data)}
+            onCancel={() => setGenesisHead(new Uint8Array())}
+          />
         </Box>
       </DialogContent>
       <DialogActions>
@@ -120,7 +174,7 @@ export const RegisterModal = ({
         <ProgressButton
           onClick={onRegister}
           label='Register'
-          loading={loading}
+          loading={working}
         />
       </DialogActions>
     </Dialog>
