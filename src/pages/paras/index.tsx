@@ -265,10 +265,10 @@ const ParachainManagement = () => {
           strState === 'Parathread'
             ? ParaState.PARATHREAD
             : isActive
-              ? ParaState.ACTIVE_PARA
-              : isInWorkplan
-                ? ParaState.SOON_ACTIVE
-                : ParaState.IDLE_PARA;
+            ? ParaState.ACTIVE_PARA
+            : isInWorkplan
+            ? ParaState.SOON_ACTIVE
+            : ParaState.IDLE_PARA;
 
         paras.push({ id, state, name } as ParachainInfo);
       }
@@ -325,7 +325,11 @@ const ParachainManagement = () => {
     const paras = await fetchParachainList();
     const reservedParas = await fetchReservedParas();
 
-    paras.push(...reservedParas);
+    paras.push(
+      ...reservedParas.filter(
+        ({ id }) => paras.find((v) => v.id === id) !== undefined
+      )
+    );
     paras.sort((a, b) => a.id - b.id);
 
     setParachains(paras);
@@ -405,9 +409,9 @@ const ParachainManagement = () => {
               <TableBody>
                 {(rowsPerPage > 0
                   ? parachains.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
                   : parachains
                 ).map(({ id, name, state }, index) => (
                   <StyledTableRow key={index}>
