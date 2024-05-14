@@ -187,7 +187,10 @@ const ParachainManagement = () => {
 
   // Buy coretime for the given parachain
   const onBuy = (_paraId: number) => {
-    // TODO:
+    router.push({
+      pathname: 'paras/purchase',
+      query: { ...router.query },
+    });
   };
 
   useEffect(() => {
