@@ -3,8 +3,6 @@ const { ApiPromise, WsProvider } = require("@polkadot/api");
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 const run = async () => {
-  const key = '0x4dcb50595177a3177648411a42aca0f53dc63b0b76ffd6f80704a090da6f8719c5d1e0d7b838cb6c6f9f69c8a289ccfa2b0000000000ffffffffffffffffffff';
-
   const coretimeApi = new ApiPromise({
     provider: new WsProvider('ws://127.0.0.1:9910'), types: {
       HashAlgorithm: {
@@ -23,10 +21,66 @@ const run = async () => {
     }
   });
 
-  const regionxApi = new ApiPromise({ provider: new WsProvider('ws://127.0.0.1:9920') });
+  const regionxApi = new ApiPromise({
+    provider: new WsProvider('ws://127.0.0.1:9920'),
+    types: {
+      LeafIndexQuery: {
+        commitment: 'H256'
+      },
+      StateMachine: {
+        _enum: {
+          Ethereum: 'u32',
+          Polkadot: 'u32',
+          Kusama: 'u32',
+          Grandpa: 'u32',
+          Beefy: 'u32',
+          Polygon: 'u32',
+          Bsc: 'u32',
+        }
+      },
+      Post: {},
+      Get: {
+        source: 'StateMachine',
+        dest: 'StateMachine',
+        nonce: 'u64',
+        from: 'Vec<u8>',
+        keys: 'Vec<Vec<u8>>',
+        height: 'u64',
+        timeout_timestamp: 'u64',
+      },
+      Request: {
+        _enum: {
+          Post: 'Post',
+          Get: 'Get'
+        }
+      }
+    },
+    rpc: {
+      ismp: {
+        queryRequests: {
+          description: '',
+          params: [
+            {
+              name: 'query',
+              type: 'Vec<LeafIndexQuery>'
+            }
+          ],
+          type: 'Vec<Request>'
+        }
+      }
+    }
+  });
 
   await coretimeApi.isReady;
+  await regionxApi.isReady;
 
+  const leafIndex = regionxApi.createType('LeafIndexQuery', { commitment: '0x1a9850f487d4a5d3d84f9ee540c557d7b0740c1db5a23e2f5c6a09ae95b3c3af' });
+  const requests = await regionxApi.rpc.ismp.queryRequests([leafIndex]);
+  console.log(requests.toHuman());
+
+  const key = requests.toHuman().keys[0];
+
+  if (1 + 2 == 3) return;
   const proofData = await coretimeApi.rpc.state.getReadProof([key]);
   const storageProof = proofData.proof.map(hex => coretimeApi.createType('Vec<u8>', hex));
 
