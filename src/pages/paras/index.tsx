@@ -45,7 +45,7 @@ enum ParaState {
   // eslint-disable-next-line no-unused-vars
   ACTIVE_PARA = 'Parachain(Active)',
   // eslint-disable-next-line no-unused-vars
-  SOON_ACTIVE = 'SOON ACTIVE',
+  SOON_ACTIVE = 'Soon Active',
 }
 
 type ParachainInfo = {
@@ -89,7 +89,7 @@ const StateCard = ({ state }: { state: ParaState }) => {
         bgcolor: styles[state].background,
         padding: '0.5rem 1.25rem',
         borderRadius: '1rem',
-        width: 'min-content',
+        width: 'fit-content',
       }}
     >
       {state}
@@ -424,11 +424,6 @@ const ParachainManagement = () => {
                         >
                           Register
                         </ParaActionButton>
-                      ) : state === ParaState.ONBOARDING ||
-                        state === ParaState.SOON_ACTIVE ? (
-                        <Typography sx={paraActionStyle}>
-                          No action required
-                        </Typography>
                       ) : state === ParaState.PARATHREAD ? (
                         <ParaActionButton
                           variant='outlined'
@@ -451,7 +446,7 @@ const ParachainManagement = () => {
                           Renew Coretime
                         </ParaActionButton>
                       ) : (
-                        <></>
+                        <Typography>No action required</Typography>
                       )}
                     </StyledTableCell>
                   </StyledTableRow>
