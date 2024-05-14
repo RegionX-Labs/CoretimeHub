@@ -65,7 +65,7 @@ const run = async () => {
   await coretimeApi.isReady;
   await regionxApi.isReady;
 
-  const leafIndex = regionxApi.createType('LeafIndexQuery', { commitment: '0x1a9850f487d4a5d3d84f9ee540c557d7b0740c1db5a23e2f5c6a09ae95b3c3af' });
+  const leafIndex = regionxApi.createType('LeafIndexQuery', { commitment: '0x65bfdc60ff5e244f8c877cca3d53b812abcdc479840054f1ff5116be2afb6317' });
   const requests = await regionxApi.rpc.ismp.queryRequests([leafIndex]);
   console.log(requests.toHuman());
 
@@ -101,9 +101,9 @@ const run = async () => {
             },
             consensusStateId: 'PARA'
           },
-          height: 32
+          height: requests.toHuman()[0].Get.height.toString()
         },
-        proof: substrateStateProof,
+        proof: substrateStateProof.toHex(),
       },
       signer: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY' // alice address
     }
