@@ -46,6 +46,10 @@ enum ParaState {
   ACTIVE_PARA = 'Parachain(Active)',
   // eslint-disable-next-line no-unused-vars
   SOON_ACTIVE = 'Soon Active',
+  // eslint-disable-next-line no-unused-vars
+  LEASE_HOLDING = 'Lease Holding',
+  // eslint-disable-next-line no-unused-vars
+  SYSTEM = 'System Parachain',
 }
 
 type ParachainInfo = {
@@ -77,9 +81,16 @@ const StateCard = ({ state }: { state: ParaState }) => {
       background: '#EDDFFF',
     },
     [ParaState.SOON_ACTIVE]: {
-      // FIXME: color and background
-      color: '#9F53FF',
-      background: '#EDDFFF',
+      color: '#5e73ff',
+      background: '#e1e7ff',
+    },
+    [ParaState.LEASE_HOLDING]: {
+      color: '#5e9b53',
+      background: '#f1ffe1',
+    },
+    [ParaState.SYSTEM]: {
+      color: '#ff7f53',
+      background: '#ffe9df',
     },
   };
   return (
@@ -251,12 +262,35 @@ const ParachainManagement = () => {
       return ids;
     };
 
+    const fetchLeaseHoldingParas = async (): Promise<number[]> => {
+      if (!coretimeApi || coretimeApiState !== ApiState.READY) return [];
+      const leases = await coretimeApi.query.broker.leases();
+      const ids = (
+        leases.toJSON() as Array<{ until: number; task: number }>
+      ).map((lease) => lease.task);
+      return ids;
+    };
+
+    const fetchSystemParas = async (): Promise<number[]> => {
+      if (!coretimeApi || coretimeApiState !== ApiState.READY) return [];
+      const leases: any = (
+        (await coretimeApi.query.broker.reservations()).toJSON() as Array<any>
+      ).map((e) => e[0]);
+      const ids = (leases as Array<{ mask: string; assignment: any }>)
+        .filter((lease) => lease.assignment.task)
+        .map((lease) => lease.assignment.task);
+
+      return ids;
+    };
+
     const fetchParachainList = async (): Promise<ParachainInfo[]> => {
       const parasRaw = await relayApi.query.paras.paraLifecycles.entries();
       const paras: ParachainInfo[] = [];
 
       const activeParas = await fetchActiveParas();
       const workplanParas = await fetchWorkplanParas();
+      const leaseHoldingParas = await fetchLeaseHoldingParas();
+      const systemParas = await fetchSystemParas();
 
       for (const [key, value] of parasRaw) {
         const [strId] = key.toHuman() as [string];
@@ -265,15 +299,20 @@ const ParachainManagement = () => {
         const name = chainData[network][id] ?? '';
         const isActive = activeParas.indexOf(id) !== -1;
         const isInWorkplan = workplanParas.indexOf(id) !== -1;
+        const isLeaseHolding = leaseHoldingParas.indexOf(id) !== -1;
+        const isSystemPara = systemParas.indexOf(id) !== -1;
 
-        const state =
-          strState === 'Parathread'
-            ? ParaState.PARATHREAD
-            : isActive
-            ? ParaState.ACTIVE_PARA
-            : isInWorkplan
-            ? ParaState.SOON_ACTIVE
-            : ParaState.IDLE_PARA;
+        const state = isSystemPara
+          ? ParaState.SYSTEM
+          : isLeaseHolding
+            ? ParaState.LEASE_HOLDING
+            : strState === 'Parathread'
+              ? ParaState.PARATHREAD
+              : isActive
+                ? ParaState.ACTIVE_PARA
+                : isInWorkplan
+                  ? ParaState.SOON_ACTIVE
+                  : ParaState.IDLE_PARA;
 
         paras.push({ id, state, name } as ParachainInfo);
       }
