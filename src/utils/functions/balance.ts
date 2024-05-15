@@ -1,6 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
-import { parseHNString } from './common';
 import { BN } from '@polkadot/util';
+
+import { parseHNString } from './common';
 
 /**
  * Converts an on chain balance value in BN planck to a decimal value in token unit (1 token token = 10^units planck)
