@@ -21,7 +21,7 @@ const types = {
     paid: 'Option<Balance>',
   },
   HashAlgorithm: {
-    _enum: ['Keccak', 'Blake2']
+    _enum: ['Keccak', 'Blake2'],
   },
   StateMachineProof: {
     hasher: 'HashAlgorithm',
@@ -31,17 +31,17 @@ const types = {
     _enum: {
       OverlayProof: 'StateMachineProof',
       StateProof: 'StateMachineProof',
-    }
+    },
   },
   LeafIndexQuery: {
-    commitment: 'H256'
+    commitment: 'H256',
   },
   StateMachine: {
     _enum: {
       Ethereum: {},
       Polkadot: 'u32',
       Kusama: 'u32',
-    }
+    },
   },
   Post: {},
   Get: {
@@ -56,9 +56,9 @@ const types = {
   Request: {
     _enum: {
       Post: 'Post',
-      Get: 'Get'
-    }
-  }
+      Get: 'Get',
+    },
+  },
 };
 
 const customRpc = {
@@ -68,12 +68,12 @@ const customRpc = {
       params: [
         {
           name: 'query',
-          type: 'Vec<LeafIndexQuery>'
-        }
+          type: 'Vec<LeafIndexQuery>',
+        },
       ],
-      type: 'Vec<Request>'
-    }
-  }
+      type: 'Vec<Request>',
+    },
+  },
 };
 
 const defaultValue = {

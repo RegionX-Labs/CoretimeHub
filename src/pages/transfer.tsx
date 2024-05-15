@@ -42,6 +42,11 @@ import {
   RegionLocation,
   RegionMetadata,
 } from '@/models';
+import {
+  makeResponse,
+  queryRequest,
+  waitForRegionRecordRequestEvent,
+} from '@/utils/ismp';
 
 const TransferPage = () => {
   const {
@@ -92,11 +97,26 @@ const TransferPage = () => {
     },
   };
 
-  useEffect(() => {
-    setFilteredRegions(
-      regions.filter((r) => r.location != RegionLocation.MARKET)
-    );
-  }, [regions]);
+  const waitAndRespond = async () => {
+    if (
+      !coretimeApi ||
+      coretimeApiState != ApiState.READY ||
+      !regionxApi ||
+      regionxApiState != ApiState.READY ||
+      !activeAccount ||
+      !selectedRegion
+    )
+      return;
+    const commitment = (await waitForRegionRecordRequestEvent(
+      regionxApi,
+      selectedRegion.region.getRegionId()
+    )) as string;
+
+    console.log(commitment);
+    const request = await queryRequest(regionxApi, commitment);
+    console.log(request);
+    await makeResponse(regionxApi, coretimeApi, request, activeAccount.address);
+  };
 
   const handleOriginChange = (newOrigin: ChainType) => {
     setOriginChain(newOrigin);
@@ -207,7 +227,13 @@ const TransferPage = () => {
           { address: activeAccount.address, signer: activeSigner },
           selectedRegion.rawId,
           receiverKeypair.pairs[0].publicKey,
-          defaultHandler
+          {
+            ...defaultHandler,
+            success: () => {
+              toastSuccess('Successfully transferred.');
+              waitAndRespond();
+            },
+          }
         );
       }
     } else if (

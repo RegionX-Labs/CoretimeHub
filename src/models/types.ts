@@ -84,10 +84,10 @@ export type TaskMetadata = {
 export type ScheduleItem = {
   mask: string;
   assignment:
-  | {
-    Task: string;
-  }
-  | 'Pool';
+    | {
+        Task: string;
+      }
+    | 'Pool';
 };
 
 export type SaleInfo = {
@@ -280,9 +280,7 @@ export class Listing {
   }
 }
 
-export type StateMachine =
-  | { Polkadot: number }
-  | { Kusama: number };
+export type StateMachine = { Polkadot: number } | { Kusama: number };
 
 export interface Get {
   source: StateMachine;
@@ -294,6 +292,4 @@ export interface Get {
   timeout_timestamp: bigint;
 }
 
-export type IsmpRequest =
-  | { Post: {} }
-  | { Get: Get };
+export type IsmpRequest = { post: {} } | { get: Get };
