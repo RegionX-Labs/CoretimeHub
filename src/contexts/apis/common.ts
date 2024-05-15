@@ -73,7 +73,8 @@ export const connect = (
   socket: string,
   dispatch: any,
   newSocket: boolean,
-  types?: any
+  types?: any,
+  customRpc?: any,
 ) => {
   const { apiState, jsonrpc } = state;
 
@@ -81,7 +82,7 @@ export const connect = (
   if (apiState !== ApiState.DISCONNECTED && !newSocket) return;
 
   const provider = new WsProvider(socket);
-  const _api = new ApiPromise({ provider, rpc: jsonrpc, types });
+  const _api = new ApiPromise({ provider, rpc: { ...jsonrpc, ...customRpc }, types });
   dispatch({ type: 'CONNECT_INIT', socket });
 
   // Set listeners for disconnection and reconnection event.

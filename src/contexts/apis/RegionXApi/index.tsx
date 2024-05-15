@@ -20,6 +20,60 @@ const types = {
     owner: 'AccountId',
     paid: 'Option<Balance>',
   },
+  HashAlgorithm: {
+    _enum: ['Keccak', 'Blake2']
+  },
+  StateMachineProof: {
+    hasher: 'HashAlgorithm',
+    storage_proof: 'Vec<Vec<u8>>',
+  },
+  SubstrateStateProof: {
+    _enum: {
+      OverlayProof: 'StateMachineProof',
+      StateProof: 'StateMachineProof',
+    }
+  },
+  LeafIndexQuery: {
+    commitment: 'H256'
+  },
+  StateMachine: {
+    _enum: {
+      Ethereum: {},
+      Polkadot: 'u32',
+      Kusama: 'u32',
+    }
+  },
+  Post: {},
+  Get: {
+    source: 'StateMachine',
+    dest: 'StateMachine',
+    nonce: 'u64',
+    from: 'Vec<u8>',
+    keys: 'Vec<Vec<u8>>',
+    height: 'u64',
+    timeout_timestamp: 'u64',
+  },
+  Request: {
+    _enum: {
+      Post: 'Post',
+      Get: 'Get'
+    }
+  }
+};
+
+const customRpc = {
+  ismp: {
+    queryRequests: {
+      description: '',
+      params: [
+        {
+          name: 'query',
+          type: 'Vec<LeafIndexQuery>'
+        }
+      ],
+      type: 'Vec<Request>'
+    }
+  }
 };
 
 const defaultValue = {
@@ -53,7 +107,7 @@ const RegionXApiContextProvider = (props: any) => {
     //
     // For this reason we don't have different urls based on the network. However, this
     // should be updated once this is in production.
-    connect(state, WS_REGIONX_CHAIN, dispatch, false, types);
+    connect(state, WS_REGIONX_CHAIN, dispatch, false, types, customRpc);
   }, [state]);
 
   return (
