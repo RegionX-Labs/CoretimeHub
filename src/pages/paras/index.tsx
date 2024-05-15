@@ -210,7 +210,7 @@ const ParachainManagement = () => {
   };
 
   // Buy coretime for the given parachain
-  const onBuy = (_paraId: number) => {
+  const onBuy = () => {
     router.push({
       pathname: 'purchase',
       query: { network },
@@ -481,7 +481,7 @@ const ParachainManagement = () => {
                       ) : state === ParaState.IDLE_PARA ? (
                         <ParaActionButton
                           variant='outlined'
-                          onClick={() => onBuy(id)}
+                          onClick={onBuy}
                         >
                           Buy Coretime
                         </ParaActionButton>
