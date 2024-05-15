@@ -6,7 +6,6 @@ export * from './CoreDetailsPanel';
 export * from './FeatureCard';
 export * from './Label';
 export * from './ListingCard';
-export * from './MarketFilters';
 export * from './RecipientInput';
 export * from './RegionCard';
 export * from './SaleInfoPanel';

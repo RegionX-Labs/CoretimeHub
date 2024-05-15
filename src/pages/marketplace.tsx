@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import theme from '@/utils/muiTheme';
 
-import { ListingCard, MarketFilters, PurchaseModal } from '@/components';
+import { ListingCard, PurchaseModal } from '@/components';
 
 import { useMarket } from '@/contexts/market';
 import { Listing } from '@/models';
@@ -48,10 +48,6 @@ const Marketplace = () => {
           </Typography>
         </Box>
       </Box>
-      <MarketFilters
-        listings={listedRegions}
-        setFilteredListings={setFilteredListings}
-      />
       {filteredListings.length > 0 && (
         <Box
           marginTop='2rem'
