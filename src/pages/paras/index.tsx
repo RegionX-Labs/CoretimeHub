@@ -210,7 +210,6 @@ const ParachainManagement = () => {
   };
 
   // Buy coretime for the given parachain
-  // TODO: pass para id to the purchase page
   const onBuy = (_paraId: number) => {
     router.push({
       pathname: 'purchase',
