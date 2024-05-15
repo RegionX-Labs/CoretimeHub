@@ -195,7 +195,6 @@ const ParachainManagement = () => {
 
   // Renew coretime with the given para id
   const onRenew = (paraId: number) => {
-    // TODO: Pass para id
     router.push({
       pathname: 'paras/renewal',
       query: { network, paraId },
