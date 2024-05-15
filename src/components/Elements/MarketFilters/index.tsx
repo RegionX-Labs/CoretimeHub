@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 
-import { Listing } from '@/models';
+import { Listing, REGIONX_DECIMALS } from '@/models';
 
 import CoreOccupancyFilter from './coreOccupancyFilter';
 import DurationFilter from './DurationFilter';
@@ -66,6 +66,7 @@ export const MarketFilters = ({ listings, setFilteredListings }: Props) => {
               <CoreOccupancyFilter
                 listings={listings}
                 filters={filters}
+                decimals={REGIONX_DECIMALS}
                 updateFilters={updateFilters}
               />
             </Box>
@@ -73,6 +74,7 @@ export const MarketFilters = ({ listings, setFilteredListings }: Props) => {
               <DurationFilter
                 listings={listings}
                 filters={filters}
+                decimals={REGIONX_DECIMALS}
                 updateFilters={updateFilters}
               />
             </Box>
@@ -80,6 +82,7 @@ export const MarketFilters = ({ listings, setFilteredListings }: Props) => {
               <RegionStartFilter
                 listings={listings}
                 filters={filters}
+                decimals={REGIONX_DECIMALS}
                 updateFilters={updateFilters}
               />
             </Box>
@@ -87,6 +90,7 @@ export const MarketFilters = ({ listings, setFilteredListings }: Props) => {
               <RegionEndFilter
                 listings={listings}
                 filters={filters}
+                decimals={REGIONX_DECIMALS}
                 updateFilters={updateFilters}
               />
             </Box>
@@ -107,6 +111,7 @@ export const MarketFilters = ({ listings, setFilteredListings }: Props) => {
         <PriceFilter
           listings={listings}
           filters={filters}
+          decimals={REGIONX_DECIMALS}
           updateFilters={updateFilters}
         />
       </Box>

@@ -1,7 +1,7 @@
 import { Box, Slider, Typography } from '@mui/material';
 import { useState } from 'react';
 
-import { formatBalance } from '@/utils/functions';
+import { planckBnToUnit } from '@/utils/functions';
 
 import { FilterProps } from '.';
 
@@ -15,9 +15,7 @@ const PriceFilter = ({
     if (listings.length < 1) return 0;
     const sortedListings = new Array(...listings);
     sortedListings.sort((a, b) => b.currentPrice.cmp(a.currentPrice));
-    return Number(
-      formatBalance(sortedListings[0].currentPrice.toString(), decimals)
-    );
+    return planckBnToUnit(sortedListings[0].currentPrice.toString(), decimals);
   };
 
   const [priceLimit, setPriceLimit] = useState(maxValue());
@@ -27,7 +25,7 @@ const PriceFilter = ({
     updateFilters({
       ...filters,
       priceFilter: (listing) =>
-        Number(formatBalance(listing.currentPrice.toString(), decimals)) <=
+        planckBnToUnit(listing.currentPrice.toString(), decimals) <=
         (newValue as number),
     });
   };
