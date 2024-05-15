@@ -39,7 +39,7 @@ enum ParaState {
   // eslint-disable-next-line no-unused-vars
   ONBOARDING = 'Onboarding',
   // eslint-disable-next-line no-unused-vars
-  PARATHREAD = 'Parathread',
+  ONDEMAND_PARACHAIN = 'On-Demand Parachain',
   // eslint-disable-next-line no-unused-vars
   IDLE_PARA = 'Parachain(Idle)',
   // eslint-disable-next-line no-unused-vars
@@ -68,7 +68,7 @@ const StateCard = ({ state }: { state: ParaState }) => {
       color: '#7472D8',
       background: 'rgba(116, 114, 216, 0.1)',
     },
-    [ParaState.PARATHREAD]: {
+    [ParaState.ONDEMAND_PARACHAIN]: {
       color: '#2D57C3',
       background: 'rgba(45, 87, 195, 0.1)',
     },
@@ -305,14 +305,14 @@ const ParachainManagement = () => {
         const state = isSystemPara
           ? ParaState.SYSTEM
           : isLeaseHolding
-            ? ParaState.LEASE_HOLDING
-            : strState === 'Parathread'
-              ? ParaState.PARATHREAD
-              : isActive
-                ? ParaState.ACTIVE_PARA
-                : isInWorkplan
-                  ? ParaState.SOON_ACTIVE
-                  : ParaState.IDLE_PARA;
+          ? ParaState.LEASE_HOLDING
+          : strState === 'Parathread'
+          ? ParaState.ONDEMAND_PARACHAIN
+          : isActive
+          ? ParaState.ACTIVE_PARA
+          : isInWorkplan
+          ? ParaState.SOON_ACTIVE
+          : ParaState.IDLE_PARA;
 
         paras.push({ id, state, name } as ParachainInfo);
       }
@@ -472,7 +472,7 @@ const ParachainManagement = () => {
                         >
                           Register
                         </ParaActionButton>
-                      ) : state === ParaState.PARATHREAD ? (
+                      ) : state === ParaState.ONDEMAND_PARACHAIN ? (
                         <ParaActionButton
                           variant='outlined'
                           onClick={() => onUpgrade(id)}
