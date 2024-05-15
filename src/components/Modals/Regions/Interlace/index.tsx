@@ -55,7 +55,10 @@ export const InterlaceModal = ({
   const [working, setWorking] = useState(false);
   const [position, setPosition] = useState(oneStart);
 
-  const newMask = maskToBin(maskFromChunk(oneStart, position + 1));
+  const newMask =
+    oneStart <= position + 1
+      ? maskToBin(maskFromChunk(oneStart, position + 1))
+      : '';
 
   const onInterlace = async () => {
     if (!api || !activeAccount || !activeSigner) return;

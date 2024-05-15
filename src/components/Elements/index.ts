@@ -4,6 +4,7 @@ export * from './Banner';
 export * from './Buttons';
 export * from './CoreDetailsPanel';
 export * from './FeatureCard';
+export * from './InputFile';
 export * from './Label';
 export * from './ListingCard';
 export * from './MarketFilters';
