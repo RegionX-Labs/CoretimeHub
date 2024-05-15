@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 
 import theme from '@/utils/muiTheme';
 import {
+  coretimeFromRegionXTransfer,
+  coretimeToRegionXTransfer,
   transferTokensFromCoretimeToRelay,
   transferTokensFromRelayToCoretime,
 } from '@/utils/transfers/crossChain';
@@ -27,6 +29,8 @@ import AssetSelector from '@/components/Elements/Selectors/AssetSelector';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+import { EXPERIMENTAL } from '@/contexts/apis/consts';
+import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { ApiState } from '@/contexts/apis/types';
 import { useBalances } from '@/contexts/balance';
 import { useRegions } from '@/contexts/regions';
@@ -48,6 +52,9 @@ const TransferPage = () => {
   const {
     state: { api: coretimeApi, apiState: coretimeApiState, symbol },
   } = useCoretimeApi();
+  const {
+    state: { api: regionxApi, apiState: regionxApiState },
+  } = useRegionXApi();
   const {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
@@ -165,8 +172,19 @@ const TransferPage = () => {
   };
 
   const handleRegionTransfer = async () => {
+    if (!activeAccount || !activeSigner) return;
     if (!selectedRegion) {
       toastError('Select a region');
+      return;
+    }
+
+    if (
+      !coretimeApi ||
+      coretimeApiState !== ApiState.READY ||
+      !regionxApi ||
+      regionxApiState !== ApiState.READY
+    ) {
+      toastError('Not connected to the Coretime chain');
       return;
     }
 
@@ -174,6 +192,42 @@ const TransferPage = () => {
       originChain === ChainType.CORETIME
         ? await transferCoretimeRegion(selectedRegion.region)
         : toastWarning('Currently not supported');
+    } else if (
+      originChain === ChainType.CORETIME &&
+      destinationChain === ChainType.REGIONX
+    ) {
+      if (!EXPERIMENTAL) toastWarning('Currently not supported');
+      else {
+        const receiverKeypair = new Keyring();
+        receiverKeypair.addFromAddress(
+          newOwner ? newOwner : activeAccount.address
+        );
+        coretimeToRegionXTransfer(
+          coretimeApi,
+          { address: activeAccount.address, signer: activeSigner },
+          selectedRegion.rawId,
+          receiverKeypair.pairs[0].publicKey,
+          defaultHandler
+        );
+      }
+    } else if (
+      originChain === ChainType.REGIONX &&
+      destinationChain === ChainType.CORETIME
+    ) {
+      if (!EXPERIMENTAL) toastWarning('Currently not supported');
+      else {
+        const receiverKeypair = new Keyring();
+        receiverKeypair.addFromAddress(
+          newOwner ? newOwner : activeAccount.address
+        );
+        coretimeFromRegionXTransfer(
+          regionxApi,
+          { address: activeAccount.address, signer: activeSigner },
+          selectedRegion.rawId,
+          receiverKeypair.pairs[0].publicKey,
+          defaultHandler
+        );
+      }
     } else {
       toastWarning('Currently not supported');
     }

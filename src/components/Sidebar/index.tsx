@@ -12,6 +12,8 @@ import React from 'react';
 
 import Logo from '@/assets/logo.png';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+import { EXPERIMENTAL } from '@/contexts/apis/consts';
+import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { RenewIcon } from '@/icons';
 
 import styles from './index.module.scss';
@@ -77,6 +79,9 @@ export const Sidebar = () => {
   const {
     state: { apiState: coretimeApiState },
   } = useCoretimeApi();
+  const {
+    state: { apiState: regionxApiState },
+  } = useRegionXApi();
 
   const menu = {
     general: [
@@ -182,6 +187,9 @@ export const Sidebar = () => {
         <div className={styles.statusContainer}>
           <StatusIndicator state={relayApiState} label='Relay chain' />
           <StatusIndicator state={coretimeApiState} label='Coretime chain' />
+          {EXPERIMENTAL && (
+            <StatusIndicator state={regionxApiState} label='RegionX chain' />
+          )}
         </div>
       </Box>
     </div>

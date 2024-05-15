@@ -6,36 +6,26 @@ export const versionWrap = (xcm: any) => {
   };
 };
 
-export const versionWrappeddNonfungibleAsset = (
-  assetLocation: any,
-  index: string
-) => {
-  return versionWrap([
-    {
-      id: {
-        Concrete: assetLocation,
-      },
-      fun: {
-        NonFungible: {
-          Index: index,
-        },
+export const nonFungibleAsset = (assetLocation: any, index: string) => {
+  return {
+    id: {
+      Concrete: assetLocation,
+    },
+    fun: {
+      NonFungible: {
+        Index: index,
       },
     },
-  ]);
+  };
 };
 
-export const versionWrappeddFungibleAsset = (
-  assetLocation: any,
-  amount: string
-) => {
-  return versionWrap([
-    {
-      id: {
-        Concrete: assetLocation,
-      },
-      fun: {
-        Fungible: amount,
-      },
+export const fungibleAsset = (assetLocation: any, amount: string) => {
+  return {
+    id: {
+      Concrete: assetLocation,
     },
-  ]);
+    fun: {
+      Fungible: amount,
+    },
+  };
 };

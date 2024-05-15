@@ -106,6 +106,7 @@ const TaskDataProvider = ({ children }: Props) => {
       ).toHuman() as ScheduleItem[]
     )[0];
 
+    if (!workload) return null;
     if (workload.assignment === 'Pool') {
       return POOLING_TASK_ID;
     } else {
