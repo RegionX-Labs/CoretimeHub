@@ -13,26 +13,37 @@ type RenewableParachain = {
   when: number;
 };
 
+// eslint-disable-next-line no-unused-vars
+export enum Status {
+  // eslint-disable-next-line no-unused-vars
+  UNINITIALIZED,
+  // eslint-disable-next-line no-unused-vars
+  LOADING,
+  // eslint-disable-next-line no-unused-vars
+  LOADED,
+}
+
 export const useRenewableParachains = () => {
   const {
     state: { api, apiState },
   } = useCoretimeApi();
 
-  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<Status>(Status.UNINITIALIZED);
   const [parachains, setParachains] = useState<RenewableParachain[]>([]);
 
   useEffect(() => {
     if (apiState !== ApiState.READY) {
-      setLoading(false);
+      setStatus(Status.UNINITIALIZED);
       setParachains([]);
     }
 
     const asyncFetchParaIds = async () => {
       if (!api || apiState !== ApiState.READY) return;
 
-      setLoading(true);
+      setStatus(Status.LOADING);
 
       const renewals = await api.query.broker.allowedRenewals.entries();
+      const chains: RenewableParachain[] = [];
       for (const [key, value] of renewals) {
         const data: any = key.toHuman();
         const core = parseHNString(data[0].core);
@@ -54,7 +65,7 @@ export const useRenewableParachains = () => {
 
         if (Task === undefined) continue;
 
-        parachains.push({
+        chains.push({
           core,
           price,
           mask,
@@ -63,13 +74,13 @@ export const useRenewableParachains = () => {
         });
       }
 
-      setParachains(parachains);
+      setParachains(chains);
 
-      setLoading(false);
+      setStatus(Status.LOADED);
     };
 
     asyncFetchParaIds();
   }, [api, apiState]);
 
-  return { loading, parachains };
+  return { status, parachains };
 };

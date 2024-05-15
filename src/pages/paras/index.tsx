@@ -194,11 +194,11 @@ const ParachainManagement = () => {
   };
 
   // Renew coretime with the given para id
-  const onRenew = (_paraId: number) => {
+  const onRenew = (paraId: number) => {
     // TODO: Pass para id
     router.push({
       pathname: 'paras/renewal',
-      query: { ...router.query },
+      query: { network, paraId },
     });
   };
 
@@ -206,15 +206,16 @@ const ParachainManagement = () => {
   const onUpgrade = (_paraId: number) => {
     router.push({
       pathname: 'purchase',
-      query: { ...router.query },
+      query: { network },
     });
   };
 
   // Buy coretime for the given parachain
+  // TODO: pass para id to the purchase page
   const onBuy = (_paraId: number) => {
     router.push({
       pathname: 'purchase',
-      query: { ...router.query },
+      query: { network },
     });
   };
 

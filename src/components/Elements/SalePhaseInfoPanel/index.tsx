@@ -5,6 +5,7 @@ import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 
 import { PhaseEndpoints } from '@/hooks/salePhase';
 
+import { useNetwork } from '@/contexts/network';
 import { SalePhase } from '@/models';
 
 import styles from './index.module.scss';
@@ -22,11 +23,12 @@ export const SalePhaseInfoPanel = ({
 }: SalePhaseInfoPanelProps) => {
   const theme = useTheme();
   const router = useRouter();
+  const { network } = useNetwork();
 
   const onManage = () => {
     router.push({
       pathname: '/regions',
-      query: { ...router.query },
+      query: { network },
     });
   };
   const minuteSeconds = 60;
