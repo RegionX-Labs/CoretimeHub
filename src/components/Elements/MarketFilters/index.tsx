@@ -58,11 +58,11 @@ export const MarketFilters = ({ listings, setFilteredListings }: Props) => {
 
   return (
     <Box>
-      <Box display={'flex'} justifyContent={'space-between'} alignItems={'end'}>
+      <Box display='flex' justifyContent='space-between' alignItems='end'>
         <Box>
           <Typography variant='subtitle2'>Search filters: </Typography>
-          <Box display={'flex'}>
-            <Box marginRight={'1em'} marginTop={'.5em'}>
+          <Box display='flex'>
+            <Box marginRight='1em' marginTop='.5em'>
               <CoreOccupancyFilter
                 listings={listings}
                 filters={filters}
@@ -70,7 +70,7 @@ export const MarketFilters = ({ listings, setFilteredListings }: Props) => {
                 updateFilters={updateFilters}
               />
             </Box>
-            <Box marginRight={'1em'} marginTop={'.5em'}>
+            <Box marginRight='1em' marginTop='.5em'>
               <DurationFilter
                 listings={listings}
                 filters={filters}
@@ -78,7 +78,7 @@ export const MarketFilters = ({ listings, setFilteredListings }: Props) => {
                 updateFilters={updateFilters}
               />
             </Box>
-            <Box marginRight={'1em'} marginTop={'.5em'}>
+            <Box marginRight='1em' marginTop='.5em'>
               <RegionStartFilter
                 listings={listings}
                 filters={filters}
@@ -86,7 +86,7 @@ export const MarketFilters = ({ listings, setFilteredListings }: Props) => {
                 updateFilters={updateFilters}
               />
             </Box>
-            <Box marginRight={'1em'} marginTop={'.5em'}>
+            <Box marginRight='1em' marginTop='.5em'>
               <RegionEndFilter
                 listings={listings}
                 filters={filters}
@@ -98,7 +98,7 @@ export const MarketFilters = ({ listings, setFilteredListings }: Props) => {
         </Box>
         <Box>
           <Typography variant='subtitle2'>Sort By: </Typography>
-          <Box marginTop={'.5em'}>
+          <Box marginTop='.5em'>
             <Sort
               listings={listings}
               filter={(listing) => filter(filters, listing)}
@@ -107,7 +107,7 @@ export const MarketFilters = ({ listings, setFilteredListings }: Props) => {
           </Box>
         </Box>
       </Box>
-      <Box marginRight={'1em'} marginTop={'1em'} width={'100%'}>
+      <Box marginRight='1em' marginTop='1em' width='100%'>
         <PriceFilter
           listings={listings}
           filters={filters}

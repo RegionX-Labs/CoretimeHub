@@ -14,11 +14,11 @@ import { RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 
-interface SimpleRegionCardProps {
+interface RegionOverviewProps {
   regionMetadata: RegionMetadata;
 }
 
-export const SimpleRegionCard = ({ regionMetadata }: SimpleRegionCardProps) => {
+export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
   TimeAgo.addLocale(en);
   // Create formatter (English).
   const timeAgo = new TimeAgo('en-US');
@@ -61,8 +61,11 @@ export const SimpleRegionCard = ({ regionMetadata }: SimpleRegionCardProps) => {
       <Box className={styles.regionInfo}>
         <Box>
           <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
+            sx={{
+              color: theme.palette.common.black,
+              fontSize: '1.25rem',
+              fontWeight: 500,
+            }}
           >
             {regionMetadata.name}
           </Typography>

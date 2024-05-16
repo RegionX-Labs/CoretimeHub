@@ -29,9 +29,9 @@ import { useTasks } from '@/contexts/tasks';
 import { POOLING_TASK_ID, RegionLocation, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
-import { Label } from '..';
+import { Label } from '../..';
 
-interface RegionCardProps {
+interface RegionMetaCardProps {
   regionMetadata: RegionMetadata;
   editable?: boolean;
   active?: boolean;
@@ -39,13 +39,13 @@ interface RegionCardProps {
   updateName?: (_newName: string) => void;
 }
 
-export const RegionCard = ({
+export const RegionMetaCard = ({
   regionMetadata,
   active = false,
   editable = false,
   bordered = true,
   updateName,
-}: RegionCardProps) => {
+}: RegionMetaCardProps) => {
   return (
     <>
       {bordered ? (

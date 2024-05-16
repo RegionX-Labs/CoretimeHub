@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import { isValidAddress } from '@/utils/functions';
 import { transferRegionOnCoretimeChain } from '@/utils/transfers/native';
 
-import { ProgressButton, SimpleRegionCard } from '@/components/Elements';
+import { ProgressButton, RegionOverview } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
@@ -110,7 +110,7 @@ export const TransferModal = ({
           </Typography>
         </Box>
         <Box className={styles.content}>
-          <SimpleRegionCard regionMetadata={regionMetadata} />
+          <RegionOverview regionMetadata={regionMetadata} />
           <Paper
             className={styles.addressContainer}
             sx={{ color: theme.palette.common.black }}

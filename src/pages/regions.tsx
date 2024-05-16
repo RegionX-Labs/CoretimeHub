@@ -17,7 +17,7 @@ import {
   InterlaceModal,
   PartitionModal,
   PoolingModal,
-  RegionCard,
+  RegionMetaCard,
   SellModal,
   TaskAssignModal,
   TransferModal,
@@ -178,7 +178,7 @@ const Dashboard = () => {
             <>
               {regions.map((region, index) => (
                 <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
-                  <RegionCard
+                  <RegionMetaCard
                     regionMetadata={region}
                     active={index === currentRegionIndex}
                     editable

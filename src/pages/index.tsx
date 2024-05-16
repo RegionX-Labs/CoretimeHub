@@ -30,37 +30,37 @@ const Home = () => {
         <Grid spacing={8} container>
           <Grid container item xs={6}>
             <FeatureCard
-              title={'Purchase a core'}
+              title='Purchase a core'
               enabled={true}
               image={Shopping}
-              buttonText={'Go to Bulk Sale'}
+              buttonText='Go to Bulk Sale'
               href='/purchase'
             />
           </Grid>
           <Grid container item xs={6}>
             <FeatureCard
-              title={'Manage your regions'}
+              title='Manage your regions'
               enabled={true}
               image={Config}
-              buttonText={'Region Dashboard'}
+              buttonText='Region Dashboard'
               href='/regions'
             />
           </Grid>
           <Grid container item xs={6} direction='column'>
             <FeatureCard
-              title={'Track Blockspace Consumption'}
+              title='Track Blockspace Consumption'
               enabled={true}
               image={Chart}
-              buttonText={'Corespace Weigher'}
+              buttonText='Corespace Weigher'
               href='https://www.polkadot-weigher.com/'
             />
           </Grid>
           <Grid container item xs={6} direction='column'>
             <FeatureCard
-              title={'Trade Coretime'}
+              title='Trade Coretime'
               enabled={false}
               image={Trade}
-              buttonText={'Explore the market'}
+              buttonText='Explore the market'
               href='/'
             />
           </Grid>

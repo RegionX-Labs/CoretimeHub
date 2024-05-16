@@ -124,9 +124,9 @@ const ListingCardInner = ({
   ];
   return (
     <Box className={styles.listingInfo}>
-      <Box textAlign={'center'}>
+      <Box textAlign='center'>
         <Typography
-          fontSize={'18px'}
+          fontSize='18px'
           variant='button'
         >{`Core Index: #${region.getCore()}`}</Typography>
       </Box>
@@ -180,7 +180,7 @@ const ListingCardInner = ({
         <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
         {`Duration: ${formatDuration(endTimestamp - beginTimestamp)}`}
       </div>
-      <Box marginY={'1em'} display={'flex'} justifyContent={'space-between'}>
+      <Box marginY='1em' display='flex' justifyContent='space-between'>
         <Typography variant='h2'>
           Begin: {timeAgo.format(beginTimestamp)}
         </Typography>
@@ -189,12 +189,8 @@ const ListingCardInner = ({
         </Typography>
       </Box>
       <Box>
-        <Box
-          display={'flex'}
-          justifyContent={'space-between'}
-          alignItems={'center'}
-        >
-          <Typography fontSize={'1rem'}>Price/timeslice:</Typography>
+        <Box display='flex' justifyContent='space-between' alignItems='center'>
+          <Typography fontSize='1rem'>Price/timeslice:</Typography>
           <Typography variant='h2'>
             {getBalanceString(
               listing.timeslicePrice.toString(),
@@ -203,12 +199,8 @@ const ListingCardInner = ({
             )}
           </Typography>
         </Box>
-        <Box
-          display={'flex'}
-          justifyContent={'space-between'}
-          alignItems={'center'}
-        >
-          <Typography fontSize={'1rem'}>Total:</Typography>
+        <Box display='flex' justifyContent='space-between' alignItems='center'>
+          <Typography fontSize='1rem'>Total:</Typography>
           <Typography variant='h2'>
             {getBalanceString(
               listing.currentPrice.toString(),
@@ -219,11 +211,7 @@ const ListingCardInner = ({
         </Box>
       </Box>
       {!readOnly && (
-        <Box
-          sx={{ marginTop: '1em' }}
-          display={'flex'}
-          justifyContent={'center'}
-        >
+        <Box sx={{ marginTop: '1em' }} display='flex' justifyContent='center'>
           <Button
             sx={{ width: '100%' }}
             variant='outlined'

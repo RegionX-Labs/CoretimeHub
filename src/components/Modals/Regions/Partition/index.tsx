@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import { ProgressButton, SimpleRegionCard } from '@/components/Elements';
+import { ProgressButton, RegionOverview } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
@@ -146,7 +146,7 @@ export const PartitionModal = ({
           </Typography>
         </Box>
         <Box className={styles.content}>
-          <SimpleRegionCard regionMetadata={regionMetadata} />
+          <RegionOverview regionMetadata={regionMetadata} />
           <Paper className={styles.timeContainer}>
             <Box className={styles.unitWrapper}>
               <Typography
