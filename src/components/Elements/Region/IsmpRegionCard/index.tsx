@@ -58,7 +58,7 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
 
   const { region, coreOccupancy, status } = regionMetadata;
   const { timeslicePeriod } = useCommon();
-  const { toastWarning, toastSuccess } = useToast();
+  const { toastWarning, toastSuccess, toastInfo, toastError } = useToast();
 
   const setTimestamps = useCallback(
     (api: ApiPromise) => {
@@ -116,6 +116,43 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
         : onError();
     }
   }, [coretimeApi, regionxApi, coretimeApiState, regionxApiState]);
+
+  const requestRegionRecord = async () => {
+    if (
+      !regionxApi ||
+      regionxApiState !== ApiState.READY ||
+      !activeAccount ||
+      !activeSigner
+    ) {
+      return;
+    }
+
+    const request = regionxApi.tx.regions.requestRegionRecord(
+      region.getRegionId()
+    );
+    try {
+      await request.signAndSend(
+        activeAccount.address,
+        { signer: activeSigner },
+        ({ status, events }) => {
+          if (status.isReady) toastInfo('Transaction was initiated');
+          else if (status.isInBlock) toastInfo(`In Block`);
+          else if (status.isFinalized) {
+            events.forEach(({ event: { method } }) => {
+              if (method === 'ExtrinsicSuccess') {
+                toastSuccess('Transaction successful');
+                fetchRegions();
+              } else if (method === 'ExtrinsicFailed') {
+                toastError(`Failed to request region record`);
+              }
+            });
+          }
+        }
+      );
+    } catch (e) {
+      toastError(`Failed to interlace the region. ${e}`);
+    }
+  };
 
   return (
     <Paper className={styles.container}>
@@ -187,7 +224,9 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
                 Failed to fetch region record
               </Typography>
             </Stack>
-            <Button variant='outlined'>Request again</Button>
+            <Button variant='outlined' onClick={requestRegionRecord}>
+              Request again
+            </Button>
           </>
         ) : (
           <></>
