@@ -44,7 +44,7 @@ const DurationFilter = ({ filters, updateFilters }: FilterProps) => {
 
   return (
     <Box width={200}>
-      <Typography marginBottom={'.5em'}>Region duration at least</Typography>
+      <Typography marginBottom='.5em'>Region duration at least</Typography>
       <FormControl fullWidth>
         <InputLabel id='range-dropdown-label'>Range</InputLabel>
         <Select

@@ -18,13 +18,13 @@ import {
 
 import {
   AmountInput,
+  Balance,
   ChainSelector,
   ProgressButton,
   RecipientInput,
-  RegionCard,
+  RegionMetaCard,
   RegionSelector,
 } from '@/components';
-import Balance from '@/components/Elements/Balance';
 import AssetSelector from '@/components/Elements/Selectors/AssetSelector';
 
 import { useAccounts } from '@/contexts/account';
@@ -337,7 +337,7 @@ const TransferPage = () => {
               justifyContent: 'center',
             }}
           >
-            <RegionCard regionMetadata={selectedRegion} />
+            <RegionMetaCard regionMetadata={selectedRegion} />
           </Box>
         )}
         <Stack

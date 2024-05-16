@@ -18,8 +18,7 @@ import { useEffect, useState } from 'react';
 import { Status, useRenewableParachains } from '@/hooks/renewableParas';
 import { getBalanceString, sendTx } from '@/utils/functions';
 
-import { ProgressButton } from '@/components';
-import Balance from '@/components/Elements/Balance';
+import { Balance, ProgressButton } from '@/components';
 
 import { chainData } from '@/chaindata';
 import { useAccounts } from '@/contexts/account';

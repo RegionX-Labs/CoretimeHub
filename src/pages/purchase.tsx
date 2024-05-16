@@ -14,12 +14,12 @@ import useSalePrice from '@/hooks/salePrice';
 import { parseHNString, sendTx } from '@/utils/functions';
 
 import {
+  Balance,
   CoreDetailsPanel,
   ProgressButton,
   SaleInfoPanel,
   SalePhaseInfoPanel,
 } from '@/components';
-import Balance from '@/components/Elements/Balance';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';

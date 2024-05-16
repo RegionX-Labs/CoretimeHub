@@ -9,7 +9,7 @@ import {
 import { Region } from 'coretime-utils';
 import { useState } from 'react';
 
-import { RegionCard } from '@/components/Elements';
+import { RegionMetaCard } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useMarket } from '@/contexts/market';
@@ -69,7 +69,7 @@ export const UnlistModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent>
         <Stack direction='column' gap={3}>
-          <RegionCard regionMetadata={regionMetadata} bordered={false} />
+          <RegionMetaCard regionMetadata={regionMetadata} bordered={false} />
         </Stack>
       </DialogContent>
       <DialogActions>

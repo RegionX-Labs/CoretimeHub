@@ -12,7 +12,7 @@ interface BalanceProps {
   relayBalance: number;
 }
 
-const Balance = ({ relayBalance, coretimeBalance }: BalanceProps) => {
+export const Balance = ({ relayBalance, coretimeBalance }: BalanceProps) => {
   const theme = useTheme();
   const {
     state: { activeAccount },
@@ -62,5 +62,3 @@ const Balance = ({ relayBalance, coretimeBalance }: BalanceProps) => {
     <></>
   );
 };
-
-export default Balance;

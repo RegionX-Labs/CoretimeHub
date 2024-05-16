@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
-import { ListingCard } from '@/components/Elements/ListingCard';
+import { ListingCard } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useToast } from '@/contexts/toast';

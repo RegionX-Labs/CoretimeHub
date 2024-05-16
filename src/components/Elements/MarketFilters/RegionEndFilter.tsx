@@ -47,7 +47,7 @@ const RegionEndFilter = ({ filters, updateFilters }: FilterProps) => {
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <Typography marginBottom={'.5em'}>Region ends by</Typography>
+        <Typography marginBottom='.5em'>Region ends by</Typography>
         <DatePicker
           label='Select date'
           value={selectedEnd}
