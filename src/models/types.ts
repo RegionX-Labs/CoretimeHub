@@ -10,47 +10,13 @@ import {
   Timeslice,
 } from 'coretime-utils';
 
+import { ISMPRecordStatus, RegionLocation } from './enums';
+
 export type Percentage = number; // Percentage value between 0 and 1
 
 export type ParaId = number;
 
 export type BlockNumber = number;
-
-export enum AssetType {
-  // eslint-disable-next-line no-unused-vars
-  NONE = 0,
-  // eslint-disable-next-line no-unused-vars
-  TOKEN = 1,
-  // eslint-disable-next-line no-unused-vars
-  REGION = 2,
-}
-
-export enum ChainType {
-  // eslint-disable-next-line no-unused-vars
-  NONE = 0,
-  // eslint-disable-next-line no-unused-vars
-  CORETIME = 1,
-  // eslint-disable-next-line no-unused-vars
-  RELAY = 2,
-  // eslint-disable-next-line no-unused-vars
-  REGIONX = 3,
-}
-
-export enum NetworkType {
-  // eslint-disable-next-line no-unused-vars
-  NONE = 'none',
-  // eslint-disable-next-line no-unused-vars
-  ROCOCO = 'rococo',
-  // eslint-disable-next-line no-unused-vars
-  KUSAMA = 'kusama',
-}
-
-export enum FinalityType {
-  // eslint-disable-next-line no-unused-vars
-  FINAL = 'Final',
-  // eslint-disable-next-line no-unused-vars
-  PROVISIONAL = 'Provisional',
-}
 
 export type Sender = {
   address: string;
@@ -65,15 +31,6 @@ export type TxStatusHandlers = {
   error: () => void;
   finally?: () => void;
 };
-
-export enum RegionLocation {
-  // eslint-disable-next-line no-unused-vars
-  CORETIME_CHAIN,
-  // eslint-disable-next-line no-unused-vars
-  REGIONX_CHAIN,
-  // eslint-disable-next-line no-unused-vars
-  MARKET,
-}
 
 export type TaskMetadata = {
   id: TaskId;
@@ -116,15 +73,6 @@ export type SaleInfo = {
   /// Number of cores which have been sold; never more than cores_offered.
   coresSold: CoreIndex;
 };
-
-export enum SalePhase {
-  // eslint-disable-next-line no-unused-vars
-  Interlude = 'Interlude phase',
-  // eslint-disable-next-line no-unused-vars
-  Leadin = 'Leadin phase',
-  // eslint-disable-next-line no-unused-vars
-  Regular = 'Fixed price phase',
-}
 
 export type SaleConfig = {
   /// The number of Relay-chain blocks in advance which scheduling should be fixed and the
@@ -183,6 +131,8 @@ export class RegionMetadata {
   // any specific task.
   public taskId: TaskId | null;
 
+  public status: ISMPRecordStatus;
+
   public static construct(
     context: ContextData,
     rawId: BN,
@@ -201,7 +151,8 @@ export class RegionMetadata {
       region.coreOccupancy(),
       currentUsage,
       region.consumed(context),
-      task
+      task,
+      ISMPRecordStatus.AVAILABLE
     );
   }
 
@@ -213,7 +164,8 @@ export class RegionMetadata {
     coreOccupancy: Percentage,
     currentUsage: Percentage,
     consumed: Percentage,
-    taskId: TaskId | null
+    taskId: TaskId | null,
+    status: ISMPRecordStatus = ISMPRecordStatus.AVAILABLE
   ) {
     this.region = region;
     this.location = location;
@@ -223,6 +175,7 @@ export class RegionMetadata {
     this.currentUsage = currentUsage;
     this.consumed = consumed;
     this.taskId = taskId;
+    this.status = status;
   }
 }
 

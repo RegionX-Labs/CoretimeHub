@@ -15,6 +15,7 @@ export type State = {
   apiState: ApiState;
   symbol: string;
   name: string;
+  decimals: number;
 };
 
 export const initialState: State = {
@@ -26,6 +27,7 @@ export const initialState: State = {
   apiState: ApiState.DISCONNECTED,
   symbol: '',
   name: '',
+  decimals: 0,
 };
 
 ///
@@ -61,6 +63,8 @@ export const reducer = (state: any, action: any) => {
       return { ...state, symbol: action.payload };
     case 'SET_NAME':
       return { ...state, name: action.payload };
+    case 'SET_DECIMALS':
+      return { ...state, decimals: action.payload };
     default:
       throw new Error(`Unknown type: ${action.type}`);
   }
@@ -98,11 +102,15 @@ export const connect = (
   _api.on('ready', async () => {
     dispatch({ type: 'CONNECT_SUCCESS' });
     const chainInfo = _api.registry.getChainProperties();
-    if (chainInfo?.tokenSymbol.isSome) {
-      const [symbol] = chainInfo.tokenSymbol.toHuman() as [string];
+    if (chainInfo) {
+      const { tokenDecimals, tokenSymbol } = chainInfo.toHuman() as any;
       dispatch({
         type: 'SET_SYMBOL',
-        payload: symbol,
+        payload: tokenSymbol ? tokenSymbol[0] : 'UNIT',
+      });
+      dispatch({
+        type: 'SET_DECIMALS',
+        payload: tokenDecimals ? tokenDecimals[0] : 12,
       });
     }
 

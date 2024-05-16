@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 
-import { Listing } from '@/models';
+import { Listing, REGIONX_DECIMALS } from '@/models';
 
 import CoreOccupancyFilter from './coreOccupancyFilter';
 import DurationFilter from './DurationFilter';
@@ -19,6 +19,7 @@ export interface FilterProps {
   filters: Filters;
   listings: Array<Listing>;
   updateFilters: (_filters: Filters) => void;
+  decimals: number;
 }
 
 type Filters = {
@@ -57,35 +58,39 @@ export const MarketFilters = ({ listings, setFilteredListings }: Props) => {
 
   return (
     <Box>
-      <Box display={'flex'} justifyContent={'space-between'} alignItems={'end'}>
+      <Box display='flex' justifyContent='space-between' alignItems='end'>
         <Box>
           <Typography variant='subtitle2'>Search filters: </Typography>
-          <Box display={'flex'}>
-            <Box marginRight={'1em'} marginTop={'.5em'}>
+          <Box display='flex'>
+            <Box marginRight='1em' marginTop='.5em'>
               <CoreOccupancyFilter
                 listings={listings}
                 filters={filters}
+                decimals={REGIONX_DECIMALS}
                 updateFilters={updateFilters}
               />
             </Box>
-            <Box marginRight={'1em'} marginTop={'.5em'}>
+            <Box marginRight='1em' marginTop='.5em'>
               <DurationFilter
                 listings={listings}
                 filters={filters}
+                decimals={REGIONX_DECIMALS}
                 updateFilters={updateFilters}
               />
             </Box>
-            <Box marginRight={'1em'} marginTop={'.5em'}>
+            <Box marginRight='1em' marginTop='.5em'>
               <RegionStartFilter
                 listings={listings}
                 filters={filters}
+                decimals={REGIONX_DECIMALS}
                 updateFilters={updateFilters}
               />
             </Box>
-            <Box marginRight={'1em'} marginTop={'.5em'}>
+            <Box marginRight='1em' marginTop='.5em'>
               <RegionEndFilter
                 listings={listings}
                 filters={filters}
+                decimals={REGIONX_DECIMALS}
                 updateFilters={updateFilters}
               />
             </Box>
@@ -93,7 +98,7 @@ export const MarketFilters = ({ listings, setFilteredListings }: Props) => {
         </Box>
         <Box>
           <Typography variant='subtitle2'>Sort By: </Typography>
-          <Box marginTop={'.5em'}>
+          <Box marginTop='.5em'>
             <Sort
               listings={listings}
               filter={(listing) => filter(filters, listing)}
@@ -102,10 +107,11 @@ export const MarketFilters = ({ listings, setFilteredListings }: Props) => {
           </Box>
         </Box>
       </Box>
-      <Box marginRight={'1em'} marginTop={'1em'} width={'100%'}>
+      <Box marginRight='1em' marginTop='1em' width='100%'>
         <PriceFilter
           listings={listings}
           filters={filters}
+          decimals={REGIONX_DECIMALS}
           updateFilters={updateFilters}
         />
       </Box>

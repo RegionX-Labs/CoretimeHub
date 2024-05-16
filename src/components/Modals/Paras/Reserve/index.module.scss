@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 35rem;
+}
+
+.info {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  flex: 1 1 0;
+}
+
+.itemKey {
+  font-size: 0.75rem;
+}
+
+.itemValue {
+  font-weight: 700;
+  font-size: 1rem;
+}

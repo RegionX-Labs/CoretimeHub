@@ -1,0 +1,44 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 35rem;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 0;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+}
+
+.itemKey {
+  font-size: 0.875rem;
+}
+
+.itemValue {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.uploadButton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1 0 0;
+  height: 6rem;
+  background-color: #f6f7fa;
+  color: #000;
+  border: 1px solid #888;
+}

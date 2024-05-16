@@ -1,18 +1,21 @@
 import { Box, Slider, Typography } from '@mui/material';
 import { useState } from 'react';
 
-import { formatBalance } from '@/utils/functions';
+import { planckBnToUnit } from '@/utils/functions';
 
 import { FilterProps } from '.';
 
-const PriceFilter = ({ listings, filters, updateFilters }: FilterProps) => {
+const PriceFilter = ({
+  listings,
+  filters,
+  updateFilters,
+  decimals,
+}: FilterProps) => {
   const maxValue = (): number => {
     if (listings.length < 1) return 0;
     const sortedListings = new Array(...listings);
     sortedListings.sort((a, b) => b.currentPrice.cmp(a.currentPrice));
-    return Number(
-      formatBalance(sortedListings[0].currentPrice.toString(), true)
-    );
+    return planckBnToUnit(sortedListings[0].currentPrice.toString(), decimals);
   };
 
   const [priceLimit, setPriceLimit] = useState(maxValue());
@@ -22,7 +25,7 @@ const PriceFilter = ({ listings, filters, updateFilters }: FilterProps) => {
     updateFilters({
       ...filters,
       priceFilter: (listing) =>
-        Number(formatBalance(listing.currentPrice.toString(), true)) <=
+        planckBnToUnit(listing.currentPrice.toString(), decimals) <=
         (newValue as number),
     });
   };
@@ -32,14 +35,14 @@ const PriceFilter = ({ listings, filters, updateFilters }: FilterProps) => {
       <Slider
         defaultValue={70}
         max={maxValue()}
-        color={'warning'}
+        color='warning'
         value={priceLimit}
         onChange={handleChange}
         aria-label='Always visible'
         valueLabelDisplay='off'
         valueLabelFormat={(value) => `${value} ROC`}
       />
-      <Typography variant='h2' textAlign={'center'}>
+      <Typography variant='h2' textAlign='center'>
         Price Limit: {`${priceLimit} ROC`}
       </Typography>
     </Box>

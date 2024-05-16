@@ -14,12 +14,12 @@ import useSalePrice from '@/hooks/salePrice';
 import { parseHNString, sendTx } from '@/utils/functions';
 
 import {
+  Balance,
   CoreDetailsPanel,
   ProgressButton,
   SaleInfoPanel,
   SalePhaseInfoPanel,
 } from '@/components';
-import Balance from '@/components/Elements/Balance';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
@@ -45,7 +45,7 @@ const Purchase = () => {
 
   const { saleInfo, loading } = useSaleInfo();
   const {
-    state: { api, apiState, symbol },
+    state: { api, apiState },
   } = useCoretimeApi();
 
   const { fetchRegions } = useRegions();
@@ -123,7 +123,6 @@ const Purchase = () => {
         <Balance
           coretimeBalance={balance.coretime}
           relayBalance={balance.relay}
-          symbol={symbol}
         />
       </Box>
       <Box>

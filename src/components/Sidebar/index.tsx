@@ -1,3 +1,4 @@
+import BuildRoundedIcon from '@mui/icons-material/BuildRounded';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ExploreIcon from '@mui/icons-material/Explore';
 import HomeIcon from '@mui/icons-material/Home';
@@ -103,12 +104,18 @@ export const Sidebar = () => {
         icon: <SwapHorizOutlinedIcon />,
       },
     ],
-    'parachain management': [
+    parachains: [
       {
         label: 'Renew',
-        route: '/renewal',
+        route: '/paras/renewal',
         enabled: true,
         icon: <RenewIcon color={theme.palette.text.primary} />,
+      },
+      {
+        label: 'Manage',
+        route: '/paras',
+        enabled: true,
+        icon: <BuildRoundedIcon />,
       },
     ],
     'primary market': [
