@@ -244,14 +244,14 @@ const ParachainManagement = () => {
         const state = isSystemPara
           ? ParaState.SYSTEM
           : isLeaseHolding
-            ? ParaState.LEASE_HOLDING
-            : strState === 'Parathread'
-              ? ParaState.ONDEMAND_PARACHAIN
-              : isActive
-                ? ParaState.ACTIVE_PARA
-                : isInWorkplan
-                  ? ParaState.SOON_ACTIVE
-                  : ParaState.IDLE_PARA;
+          ? ParaState.LEASE_HOLDING
+          : strState === 'Parathread'
+          ? ParaState.ONDEMAND_PARACHAIN
+          : isActive
+          ? ParaState.ACTIVE_PARA
+          : isInWorkplan
+          ? ParaState.SOON_ACTIVE
+          : ParaState.IDLE_PARA;
 
         paras.push({ id, state, name } as ParachainInfo);
       }
@@ -400,9 +400,9 @@ const ParachainManagement = () => {
               <TableBody>
                 {(rowsPerPage > 0
                   ? parachains.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
                   : parachains
                 ).map(({ id, name, state }, index) => (
                   <StyledTableRow key={index}>
