@@ -103,11 +103,12 @@ const ParachainManagement = () => {
   }));
 
   const paraActionStyle = ({ theme }: any) => ({
-    width: '12rem',
-    borderRadius: '2rem',
+    width: 'mind-width',
     fontWeight: 'bold',
+    padding: 0,
     color: theme.palette.primary.main,
-    border: `1px solid ${theme.palette.primary.main}`,
+    display: 'flex',
+    justifyContent: 'flex-start',
   });
 
   const ParaActionButton = styled(Button)(paraActionStyle);
@@ -421,28 +422,19 @@ const ParachainManagement = () => {
                     </StyledTableCell>
                     <StyledTableCell>
                       {state === ParaState.RESERVED ? (
-                        <ParaActionButton
-                          onClick={() => onRegister(id)}
-                          variant='outlined'
-                        >
+                        <ParaActionButton onClick={() => onRegister(id)}>
                           Register
                         </ParaActionButton>
                       ) : state === ParaState.ONDEMAND_PARACHAIN ? (
-                        <ParaActionButton
-                          variant='outlined'
-                          onClick={() => onUpgrade(id)}
-                        >
+                        <ParaActionButton onClick={() => onUpgrade(id)}>
                           Upgrade(Buy Coretime)
                         </ParaActionButton>
                       ) : state === ParaState.IDLE_PARA ? (
-                        <ParaActionButton variant='outlined' onClick={onBuy}>
+                        <ParaActionButton onClick={onBuy}>
                           Buy Coretime
                         </ParaActionButton>
                       ) : state === ParaState.ACTIVE_PARA ? (
-                        <ParaActionButton
-                          variant='outlined'
-                          onClick={() => onRenew(id)}
-                        >
+                        <ParaActionButton onClick={() => onRenew(id)}>
                           Renew Coretime
                         </ParaActionButton>
                       ) : (
