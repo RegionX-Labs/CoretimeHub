@@ -1,6 +1,7 @@
 import { NetworkType } from '@/models';
 
 import KusamaChains from './kusama.json';
+import leases from './leases.json';
 import RococoChains from './rococo.json';
 
 type ParachainRecord = {
@@ -16,10 +17,10 @@ const transformData = (data: ParachainRecord[]) => {
   return mapping;
 };
 
-const parachains = {
+const chainData = {
   [NetworkType.NONE]: {} as Record<number, string>,
   [NetworkType.KUSAMA]: transformData(KusamaChains),
   [NetworkType.ROCOCO]: transformData(RococoChains),
 };
 
-export default parachains;
+export { chainData, leases };

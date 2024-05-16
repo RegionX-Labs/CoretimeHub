@@ -21,7 +21,7 @@ import { getBalanceString, sendTx } from '@/utils/functions';
 import { ProgressButton } from '@/components';
 import Balance from '@/components/Elements/Balance';
 
-import chainData from '@/chaindata';
+import { chainData } from '@/chaindata';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useBalances } from '@/contexts/balance';

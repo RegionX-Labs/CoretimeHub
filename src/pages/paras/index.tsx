@@ -5,6 +5,7 @@ import {
   CircularProgress,
   FormControlLabel,
   Paper,
+  Stack,
   Switch,
   Table,
   TableBody,
@@ -24,88 +25,25 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
 
-import { ActionButton, RegisterModal, ReserveModal } from '@/components';
+import {
+  ActionButton,
+  LeaseStateCard,
+  ParaStateCard,
+  RegisterModal,
+  ReserveModal,
+} from '@/components';
 
-import chainData from '@/chaindata';
+import { chainData } from '@/chaindata';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
-
-// eslint-disable-next-line no-unused-vars
-enum ParaState {
-  // eslint-disable-next-line no-unused-vars
-  RESERVED = 'Reserved',
-  // eslint-disable-next-line no-unused-vars
-  ONBOARDING = 'Onboarding',
-  // eslint-disable-next-line no-unused-vars
-  ONDEMAND_PARACHAIN = 'On-Demand Parachain',
-  // eslint-disable-next-line no-unused-vars
-  IDLE_PARA = 'Parachain(Idle)',
-  // eslint-disable-next-line no-unused-vars
-  ACTIVE_PARA = 'Parachain(Active)',
-  // eslint-disable-next-line no-unused-vars
-  SOON_ACTIVE = 'Soon Active',
-  // eslint-disable-next-line no-unused-vars
-  LEASE_HOLDING = 'Lease Holding',
-  // eslint-disable-next-line no-unused-vars
-  SYSTEM = 'System Parachain',
-}
+import { ParaState } from '@/models';
 
 type ParachainInfo = {
   id: number;
   state: ParaState;
   name: string;
-};
-
-const StateCard = ({ state }: { state: ParaState }) => {
-  const styles = {
-    [ParaState.RESERVED]: {
-      color: '#008000',
-      background: 'rgba(0, 128, 0, 0.1)',
-    },
-    [ParaState.ONBOARDING]: {
-      color: '#7472D8',
-      background: 'rgba(116, 114, 216, 0.1)',
-    },
-    [ParaState.ONDEMAND_PARACHAIN]: {
-      color: '#2D57C3',
-      background: 'rgba(45, 87, 195, 0.1)',
-    },
-    [ParaState.IDLE_PARA]: {
-      color: '#008000',
-      background: 'rgba(0, 128, 0, 0.1)',
-    },
-    [ParaState.ACTIVE_PARA]: {
-      color: '#9F53FF',
-      background: '#EDDFFF',
-    },
-    [ParaState.SOON_ACTIVE]: {
-      color: '#5e73ff',
-      background: '#e1e7ff',
-    },
-    [ParaState.LEASE_HOLDING]: {
-      color: '#5e9b53',
-      background: '#f1ffe1',
-    },
-    [ParaState.SYSTEM]: {
-      color: '#ff7f53',
-      background: '#ffe9df',
-    },
-  };
-  return (
-    <Typography
-      sx={{
-        color: styles[state].color,
-        bgcolor: styles[state].background,
-        padding: '0.5rem 1.25rem',
-        borderRadius: '1rem',
-        width: 'fit-content',
-      }}
-    >
-      {state}
-    </Typography>
-  );
 };
 
 const ParachainManagement = () => {
@@ -127,6 +65,7 @@ const ParachainManagement = () => {
   const [watchAll, watchAllParas] = useState(true);
   const [loading, setLoading] = useState(false);
 
+  const [height, setHeight] = useState(0);
   const [parachains, setParachains] = useState<ParachainInfo[]>([]);
   const [nextParaId, setNextParaId] = useState<number>(0);
   const [reservationCost, setReservationCost] = useState<string>('0');
@@ -391,6 +330,17 @@ const ParachainManagement = () => {
     fetchParaStates();
   }, [fetchParaStates]);
 
+  useEffect(() => {
+    const fetchHeight = async () => {
+      if (!relayApi || relayApiState !== ApiState.READY) return;
+      const data = await relayApi.query.system.number();
+      const height = data.toJSON() as number;
+      setHeight(height);
+    };
+
+    fetchHeight();
+  }, [relayApi, relayApiState]);
+
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -461,7 +411,10 @@ const ParachainManagement = () => {
                     <StyledTableCell>{id}</StyledTableCell>
                     <StyledTableCell>{name}</StyledTableCell>
                     <StyledTableCell>
-                      <StateCard state={state} />
+                      <Stack direction='row' gap='2rem' alignItems='center'>
+                        <ParaStateCard state={state} />
+                        <LeaseStateCard paraID={id} height={height} />
+                      </Stack>
                     </StyledTableCell>
                     <StyledTableCell>
                       {state === ParaState.RESERVED ? (
@@ -479,10 +432,7 @@ const ParachainManagement = () => {
                           Upgrade(Buy Coretime)
                         </ParaActionButton>
                       ) : state === ParaState.IDLE_PARA ? (
-                        <ParaActionButton
-                          variant='outlined'
-                          onClick={onBuy}
-                        >
+                        <ParaActionButton variant='outlined' onClick={onBuy}>
                           Buy Coretime
                         </ParaActionButton>
                       ) : state === ParaState.ACTIVE_PARA ? (

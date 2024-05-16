@@ -1,0 +1,274 @@
+{
+  "kusama": [
+    {
+      "paraID": 2274,
+      "name": "Quantum",
+      "coreUntilBlock": 23700799,
+      "renewCoreAtSaleCycle": 2
+    },
+    {
+      "paraID": 2233,
+      "name": "NA",
+      "coreUntilBlock": 23700799,
+      "renewCoreAtSaleCycle": 2
+    },
+    {
+      "paraID": 2085,
+      "name": "Parallel Heiko",
+      "coreUntilBlock": 23700799,
+      "renewCoreAtSaleCycle": 2
+    },
+    {
+      "paraID": 2125,
+      "name": "InvArch",
+      "coreUntilBlock": 23700799,
+      "renewCoreAtSaleCycle": 2
+    },
+    {
+      "paraID": 2275,
+      "name": "NA",
+      "coreUntilBlock": 23700799,
+      "renewCoreAtSaleCycle": 2
+    },
+    {
+      "paraID": 2123,
+      "name": "GM",
+      "coreUntilBlock": 23700799,
+      "renewCoreAtSaleCycle": 2
+    },
+    {
+      "paraID": 2281,
+      "name": "Kreivo",
+      "coreUntilBlock": 24507199,
+      "renewCoreAtSaleCycle": 4
+    },
+    {
+      "paraID": 2001,
+      "name": "Bfrost",
+      "coreUntilBlock": 24507199,
+      "renewCoreAtSaleCycle": 4
+    },
+    {
+      "paraID": 2048,
+      "name": "Robonomics",
+      "coreUntilBlock": 24507199,
+      "renewCoreAtSaleCycle": 4
+    },
+    {
+      "paraID": 1000,
+      "name": "AssetHub",
+      "coreUntilBlock": 24507199,
+      "renewCoreAtSaleCycle": 4
+    },
+    {
+      "paraID": 2222,
+      "name": "DAO IPCI",
+      "coreUntilBlock": 24507199,
+      "renewCoreAtSaleCycle": 4
+    },
+    {
+      "paraID": 2024,
+      "name": "Genshiro",
+      "coreUntilBlock": 24910399,
+      "renewCoreAtSaleCycle": 5
+    },
+    {
+      "paraID": 3334,
+      "name": "t1rn",
+      "coreUntilBlock": 24910399,
+      "renewCoreAtSaleCycle": 5
+    },
+    {
+      "paraID": 2023,
+      "name": "Moonriver",
+      "coreUntilBlock": 24910399,
+      "renewCoreAtSaleCycle": 5
+    },
+    {
+      "paraID": 2012,
+      "name": "Crust",
+      "coreUntilBlock": 24910399,
+      "renewCoreAtSaleCycle": 5
+    },
+    {
+      "paraID": 2110,
+      "name": "Mangata",
+      "coreUntilBlock": 25716799,
+      "renewCoreAtSaleCycle": 7
+    },
+    {
+      "paraID": 2114,
+      "name": "Turing",
+      "coreUntilBlock": 25716799,
+      "renewCoreAtSaleCycle": 7
+    },
+    {
+      "paraID": 3338,
+      "name": "Gondatsu",
+      "coreUntilBlock": 25716799,
+      "renewCoreAtSaleCycle": 7
+    },
+    {
+      "paraID": 2007,
+      "name": "Shiden",
+      "coreUntilBlock": 25716799,
+      "renewCoreAtSaleCycle": 7
+    },
+    {
+      "paraID": 3343,
+      "name": "NA",
+      "coreUntilBlock": 25716799,
+      "renewCoreAtSaleCycle": 7
+    },
+    {
+      "paraID": 1001,
+      "name": "Encointer",
+      "coreUntilBlock": 25716799,
+      "renewCoreAtSaleCycle": 7
+    },
+    {
+      "paraID": 3336,
+      "name": "K-Laos",
+      "coreUntilBlock": 25716799,
+      "renewCoreAtSaleCycle": 7
+    },
+    {
+      "paraID": 1002,
+      "name": "BridgeHub",
+      "coreUntilBlock": 25716799,
+      "renewCoreAtSaleCycle": 7
+    },
+    {
+      "paraID": 2236,
+      "name": "Subzero",
+      "coreUntilBlock": 25716799,
+      "renewCoreAtSaleCycle": 7
+    },
+    {
+      "paraID": 2106,
+      "name": "Litmus",
+      "coreUntilBlock": 26119999,
+      "renewCoreAtSaleCycle": 8
+    },
+    {
+      "paraID": 2105,
+      "name": "Crab",
+      "coreUntilBlock": 26119999,
+      "renewCoreAtSaleCycle": 8
+    },
+    {
+      "paraID": 3345,
+      "name": "Yerba",
+      "coreUntilBlock": 26119999,
+      "renewCoreAtSaleCycle": 8
+    },
+    {
+      "paraID": 3340,
+      "name": "NA",
+      "coreUntilBlock": 26119999,
+      "renewCoreAtSaleCycle": 8
+    },
+    {
+      "paraID": 2011,
+      "name": "Sora",
+      "coreUntilBlock": 26119999,
+      "renewCoreAtSaleCycle": 8
+    },
+    {
+      "paraID": 2241,
+      "name": "Krest",
+      "coreUntilBlock": 26119999,
+      "renewCoreAtSaleCycle": 8
+    },
+    {
+      "paraID": 3339,
+      "name": "Curio",
+      "coreUntilBlock": 26119999,
+      "renewCoreAtSaleCycle": 8
+    },
+    {
+      "paraID": 2096,
+      "name": "Pioneer",
+      "coreUntilBlock": 26926399,
+      "renewCoreAtSaleCycle": 10
+    },
+    {
+      "paraID": 2113,
+      "name": "Kabocha",
+      "coreUntilBlock": 26926399,
+      "renewCoreAtSaleCycle": 10
+    },
+    {
+      "paraID": 2239,
+      "name": "Accurast Canary",
+      "coreUntilBlock": 26926399,
+      "renewCoreAtSaleCycle": 10
+    },
+    {
+      "paraID": 2004,
+      "name": "Khala",
+      "coreUntilBlock": 26926399,
+      "renewCoreAtSaleCycle": 10
+    },
+    {
+      "paraID": 2095,
+      "name": "Quartz",
+      "coreUntilBlock": 26926399,
+      "renewCoreAtSaleCycle": 10
+    },
+    {
+      "paraID": 2121,
+      "name": "Imbue",
+      "coreUntilBlock": 26926399,
+      "renewCoreAtSaleCycle": 10
+    },
+    {
+      "paraID": 3344,
+      "name": "NA",
+      "coreUntilBlock": 27329599,
+      "renewCoreAtSaleCycle": 11
+    },
+    {
+      "paraID": 2084,
+      "name": "Calamari",
+      "coreUntilBlock": 27329599,
+      "renewCoreAtSaleCycle": 11
+    },
+    {
+      "paraID": 2000,
+      "name": "Karura",
+      "coreUntilBlock": 27329599,
+      "renewCoreAtSaleCycle": 11
+    },
+    {
+      "paraID": 2119,
+      "name": "Bajun",
+      "coreUntilBlock": 27329599,
+      "renewCoreAtSaleCycle": 11
+    },
+    {
+      "paraID": 3350,
+      "name": "NA",
+      "coreUntilBlock": 27329599,
+      "renewCoreAtSaleCycle": 11
+    },
+    {
+      "paraID": 2087,
+      "name": "Picasso",
+      "coreUntilBlock": 27329599,
+      "renewCoreAtSaleCycle": 11
+    },
+    {
+      "paraID": 2090,
+      "name": "Basilisk",
+      "coreUntilBlock": 27329599,
+      "renewCoreAtSaleCycle": 11
+    },
+    {
+      "paraID": 1005,
+      "name": "NA",
+      "coreUntilBlock": 27329599,
+      "renewCoreAtSaleCycle": 11
+    }
+  ]
+}
