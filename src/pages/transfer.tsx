@@ -97,7 +97,7 @@ const TransferPage = () => {
     },
   };
 
-  const waitAndRespond = async () => {
+  const ismpWaitAndRespond = async () => {
     if (
       !coretimeApi ||
       coretimeApiState != ApiState.READY ||
@@ -231,7 +231,7 @@ const TransferPage = () => {
             ...defaultHandler,
             success: () => {
               toastSuccess('Successfully transferred.');
-              waitAndRespond();
+              ismpWaitAndRespond();
             },
           }
         );
