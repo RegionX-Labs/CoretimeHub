@@ -177,19 +177,6 @@ const Dashboard = () => {
             </Typography>
           ) : (
             <>
-              {/** FIXME: remove mock data */}
-              <IsmpRegionCard
-                regionMetadata={{
-                  ...regions[0],
-                  status: ISMPRecordStatus.PENDING,
-                }}
-              />
-              <IsmpRegionCard
-                regionMetadata={{
-                  ...regions[0],
-                  status: ISMPRecordStatus.UNAVAILABLE,
-                }}
-              />
               {regions.map((region, index) => (
                 <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
                   <RegionMetaCard
