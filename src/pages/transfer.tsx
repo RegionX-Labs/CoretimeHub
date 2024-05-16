@@ -107,13 +107,25 @@ const TransferPage = () => {
       !selectedRegion
     )
       return;
-    const commitment = (await waitForRegionRecordRequestEvent(
-      regionxApi,
-      selectedRegion.region.getRegionId()
-    )) as string;
 
-    const request = await queryRequest(regionxApi, commitment);
-    await makeResponse(regionxApi, coretimeApi, request, activeAccount.address);
+    try {
+      const commitment = (await waitForRegionRecordRequestEvent(
+        regionxApi,
+        selectedRegion.region.getRegionId()
+      )) as string;
+
+      const request = await queryRequest(regionxApi, commitment);
+      await makeResponse(
+        regionxApi,
+        coretimeApi,
+        request,
+        activeAccount.address
+      );
+    } catch {
+      toastWarning(
+        `Failed to fulfill ISMP request. Wait 5 minutes to re-request`
+      );
+    }
   };
 
   const handleOriginChange = (newOrigin: ChainType) => {

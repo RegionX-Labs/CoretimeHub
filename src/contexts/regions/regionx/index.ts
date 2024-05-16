@@ -3,10 +3,11 @@ import { Region } from 'coretime-utils';
 
 import { parseHNString } from '@/utils/functions';
 import { ISMPRecordStatus } from '@/models';
+import { makeResponse } from '@/utils/ismp';
 
 export const fetchRegions = async (
   regionxApi: ApiPromise | null
-): Promise<Array<[Region, ISMPRecordStatus]>> => {
+): Promise<Array<[Region, ISMPRecordStatus, string?]>> => {
   if (!regionxApi) {
     return [];
   }
@@ -24,21 +25,31 @@ export const fetchRegions = async (
           core: parseHNString(core.toString()),
           mask: mask,
         };
-        const region = record.available
-          ? new Region(regionId, {
-              ...record.available,
-              owner,
-            })
-          : new Region(
-              regionId,
-              /*dummy data*/ {
-                end: 0,
-                owner,
-                paid: null,
-              }
-            );
 
-        return [region, ISMPRecordStatus.AVAILABLE];
+        if (record.available) {
+          const region = new Region(regionId, {
+            ...record.available,
+            owner,
+          });
+          return [region, ISMPRecordStatus.AVAILABLE];
+        } else {
+          const region = new Region(
+            regionId,
+            /*dummy data*/ {
+              end: 0,
+              owner,
+              paid: null,
+            }
+          );
+          console.log(record.pending);
+          return [
+            region,
+            record.pending
+              ? ISMPRecordStatus.PENDING
+              : ISMPRecordStatus.UNAVAILABLE,
+            record.pending,
+          ];
+        }
       })
       .filter((entry) => !!entry) as Array<[Region, ISMPRecordStatus]>;
     return regions;

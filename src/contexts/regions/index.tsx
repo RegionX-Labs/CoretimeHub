@@ -94,7 +94,7 @@ const RegionDataProvider = ({ children }: Props) => {
     const regionxRegions = EXPERIMENTAL
       ? await RegionXRegions.fetchRegions(regionxApi)
       : [];
-    for await (const [region, status] of regionxRegions) {
+    for await (const [region, status, commitment] of regionxRegions) {
       if (status === ISMPRecordStatus.AVAILABLE) {
         const regionMetadata = await constructRegionMetadata(
           region,
@@ -106,6 +106,17 @@ const RegionDataProvider = ({ children }: Props) => {
         if (!regionMetadata) continue;
         _regions.push(regionMetadata);
       } else {
+        const regionMetadata = await constructRegionMetadata(
+          region,
+          RegionLocation.REGIONX_CHAIN,
+          activeAccount.address,
+          tasks,
+          _regions.length,
+          status,
+          commitment
+        );
+        if (!regionMetadata) continue;
+        _regions.push(regionMetadata);
       }
     }
 
@@ -124,7 +135,9 @@ const RegionDataProvider = ({ children }: Props) => {
     location: RegionLocation,
     owner: string,
     tasks: Tasks,
-    index: number
+    index: number,
+    recordStatus: ISMPRecordStatus = ISMPRecordStatus.AVAILABLE,
+    commitment?: string
   ): Promise<RegionMetadata | null> => {
     // Only user owned non-expired regions.
     if (region.getOwner() !== owner || region.consumed(context) > 1)
@@ -153,7 +166,9 @@ const RegionDataProvider = ({ children }: Props) => {
       region,
       name,
       location,
-      task
+      task,
+      recordStatus,
+      commitment
     );
   };
 

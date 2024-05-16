@@ -133,13 +133,18 @@ export class RegionMetadata {
 
   public status: ISMPRecordStatus;
 
+  // If the record status is pending this contains the commitment hash of the ismp get request.
+  public requestCommitment: string | null;
+
   public static construct(
     context: ContextData,
     rawId: BN,
     region: Region,
     name: string,
     regionLocation: RegionLocation,
-    task: number | null
+    task: number | null,
+    recordStatus: ISMPRecordStatus = ISMPRecordStatus.AVAILABLE,
+    requestCommitment?: string
   ): RegionMetadata {
     const currentUsage = 0;
 
@@ -152,7 +157,8 @@ export class RegionMetadata {
       currentUsage,
       region.consumed(context),
       task,
-      ISMPRecordStatus.AVAILABLE
+      recordStatus,
+      requestCommitment
     );
   }
 
@@ -165,7 +171,8 @@ export class RegionMetadata {
     currentUsage: Percentage,
     consumed: Percentage,
     taskId: TaskId | null,
-    status: ISMPRecordStatus = ISMPRecordStatus.AVAILABLE
+    status: ISMPRecordStatus = ISMPRecordStatus.AVAILABLE,
+    requestCommitment?: string
   ) {
     this.region = region;
     this.location = location;
@@ -176,6 +183,7 @@ export class RegionMetadata {
     this.consumed = consumed;
     this.taskId = taskId;
     this.status = status;
+    this.requestCommitment = requestCommitment || null;
   }
 }
 

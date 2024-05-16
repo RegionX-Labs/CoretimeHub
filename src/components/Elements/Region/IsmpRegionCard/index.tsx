@@ -16,12 +16,17 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { timesliceToTimestamp } from '@/utils/functions';
 
-import { useRelayApi } from '@/contexts/apis';
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useCommon } from '@/contexts/common';
 import { ISMPRecordStatus, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
+import { useRegionXApi } from '@/contexts/apis/RegionXApi';
+import { useToast } from '@/contexts/toast';
+import { makeResponse, queryRequest } from '@/utils/ismp';
+import { useAccounts } from '@/contexts/account';
+import { useRegions } from '@/contexts/regions';
 
 interface IsmpRegionProps {
   regionMetadata: RegionMetadata;
@@ -35,6 +40,17 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
   const {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
+  const {
+    state: { api: coretimeApi, apiState: coretimeApiState },
+  } = useCoretimeApi();
+  const {
+    state: { api: regionxApi, apiState: regionxApiState },
+  } = useRegionXApi();
+  const {
+    state: { activeAccount, activeSigner },
+  } = useAccounts();
+
+  const { fetchRegions } = useRegions();
 
   const theme = useTheme();
 
@@ -42,6 +58,7 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
 
   const { region, coreOccupancy, status } = regionMetadata;
   const { timeslicePeriod } = useCommon();
+  const { toastWarning, toastSuccess } = useToast();
 
   const setTimestamps = useCallback(
     (api: ApiPromise) => {
@@ -59,6 +76,47 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
 
     setTimestamps(relayApi);
   }, [relayApi, relayApiState, setTimestamps]);
+
+  useEffect(() => {
+    if (
+      !coretimeApi ||
+      coretimeApiState !== ApiState.READY ||
+      !regionxApi ||
+      regionxApiState !== ApiState.READY ||
+      !activeAccount
+    ) {
+      return;
+    }
+
+    const onError = () =>
+      toastWarning(
+        `Failed to fulfill ISMP request. Wait 5 minutes to re-request`
+      );
+
+    const respond = async (commitment: string) => {
+      try {
+        const request = await queryRequest(regionxApi, commitment);
+        await makeResponse(
+          regionxApi,
+          coretimeApi,
+          request,
+          activeAccount.address
+        );
+        toastSuccess('ISMP request fulfilled');
+        fetchRegions();
+      } catch {
+        onError();
+      }
+    };
+
+    console.log(regionMetadata.requestCommitment);
+    if (status === ISMPRecordStatus.PENDING) {
+      regionMetadata.requestCommitment
+        ? respond(regionMetadata.requestCommitment)
+        : onError();
+    }
+  }, [coretimeApi, regionxApi, coretimeApiState, regionxApiState]);
+
   return (
     <Paper className={styles.container}>
       <Box
