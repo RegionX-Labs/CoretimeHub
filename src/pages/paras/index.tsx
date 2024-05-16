@@ -372,10 +372,7 @@ const ParachainManagement = () => {
             labelPlacement='start'
             sx={{
               color: theme.palette.common.black,
-              background: theme.palette.common.white,
-              border: `1px solid ${theme.palette.grey['200']}`,
               padding: '0.25rem 1.25rem',
-              borderRadius: '5rem',
             }}
           />
           <ActionButton
@@ -403,9 +400,9 @@ const ParachainManagement = () => {
               <TableBody>
                 {(rowsPerPage > 0
                   ? parachains.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
                   : parachains
                 ).map(({ id, name, state }, index) => (
                   <StyledTableRow key={index}>
