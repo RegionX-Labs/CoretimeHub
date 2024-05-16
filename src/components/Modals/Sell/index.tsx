@@ -11,7 +11,11 @@ import {
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
-import { AmountInput, RecipientInput, RegionCard } from '@/components/Elements';
+import {
+  AmountInput,
+  RecipientInput,
+  RegionMetaCard,
+} from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
@@ -107,7 +111,7 @@ export const SellModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent>
         <Stack direction='column' gap={3}>
-          <RegionCard regionMetadata={regionMetadata} bordered={false} />
+          <RegionMetaCard regionMetadata={regionMetadata} bordered={false} />
           <Stack direction='column' gap={1} alignItems='center'>
             <Typography>Sell Region</Typography>
             <ArrowDownwardOutlinedIcon />

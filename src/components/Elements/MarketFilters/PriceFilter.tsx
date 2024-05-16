@@ -32,14 +32,14 @@ const PriceFilter = ({ listings, filters, updateFilters }: FilterProps) => {
       <Slider
         defaultValue={70}
         max={maxValue()}
-        color={'warning'}
+        color='warning'
         value={priceLimit}
         onChange={handleChange}
         aria-label='Always visible'
         valueLabelDisplay='off'
         valueLabelFormat={(value) => `${value} ROC`}
       />
-      <Typography variant='h2' textAlign={'center'}>
+      <Typography variant='h2' textAlign='center'>
         Price Limit: {`${priceLimit} ROC`}
       </Typography>
     </Box>

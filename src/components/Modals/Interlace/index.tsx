@@ -13,7 +13,7 @@ import {
 import { maskFromBin, maskFromChunk, maskToBin } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
-import { ProgressButton, SimpleRegionCard } from '@/components/Elements';
+import { ProgressButton, RegionOverview } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
@@ -115,7 +115,7 @@ export const InterlaceModal = ({
             Interlace your region
           </Typography>
         </Box>
-        <SimpleRegionCard regionMetadata={regionMetadata} />
+        <RegionOverview regionMetadata={regionMetadata} />
         <Paper className={styles.content}>
           <Typography
             variant='subtitle2'

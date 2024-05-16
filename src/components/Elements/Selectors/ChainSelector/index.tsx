@@ -85,7 +85,7 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
             <Box className={styles.chainItem}>
               <Image src={icon} alt='icon' className={styles.icon} />
               {loading ? (
-                <CircularProgress size={'1.5rem'} />
+                <CircularProgress size='1.5rem' />
               ) : (
                 <Typography className={styles.label}>{label}</Typography>
               )}

@@ -17,8 +17,7 @@ import { useState } from 'react';
 import { useRenewableParachains } from '@/hooks/renewableParas';
 import { formatBalance, sendTx } from '@/utils/functions';
 
-import { ProgressButton } from '@/components';
-import Balance from '@/components/Elements/Balance';
+import { Balance, ProgressButton } from '@/components';
 
 import chainData from '@/chaindata';
 import { useAccounts } from '@/contexts/account';
@@ -131,7 +130,7 @@ const Renewal = () => {
             ))}
           </Select>
         </FormControl>
-        <Stack direction='column' alignItems='center' mt={'2rem'} gap='1rem'>
+        <Stack direction='column' alignItems='center' mt='2rem' gap='1rem'>
           <Typography
             variant='h6'
             color='black'

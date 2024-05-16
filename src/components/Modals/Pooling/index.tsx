@@ -18,7 +18,7 @@ import { isValidAddress } from '@/utils/functions';
 import {
   FinalitySelector,
   ProgressButton,
-  SimpleRegionCard,
+  RegionOverview,
 } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
@@ -122,7 +122,7 @@ export const PoolingModal = ({
           </Typography>
         </Box>
         <Box className={styles.content}>
-          <SimpleRegionCard regionMetadata={regionMetadata} />
+          <RegionOverview regionMetadata={regionMetadata} />
         </Box>
         <Paper className={styles.options}>
           <Typography

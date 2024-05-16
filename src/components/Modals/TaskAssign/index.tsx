@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 import {
   FinalitySelector,
   ProgressButton,
-  SimpleRegionCard,
+  RegionOverview,
 } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
@@ -131,7 +131,7 @@ export const TaskAssignModal = ({
             </Typography>
           </Box>
           <Box className={styles.content}>
-            <SimpleRegionCard regionMetadata={regionMetadata} />
+            <RegionOverview regionMetadata={regionMetadata} />
             <Paper className={styles.taskWrapper}>
               <Stack
                 direction='row'
