@@ -10,7 +10,7 @@ import {
   Timeslice,
 } from 'coretime-utils';
 
-import { ISMPRecordStatus, RegionLocation } from './enums';
+import { ISMPRecordStatus, ParaState, RegionLocation } from './enums';
 
 export type Percentage = number; // Percentage value between 0 and 1
 
@@ -232,3 +232,9 @@ export class Listing {
     this.saleRecepient = saleRecepient;
   }
 }
+
+export type ParachainInfo = {
+  id: number;
+  state: ParaState;
+  name: string;
+};
