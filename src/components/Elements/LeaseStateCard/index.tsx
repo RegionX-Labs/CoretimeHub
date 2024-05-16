@@ -27,9 +27,7 @@ export const LeaseStateCard = ({ paraId, height }: LeaseStateProps) => {
   return (
     <Stack direction='column' gap='0.5rem' alignItems='center'>
       <Typography>
-        {`Expires in ${formatDuration(
-          (until - height) * 6 * 1000
-        )}`}
+        {`Expires in ${formatDuration((until - height) * 6 * 1000)}`}
       </Typography>
       <LinearProgress
         sx={{

@@ -402,9 +402,9 @@ const ParachainManagement = () => {
               <TableBody>
                 {(rowsPerPage > 0
                   ? parachains.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
                   : parachains
                 ).map(({ id, name, state }, index) => (
                   <StyledTableRow key={index}>
@@ -414,9 +414,9 @@ const ParachainManagement = () => {
                       <Stack direction='row' gap='2rem' alignItems='center'>
                         <ParaStateCard state={state} />
                         {/* System paras have reserved coretime */}
-                        {state != ParaState.SYSTEM &&
+                        {state != ParaState.SYSTEM && (
                           <LeaseStateCard paraId={id} height={height} />
-                        }
+                        )}
                       </Stack>
                     </StyledTableCell>
                     <StyledTableCell>
