@@ -15,9 +15,10 @@ import { useState } from 'react';
 
 import {
   InterlaceModal,
+  IsmpRegionCard,
   PartitionModal,
   PoolingModal,
-  RegionCard,
+  RegionMetaCard,
   TaskAssignModal,
   TransferModal,
 } from '@/components';
@@ -33,7 +34,7 @@ import {
   PartitionIcon,
   TransferIcon,
 } from '@/icons';
-import { RegionLocation } from '@/models';
+import { ISMPRecordStatus, RegionLocation } from '@/models';
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -176,9 +177,22 @@ const Dashboard = () => {
             </Typography>
           ) : (
             <>
+              {/** FIXME: remove mock data */}
+              <IsmpRegionCard
+                regionMetadata={{
+                  ...regions[0],
+                  status: ISMPRecordStatus.PENDING,
+                }}
+              />
+              <IsmpRegionCard
+                regionMetadata={{
+                  ...regions[0],
+                  status: ISMPRecordStatus.UNAVAILABLE,
+                }}
+              />
               {regions.map((region, index) => (
                 <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
-                  <RegionCard
+                  <RegionMetaCard
                     regionMetadata={region}
                     active={index === currentRegionIndex}
                     editable
