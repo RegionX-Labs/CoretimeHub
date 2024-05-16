@@ -7,7 +7,7 @@ import { ApiState } from '@/contexts/apis/types';
 
 type RenewableParachain = {
   core: number;
-  paraID: number;
+  paraId: number;
   price: number;
   mask: string;
   when: number;
@@ -69,7 +69,7 @@ export const useRenewableParachains = () => {
           core,
           price,
           mask,
-          paraID: parseHNString(Task),
+          paraId: parseHNString(Task),
           when,
         });
       }

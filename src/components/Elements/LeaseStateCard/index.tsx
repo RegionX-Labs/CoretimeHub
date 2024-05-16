@@ -6,29 +6,29 @@ import { useNetwork } from '@/contexts/network';
 import { LeaseState } from '@/models';
 
 interface LeaseStateProps {
-  paraID: number;
+  paraId: number;
   height: number;
 }
 
-export const LeaseStateCard = ({ paraID, height }: LeaseStateProps) => {
+export const LeaseStateCard = ({ paraId, height }: LeaseStateProps) => {
   const formatDuration = humanizer({ units: ['w', 'd'], round: true });
   const { network } = useNetwork();
 
   const chainData: LeaseState[] =
     (leases as Record<string, LeaseState[]>)[network.toString()] ?? [];
-  const chain = chainData.find((item) => item.paraID === paraID);
+  const chain = chainData.find((item) => item.paraId === paraId);
 
   if (!chain) return <></>;
 
-  const { coreUntilBlock } = chain;
+  const { until } = chain;
 
-  if (height > coreUntilBlock) return <></>;
+  if (height > until) return <></>;
 
   return (
     <Stack direction='column' gap='0.5rem' alignItems='center'>
       <Typography>
-        {`Renewal required in ${formatDuration(
-          (coreUntilBlock - height) * 6 * 1000
+        {`Expires in ${formatDuration(
+          (until - height) * 6 * 1000
         )}`}
       </Typography>
       <LinearProgress
@@ -37,7 +37,7 @@ export const LeaseStateCard = ({ paraID, height }: LeaseStateProps) => {
           height: '0.75rem',
         }}
         variant='determinate'
-        value={(height / coreUntilBlock) * 100}
+        value={(height / until) * 100}
         color='info'
       />
     </Stack>

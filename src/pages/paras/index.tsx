@@ -243,14 +243,14 @@ const ParachainManagement = () => {
         const state = isSystemPara
           ? ParaState.SYSTEM
           : isLeaseHolding
-          ? ParaState.LEASE_HOLDING
-          : strState === 'Parathread'
-          ? ParaState.ONDEMAND_PARACHAIN
-          : isActive
-          ? ParaState.ACTIVE_PARA
-          : isInWorkplan
-          ? ParaState.SOON_ACTIVE
-          : ParaState.IDLE_PARA;
+            ? ParaState.LEASE_HOLDING
+            : strState === 'Parathread'
+              ? ParaState.ONDEMAND_PARACHAIN
+              : isActive
+                ? ParaState.ACTIVE_PARA
+                : isInWorkplan
+                  ? ParaState.SOON_ACTIVE
+                  : ParaState.IDLE_PARA;
 
         paras.push({ id, state, name } as ParachainInfo);
       }
@@ -402,9 +402,9 @@ const ParachainManagement = () => {
               <TableBody>
                 {(rowsPerPage > 0
                   ? parachains.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
                   : parachains
                 ).map(({ id, name, state }, index) => (
                   <StyledTableRow key={index}>
@@ -413,7 +413,10 @@ const ParachainManagement = () => {
                     <StyledTableCell>
                       <Stack direction='row' gap='2rem' alignItems='center'>
                         <ParaStateCard state={state} />
-                        <LeaseStateCard paraID={id} height={height} />
+                        {/* System paras have reserved coretime */}
+                        {state != ParaState.SYSTEM &&
+                          <LeaseStateCard paraId={id} height={height} />
+                        }
                       </Stack>
                     </StyledTableCell>
                     <StyledTableCell>

@@ -84,10 +84,10 @@ export type TaskMetadata = {
 export type ScheduleItem = {
   mask: string;
   assignment:
-    | {
-        Task: string;
-      }
-    | 'Pool';
+  | {
+    Task: string;
+  }
+  | 'Pool';
 };
 
 export type SaleInfo = {
@@ -301,8 +301,6 @@ export enum ParaState {
 }
 
 export type LeaseState = {
-  paraID: number;
-  name: string;
-  coreUntilBlock: number;
-  renewCoreAtSaleCycle: number;
+  paraId: number;
+  until: number;
 };
