@@ -11,15 +11,11 @@ export const waitForRegionRecordRequestEvent = async (
       .events((events: any) => {
         events.forEach((record: any) => {
           const { event } = record;
-          console.log(`${event.section}.${event.method}`);
-          console.log(event.data.toHuman());
           if (
             event.section == 'regions' &&
             event.method == 'RegionRecordRequested'
           ) {
             const id = event.data.toHuman().regionId;
-            console.log(id);
-            console.log(regionId);
             if (
               id.begin == regionId.begin.toString() &&
               id.core == regionId.core.toString() &&

@@ -112,9 +112,7 @@ const TransferPage = () => {
       selectedRegion.region.getRegionId()
     )) as string;
 
-    console.log(commitment);
     const request = await queryRequest(regionxApi, commitment);
-    console.log(request);
     await makeResponse(regionxApi, coretimeApi, request, activeAccount.address);
   };
 
