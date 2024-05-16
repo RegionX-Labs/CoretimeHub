@@ -12,10 +12,11 @@ import {
   useTheme,
 } from '@mui/material';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
-import { useRenewableParachains } from '@/hooks/renewableParas';
-import { formatBalance, sendTx } from '@/utils/functions';
+import { Status, useRenewableParachains } from '@/hooks/renewableParas';
+import { getBalanceString, sendTx } from '@/utils/functions';
 
 import { Balance, ProgressButton } from '@/components';
 
@@ -27,20 +28,21 @@ import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
 
 const Renewal = () => {
+  const router = useRouter();
   const theme = useTheme();
 
   const {
     state: { activeAccount, activeSigner },
   } = useAccounts();
   const { balance } = useBalances();
-  const { loading, parachains } = useRenewableParachains();
+  const { status, parachains } = useRenewableParachains();
   const {
-    state: { api, symbol },
+    state: { api, decimals, symbol },
   } = useCoretimeApi();
   const { toastError, toastInfo, toastSuccess } = useToast();
   const { network } = useNetwork();
 
-  const [paraId, setParaId] = useState<number>(0);
+  const [activeIdx, setActiveIdx] = useState<number>(0);
   const [working, setWorking] = useState(false);
 
   const defaultHandler = {
@@ -59,14 +61,28 @@ const Renewal = () => {
   const handleRenew = () => {
     if (!activeAccount || !api || !activeSigner) return;
 
-    const { core } = parachains[paraId];
+    const { core } = parachains[activeIdx];
 
     const txRenewal = api.tx.broker.renew(core);
 
     sendTx(txRenewal, activeAccount.address, activeSigner, defaultHandler);
   };
 
-  return loading ? (
+  useEffect(() => {
+    if (!router.isReady || status !== Status.LOADED || parachains.length === 0)
+      return;
+    const { query } = router;
+    if (query['paraId'] === undefined) return;
+    const paraId = parseInt(query['paraId'] as string);
+    const index = parachains.findIndex((para) => para.paraID == paraId);
+    if (index === -1) {
+      toastError(`No renewable parachain found with ID = ${paraId}`);
+      return;
+    }
+    setActiveIdx(index);
+  }, [router, parachains, status, parachains.length, toastError]);
+
+  return status === Status.LOADING ? (
     <Backdrop open>
       <CircularProgress />
     </Backdrop>
@@ -98,7 +114,6 @@ const Renewal = () => {
         <Balance
           coretimeBalance={balance.coretime}
           relayBalance={balance.relay}
-          symbol={symbol}
         />
       </Box>
 
@@ -120,8 +135,8 @@ const Renewal = () => {
           <Select
             labelId='label-parachain-select'
             label='Parachain'
-            value={paraId}
-            onChange={(e) => setParaId(Number(e.target.value))}
+            value={activeIdx}
+            onChange={(e) => setActiveIdx(Number(e.target.value))}
           >
             {parachains.map(({ paraID }, index) => (
               <MenuItem key={index} value={index}>
@@ -130,15 +145,18 @@ const Renewal = () => {
             ))}
           </Select>
         </FormControl>
-        <Stack direction='column' alignItems='center' mt='2rem' gap='1rem'>
-          <Typography
-            variant='h6'
-            color='black'
-          >{`Core number: ${parachains[paraId].core}`}</Typography>
-          <Typography color='black'>{`Renewal price: ${formatBalance(
-            parachains[paraId].price.toString(),
-            false
-          )} ${symbol}`}</Typography>
+        <Stack direction='column' alignItems='center' mt={'2rem'} gap='1rem'>
+          <Typography variant='h6' color='black'>
+            {`Core number: ${parachains[activeIdx].core}`}
+          </Typography>
+          <Typography color='black'>
+            Renewal price: &nbsp;
+            {getBalanceString(
+              parachains[activeIdx].price.toString(),
+              decimals,
+              symbol
+            )}
+          </Typography>
         </Stack>
         <Stack
           direction='row'

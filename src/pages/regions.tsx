@@ -19,11 +19,11 @@ import {
   PartitionModal,
   PoolingModal,
   RegionMetaCard,
+  SellModal,
   TaskAssignModal,
   TransferModal,
+  UnlistModal,
 } from '@/components';
-import { SellModal } from '@/components/Modals/Sell';
-import { UnlistModal } from '@/components/Modals/Unlist';
 
 import { useAccounts } from '@/contexts/account';
 import { useRegions } from '@/contexts/regions';
@@ -147,6 +147,7 @@ const Dashboard = () => {
           display: 'flex',
           height: '100%',
           justifyContent: 'space-between',
+          mt: '1rem',
         }}
       >
         <Box
@@ -156,8 +157,7 @@ const Dashboard = () => {
             overflowY: 'auto',
             display: 'flex',
             flexDirection: 'column',
-            gap: '2rem',
-            mt: '1rem',
+            gap: '0.75rem',
             '::-webkit-scrollbar': {
               display: 'none',
             },
@@ -209,6 +209,7 @@ const Dashboard = () => {
             color: theme.palette.text.secondary,
             minWidth: '18rem',
             padding: '2rem 3rem',
+            maxHeight: '32.5rem',
           }}
         >
           <Typography variant='h1' color={theme.palette.text.primary}>
