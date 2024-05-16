@@ -15,7 +15,6 @@ import { useState } from 'react';
 
 import {
   InterlaceModal,
-  IsmpRegionCard,
   PartitionModal,
   PoolingModal,
   RegionMetaCard,
@@ -34,7 +33,7 @@ import {
   PartitionIcon,
   TransferIcon,
 } from '@/icons';
-import { ISMPRecordStatus, RegionLocation } from '@/models';
+import { RegionLocation } from '@/models';
 
 const Dashboard = () => {
   const theme = useTheme();

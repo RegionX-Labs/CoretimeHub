@@ -189,11 +189,7 @@ const ListingCardInner = ({
         </Typography>
       </Box>
       <Box>
-        <Box
-          display='flex'
-          justifyContent='space-between'
-          alignItems='center'
-        >
+        <Box display='flex' justifyContent='space-between' alignItems='center'>
           <Typography fontSize='1rem'>Price/timeslice:</Typography>
           <Typography variant='h2'>
             {getBalanceString(
@@ -203,11 +199,7 @@ const ListingCardInner = ({
             )}
           </Typography>
         </Box>
-        <Box
-          display='flex'
-          justifyContent='space-between'
-          alignItems='center'
-        >
+        <Box display='flex' justifyContent='space-between' alignItems='center'>
           <Typography fontSize='1rem'>Total:</Typography>
           <Typography variant='h2'>
             {getBalanceString(
@@ -219,11 +211,7 @@ const ListingCardInner = ({
         </Box>
       </Box>
       {!readOnly && (
-        <Box
-          sx={{ marginTop: '1em' }}
-          display='flex'
-          justifyContent='center'
-        >
+        <Box sx={{ marginTop: '1em' }} display='flex' justifyContent='center'>
           <Button
             sx={{ width: '100%' }}
             variant='outlined'
