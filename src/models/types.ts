@@ -237,4 +237,5 @@ export type ParachainInfo = {
   id: number;
   state: ParaState;
   name: string;
+  watching?: boolean;
 };

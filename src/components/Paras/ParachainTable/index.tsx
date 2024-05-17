@@ -1,5 +1,8 @@
+import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined';
+import StarOutlinedIcon from '@mui/icons-material/StarOutlined';
 import {
   Button,
+  IconButton,
   Paper,
   styled,
   Table,
@@ -25,6 +28,7 @@ interface ParachainTableProps {
     onRegister: (_id: number) => void;
     onUpgrade: (_id: number) => void;
     onBuy: () => void;
+    onWatch: (_id: number, _watching: boolean) => void;
     onRenew: (_id: number) => void;
   };
 }
@@ -33,7 +37,7 @@ export const ParachainTable = ({
   parachains,
   handlers,
 }: ParachainTableProps) => {
-  const { onRegister, onUpgrade, onBuy, onRenew } = handlers;
+  const { onRegister, onUpgrade, onBuy, onRenew, onWatch } = handlers;
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -93,6 +97,7 @@ export const ParachainTable = ({
             <StyledTableCell>Para Name</StyledTableCell>
             <StyledTableCell>State</StyledTableCell>
             <StyledTableCell>Action</StyledTableCell>
+            <StyledTableCell>Watchlist</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -102,7 +107,7 @@ export const ParachainTable = ({
                 page * rowsPerPage + rowsPerPage
               )
             : parachains
-          ).map(({ id, name, state }, index) => (
+          ).map(({ id, name, state, watching }, index) => (
             <StyledTableRow key={index}>
               <StyledTableCell>{id}</StyledTableCell>
               <StyledTableCell>{name}</StyledTableCell>
@@ -138,6 +143,17 @@ export const ParachainTable = ({
                 ) : (
                   <Typography>No action required</Typography>
                 )}
+              </StyledTableCell>
+              <StyledTableCell>
+                <IconButton
+                  onClick={() => onWatch(id, watching ? false : true)}
+                >
+                  {watching ? (
+                    <StarOutlinedIcon color='primary' />
+                  ) : (
+                    <StarBorderOutlinedIcon color='action' />
+                  )}
+                </IconButton>
               </StyledTableCell>
             </StyledTableRow>
           ))}
