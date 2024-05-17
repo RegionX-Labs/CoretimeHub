@@ -10,7 +10,7 @@ import {
   Timeslice,
 } from 'coretime-utils';
 
-import { ISMPRecordStatus, RegionLocation } from './enums';
+import { ISMPRecordStatus, ParaState, RegionLocation } from './enums';
 
 export type Percentage = number; // Percentage value between 0 and 1
 
@@ -233,27 +233,9 @@ export class Listing {
   }
 }
 
-// eslint-disable-next-line no-unused-vars
-export enum ParaState {
-  // eslint-disable-next-line no-unused-vars
-  RESERVED = 'Reserved',
-  // eslint-disable-next-line no-unused-vars
-  ONBOARDING = 'Onboarding',
-  // eslint-disable-next-line no-unused-vars
-  ONDEMAND_PARACHAIN = 'On-Demand Parachain',
-  // eslint-disable-next-line no-unused-vars
-  IDLE_PARA = 'Parachain(Idle)',
-  // eslint-disable-next-line no-unused-vars
-  ACTIVE_PARA = 'Parachain(Active)',
-  // eslint-disable-next-line no-unused-vars
-  SOON_ACTIVE = 'Soon Active',
-  // eslint-disable-next-line no-unused-vars
-  LEASE_HOLDING = 'Lease Holding',
-  // eslint-disable-next-line no-unused-vars
-  SYSTEM = 'System Parachain',
-}
-
-export type LeaseState = {
-  paraId: number;
-  until: number;
+export type ParachainInfo = {
+  id: number;
+  state: ParaState;
+  name: string;
+  watching?: boolean;
 };
