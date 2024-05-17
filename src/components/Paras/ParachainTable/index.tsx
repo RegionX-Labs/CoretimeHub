@@ -1,5 +1,5 @@
-import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined';
-import StarOutlinedIcon from '@mui/icons-material/StarOutlined';
+import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined';
 import {
   Button,
   IconButton,
@@ -149,9 +149,9 @@ export const ParachainTable = ({
                   onClick={() => onWatch(id, watching ? false : true)}
                 >
                   {watching ? (
-                    <StarOutlinedIcon color='primary' />
+                    <VisibilityIcon color='success' />
                   ) : (
-                    <StarBorderOutlinedIcon color='action' />
+                    <VisibilityOffIcon color='action' />
                   )}
                 </IconButton>
               </StyledTableCell>
