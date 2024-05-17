@@ -4,6 +4,7 @@ import {
   Button,
   IconButton,
   Paper,
+  Stack,
   styled,
   Table,
   TableBody,
@@ -16,10 +17,13 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
+import { useRelayApi } from '@/contexts/apis';
+import { ApiState } from '@/contexts/apis/types';
 import { ParachainInfo, ParaState } from '@/models';
 
+import { LeaseStateCard } from '../LeaseStateCard';
 import { ParaStateCard } from '../ParaStateCard';
 
 interface ParachainTableProps {
@@ -64,6 +68,11 @@ export const ParachainTable = ({
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const {
+    state: { api: relayApi, apiState: relayApiState },
+  } = useRelayApi();
+  const [height, setHeight] = useState(0);
+
   const paraActionStyle = ({ theme }: any) => ({
     width: '12rem',
     borderRadius: '2rem',
@@ -87,6 +96,17 @@ export const ParachainTable = ({
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  useEffect(() => {
+    const fetchHeight = async () => {
+      if (!relayApi || relayApiState !== ApiState.READY) return;
+      const data = await relayApi.query.system.number();
+      const height = data.toJSON() as number;
+      setHeight(height);
+    };
+
+    fetchHeight();
+  }, [relayApi, relayApiState]);
 
   return (
     <TableContainer component={Paper} sx={{ maxHeight: '100%' }}>
@@ -112,7 +132,13 @@ export const ParachainTable = ({
               <StyledTableCell>{id}</StyledTableCell>
               <StyledTableCell>{name}</StyledTableCell>
               <StyledTableCell>
-                <ParaStateCard state={state} />
+                <Stack direction='row' gap='2rem' alignItems='center'>
+                  <ParaStateCard state={state} />
+                  {/* System paras have reserved coretime */}
+                  {state != ParaState.SYSTEM && (
+                    <LeaseStateCard paraId={id} height={height} />
+                  )}
+                </Stack>
               </StyledTableCell>
               <StyledTableCell>
                 {state === ParaState.RESERVED ? (

@@ -27,7 +27,7 @@ export const LeaseStateCard = ({ paraId, height }: LeaseStateProps) => {
   return (
     <Stack direction='column' gap='0.5rem' alignItems='center'>
       <Typography>
-        {`Renewal required in ${formatDuration((until - height) * 6 * 1000)}`}
+        {`Lease expires in ${formatDuration((until - height) * 6 * 1000)}`}
       </Typography>
     </Stack>
   );
