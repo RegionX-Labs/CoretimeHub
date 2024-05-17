@@ -10,7 +10,7 @@ import {
   Timeslice,
 } from 'coretime-utils';
 
-import { ISMPRecordStatus, RegionLocation } from './enums';
+import { ISMPRecordStatus, ParaState, RegionLocation } from './enums';
 
 export type Percentage = number; // Percentage value between 0 and 1
 
@@ -254,3 +254,10 @@ export interface Get {
 }
 
 export type IsmpRequest = { post: any } | { get: Get };
+
+export type ParachainInfo = {
+  id: number;
+  state: ParaState;
+  name: string;
+  watching?: boolean;
+};

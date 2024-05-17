@@ -26,6 +26,7 @@ import { MarketProvider } from '@/contexts/market';
 import { NetworkProvider } from '@/contexts/network';
 import { RegionDataProvider } from '@/contexts/regions';
 import { SaleInfoProvider } from '@/contexts/sales';
+import { SettingsProvider } from '@/contexts/settings';
 import { TaskDataProvider } from '@/contexts/tasks';
 import { ToastProvider } from '@/contexts/toast';
 
@@ -51,7 +52,9 @@ export default function MyApp(props: MyAppProps) {
             <RegionDataProvider>
               <MarketProvider>
                 <SaleInfoProvider>
-                  {getLayout(<Component {...pageProps} />)}
+                  <SettingsProvider>
+                    {getLayout(<Component {...pageProps} />)}
+                  </SettingsProvider>
                 </SaleInfoProvider>
               </MarketProvider>
             </RegionDataProvider>
