@@ -17,12 +17,15 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 import { useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
+import { useNetwork } from '@/contexts/network';
 import { ParachainInfo, ParaState } from '@/models';
 
+import styles from './index.module.scss';
 import { LeaseStateCard } from '../LeaseStateCard';
 import { ParaStateCard } from '../ParaStateCard';
 
@@ -69,6 +72,7 @@ export const ParachainTable = ({
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const { network } = useNetwork();
   const {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
@@ -125,13 +129,21 @@ export const ParachainTable = ({
         <TableBody>
           {(rowsPerPage > 0
             ? parachains.slice(
-              page * rowsPerPage,
-              page * rowsPerPage + rowsPerPage
-            )
+                page * rowsPerPage,
+                page * rowsPerPage + rowsPerPage
+              )
             : parachains
           ).map(({ id, name, state, watching }, index) => (
             <StyledTableRow key={index}>
-              <StyledTableCell>{id}</StyledTableCell>
+              <StyledTableCell>
+                <Link
+                  href={`https://${network}.subscan.io/parachain/${id}`}
+                  target='_blank'
+                  className={styles.paraId}
+                >
+                  {id}
+                </Link>
+              </StyledTableCell>
               <StyledTableCell>{name}</StyledTableCell>
               <StyledTableCell>
                 <Stack direction='row' gap='2rem' alignItems='center'>
