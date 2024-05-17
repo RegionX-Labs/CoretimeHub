@@ -178,12 +178,7 @@ const TransferPage = () => {
       return;
     }
 
-    if (
-      !coretimeApi ||
-      coretimeApiState !== ApiState.READY ||
-      !regionxApi ||
-      regionxApiState !== ApiState.READY
-    ) {
+    if (!coretimeApi || coretimeApiState !== ApiState.READY) {
       toastError('Not connected to the Coretime chain');
       return;
     }
@@ -214,20 +209,22 @@ const TransferPage = () => {
       originChain === ChainType.REGIONX &&
       destinationChain === ChainType.CORETIME
     ) {
-      if (!EXPERIMENTAL) toastWarning('Currently not supported');
-      else {
-        const receiverKeypair = new Keyring();
-        receiverKeypair.addFromAddress(
-          newOwner ? newOwner : activeAccount.address
-        );
-        coretimeFromRegionXTransfer(
-          regionxApi,
-          { address: activeAccount.address, signer: activeSigner },
-          selectedRegion.rawId,
-          receiverKeypair.pairs[0].publicKey,
-          defaultHandler
-        );
+      if (!EXPERIMENTAL || !regionxApi || regionxApiState !== ApiState.READY) {
+        toastWarning('Currently not supported');
+        return;
       }
+
+      const receiverKeypair = new Keyring();
+      receiverKeypair.addFromAddress(
+        newOwner ? newOwner : activeAccount.address
+      );
+      coretimeFromRegionXTransfer(
+        regionxApi,
+        { address: activeAccount.address, signer: activeSigner },
+        selectedRegion.rawId,
+        receiverKeypair.pairs[0].publicKey,
+        defaultHandler
+      );
     } else {
       toastWarning('Currently not supported');
     }
