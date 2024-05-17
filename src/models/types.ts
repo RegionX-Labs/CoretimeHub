@@ -239,3 +239,8 @@ export type ParachainInfo = {
   name: string;
   watching?: boolean;
 };
+
+export type LeaseState = {
+  paraId: number;
+  until: number;
+};

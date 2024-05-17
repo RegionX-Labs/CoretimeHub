@@ -132,10 +132,7 @@ const ParachainManagement = () => {
             labelPlacement='start'
             sx={{
               color: theme.palette.common.black,
-              background: theme.palette.common.white,
-              border: `1px solid ${theme.palette.grey['200']}`,
               padding: '0.25rem 1.25rem',
-              borderRadius: '5rem',
             }}
           />
           <ActionButton

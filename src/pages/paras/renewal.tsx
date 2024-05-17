@@ -20,7 +20,7 @@ import { getBalanceString, sendTx } from '@/utils/functions';
 
 import { Balance, ProgressButton } from '@/components';
 
-import chainData from '@/chaindata';
+import { chainData } from '@/chaindata';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useBalances } from '@/contexts/balance';
@@ -74,7 +74,7 @@ const Renewal = () => {
     const { query } = router;
     if (query['paraId'] === undefined) return;
     const paraId = parseInt(query['paraId'] as string);
-    const index = parachains.findIndex((para) => para.paraID == paraId);
+    const index = parachains.findIndex((para) => para.paraId == paraId);
     if (index === -1) {
       toastError(`No renewable parachain found with ID = ${paraId}`);
       return;
@@ -138,9 +138,9 @@ const Renewal = () => {
             value={activeIdx}
             onChange={(e) => setActiveIdx(Number(e.target.value))}
           >
-            {parachains.map(({ paraID }, index) => (
+            {parachains.map(({ paraId }, index) => (
               <MenuItem key={index} value={index}>
-                {`${paraID} ${chainData[network][paraID] || ''}`}
+                {`${paraId} ${chainData[network][paraId] || ''}`}
               </MenuItem>
             ))}
           </Select>
