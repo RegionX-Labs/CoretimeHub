@@ -253,4 +253,4 @@ export interface Get {
   timeout_timestamp: bigint;
 }
 
-export type IsmpRequest = { post: {} } | { get: Get };
+export type IsmpRequest = { post: any } | { get: Get };

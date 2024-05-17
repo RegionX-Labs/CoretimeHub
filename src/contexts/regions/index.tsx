@@ -1,4 +1,4 @@
-import { CoreIndex, Region, getEncodedRegionId } from 'coretime-utils';
+import { CoreIndex, getEncodedRegionId, Region } from 'coretime-utils';
 import React, {
   createContext,
   useCallback,

@@ -1,25 +1,26 @@
-import { Get, IsmpRequest } from '@/models';
 import { ApiPromise } from '@polkadot/api';
 import { RegionId } from 'coretime-utils';
+
+import { Get, IsmpRequest } from '@/models';
 
 export const waitForRegionRecordRequestEvent = async (
   regionxApi: ApiPromise,
   regionId: RegionId
 ) => {
-  return new Promise(async (resolve, reject) => {
-    const unsubscribe: any = await regionxApi.query.system
+  return new Promise((resolve, reject) => {
+    const unsubscribe: any = regionxApi.query.system
       .events((events: any) => {
         events.forEach((record: any) => {
           const { event } = record;
           if (
-            event.section == 'regions' &&
-            event.method == 'RegionRecordRequested'
+            event.section === 'regions' &&
+            event.method === 'RegionRecordRequested'
           ) {
             const id = event.data.toHuman().regionId;
             if (
-              id.begin == regionId.begin.toString() &&
-              id.core == regionId.core.toString() &&
-              id.mask == regionId.mask
+              id.begin === regionId.begin.toString() &&
+              id.core === regionId.core.toString() &&
+              id.mask === regionId.mask
             ) {
               unsubscribe();
               resolve(event.data.toHuman().requestCommitment);

@@ -2,8 +2,13 @@ import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
 import { Box, Button, Link, Stack, Typography } from '@mui/material';
 import { Keyring } from '@polkadot/api';
 import { Region } from 'coretime-utils';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
+import {
+  makeResponse,
+  queryRequest,
+  waitForRegionRecordRequestEvent,
+} from '@/utils/ismp';
 import theme from '@/utils/muiTheme';
 import {
   coretimeFromRegionXTransfer,
@@ -42,11 +47,6 @@ import {
   RegionLocation,
   RegionMetadata,
 } from '@/models';
-import {
-  makeResponse,
-  queryRequest,
-  waitForRegionRecordRequestEvent,
-} from '@/utils/ismp';
 
 const TransferPage = () => {
   const {

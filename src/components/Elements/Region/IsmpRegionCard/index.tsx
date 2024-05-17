@@ -15,18 +15,18 @@ import en from 'javascript-time-ago/locale/en';
 import { useCallback, useEffect, useState } from 'react';
 
 import { timesliceToTimestamp } from '@/utils/functions';
+import { makeResponse, queryRequest } from '@/utils/ismp';
 
+import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { ApiState } from '@/contexts/apis/types';
 import { useCommon } from '@/contexts/common';
+import { useRegions } from '@/contexts/regions';
+import { useToast } from '@/contexts/toast';
 import { ISMPRecordStatus, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
-import { useRegionXApi } from '@/contexts/apis/RegionXApi';
-import { useToast } from '@/contexts/toast';
-import { makeResponse, queryRequest } from '@/utils/ismp';
-import { useAccounts } from '@/contexts/account';
-import { useRegions } from '@/contexts/regions';
 
 interface IsmpRegionProps {
   regionMetadata: RegionMetadata;
@@ -109,7 +109,6 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
       }
     };
 
-    console.log(regionMetadata.requestCommitment);
     if (status === ISMPRecordStatus.PENDING) {
       regionMetadata.requestCommitment
         ? respond(regionMetadata.requestCommitment)

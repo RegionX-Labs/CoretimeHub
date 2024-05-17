@@ -2,8 +2,8 @@ import { ApiPromise } from '@polkadot/api';
 import { Region } from 'coretime-utils';
 
 import { parseHNString } from '@/utils/functions';
+
 import { ISMPRecordStatus } from '@/models';
-import { makeResponse } from '@/utils/ismp';
 
 export const fetchRegions = async (
   regionxApi: ApiPromise | null
@@ -41,7 +41,6 @@ export const fetchRegions = async (
               paid: null,
             }
           );
-          console.log(record.pending);
           return [
             region,
             record.pending
