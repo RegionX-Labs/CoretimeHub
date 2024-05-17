@@ -1,4 +1,4 @@
-import { LinearProgress, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { humanizer } from 'humanize-duration';
 
 import { leases } from '@/chaindata';
@@ -20,24 +20,15 @@ export const LeaseStateCard = ({ paraId, height }: LeaseStateProps) => {
 
   if (!chain) return <></>;
 
-  const { until, lease_start } = chain;
+  const { until } = chain;
 
-  if (height > until || lease_start === undefined) return <></>;
+  if (height > until) return <></>;
 
   return (
     <Stack direction='column' gap='0.5rem' alignItems='center'>
       <Typography>
         {`Renewal required in ${formatDuration((until - height) * 6 * 1000)}`}
       </Typography>
-      <LinearProgress
-        sx={{
-          width: '15rem',
-          height: '0.75rem',
-        }}
-        variant='determinate'
-        value={((height - lease_start) / (until - lease_start)) * 100}
-        color='info'
-      />
     </Stack>
   );
 };

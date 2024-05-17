@@ -1,97 +1,370 @@
 {
   "kusama": [
-    { "paraId": 1000, "until": 24507199, "lease_start": 0 },
-    { "paraId": 1001, "until": 25716799, "lease_start": 0 },
-    { "paraId": 1002, "until": 25716799, "lease_start": 0 },
-    { "paraId": 1005, "until": 27329599, "lease_start": 0 },
-    { "paraId": 2000, "until": 27329599, "lease_start": 0 },
-    { "paraId": 2001, "until": 24507199, "lease_start": 21772800 },
-    { "paraId": 2004, "until": 26926399, "lease_start": 21772800 },
-    { "paraId": 2007, "until": 25716799, "lease_start": 0 },
-    { "paraId": 2011, "until": 26119999, "lease_start": 21772800 },
-    { "paraId": 2012, "until": 24910399, "lease_start": 19958400 },
-    { "paraId": 2023, "until": 24910399, "lease_start": 0 },
-    { "paraId": 2024, "until": 24910399, "lease_start": 19958400 },
-    { "paraId": 2048, "until": 24507199, "lease_start": 20563200 },
-    { "paraId": 2084, "until": 27329599, "lease_start": 0 },
-    { "paraId": 2085, "until": 23700799, "lease_start": 18748800 },
-    { "paraId": 2087, "until": 27329599, "lease_start": 0 },
-    { "paraId": 2090, "until": 27329599, "lease_start": 22377600 },
-    { "paraId": 2095, "until": 26926399, "lease_start": 22377600 },
-    { "paraId": 2096, "until": 26926399, "lease_start": 22982400 },
-    { "paraId": 2105, "until": 26119999, "lease_start": 19958400 },
-    { "paraId": 2106, "until": 26119999, "lease_start": 21168000 },
-    { "paraId": 2110, "until": 25716799, "lease_start": 21168000 },
-    { "paraId": 2113, "until": 26926399, "lease_start": 22377600 },
-    { "paraId": 2114, "until": 25716799, "lease_start": 21168000 },
-    { "paraId": 2119, "until": 27329599, "lease_start": 22377600 },
-    { "paraId": 2121, "until": 26926399, "lease_start": 22377600 },
-    { "paraId": 2123, "until": 23700799, "lease_start": 18748800 },
-    { "paraId": 2125, "until": 23700799, "lease_start": 18748800 },
-    { "paraId": 2222, "until": 24507199, "lease_start": 19353600 },
-    { "paraId": 2233, "until": 23700799, "lease_start": 22377600 },
-    { "paraId": 2236, "until": 25716799, "lease_start": 20563200 },
-    { "paraId": 2239, "until": 26926399, "lease_start": 0 },
-    { "paraId": 2241, "until": 26119999, "lease_start": 21772800 },
-    { "paraId": 2274, "until": 23700799, "lease_start": 18748800 },
-    { "paraId": 2275, "until": 23700799, "lease_start": 18748800 },
-    { "paraId": 2281, "until": 24507199, "lease_start": 19353600 },
-    { "paraId": 3334, "until": 24910399, "lease_start": 19958400 },
-    { "paraId": 3336, "until": 25716799, "lease_start": 20563200 },
-    { "paraId": 3338, "until": 25716799, "lease_start": 20563200 },
-    { "paraId": 3339, "until": 26119999, "lease_start": 21168000 },
-    { "paraId": 3340, "until": 26119999, "lease_start": 21168000 },
-    { "paraId": 3343, "until": 25716799, "lease_start": 0 },
-    { "paraId": 3344, "until": 27329599, "lease_start": 22377600 },
-    { "paraId": 3345, "until": 26119999, "lease_start": 21772800 },
-    { "paraId": 3350, "until": 27329599, "lease_start": 22377600 }
+    {
+      "paraId": 1000,
+      "until": 24507199
+    },
+    {
+      "paraId": 1001,
+      "until": 25716799
+    },
+    {
+      "paraId": 1002,
+      "until": 25716799
+    },
+    {
+      "paraId": 1005,
+      "until": 27329599
+    },
+    {
+      "paraId": 2000,
+      "until": 27329599
+    },
+    {
+      "paraId": 2001,
+      "until": 24507199
+    },
+    {
+      "paraId": 2004,
+      "until": 26926399
+    },
+    {
+      "paraId": 2007,
+      "until": 25716799
+    },
+    {
+      "paraId": 2011,
+      "until": 26119999
+    },
+    {
+      "paraId": 2012,
+      "until": 24910399
+    },
+    {
+      "paraId": 2023,
+      "until": 24910399
+    },
+    {
+      "paraId": 2024,
+      "until": 24910399
+    },
+    {
+      "paraId": 2048,
+      "until": 24507199
+    },
+    {
+      "paraId": 2084,
+      "until": 27329599
+    },
+    {
+      "paraId": 2085,
+      "until": 23700799
+    },
+    {
+      "paraId": 2087,
+      "until": 27329599
+    },
+    {
+      "paraId": 2090,
+      "until": 27329599
+    },
+    {
+      "paraId": 2095,
+      "until": 26926399
+    },
+    {
+      "paraId": 2096,
+      "until": 26926399
+    },
+    {
+      "paraId": 2105,
+      "until": 26119999
+    },
+    {
+      "paraId": 2106,
+      "until": 26119999
+    },
+    {
+      "paraId": 2110,
+      "until": 25716799
+    },
+    {
+      "paraId": 2113,
+      "until": 26926399
+    },
+    {
+      "paraId": 2114,
+      "until": 25716799
+    },
+    {
+      "paraId": 2119,
+      "until": 27329599
+    },
+    {
+      "paraId": 2121,
+      "until": 26926399
+    },
+    {
+      "paraId": 2123,
+      "until": 23700799
+    },
+    {
+      "paraId": 2125,
+      "until": 23700799
+    },
+    {
+      "paraId": 2222,
+      "until": 24507199
+    },
+    {
+      "paraId": 2233,
+      "until": 23700799
+    },
+    {
+      "paraId": 2236,
+      "until": 25716799
+    },
+    {
+      "paraId": 2239,
+      "until": 26926399
+    },
+    {
+      "paraId": 2241,
+      "until": 26119999
+    },
+    {
+      "paraId": 2274,
+      "until": 23700799
+    },
+    {
+      "paraId": 2275,
+      "until": 23700799
+    },
+    {
+      "paraId": 2281,
+      "until": 24507199
+    },
+    {
+      "paraId": 3334,
+      "until": 24910399
+    },
+    {
+      "paraId": 3336,
+      "until": 25716799
+    },
+    {
+      "paraId": 3338,
+      "until": 25716799
+    },
+    {
+      "paraId": 3339,
+      "until": 26119999
+    },
+    {
+      "paraId": 3340,
+      "until": 26119999
+    },
+    {
+      "paraId": 3343,
+      "until": 25716799
+    },
+    {
+      "paraId": 3344,
+      "until": 27329599
+    },
+    {
+      "paraId": 3345,
+      "until": 26119999
+    },
+    {
+      "paraId": 3350,
+      "until": 27329599
+    }
   ],
   "rococo": [
-    { "paraId": 2100, "until": 10512000 },
-    { "paraId": 1003, "until": 10555200 },
-    { "paraId": 2093, "until": 10569600 },
-    { "paraId": 2026, "until": 10569600 },
-    { "paraId": 2015, "until": 10598400 },
-    { "paraId": 2110, "until": 10742400 },
-    { "paraId": 2006, "until": 10785600 },
-    { "paraId": 2114, "until": 10800000 },
-    { "paraId": 2031, "until": 10886400 },
-    { "paraId": 2043, "until": 10900800 },
-    { "paraId": 2239, "until": 10915200 },
-    { "paraId": 2004, "until": 10972800 },
-    { "paraId": 1836, "until": 11145600 },
-    { "paraId": 2007, "until": 11188800 },
-    { "paraId": 3416, "until": 11289600 },
-    { "paraId": 2040, "until": 11433600 },
-    { "paraId": 2104, "until": 11433600 },
-    { "paraId": 3016, "until": 11520000 },
-    { "paraId": 2124, "until": 11577600 },
-    { "paraId": 2013, "until": 11822400 },
-    { "paraId": 3345, "until": 11908800 },
-    { "paraId": 4285, "until": 11908800 },
-    { "paraId": 4374, "until": 12470400 },
-    { "paraId": 4292, "until": 12585600 },
-    { "paraId": 2056, "until": 12960000 },
-    { "paraId": 2034, "until": 13161600 },
-    { "paraId": 4323, "until": 13219200 },
-    { "paraId": 3333, "until": 13248000 },
-    { "paraId": 2119, "until": 13248000 },
-    { "paraId": 2101, "until": 13348800 },
-    { "paraId": 1005, "until": 13363200 },
-    { "paraId": 3344, "until": 13521600 },
-    { "paraId": 4044, "until": 13521600 },
-    { "paraId": 3339, "until": 13737600 },
-    { "paraId": 1004, "until": 14025600 },
-    { "paraId": 4353, "until": 14126400 },
-    { "paraId": 4343, "until": 14140800 },
-    { "paraId": 201804, "until": 14155200 },
-    { "paraId": 2058, "until": 14385600 },
-    { "paraId": 2106, "until": 14400000 },
-    { "paraId": 2000, "until": 14400000 },
-    { "paraId": 2105, "until": 14400000 },
-    { "paraId": 2090, "until": 14400000 },
-    { "paraId": 1013, "until": 14529600 },
-    { "paraId": 1000, "until": 14587200 },
-    { "paraId": 3369, "until": 14932800 }
+    {
+      "paraId": 2100,
+      "until": 10512000
+    },
+    {
+      "paraId": 1003,
+      "until": 10555200
+    },
+    {
+      "paraId": 2093,
+      "until": 10569600
+    },
+    {
+      "paraId": 2026,
+      "until": 10569600
+    },
+    {
+      "paraId": 2015,
+      "until": 10598400
+    },
+    {
+      "paraId": 2110,
+      "until": 10742400
+    },
+    {
+      "paraId": 2006,
+      "until": 10785600
+    },
+    {
+      "paraId": 2114,
+      "until": 10800000
+    },
+    {
+      "paraId": 2031,
+      "until": 10886400
+    },
+    {
+      "paraId": 2043,
+      "until": 10900800
+    },
+    {
+      "paraId": 2239,
+      "until": 10915200
+    },
+    {
+      "paraId": 2004,
+      "until": 10972800
+    },
+    {
+      "paraId": 1836,
+      "until": 11145600
+    },
+    {
+      "paraId": 2007,
+      "until": 11188800
+    },
+    {
+      "paraId": 3416,
+      "until": 11289600
+    },
+    {
+      "paraId": 2040,
+      "until": 11433600
+    },
+    {
+      "paraId": 2104,
+      "until": 11433600
+    },
+    {
+      "paraId": 3016,
+      "until": 11520000
+    },
+    {
+      "paraId": 2124,
+      "until": 11577600
+    },
+    {
+      "paraId": 2013,
+      "until": 11822400
+    },
+    {
+      "paraId": 3345,
+      "until": 11908800
+    },
+    {
+      "paraId": 4285,
+      "until": 11908800
+    },
+    {
+      "paraId": 4374,
+      "until": 12470400
+    },
+    {
+      "paraId": 4292,
+      "until": 12585600
+    },
+    {
+      "paraId": 2056,
+      "until": 12960000
+    },
+    {
+      "paraId": 2034,
+      "until": 13161600
+    },
+    {
+      "paraId": 4323,
+      "until": 13219200
+    },
+    {
+      "paraId": 3333,
+      "until": 13248000
+    },
+    {
+      "paraId": 2119,
+      "until": 13248000
+    },
+    {
+      "paraId": 2101,
+      "until": 13348800
+    },
+    {
+      "paraId": 1005,
+      "until": 13363200
+    },
+    {
+      "paraId": 3344,
+      "until": 13521600
+    },
+    {
+      "paraId": 4044,
+      "until": 13521600
+    },
+    {
+      "paraId": 3339,
+      "until": 13737600
+    },
+    {
+      "paraId": 1004,
+      "until": 14025600
+    },
+    {
+      "paraId": 4353,
+      "until": 14126400
+    },
+    {
+      "paraId": 4343,
+      "until": 14140800
+    },
+    {
+      "paraId": 201804,
+      "until": 14155200
+    },
+    {
+      "paraId": 2058,
+      "until": 14385600
+    },
+    {
+      "paraId": 2106,
+      "until": 14400000
+    },
+    {
+      "paraId": 2000,
+      "until": 14400000
+    },
+    {
+      "paraId": 2105,
+      "until": 14400000
+    },
+    {
+      "paraId": 2090,
+      "until": 14400000
+    },
+    {
+      "paraId": 1013,
+      "until": 14529600
+    },
+    {
+      "paraId": 1000,
+      "until": 14587200
+    },
+    {
+      "paraId": 3369,
+      "until": 14932800
+    }
   ]
 }

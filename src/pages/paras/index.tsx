@@ -244,14 +244,14 @@ const ParachainManagement = () => {
         const state = isSystemPara
           ? ParaState.SYSTEM
           : isLeaseHolding
-          ? ParaState.LEASE_HOLDING
-          : strState === 'Parathread'
-          ? ParaState.ONDEMAND_PARACHAIN
-          : isActive
-          ? ParaState.ACTIVE_PARA
-          : isInWorkplan
-          ? ParaState.SOON_ACTIVE
-          : ParaState.IDLE_PARA;
+            ? ParaState.LEASE_HOLDING
+            : strState === 'Parathread'
+              ? ParaState.ONDEMAND_PARACHAIN
+              : isActive
+                ? ParaState.ACTIVE_PARA
+                : isInWorkplan
+                  ? ParaState.SOON_ACTIVE
+                  : ParaState.IDLE_PARA;
 
         paras.push({ id, state, name } as ParachainInfo);
       }

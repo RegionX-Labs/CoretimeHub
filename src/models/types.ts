@@ -256,5 +256,4 @@ export enum ParaState {
 export type LeaseState = {
   paraId: number;
   until: number;
-  lease_start?: number;
 };
