@@ -44,6 +44,7 @@ export const ParaStateCard = ({ state }: { state: ParaState }) => {
         bgcolor: styles[state].background,
         padding: '0.5rem 1rem',
         borderRadius: '1rem',
+        border: `1px solid ${styles[state].color}`,
         width: '12.5rem',
         textAlign: 'center',
         height: 'fit-content',

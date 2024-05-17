@@ -51,6 +51,7 @@ export const ParachainTable = ({
     },
     [`&.${tableCellClasses.body}`]: {
       fontSize: 14,
+      color: theme.palette.common.black,
     },
   }));
 
@@ -124,9 +125,9 @@ export const ParachainTable = ({
         <TableBody>
           {(rowsPerPage > 0
             ? parachains.slice(
-                page * rowsPerPage,
-                page * rowsPerPage + rowsPerPage
-              )
+              page * rowsPerPage,
+              page * rowsPerPage + rowsPerPage
+            )
             : parachains
           ).map(({ id, name, state, watching }, index) => (
             <StyledTableRow key={index}>
