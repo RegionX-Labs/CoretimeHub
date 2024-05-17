@@ -23,6 +23,7 @@ import { useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { ParachainInfo, ParaState } from '@/models';
 
+import { CoreExpiryCard } from '../CoreExpiryCard';
 import { LeaseStateCard } from '../LeaseStateCard';
 import { ParaStateCard } from '../ParaStateCard';
 
@@ -138,7 +139,10 @@ export const ParachainTable = ({
                   <ParaStateCard state={state} />
                   {/* System paras have reserved coretime */}
                   {state != ParaState.SYSTEM && (
-                    <LeaseStateCard paraId={id} height={height} />
+                    <Stack direction='column' gap='1rem' alignItems='center'>
+                      <LeaseStateCard paraId={id} height={height} />
+                      <CoreExpiryCard paraId={id} height={height} />
+                    </Stack>
                   )}
                 </Stack>
               </StyledTableCell>

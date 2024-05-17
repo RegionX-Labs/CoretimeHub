@@ -3,7 +3,7 @@ import { humanizer } from 'humanize-duration';
 
 import { leases } from '@/chaindata';
 import { useNetwork } from '@/contexts/network';
-import { LeaseState } from '@/models';
+import { LeaseState, RELAY_CHAIN_BLOCK_TIME } from '@/models';
 
 interface LeaseStateProps {
   paraId: number;
@@ -27,7 +27,7 @@ export const LeaseStateCard = ({ paraId, height }: LeaseStateProps) => {
   return (
     <Stack direction='column' gap='0.5rem' alignItems='center'>
       <Typography>
-        {`Lease expires in ${formatDuration((until - height) * 6 * 1000)}`}
+        {`Lease expires in ${formatDuration((until - height) * RELAY_CHAIN_BLOCK_TIME)}`}
       </Typography>
     </Stack>
   );
