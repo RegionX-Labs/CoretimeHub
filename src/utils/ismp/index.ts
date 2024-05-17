@@ -96,6 +96,27 @@ export const makeResponse = async (
   }
 };
 
+export const makeTimeout = async (
+  regionxApi: ApiPromise,
+  request: IsmpRequest
+) => {
+  if (isGetRequest(request)) {
+    const response = regionxApi.tx.ismp.handleUnsigned([
+      {
+        Timeout: {
+          Get: {
+            requests: [request],
+          },
+        },
+      },
+    ]);
+
+    await response.send();
+  } else {
+    new Error('Expected a Get request');
+  }
+};
+
 const isGetRequest = (request: IsmpRequest): request is { get: Get } => {
   return (request as { get: Get }).get !== undefined;
 };

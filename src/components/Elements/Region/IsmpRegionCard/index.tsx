@@ -15,7 +15,7 @@ import en from 'javascript-time-ago/locale/en';
 import { useCallback, useEffect, useState } from 'react';
 
 import { timesliceToTimestamp } from '@/utils/functions';
-import { makeResponse, queryRequest } from '@/utils/ismp';
+import { makeResponse, makeTimeout, queryRequest } from '@/utils/ismp';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
@@ -95,15 +95,27 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
 
     const respond = async (commitment: string) => {
       try {
-        const request = await queryRequest(regionxApi, commitment);
-        await makeResponse(
-          regionxApi,
-          coretimeApi,
-          request,
-          activeAccount.address
-        );
-        toastSuccess('ISMP request fulfilled');
-        fetchRegions();
+        const request: any = await queryRequest(regionxApi, commitment);
+        const currentTimestamp = (
+          await regionxApi.query.timestamp.now()
+        ).toJSON() as number;
+        if (
+          request.get &&
+          currentTimestamp / 1000 > request.get.timeout_timestamp
+        ) {
+          await makeTimeout(regionxApi, request);
+          toastInfo('ISMP request timed out');
+          fetchRegions();
+        } else {
+          await makeResponse(
+            regionxApi,
+            coretimeApi,
+            request,
+            activeAccount.address
+          );
+          toastSuccess('ISMP request fulfilled');
+          fetchRegions();
+        }
       } catch {
         onError();
       }
