@@ -20,14 +20,14 @@ export const LeaseStateCard = ({ paraId, height }: LeaseStateProps) => {
 
   if (!chain) return <></>;
 
-  const { until } = chain;
+  const { until, lease_start } = chain;
 
-  if (height > until) return <></>;
+  if (height > until || lease_start === undefined) return <></>;
 
   return (
     <Stack direction='column' gap='0.5rem' alignItems='center'>
       <Typography>
-        {`Expires in ${formatDuration((until - height) * 6 * 1000)}`}
+        {`Renewal required in ${formatDuration((until - height) * 6 * 1000)}`}
       </Typography>
       <LinearProgress
         sx={{
@@ -35,7 +35,7 @@ export const LeaseStateCard = ({ paraId, height }: LeaseStateProps) => {
           height: '0.75rem',
         }}
         variant='determinate'
-        value={(height / until) * 100}
+        value={((height - lease_start) / (until - lease_start)) * 100}
         color='info'
       />
     </Stack>
