@@ -26,6 +26,7 @@ import { useNetwork } from '@/contexts/network';
 import { ParachainInfo, ParaState } from '@/models';
 
 import styles from './index.module.scss';
+import { CoreExpiryCard } from '../CoreExpiryCard';
 import { LeaseStateCard } from '../LeaseStateCard';
 import { ParaStateCard } from '../ParaStateCard';
 
@@ -150,7 +151,10 @@ export const ParachainTable = ({
                   <ParaStateCard state={state} />
                   {/* System paras have reserved coretime */}
                   {state != ParaState.SYSTEM && (
-                    <LeaseStateCard paraId={id} height={height} />
+                    <Stack direction='column' gap='1rem' alignItems='center'>
+                      <LeaseStateCard paraId={id} height={height} />
+                      <CoreExpiryCard paraId={id} height={height} />
+                    </Stack>
                   )}
                 </Stack>
               </StyledTableCell>
