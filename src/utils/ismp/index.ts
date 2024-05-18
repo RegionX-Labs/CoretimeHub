@@ -1,7 +1,8 @@
 import { ApiPromise } from '@polkadot/api';
+import { ISubmittableResult } from '@polkadot/types/types';
 import { RegionId } from 'coretime-utils';
 
-import { Get, IsmpRequest } from '@/models';
+import { Get, IsmpRequest, TxStatusHandlers } from '@/models';
 
 export const waitForRegionRecordRequestEvent = async (
   regionxApi: ApiPromise,
@@ -48,7 +49,8 @@ export const makeResponse = async (
   regionxApi: ApiPromise,
   coretimeApi: ApiPromise,
   request: IsmpRequest,
-  responderAddress: string
+  responderAddress: string,
+  txHandlers: TxStatusHandlers
 ) => {
   if (isGetRequest(request)) {
     const hashAt = (
@@ -90,7 +92,21 @@ export const makeResponse = async (
       },
     ]);
 
-    await response.send();
+    response.send((result: ISubmittableResult) => {
+      const { status, events } = result;
+      if (status.isReady) txHandlers.ready();
+      else if (status.isInBlock) txHandlers.inBlock();
+      else if (status.isFinalized) {
+        txHandlers.finalized();
+        events.forEach(({ event: { method } }) => {
+          if (method === 'ExtrinsicSuccess') {
+            txHandlers.success();
+          } else if (method === 'ExtrinsicFailed') {
+            txHandlers.error();
+          }
+        });
+      }
+    });
   } else {
     new Error('Expected a Get request');
   }
@@ -98,7 +114,8 @@ export const makeResponse = async (
 
 export const makeTimeout = async (
   regionxApi: ApiPromise,
-  request: IsmpRequest
+  request: IsmpRequest,
+  txHandlers: TxStatusHandlers
 ) => {
   if (isGetRequest(request)) {
     const response = regionxApi.tx.ismp.handleUnsigned([
@@ -111,7 +128,21 @@ export const makeTimeout = async (
       },
     ]);
 
-    await response.send();
+    response.send((result: ISubmittableResult) => {
+      const { status, events } = result;
+      if (status.isReady) txHandlers.ready();
+      else if (status.isInBlock) txHandlers.inBlock();
+      else if (status.isFinalized) {
+        txHandlers.finalized();
+        events.forEach(({ event: { method } }) => {
+          if (method === 'ExtrinsicSuccess') {
+            txHandlers.success();
+          } else if (method === 'ExtrinsicFailed') {
+            txHandlers.error();
+          }
+        });
+      }
+    });
   } else {
     new Error('Expected a Get request');
   }

@@ -99,22 +99,48 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
         const currentTimestamp = (
           await regionxApi.query.timestamp.now()
         ).toJSON() as number;
+
         if (
           request.get &&
           currentTimestamp / 1000 > request.get.timeout_timestamp
         ) {
-          await makeTimeout(regionxApi, request);
-          toastInfo('ISMP request timed out');
+          await makeTimeout(regionxApi, request, {
+            ready: () => toastInfo('Request timed out'),
+            inBlock: () => {
+              /* */
+            },
+            finalized: () => {
+              /* */
+            },
+            success: () => {
+              fetchRegions();
+            },
+            error: () => {
+              /* */
+            },
+          });
           fetchRegions();
         } else {
           await makeResponse(
             regionxApi,
             coretimeApi,
             request,
-            activeAccount.address
+            activeAccount.address,
+            {
+              ready: () => toastInfo('Fetching region record.'),
+              inBlock: () => toastInfo(`In Block`),
+              finalized: () => {
+                /* */
+              },
+              success: () => {
+                toastSuccess('Region record fetched.');
+                fetchRegions();
+              },
+              error: () => {
+                toastError(`Failed to fetch region record.`);
+              },
+            }
           );
-          toastSuccess('ISMP request fulfilled');
-          fetchRegions();
         }
       } catch {
         onError();

@@ -63,7 +63,7 @@ const TransferPage = () => {
   const {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
-  const { regions } = useRegions();
+  const { regions, fetchRegions } = useRegions();
 
   const [filteredRegions, setFilteredRegions] = useState<Array<RegionMetadata>>(
     []
@@ -119,7 +119,21 @@ const TransferPage = () => {
         regionxApi,
         coretimeApi,
         request,
-        activeAccount.address
+        activeAccount.address,
+        {
+          ready: () => toastInfo('Fetching region record.'),
+          inBlock: () => toastInfo(`In Block`),
+          finalized: () => {
+            /* */
+          },
+          success: () => {
+            toastSuccess('Region record fetched.');
+            fetchRegions();
+          },
+          error: () => {
+            toastError(`Failed to fetch region record.`);
+          },
+        }
       );
     } catch {
       toastWarning(
