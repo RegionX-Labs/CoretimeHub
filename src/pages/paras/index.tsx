@@ -1,9 +1,12 @@
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import {
   Backdrop,
   Box,
   CircularProgress,
   FormControlLabel,
+  InputAdornment,
   Switch,
+  TextField,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -40,6 +43,7 @@ const ParachainManagement = () => {
   const [watchAll, watchAllParas] = useState(true);
   const [paras2Show, setParas2Show] = useState<ParachainInfo[]>([]);
   const [paraId2Reg, setParaId2Reg] = useState(0);
+  const [search, setSearch] = useState('');
 
   const [reserveModalOpen, openReserveModal] = useState(false);
   const [registerModalOpen, openRegisterModal] = useState(false);
@@ -96,15 +100,23 @@ const ParachainManagement = () => {
       watching: watchList.includes(para.id),
     }));
     setParas2Show(
-      parasWithWatchInfo.filter((para) =>
-        watchAll ? true : para.watching === true
+      parasWithWatchInfo.filter(
+        (para) =>
+          para.id.toString().includes(search) &&
+          (watchAll ? true : para.watching === true)
       )
     );
-  }, [parachains, watchList, watchAll]);
+  }, [parachains, watchList, watchAll, search]);
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <Box>
           <Typography
             variant='subtitle1'
@@ -119,7 +131,7 @@ const ParachainManagement = () => {
             Watch parachains state, register and manage parachains
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: '2rem', height: '3.25rem' }}>
+        <Box sx={{ display: 'flex', gap: '1.5rem', height: '3.25rem' }}>
           <FormControlLabel
             control={
               <Switch
@@ -132,7 +144,26 @@ const ParachainManagement = () => {
             labelPlacement='start'
             sx={{
               color: theme.palette.common.black,
-              padding: '0.25rem 1.25rem',
+              padding: '0.25rem',
+            }}
+          />
+          <TextField
+            placeholder='Search by para id'
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <SearchOutlinedIcon />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              '.MuiInputBase-root': { borderRadius: '5rem', margin: 'auto 0' },
+              '.MuiInputBase-input': {
+                paddingTop: '0.75rem',
+                paddingBottom: '0.75rem',
+              },
             }}
           />
           <ActionButton
