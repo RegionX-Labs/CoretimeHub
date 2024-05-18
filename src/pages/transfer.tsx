@@ -161,6 +161,8 @@ const TransferPage = () => {
       toastWarning('Connect wallet first');
       return;
     }
+
+    setWorking(true);
     if (asset === AssetType.REGION) {
       handleRegionTransfer();
     } else if (asset === AssetType.TOKEN) {
@@ -287,7 +289,6 @@ const TransferPage = () => {
       return;
     }
 
-    setWorking(true);
     transferRegionOnCoretimeChain(
       coretimeApi,
       region,
