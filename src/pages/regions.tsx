@@ -15,6 +15,7 @@ import { useState } from 'react';
 
 import {
   InterlaceModal,
+  IsmpRegionCard,
   PartitionModal,
   PoolingModal,
   RegionMetaCard,
@@ -33,7 +34,7 @@ import {
   PartitionIcon,
   TransferIcon,
 } from '@/icons';
-import { RegionLocation } from '@/models';
+import { ISMPRecordStatus, RegionLocation } from '@/models';
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -178,12 +179,16 @@ const Dashboard = () => {
             <>
               {regions.map((region, index) => (
                 <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
-                  <RegionMetaCard
-                    regionMetadata={region}
-                    active={index === currentRegionIndex}
-                    editable
-                    updateName={(name) => updateRegionName(index, name)}
-                  />
+                  {region.status === ISMPRecordStatus.AVAILABLE ? (
+                    <RegionMetaCard
+                      regionMetadata={region}
+                      active={index === currentRegionIndex}
+                      editable
+                      updateName={(name) => updateRegionName(index, name)}
+                    />
+                  ) : (
+                    <IsmpRegionCard regionMetadata={region} />
+                  )}
                 </Box>
               ))}
             </>

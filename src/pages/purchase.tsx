@@ -83,6 +83,7 @@ const Purchase = () => {
 
     const txPurchase = api.tx.broker.purchase(currentPrice);
 
+    setWorking(true);
     sendTx(txPurchase, activeAccount.address, activeSigner, {
       ready: () => toastInfo('Transaction was initiated'),
       inBlock: () => toastInfo(`In Block`),

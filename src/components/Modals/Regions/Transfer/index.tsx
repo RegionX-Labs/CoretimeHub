@@ -13,12 +13,16 @@ import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
 import { isValidAddress } from '@/utils/functions';
-import { transferRegionOnCoretimeChain } from '@/utils/transfers/native';
+import {
+  transferRegionOnCoretimeChain,
+  transferRegionOnRegionXChain,
+} from '@/utils/transfers/native';
 
 import { ProgressButton, RegionOverview } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
+import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { RegionLocation, RegionMetadata } from '@/models';
@@ -47,17 +51,53 @@ export const TransferModal = ({
   const {
     state: { api: coretimeApi },
   } = useCoretimeApi();
+  const {
+    state: { api: regionxApi },
+  } = useRegionXApi();
 
   const [newOwner, setNewOwner] = useState('');
   const [working, setWorking] = useState(false);
 
   const onTransfer = () => {
     if (regionMetadata.location === RegionLocation.CORETIME_CHAIN) {
-      transferCoretimeRegion(regionMetadata.region);
+      transferOnCoretimeChain(regionMetadata.region);
+    } else if (regionMetadata.location === RegionLocation.REGIONX_CHAIN) {
+      transferOnRegionXChain(regionMetadata.region);
     }
   };
 
-  const transferCoretimeRegion = async (region: Region) => {
+  const transferOnRegionXChain = (region: Region) => {
+    if (!regionxApi || !activeAccount || !activeSigner) return;
+
+    if (!newOwner) {
+      toastError('Please input the new owner.');
+      return;
+    }
+
+    transferRegionOnRegionXChain(
+      regionxApi,
+      region,
+      activeSigner,
+      activeAccount.address,
+      newOwner,
+      {
+        ready: () => toastInfo('Transaction was initiated.'),
+        inBlock: () => toastInfo(`In Block`),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully transferred the region.');
+          onClose();
+          fetchRegions();
+        },
+        error: () => {
+          toastError(`Failed to transfer the region.`);
+          setWorking(false);
+        },
+      }
+    );
+  };
+
+  const transferOnCoretimeChain = async (region: Region) => {
     if (!coretimeApi || !activeAccount || !activeSigner) return;
     if (!newOwner) {
       toastError('Please input the new owner.');

@@ -2,8 +2,13 @@ import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
 import { Box, Button, Link, Stack, Typography } from '@mui/material';
 import { Keyring } from '@polkadot/api';
 import { Region } from 'coretime-utils';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
+import {
+  makeResponse,
+  queryRequest,
+  waitForRegionRecordRequestEvent,
+} from '@/utils/ismp';
 import theme from '@/utils/muiTheme';
 import {
   coretimeFromRegionXTransfer,
@@ -58,7 +63,7 @@ const TransferPage = () => {
   const {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
-  const { regions } = useRegions();
+  const { regions, fetchRegions } = useRegions();
 
   const [filteredRegions, setFilteredRegions] = useState<Array<RegionMetadata>>(
     []
@@ -92,11 +97,50 @@ const TransferPage = () => {
     },
   };
 
-  useEffect(() => {
-    setFilteredRegions(
-      regions.filter((r) => r.location != RegionLocation.MARKET)
-    );
-  }, [regions]);
+  const ismpWaitAndRespond = async () => {
+    if (
+      !coretimeApi ||
+      coretimeApiState != ApiState.READY ||
+      !regionxApi ||
+      regionxApiState != ApiState.READY ||
+      !activeAccount ||
+      !selectedRegion
+    )
+      return;
+
+    try {
+      const commitment = (await waitForRegionRecordRequestEvent(
+        regionxApi,
+        selectedRegion.region.getRegionId()
+      )) as string;
+
+      const request = await queryRequest(regionxApi, commitment);
+      await makeResponse(
+        regionxApi,
+        coretimeApi,
+        request,
+        activeAccount.address,
+        {
+          ready: () => toastInfo('Fetching region record.'),
+          inBlock: () => toastInfo(`In Block`),
+          finalized: () => {
+            /* */
+          },
+          success: () => {
+            toastSuccess('Region record fetched.');
+            fetchRegions();
+          },
+          error: () => {
+            toastError(`Failed to fetch region record.`);
+          },
+        }
+      );
+    } catch {
+      toastWarning(
+        `Failed to fulfill ISMP request. Wait 5 minutes to re-request`
+      );
+    }
+  };
 
   const handleOriginChange = (newOrigin: ChainType) => {
     setOriginChain(newOrigin);
@@ -117,6 +161,8 @@ const TransferPage = () => {
       toastWarning('Connect wallet first');
       return;
     }
+
+    setWorking(true);
     if (asset === AssetType.REGION) {
       handleRegionTransfer();
     } else if (asset === AssetType.TOKEN) {
@@ -202,7 +248,13 @@ const TransferPage = () => {
           { address: activeAccount.address, signer: activeSigner },
           selectedRegion.rawId,
           receiverKeypair.pairs[0].publicKey,
-          defaultHandler
+          {
+            ...defaultHandler,
+            success: () => {
+              toastSuccess('Successfully transferred.');
+              ismpWaitAndRespond();
+            },
+          }
         );
       }
     } else if (
@@ -237,7 +289,6 @@ const TransferPage = () => {
       return;
     }
 
-    setWorking(true);
     transferRegionOnCoretimeChain(
       coretimeApi,
       region,

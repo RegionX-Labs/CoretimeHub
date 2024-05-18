@@ -8,8 +8,8 @@ import { POOLING_TASK_ID, ScheduleItem, TaskMetadata } from '@/models';
 import { useCoretimeApi } from '../apis';
 import { ApiState } from '../apis/types';
 
-type Task = number | null;
-type Tasks = Record<string, Task>;
+export type Task = number | null;
+export type Tasks = Record<string, Task>;
 
 interface TasksData {
   tasks: Array<TaskMetadata>;

@@ -32,3 +32,18 @@ export const transferRegionOnCoretimeChain = async (
   );
   sendTx(txTransfer, senderAddress, signer, handlers);
 };
+
+export const transferRegionOnRegionXChain = async (
+  regionxApi: ApiPromise,
+  region: Region,
+  signer: Signer,
+  senderAddress: string,
+  newOwner: string,
+  handlers: TxStatusHandlers
+) => {
+  const txTransfer = regionxApi.tx.regions.transfer(
+    region.getOnChainRegionId(),
+    newOwner
+  );
+  sendTx(txTransfer, senderAddress, signer, handlers);
+};

@@ -1,4 +1,4 @@
-import { CoreIndex, getEncodedRegionId } from 'coretime-utils';
+import { CoreIndex, getEncodedRegionId, Region } from 'coretime-utils';
 import React, {
   createContext,
   useCallback,
@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react';
 
-import { RegionLocation, RegionMetadata } from '@/models';
+import { ISMPRecordStatus, RegionLocation, RegionMetadata } from '@/models';
 
 import * as NativeRegions from './native';
 import * as RegionXRegions from './regionx';
@@ -16,7 +16,7 @@ import { useCoretimeApi } from '../apis';
 import { EXPERIMENTAL } from '../apis/consts';
 import { useRegionXApi } from '../apis/RegionXApi';
 import { useCommon } from '../common';
-import { useTasks } from '../tasks';
+import { Tasks, useTasks } from '../tasks';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
@@ -76,61 +76,48 @@ const RegionDataProvider = ({ children }: Props) => {
 
     const tasks = await fetchWorkplan();
 
+    const _regions: Array<RegionMetadata> = [];
+
     const brokerRegions = await NativeRegions.fetchRegions(coretimeApi);
+    for await (const region of brokerRegions) {
+      const regionMetadata = await constructRegionMetadata(
+        region,
+        RegionLocation.CORETIME_CHAIN,
+        activeAccount.address,
+        tasks,
+        _regions.length
+      );
+      if (!regionMetadata) continue;
+      _regions.push(regionMetadata);
+    }
+
     const regionxRegions = EXPERIMENTAL
       ? await RegionXRegions.fetchRegions(regionxApi)
       : [];
-
-    const _regions: Array<RegionMetadata> = [];
-
-    for await (const region of [...brokerRegions, ...regionxRegions]) {
-      // Only user owned non-expired regions.
-      if (
-        region.getOwner() !== activeAccount.address ||
-        region.consumed(context) > 1
-      )
-        continue;
-
-      const location = brokerRegions.find(
-        (r) =>
-          JSON.stringify(r.getRegionId()) ===
-            JSON.stringify(region.getRegionId()) &&
-          r.getOwner() === region.getOwner()
-      )
-        ? RegionLocation.CORETIME_CHAIN
-        : RegionLocation.REGIONX_CHAIN;
-
-      const rawId = getEncodedRegionId(
-        region.getRegionId(),
-        location === RegionLocation.CORETIME_CHAIN ? coretimeApi : regionxApi
-      ).toString();
-
-      const name =
-        localStorage.getItem(`region-${rawId}`) ??
-        `Region #${_regions.length + 1}`;
-
-      let task = tasks[rawId.toString()] ?? null;
-
-      // If the region isn't still active it cannot be in the workload.
-      if (region.consumed(context) != 0) {
-        if (!task) {
-          task = await _getTaskFromWorkloadId(
-            region.getCore(),
-            region.getMask()
-          );
-        }
-      }
-
-      _regions.push(
-        RegionMetadata.construct(
-          context,
-          getEncodedRegionId(region.getRegionId(), coretimeApi),
+    for await (const [region, status, commitment] of regionxRegions) {
+      if (status === ISMPRecordStatus.AVAILABLE) {
+        const regionMetadata = await constructRegionMetadata(
           region,
-          name,
-          location,
-          task
-        )
-      );
+          RegionLocation.REGIONX_CHAIN,
+          activeAccount.address,
+          tasks,
+          _regions.length
+        );
+        if (!regionMetadata) continue;
+        _regions.push(regionMetadata);
+      } else {
+        const regionMetadata = await constructRegionMetadata(
+          region,
+          RegionLocation.REGIONX_CHAIN,
+          activeAccount.address,
+          tasks,
+          _regions.length,
+          status,
+          commitment
+        );
+        if (!regionMetadata) continue;
+        _regions.push(regionMetadata);
+      }
     }
 
     setRegions(_regions);
@@ -142,6 +129,48 @@ const RegionDataProvider = ({ children }: Props) => {
     fetchWorkplan,
     _getTaskFromWorkloadId,
   ]);
+
+  const constructRegionMetadata = async (
+    region: Region,
+    location: RegionLocation,
+    owner: string,
+    tasks: Tasks,
+    index: number,
+    recordStatus: ISMPRecordStatus = ISMPRecordStatus.AVAILABLE,
+    commitment?: string
+  ): Promise<RegionMetadata | null> => {
+    // Only user owned non-expired regions.
+    if (region.getOwner() !== owner || region.consumed(context) > 1)
+      return null;
+
+    const rawId = getEncodedRegionId(
+      region.getRegionId(),
+      location === RegionLocation.CORETIME_CHAIN ? coretimeApi : regionxApi
+    ).toString();
+
+    const name =
+      localStorage.getItem(`region-${rawId}`) ?? `Region #${index + 1}`;
+
+    let task = tasks[rawId.toString()] ?? null;
+
+    // If the region isn't still active it cannot be in the workload.
+    if (region.consumed(context) != 0) {
+      if (!task) {
+        task = await _getTaskFromWorkloadId(region.getCore(), region.getMask());
+      }
+    }
+
+    return RegionMetadata.construct(
+      context,
+      getEncodedRegionId(region.getRegionId(), coretimeApi),
+      region,
+      name,
+      location,
+      task,
+      recordStatus,
+      commitment
+    );
+  };
 
   useEffect(() => {
     fetchRegions();
