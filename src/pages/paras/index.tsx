@@ -110,7 +110,13 @@ const ParachainManagement = () => {
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <Box>
           <Typography
             variant='subtitle1'
@@ -125,23 +131,7 @@ const ParachainManagement = () => {
             Watch parachains state, register and manage parachains
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: '1rem', height: '3.25rem' }}>
-          <TextField
-            placeholder='Search by para id'
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <SearchOutlinedIcon />
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              '.MuiInputBase-root': { borderRadius: '5rem', margin: 'auto 0' },
-              '.MuiInputBase-input': { paddingTop: '0.75rem' },
-            }}
-          />
+        <Box sx={{ display: 'flex', gap: '1.5rem', height: '3.25rem' }}>
           <FormControlLabel
             control={
               <Switch
@@ -155,7 +145,25 @@ const ParachainManagement = () => {
             sx={{
               color: theme.palette.common.black,
               padding: '0.25rem',
-              mr: '0.5rem',
+            }}
+          />
+          <TextField
+            placeholder='Search by para id'
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <SearchOutlinedIcon />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              '.MuiInputBase-root': { borderRadius: '5rem', margin: 'auto 0' },
+              '.MuiInputBase-input': {
+                paddingTop: '0.75rem',
+                paddingBottom: '0.75rem',
+              },
             }}
           />
           <ActionButton

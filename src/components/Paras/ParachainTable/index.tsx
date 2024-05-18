@@ -125,9 +125,9 @@ export const ParachainTable = ({
         <TableBody>
           {(rowsPerPage > 0
             ? parachains.slice(
-              page * rowsPerPage,
-              page * rowsPerPage + rowsPerPage
-            )
+                page * rowsPerPage,
+                page * rowsPerPage + rowsPerPage
+              )
             : parachains
           ).map(({ id, name, state, watching }, index) => (
             <StyledTableRow key={index}>
