@@ -106,13 +106,15 @@ export const useParasInfo = () => {
           ? ParaState.SYSTEM
           : isLeaseHolding
             ? ParaState.LEASE_HOLDING
-            : strState === 'Parathread'
-              ? ParaState.ONDEMAND_PARACHAIN
+            : strState === 'Onboarding'
+              ? ParaState.ONBOARDING
               : isActive
                 ? ParaState.ACTIVE_PARA
                 : isInWorkplan
-                  ? ParaState.SOON_ACTIVE
-                  : ParaState.IDLE_PARA;
+                  ? ParaState.IN_WORKPLAN
+                  : strState === 'Parathread'
+                    ? ParaState.ONDEMAND_PARACHAIN
+                    : ParaState.IDLE_PARA;
 
         paras.push({ id, state, name } as ParachainInfo);
       }
