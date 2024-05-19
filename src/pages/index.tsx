@@ -4,7 +4,7 @@ import { FeatureCard } from '@/components';
 
 import Chart from '@/assets/chart.png';
 import Config from '@/assets/config.png';
-import Shopping from '@/assets/shopping.png';
+import Manage from '@/assets/manage.png';
 import Trade from '@/assets/trade.png';
 
 const Home = () => {
@@ -14,16 +14,21 @@ const Home = () => {
     <Box>
       <Box>
         <Typography
-          variant='subtitle1'
-          sx={{ color: theme.palette.common.black }}
+          fontWeight={'light'}
+          sx={{
+            color: theme.palette.common.black,
+            textAlign: 'center',
+            fontSize: '32px',
+          }}
         >
-          Home
+          Corehub | Home
         </Typography>
         <Typography
           variant='subtitle2'
-          sx={{ color: theme.palette.text.primary }}
+          fontWeight={'light'}
+          sx={{ color: theme.palette.common.black, textAlign: 'center' }}
         >
-          Explore all the possibilities RegionX offers
+          Explore all the possibilities RegionX Corehub offers
         </Typography>
       </Box>
       <Box marginTop='2em'>
@@ -32,7 +37,7 @@ const Home = () => {
             <FeatureCard
               title='Purchase a core'
               enabled={true}
-              image={Shopping}
+              image={Trade}
               buttonText='Go to Bulk Sale'
               href='/purchase'
             />
@@ -57,11 +62,11 @@ const Home = () => {
           </Grid>
           <Grid container item xs={6} direction='column'>
             <FeatureCard
-              title='Trade Coretime'
-              enabled={false}
-              image={Trade}
-              buttonText='Explore the market'
-              href='/'
+              title='Parachain Management'
+              enabled={true}
+              image={Manage}
+              buttonText='Manage your parachain'
+              href='/paras'
             />
           </Grid>
         </Grid>
