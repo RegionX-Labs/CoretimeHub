@@ -24,7 +24,7 @@ export const ParaStateCard = ({ state }: { state: ParaState }) => {
       color: '#9F53FF',
       background: '#EDDFFF',
     },
-    [ParaState.SOON_ACTIVE]: {
+    [ParaState.IN_WORKPLAN]: {
       color: '#5e73ff',
       background: '#e1e7ff',
     },

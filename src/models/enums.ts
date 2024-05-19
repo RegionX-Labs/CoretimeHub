@@ -73,7 +73,7 @@ export enum ParaState {
   // eslint-disable-next-line no-unused-vars
   ACTIVE_PARA = 'Parachain(Active)',
   // eslint-disable-next-line no-unused-vars
-  SOON_ACTIVE = 'Soon Active',
+  IN_WORKPLAN = 'Idle(In workplan)',
   // eslint-disable-next-line no-unused-vars
   LEASE_HOLDING = 'Lease Holding',
   // eslint-disable-next-line no-unused-vars
