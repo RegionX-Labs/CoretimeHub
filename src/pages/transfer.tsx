@@ -312,7 +312,7 @@ const TransferPage = () => {
   };
 
   return (
-    <Box>
+    <Box sx={{ maxHeight: 'calc(100% - 2rem)' }}>
       <Box
         sx={{
           display: 'flex',
@@ -340,16 +340,22 @@ const TransferPage = () => {
       </Box>
       <Box
         width='60%'
-        margin='2rem auto 0 auto'
+        margin='0.5rem auto'
         sx={{
           overflowY: 'auto',
           '::-webkit-scrollbar': { display: 'none' },
+          height: '100%',
         }}
       >
         <Paper
-          sx={{ padding: '2rem', borderRadius: '2rem', marginBottom: '2rem' }}
+          sx={{
+            padding: '2rem',
+            borderRadius: '2rem',
+            mb: '2rem',
+            boxShadow: 'none',
+          }}
         >
-          <Stack margin='0.5rem 0' direction='column' gap={1}>
+          <Stack margin='0.5rem 0' direction='column' gap='1rem'>
             <Typography
               sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
             >
@@ -357,7 +363,7 @@ const TransferPage = () => {
             </Typography>
             <ChainSelector chain={originChain} setChain={handleOriginChange} />
           </Stack>
-          <Stack margin='0.5rem 0' direction='column' gap={1}>
+          <Stack margin='1rem 0' direction='column' gap='1rem'>
             <Typography
               sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
             >
@@ -416,7 +422,12 @@ const TransferPage = () => {
           <ArrowDownward />
         </Stack>
         <Paper
-          sx={{ padding: '2rem', borderRadius: '2rem', marginTop: '2rem' }}
+          sx={{
+            padding: '2rem',
+            borderRadius: '2rem',
+            mt: '2rem',
+            boxShadow: 'none',
+          }}
         >
           <Stack direction='column' gap={1}>
             <Typography
@@ -440,11 +451,12 @@ const TransferPage = () => {
             )}
         </Paper>
         <Box
-          margin='2rem 0 0 0'
           sx={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            mt: '2rem',
+            pb: '1rem',
           }}
         >
           <Button
@@ -456,7 +468,7 @@ const TransferPage = () => {
             }}
             onClick={onHome}
           >
-            Home
+            &lt; Home
           </Button>
           <ProgressButton
             label='Transfer'
