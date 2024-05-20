@@ -78,6 +78,7 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
         id='origin-selector'
         value={chain}
         label='Origin'
+        sx={{ borderRadius: '1rem' }}
         onChange={(e) => setChain(e.target.value as ChainType)}
       >
         {menuItems.map(({ icon, label, value, loading }, index) => (

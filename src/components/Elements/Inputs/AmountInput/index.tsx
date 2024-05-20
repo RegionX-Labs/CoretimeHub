@@ -51,6 +51,11 @@ export const AmountInput = ({
       <TextField
         value={`${amount} ${currency}`}
         placeholder={`Enter ${currency} amount`}
+        InputProps={{
+          style: {
+            borderRadius: '1rem',
+          },
+        }}
         onChange={(e) => {
           setAmount(extractValue(e.target.value));
         }}

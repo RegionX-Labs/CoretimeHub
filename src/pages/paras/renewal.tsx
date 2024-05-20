@@ -166,7 +166,16 @@ const Renewal = () => {
           justifyContent='space-between'
         >
           <Link href='/'>
-            <Button variant='outlined'>Home</Button>
+            <Button
+              variant='outlined'
+              sx={{
+                borderRadius: 100,
+                bgcolor: theme.palette.common.white,
+                textTransform: 'capitalize',
+              }}
+            >
+              Home
+            </Button>
           </Link>
           <ProgressButton
             label='Renew'

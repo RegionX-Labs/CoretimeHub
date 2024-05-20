@@ -21,6 +21,7 @@ export const RegionSelector = ({
         id='destination-selector'
         value={selectedRegion?.name}
         label='Destination'
+        sx={{ borderRadius: '1rem' }}
         onChange={(e) => handleRegionChange(Number(e.target.value))}
       >
         {regions.map((region, indx) => (

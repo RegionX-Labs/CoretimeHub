@@ -1,5 +1,5 @@
 import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
-import { Box, Button, Link, Stack, Typography } from '@mui/material';
+import { Box, Button, Link, Paper, Stack, Typography } from '@mui/material';
 import { Keyring } from '@polkadot/api';
 import { Region } from 'coretime-utils';
 import { useState } from 'react';
@@ -334,48 +334,54 @@ const TransferPage = () => {
           '::-webkit-scrollbar': { display: 'none' },
         }}
       >
-        <Stack margin='0.5rem 0' direction='column' gap={1}>
-          <Typography
-            sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
-          >
-            Origin chain:
-          </Typography>
-          <ChainSelector chain={originChain} setChain={handleOriginChange} />
-        </Stack>
-        <Stack margin='0.5rem 0' direction='column' gap={1}>
-          <Typography
-            sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
-          >
-            Destination chain:
-          </Typography>
-          <ChainSelector
-            chain={destinationChain}
-            setChain={setDestinationChain}
-          />
-        </Stack>
-        {originChain !== ChainType.NONE &&
-          destinationChain !== ChainType.NONE && (
-            <Stack margin='1em 0' direction='column' gap={1}>
-              <AssetSelector
-                symbol={symbol}
-                asset={asset}
-                setAsset={setAsset}
-              />
-            </Stack>
-          )}
+        <Paper
+          sx={{ padding: '2rem', borderRadius: '2rem', marginBottom: '2rem' }}
+        >
+          <Stack margin='0.5rem 0' direction='column' gap={1}>
+            <Typography
+              sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
+            >
+              Origin chain:
+            </Typography>
+            <ChainSelector chain={originChain} setChain={handleOriginChange} />
+          </Stack>
+          <Stack margin='0.5rem 0' direction='column' gap={1}>
+            <Typography
+              sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
+            >
+              Destination chain:
+            </Typography>
+            <ChainSelector
+              chain={destinationChain}
+              setChain={setDestinationChain}
+            />
+          </Stack>
+          {originChain !== ChainType.NONE &&
+            destinationChain !== ChainType.NONE && (
+              <Stack margin='1em 0' direction='column' gap={1}>
+                <AssetSelector
+                  symbol={symbol}
+                  asset={asset}
+                  setAsset={setAsset}
+                />
+              </Stack>
+            )}
+          {asset === AssetType.REGION &&
+            originChain !== ChainType.NONE &&
+            destinationChain !== ChainType.NONE && (
+              <Stack margin='1em 0' direction='column' gap={1}>
+                <Typography>Region</Typography>
+                <RegionSelector
+                  regions={filteredRegions}
+                  selectedRegion={selectedRegion}
+                  handleRegionChange={(indx) =>
+                    setSelectedRegion(regions[indx])
+                  }
+                />
+              </Stack>
+            )}
+        </Paper>
 
-        {asset === AssetType.REGION &&
-          originChain !== ChainType.NONE &&
-          destinationChain !== ChainType.NONE && (
-            <Stack margin='1em 0' direction='column' gap={1}>
-              <Typography>Region</Typography>
-              <RegionSelector
-                regions={filteredRegions}
-                selectedRegion={selectedRegion}
-                handleRegionChange={(indx) => setSelectedRegion(regions[indx])}
-              />
-            </Stack>
-          )}
         {selectedRegion && (
           <Box
             sx={{
@@ -397,26 +403,30 @@ const TransferPage = () => {
           <Typography>Transfer</Typography>
           <ArrowDownward />
         </Stack>
-        <Stack direction='column' gap={1}>
-          <Typography
-            sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
-          >
-            Transfer to:
-          </Typography>
-          <RecipientInput recipient={newOwner} setRecipient={setNewOwner} />
-        </Stack>
-        {asset === AssetType.TOKEN &&
-          originChain !== ChainType.NONE &&
-          destinationChain !== ChainType.NONE && (
-            <Stack margin='2em 0' direction='column' gap={1}>
-              <AmountInput
-                amount={transferAmount}
-                setAmount={setTransferAmount}
-                currency={symbol}
-                caption='Transfer amount'
-              />
-            </Stack>
-          )}
+        <Paper
+          sx={{ padding: '2rem', borderRadius: '2rem', marginTop: '2rem' }}
+        >
+          <Stack direction='column' gap={1}>
+            <Typography
+              sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
+            >
+              Transfer to:
+            </Typography>
+            <RecipientInput recipient={newOwner} setRecipient={setNewOwner} />
+          </Stack>
+          {asset === AssetType.TOKEN &&
+            originChain !== ChainType.NONE &&
+            destinationChain !== ChainType.NONE && (
+              <Stack margin='2em 0' direction='column' gap={1}>
+                <AmountInput
+                  amount={transferAmount}
+                  setAmount={setTransferAmount}
+                  currency={symbol}
+                  caption='Transfer amount'
+                />
+              </Stack>
+            )}
+        </Paper>
         <Box
           margin='2rem 0 0 0'
           sx={{
