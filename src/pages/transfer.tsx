@@ -1,7 +1,8 @@
 import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
-import { Box, Button, Link, Paper, Stack, Typography } from '@mui/material';
+import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { Keyring } from '@polkadot/api';
 import { Region } from 'coretime-utils';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import {
@@ -38,6 +39,7 @@ import { EXPERIMENTAL } from '@/contexts/apis/consts';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { ApiState } from '@/contexts/apis/types';
 import { useBalances } from '@/contexts/balance';
+import { useNetwork } from '@/contexts/network';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import {
@@ -49,6 +51,8 @@ import {
 } from '@/models';
 
 const TransferPage = () => {
+  const router = useRouter();
+
   const {
     state: { activeAccount, activeSigner },
   } = useAccounts();
@@ -63,6 +67,7 @@ const TransferPage = () => {
   const {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
+  const { network } = useNetwork();
   const { regions, fetchRegions } = useRegions();
 
   const [filteredRegions, setFilteredRegions] = useState<Array<RegionMetadata>>(
@@ -299,6 +304,13 @@ const TransferPage = () => {
     );
   };
 
+  const onHome = () => {
+    router.push({
+      pathname: '/',
+      query: { network },
+    });
+  };
+
   return (
     <Box>
       <Box
@@ -435,18 +447,17 @@ const TransferPage = () => {
             justifyContent: 'space-between',
           }}
         >
-          <Link href='/'>
-            <Button
-              variant='outlined'
-              sx={{
-                borderRadius: 100,
-                bgcolor: theme.palette.common.white,
-                textTransform: 'capitalize',
-              }}
-            >
-              Home
-            </Button>
-          </Link>
+          <Button
+            variant='outlined'
+            sx={{
+              borderRadius: 100,
+              bgcolor: theme.palette.common.white,
+              textTransform: 'capitalize',
+            }}
+            onClick={onHome}
+          >
+            Home
+          </Button>
           <ProgressButton
             label='Transfer'
             onClick={handleTransfer}
