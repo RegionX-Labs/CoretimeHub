@@ -11,7 +11,6 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -81,6 +80,13 @@ const Renewal = () => {
     }
     setActiveIdx(index);
   }, [router, parachains, status, parachains.length, toastError]);
+
+  const onHome = () => {
+    router.push({
+      pathname: '/',
+      query: { network },
+    });
+  };
 
   return status === Status.LOADING ? (
     <Backdrop open>
@@ -165,18 +171,17 @@ const Renewal = () => {
           marginTop='2em'
           justifyContent='space-between'
         >
-          <Link href='/'>
-            <Button
-              variant='outlined'
-              sx={{
-                borderRadius: 100,
-                bgcolor: theme.palette.common.white,
-                textTransform: 'capitalize',
-              }}
-            >
-              Home
-            </Button>
-          </Link>
+          <Button
+            variant='outlined'
+            sx={{
+              borderRadius: 100,
+              bgcolor: theme.palette.common.white,
+              textTransform: 'capitalize',
+            }}
+            onClick={onHome}
+          >
+            &lt; Home
+          </Button>
           <ProgressButton
             label='Renew'
             onClick={handleRenew}

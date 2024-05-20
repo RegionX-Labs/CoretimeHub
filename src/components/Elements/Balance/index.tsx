@@ -18,21 +18,29 @@ export const Balance = ({ relayBalance, coretimeBalance }: BalanceProps) => {
     state: { activeAccount },
   } = useAccounts();
   const {
-    state: { decimals: relayDecimals, symbol: relaySymbol },
+    state: {
+      decimals: relayDecimals,
+      symbol: relaySymbol,
+      name: relayChainName,
+    },
   } = useRelayApi();
   const {
-    state: { decimals: coretimeDecimals, symbol: coretimeSymbol },
+    state: {
+      decimals: coretimeDecimals,
+      symbol: coretimeSymbol,
+      name: coretimeChainName,
+    },
   } = useCoretimeApi();
 
   const items = [
     {
-      label: 'Relay Chain',
+      label: relayChainName,
       value: relayBalance,
       symbol: relaySymbol,
       decimals: relayDecimals,
     },
     {
-      label: 'Coretime Chain',
+      label: coretimeChainName,
       value: coretimeBalance,
       symbol: coretimeSymbol,
       decimals: coretimeDecimals,

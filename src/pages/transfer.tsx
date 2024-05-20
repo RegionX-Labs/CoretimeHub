@@ -1,7 +1,8 @@
 import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
-import { Box, Button, Link, Paper, Stack, Typography } from '@mui/material';
+import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { Keyring } from '@polkadot/api';
 import { Region } from 'coretime-utils';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import {
@@ -38,6 +39,7 @@ import { EXPERIMENTAL } from '@/contexts/apis/consts';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { ApiState } from '@/contexts/apis/types';
 import { useBalances } from '@/contexts/balance';
+import { useNetwork } from '@/contexts/network';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import {
@@ -49,6 +51,8 @@ import {
 } from '@/models';
 
 const TransferPage = () => {
+  const router = useRouter();
+
   const {
     state: { activeAccount, activeSigner },
   } = useAccounts();
@@ -63,6 +67,7 @@ const TransferPage = () => {
   const {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
+  const { network } = useNetwork();
   const { regions, fetchRegions } = useRegions();
 
   const [filteredRegions, setFilteredRegions] = useState<Array<RegionMetadata>>(
@@ -299,8 +304,15 @@ const TransferPage = () => {
     );
   };
 
+  const onHome = () => {
+    router.push({
+      pathname: '/',
+      query: { network },
+    });
+  };
+
   return (
-    <Box>
+    <Box sx={{ maxHeight: 'calc(100% - 2rem)' }}>
       <Box
         sx={{
           display: 'flex',
@@ -328,16 +340,22 @@ const TransferPage = () => {
       </Box>
       <Box
         width='60%'
-        margin='2rem auto 0 auto'
+        margin='0.5rem auto'
         sx={{
           overflowY: 'auto',
           '::-webkit-scrollbar': { display: 'none' },
+          height: '100%',
         }}
       >
         <Paper
-          sx={{ padding: '2rem', borderRadius: '2rem', marginBottom: '2rem' }}
+          sx={{
+            padding: '2rem',
+            borderRadius: '2rem',
+            mb: '2rem',
+            boxShadow: 'none',
+          }}
         >
-          <Stack margin='0.5rem 0' direction='column' gap={1}>
+          <Stack margin='0.5rem 0' direction='column' gap='1rem'>
             <Typography
               sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
             >
@@ -345,7 +363,7 @@ const TransferPage = () => {
             </Typography>
             <ChainSelector chain={originChain} setChain={handleOriginChange} />
           </Stack>
-          <Stack margin='0.5rem 0' direction='column' gap={1}>
+          <Stack margin='1rem 0' direction='column' gap='1rem'>
             <Typography
               sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
             >
@@ -404,7 +422,12 @@ const TransferPage = () => {
           <ArrowDownward />
         </Stack>
         <Paper
-          sx={{ padding: '2rem', borderRadius: '2rem', marginTop: '2rem' }}
+          sx={{
+            padding: '2rem',
+            borderRadius: '2rem',
+            mt: '2rem',
+            boxShadow: 'none',
+          }}
         >
           <Stack direction='column' gap={1}>
             <Typography
@@ -428,25 +451,25 @@ const TransferPage = () => {
             )}
         </Paper>
         <Box
-          margin='2rem 0 0 0'
           sx={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            mt: '2rem',
+            pb: '1rem',
           }}
         >
-          <Link href='/'>
-            <Button
-              variant='outlined'
-              sx={{
-                borderRadius: 100,
-                bgcolor: theme.palette.common.white,
-                textTransform: 'capitalize',
-              }}
-            >
-              Home
-            </Button>
-          </Link>
+          <Button
+            variant='outlined'
+            sx={{
+              borderRadius: 100,
+              bgcolor: theme.palette.common.white,
+              textTransform: 'capitalize',
+            }}
+            onClick={onHome}
+          >
+            &lt; Home
+          </Button>
           <ProgressButton
             label='Transfer'
             onClick={handleTransfer}
