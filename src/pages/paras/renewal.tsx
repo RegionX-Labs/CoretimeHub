@@ -6,6 +6,7 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
+  Paper,
   Select,
   Stack,
   Typography,
@@ -123,47 +124,65 @@ const Renewal = () => {
         />
       </Box>
 
-      <Stack
-        direction='column'
-        gap={1}
-        margin='1rem 0'
-        width='60%'
-        sx={{ mx: 'auto' }}
-      >
-        <Typography
-          variant='subtitle1'
-          sx={{ color: theme.palette.common.black }}
+      <Box sx={{ width: '60%', margin: '0 auto' }}>
+        <Paper
+          sx={{
+            padding: '2rem',
+            borderRadius: '2rem',
+            mt: '2rem',
+            boxShadow: 'none',
+          }}
         >
-          Select a parachain to renew.
-        </Typography>
-        <FormControl fullWidth sx={{ mt: '1rem' }}>
-          <InputLabel id='label-parachain-select'>Parachain</InputLabel>
-          <Select
-            labelId='label-parachain-select'
-            label='Parachain'
-            value={activeIdx}
-            onChange={(e) => setActiveIdx(Number(e.target.value))}
+          <Stack
+            direction='column'
+            gap={1}
+            margin='1rem 0'
+            width='75%'
+            sx={{ mx: 'auto' }}
           >
-            {parachains.map(({ paraId }, index) => (
-              <MenuItem key={index} value={index}>
-                {`${paraId} ${chainData[network][paraId] || ''}`}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <Stack direction='column' alignItems='center' mt={'2rem'} gap='1rem'>
-          <Typography variant='h6' color='black'>
-            {`Core number: ${parachains[activeIdx].core}`}
-          </Typography>
-          <Typography color='black'>
-            Renewal price: &nbsp;
-            {getBalanceString(
-              parachains[activeIdx].price.toString(),
-              decimals,
-              symbol
-            )}
-          </Typography>
-        </Stack>
+            <Typography
+              variant='h1'
+              textAlign='center'
+              sx={{ color: theme.palette.common.black, mb: '1rem' }}
+            >
+              Select a parachain to renew
+            </Typography>
+            <FormControl fullWidth sx={{ mt: '1rem' }}>
+              <InputLabel id='label-parachain-select'>Parachain</InputLabel>
+              <Select
+                sx={{ borderRadius: '1rem' }}
+                labelId='label-parachain-select'
+                label='Parachain'
+                value={activeIdx}
+                onChange={(e) => setActiveIdx(Number(e.target.value))}
+              >
+                {parachains.map(({ paraId }, index) => (
+                  <MenuItem key={index} value={index}>
+                    {`${paraId} ${chainData[network][paraId] || ''}`}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Stack
+              direction='column'
+              alignItems='center'
+              mt={'2rem'}
+              gap='1rem'
+            >
+              <Typography variant='h6' color='black'>
+                {`Core number: ${parachains[activeIdx].core}`}
+              </Typography>
+              <Typography color='black'>
+                Renewal price: &nbsp;
+                {getBalanceString(
+                  parachains[activeIdx].price.toString(),
+                  decimals,
+                  symbol
+                )}
+              </Typography>
+            </Stack>
+          </Stack>
+        </Paper>
         <Stack
           direction='row'
           gap='1rem'
@@ -188,7 +207,7 @@ const Renewal = () => {
             loading={working}
           />
         </Stack>
-      </Stack>
+      </Box>
     </>
   );
 };
