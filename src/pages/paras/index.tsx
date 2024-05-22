@@ -177,7 +177,7 @@ const ParachainManagement = () => {
           <CircularProgress />
         </Backdrop>
       ) : (
-        <Box sx={{ mt: '2rem', overflowY: 'auto' }}>
+        <Box sx={{ mt: '2rem', mb: '1rem', overflowY: 'auto' }}>
           <ParachainTable
             {...{
               parachains: paras2Show,

@@ -62,7 +62,7 @@ const Home = () => {
           </Grid>
           <Grid container item xs={6} direction='column'>
             <FeatureCard
-              title='Parachain Management'
+              title='Parachain Dashboard'
               enabled={true}
               image={Manage}
               buttonText='Manage your parachain'
