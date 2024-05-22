@@ -29,7 +29,7 @@ export const CoreExpiryCard = ({ paraId, height }: CoreExpiryProps) => {
   if (height > until) return <></>;
 
   return (
-    <Stack direction='column' gap='0.5rem' alignItems='center'>
+    <Stack direction='column' gap='0.5rem' alignItems='start'>
       <Typography
         sx={{ color: theme.palette.text.primary, fontSize: '0.875rem' }}
       >

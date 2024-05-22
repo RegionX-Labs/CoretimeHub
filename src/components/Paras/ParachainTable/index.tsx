@@ -123,6 +123,7 @@ export const ParachainTable = ({
             <StyledTableCell>Para ID</StyledTableCell>
             <StyledTableCell>Para Name</StyledTableCell>
             <StyledTableCell>State</StyledTableCell>
+            <StyledTableCell>Expiry</StyledTableCell>
             <StyledTableCell>Action</StyledTableCell>
             <StyledTableCell>Watchlist</StyledTableCell>
           </TableRow>
@@ -146,17 +147,17 @@ export const ParachainTable = ({
                 </Link>
               </StyledTableCell>
               <StyledTableCell>{name}</StyledTableCell>
+              <StyledTableCell style={{ margin: 0 }}>
+                <ParaStateCard state={state} />
+              </StyledTableCell>
               <StyledTableCell>
-                <Stack direction='row' gap='2rem' alignItems='center'>
-                  <ParaStateCard state={state} />
-                  {/* System paras have reserved coretime */}
-                  {state != ParaState.SYSTEM && (
-                    <Stack direction='column' gap='1rem' alignItems='center'>
-                      <LeaseStateCard paraId={id} height={height} />
-                      <CoreExpiryCard paraId={id} height={height} />
-                    </Stack>
-                  )}
-                </Stack>
+                {/* System paras have reserved coretime */}
+                {state != ParaState.SYSTEM && (
+                  <Stack>
+                    <LeaseStateCard paraId={id} height={height} />
+                    <CoreExpiryCard paraId={id} height={height} />
+                  </Stack>
+                )}
               </StyledTableCell>
               <StyledTableCell>
                 {state === ParaState.RESERVED ? (
