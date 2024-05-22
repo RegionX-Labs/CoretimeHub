@@ -5,6 +5,8 @@ import moment from 'moment';
 
 import { getBalanceString } from '@/utils/functions';
 
+import { SalePhaseCard } from '@/components/Elements';
+
 import DollarIcon from '@/assets/dollar.png';
 import ListIcon from '@/assets/list.png';
 import ShoppingIcon from '@/assets/shopping.png';
@@ -48,34 +50,40 @@ export const SaleInfoPanel = ({
       <DetailCard
         icon={ShoppingIcon}
         title='Sale details'
-        left={{
-          label: 'Started at',
-          value: moment(saleStartTimestamp).format('D MMM HH:mm'),
-        }}
-        right={{
-          label: 'End at',
-          value: moment(saleEndTimestamp).format('D MMMM HH:mm'),
+        items={{
+          left: {
+            label: 'Started at',
+            value: moment(saleStartTimestamp).format('D MMM HH:mm'),
+          },
+          right: {
+            label: 'End at',
+            value: moment(saleEndTimestamp).format('D MMMM HH:mm'),
+          },
         }}
       />
-      <DetailCard
-        icon={ListIcon}
-        title='Phase details'
-        left={{ label: 'Current phase', value: currentPhase }}
-        right={{ label: 'Upcoming phase', value: nextPhase() }}
-      />
+      <DetailCard icon={ListIcon} title='Phase details'>
+        <SalePhaseCard label='Current phase' value={currentPhase} />
+        <SalePhaseCard label='Upcoming phase' value={nextPhase()} />
+      </DetailCard>
       <DetailCard
         icon={DollarIcon}
         title='Price details'
-        left={{
-          label:
-            (currentPhase as SalePhase) === SalePhase.Interlude
-              ? 'Start price'
-              : 'Current price',
-          value: getBalanceString(currentPrice.toString(), decimals, symbol),
-        }}
-        right={{
-          label: 'Floor price',
-          value: getBalanceString(saleInfo.price.toString(), decimals, symbol),
+        items={{
+          left: {
+            label:
+              (currentPhase as SalePhase) === SalePhase.Interlude
+                ? 'Start price'
+                : 'Current price',
+            value: getBalanceString(currentPrice.toString(), decimals, symbol),
+          },
+          right: {
+            label: 'Floor price',
+            value: getBalanceString(
+              saleInfo.price.toString(),
+              decimals,
+              symbol
+            ),
+          },
         }}
       />
     </Box>
