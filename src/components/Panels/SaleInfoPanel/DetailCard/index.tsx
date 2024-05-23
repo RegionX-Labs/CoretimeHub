@@ -11,15 +11,20 @@ interface ItemDetail {
 interface DetailCardProps {
   icon: any;
   title: string;
-  left: ItemDetail;
-  right: ItemDetail;
+  items?: {
+    left: ItemDetail;
+    right: ItemDetail;
+  };
+  children?: React.ReactNode;
 }
 
 const ItemContainer = ({ label, value }: ItemDetail) => {
   const theme = useTheme();
   return (
     <Box className={styles.infoItem}>
-      <Typography>{label}</Typography>
+      <Typography sx={{ color: theme.palette.text.primary }}>
+        {label}
+      </Typography>
       <Typography
         sx={{
           color: theme.palette.common.black,
@@ -33,7 +38,12 @@ const ItemContainer = ({ label, value }: ItemDetail) => {
   );
 };
 
-export const DetailCard = ({ icon, title, left, right }: DetailCardProps) => {
+export const DetailCard = ({
+  icon,
+  title,
+  items,
+  children,
+}: DetailCardProps) => {
   const theme = useTheme();
   return (
     <Paper className={styles.container}>
@@ -46,9 +56,18 @@ export const DetailCard = ({ icon, title, left, right }: DetailCardProps) => {
           {title}
         </Typography>
       </Box>
-      <Box className={styles.infoSection}>
-        <ItemContainer {...left} />
-        <ItemContainer {...right} />
+      <Box
+        className={styles.infoSection}
+        sx={{ color: theme.palette.common.black }}
+      >
+        {items ? (
+          <>
+            <ItemContainer {...items.left} />
+            <ItemContainer {...items.right} />
+          </>
+        ) : (
+          children
+        )}
       </Box>
     </Paper>
   );

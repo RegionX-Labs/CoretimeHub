@@ -1,5 +1,5 @@
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined';
-import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
+import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderRounded';
+import StarIcon from '@mui/icons-material/StarRounded';
 import {
   Button,
   IconButton,
@@ -17,7 +17,6 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 import { useRelayApi } from '@/contexts/apis';
@@ -25,7 +24,6 @@ import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { ParachainInfo, ParaState } from '@/models';
 
-import styles from './index.module.scss';
 import { CoreExpiryCard } from '../CoreExpiryCard';
 import { LeaseStateCard } from '../LeaseStateCard';
 import { ParaStateCard } from '../ParaStateCard';
@@ -137,20 +135,22 @@ export const ParachainTable = ({
             : parachains
           ).map(({ id, name, state, watching }, index) => (
             <StyledTableRow key={index}>
-              <StyledTableCell>
-                <Link
-                  href={`https://${network}.subscan.io/parachain/${id}`}
-                  target='_blank'
-                  className={styles.paraId}
+              <StyledTableCell style={{ width: '5%' }}>
+                <Button
+                  onClick={() => {
+                    window.open(
+                      `https://${network}.subscan.io/parachain/${id}`
+                    );
+                  }}
                 >
                   {id}
-                </Link>
+                </Button>
               </StyledTableCell>
-              <StyledTableCell>{name}</StyledTableCell>
-              <StyledTableCell style={{ margin: 0 }}>
+              <StyledTableCell style={{ width: '25%' }}>{name}</StyledTableCell>
+              <StyledTableCell style={{ margin: 0, width: '20%' }}>
                 <ParaStateCard state={state} />
               </StyledTableCell>
-              <StyledTableCell>
+              <StyledTableCell style={{ width: '25%' }}>
                 {/* System paras have reserved coretime */}
                 {state != ParaState.SYSTEM && (
                   <Stack>
@@ -159,7 +159,7 @@ export const ParachainTable = ({
                   </Stack>
                 )}
               </StyledTableCell>
-              <StyledTableCell>
+              <StyledTableCell style={{ width: '20%' }}>
                 {state === ParaState.RESERVED ? (
                   <ParaActionButton onClick={() => onRegister(id)}>
                     Register
@@ -180,21 +180,28 @@ export const ParachainTable = ({
                   <Typography>No action required</Typography>
                 )}
               </StyledTableCell>
-              <StyledTableCell>
+              <StyledTableCell style={{ width: '5%' }}>
                 <IconButton
                   onClick={() => onWatch(id, watching ? false : true)}
                 >
                   {watching ? (
-                    <VisibilityIcon color='success' />
+                    <StarIcon color='success' />
                   ) : (
-                    <VisibilityOffIcon color='action' />
+                    <StarBorderOutlinedIcon color='action' />
                   )}
                 </IconButton>
               </StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>
-        <TableFooter>
+        <TableFooter
+          sx={{
+            position: 'fixed',
+            bottom: '0.3rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+          }}
+        >
           <TableRow>
             <TablePagination
               rowsPerPageOptions={[10, 25, { label: 'All', value: -1 }]}

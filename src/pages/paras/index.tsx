@@ -122,7 +122,7 @@ const ParachainManagement = () => {
             variant='subtitle1'
             sx={{ color: theme.palette.common.black }}
           >
-            Project Management
+            Parachain Dashboard
           </Typography>
           <Typography
             variant='subtitle2'
@@ -177,7 +177,7 @@ const ParachainManagement = () => {
           <CircularProgress />
         </Backdrop>
       ) : (
-        <Box sx={{ mt: '2rem', overflowY: 'auto' }}>
+        <Box sx={{ mt: '2rem', mb: '1rem', overflowY: 'auto' }}>
           <ParachainTable
             {...{
               parachains: paras2Show,

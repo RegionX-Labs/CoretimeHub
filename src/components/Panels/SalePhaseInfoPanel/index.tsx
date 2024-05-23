@@ -5,13 +5,15 @@ import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 
 import { PhaseEndpoints } from '@/hooks/salePhase';
 
+import { SalePhaseCard } from '@/components/Elements';
+
 import { useNetwork } from '@/contexts/network';
 import { SalePhase } from '@/models';
 
 import styles from './index.module.scss';
 
 interface SalePhaseInfoPanelProps {
-  currentPhase: string;
+  currentPhase: SalePhase;
   saleEndTimestamp: number;
   saleStartTimestamp: number;
   endpoints: PhaseEndpoints;
@@ -124,7 +126,9 @@ export const SalePhaseInfoPanel = ({
         </Button>
       </Box>
       <Box className={styles.timerWrapper}>
-        <Typography className={styles.currentPhase}>{currentPhase}</Typography>
+        <Box className={styles.currentPhase}>
+          <SalePhaseCard label='' value={currentPhase} />
+        </Box>
         <Typography>Ends in:</Typography>
         <Box className={styles.countDown}>
           <CountdownCircleTimer
