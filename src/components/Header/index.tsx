@@ -1,4 +1,5 @@
 import { ExpandMore } from '@mui/icons-material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopyRounded';
 import {
   Box,
   Button,
@@ -11,12 +12,11 @@ import {
 import React, { useState } from 'react';
 
 import { KeyringState, useAccounts } from '@/contexts/account';
-import ContentCopyIcon from '@mui/icons-material/ContentCopyRounded';
+import { useToast } from '@/contexts/toast';
 
 import styles from './index.module.scss';
 import { ProgressButton } from '../Elements';
 import NetworkSelector from '../Elements/Selectors/NetworkSelector';
-import { useToast } from '@/contexts/toast';
 
 export const Header = () => {
   const theme = useTheme();
