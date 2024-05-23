@@ -136,11 +136,11 @@ const ParachainManagement = () => {
             control={
               <Switch
                 color='success'
-                checked={watchAll}
-                onChange={(e) => watchAllParas(e.target.checked)}
+                checked={!watchAll}
+                onChange={(e) => watchAllParas(!e.target.checked)}
               />
             }
-            label='Watch all Paras'
+            label='Watchlist Only'
             labelPlacement='start'
             sx={{
               color: theme.palette.common.black,

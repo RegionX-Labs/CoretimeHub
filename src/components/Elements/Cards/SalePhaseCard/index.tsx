@@ -10,7 +10,8 @@ export const SalePhaseCard = ({ label, value }: SalePhaseProps) => {
   const theme = useTheme();
 
   const tooltip = {
-    [SalePhase.Interlude]: 'During the interlude phase, renewals take place.',
+    [SalePhase.Interlude]:
+      'During the interlude phase, renewals take place. Regular purchases cannot be made.',
     [SalePhase.Leadin]:
       'During the leadin phase, the price decreases from the start price to the floor price.',
     [SalePhase.Regular]:

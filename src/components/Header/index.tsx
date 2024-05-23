@@ -1,6 +1,8 @@
 import { ExpandMore } from '@mui/icons-material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopyRounded';
 import {
   Box,
+  Button,
   Collapse,
   Divider,
   List,
@@ -10,6 +12,7 @@ import {
 import React, { useState } from 'react';
 
 import { KeyringState, useAccounts } from '@/contexts/account';
+import { useToast } from '@/contexts/toast';
 
 import styles from './index.module.scss';
 import { ProgressButton } from '../Elements';
@@ -25,10 +28,24 @@ export const Header = () => {
   } = useAccounts();
 
   const [accountsOpen, openAccounts] = useState(false);
+  const { toastInfo } = useToast();
 
   const onDisconnect = () => {
     openAccounts(false);
     disconnectWallet();
+  };
+
+  const truncateAddres = (address: string) => {
+    return (
+      address.substring(0, 6) + '...' + address.substring(address.length - 6)
+    );
+  };
+
+  const copyAddress = async () => {
+    if (!activeAccount) return;
+
+    await navigator.clipboard.writeText(activeAccount.address);
+    toastInfo('Address copied');
   };
 
   return (
@@ -42,6 +59,14 @@ export const Header = () => {
         }}
       >
         <Box className={styles.menu}>
+          {activeAccount && (
+            <Box display='flex' alignItems='center' sx={{ margin: '1rem' }}>
+              <Button onClick={copyAddress}>
+                <ContentCopyIcon sx={{ color: theme.palette.grey['600'] }} />
+              </Button>
+              <p>{truncateAddres(activeAccount.address)}</p>
+            </Box>
+          )}
           <div>
             <NetworkSelector />
           </div>
