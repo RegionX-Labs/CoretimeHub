@@ -1,5 +1,5 @@
-import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderOutlined';
-import StarOutlinedIcon from '@mui/icons-material/StarOutlined';
+import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderRounded';
+import StarIcon from '@mui/icons-material/StarRounded';
 import {
   Button,
   IconButton,
@@ -185,7 +185,7 @@ export const ParachainTable = ({
                   onClick={() => onWatch(id, watching ? false : true)}
                 >
                   {watching ? (
-                    <StarOutlinedIcon color='success' />
+                    <StarIcon color='success' />
                   ) : (
                     <StarBorderOutlinedIcon color='action' />
                   )}
@@ -197,7 +197,7 @@ export const ParachainTable = ({
         <TableFooter
           sx={{
             position: 'fixed',
-            bottom: 0,
+            bottom: '0.3rem',
             left: '50%',
             transform: 'translateX(-50%)',
           }}

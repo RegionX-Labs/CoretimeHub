@@ -28,9 +28,10 @@ export const SalePhaseCard = ({ label, value }: SalePhaseProps) => {
             fontWeight: 700,
             marginRight: '0.2em',
             color: 'inherit',
+            cursor: 'default',
           }}
         >
-          {value}
+          &#9432; {value}
         </Typography>
       </Tooltip>
     </Box>
