@@ -16,16 +16,23 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { Status, useRenewableParachains } from '@/hooks/renewableParas';
-import { getBalanceString, sendTx } from '@/utils/functions';
+import {
+  getBalanceString,
+  sendTx,
+  timesliceToTimestamp,
+} from '@/utils/functions';
 
 import { Balance, ProgressButton } from '@/components';
 
 import { chainData } from '@/chaindata';
 import { useAccounts } from '@/contexts/account';
-import { useCoretimeApi } from '@/contexts/apis';
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { useBalances } from '@/contexts/balance';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
+import { ApiState } from '@/contexts/apis/types';
+import { humanizer } from 'humanize-duration';
+import { useCommon } from '@/contexts/common';
 
 const Renewal = () => {
   const router = useRouter();
@@ -36,14 +43,23 @@ const Renewal = () => {
   } = useAccounts();
   const { balance } = useBalances();
   const { status, parachains } = useRenewableParachains();
+
   const {
-    state: { api, decimals, symbol },
+    state: { api: relayApi, apiState: relayApiState },
+  } = useRelayApi();
+  const {
+    state: { api: coretimeApi, apiState: coretimeApiState, decimals, symbol },
   } = useCoretimeApi();
+
   const { toastError, toastInfo, toastSuccess } = useToast();
   const { network } = useNetwork();
+  const { timeslicePeriod } = useCommon();
 
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [working, setWorking] = useState(false);
+  const [expiryTimestamp, setExpiryTimestamp] = useState(0);
+
+  const formatDuration = humanizer({ units: ['w', 'd'], round: true });
 
   const defaultHandler = {
     ready: () => toastInfo('Transaction was initiated.'),
@@ -59,14 +75,43 @@ const Renewal = () => {
   };
 
   const handleRenew = () => {
-    if (!activeAccount || !api || !activeSigner) return;
+    if (!activeAccount || !coretimeApi || !coretimeApiState || !activeSigner)
+      return;
 
     const { core } = parachains[activeIdx];
 
-    const txRenewal = api.tx.broker.renew(core);
+    const txRenewal = coretimeApi.tx.broker.renew(core);
 
     sendTx(txRenewal, activeAccount.address, activeSigner, defaultHandler);
   };
+
+  useEffect(() => {
+    const getExpiry = async () => {
+      if (
+        !coretimeApi ||
+        coretimeApiState !== ApiState.READY ||
+        !relayApi ||
+        relayApiState !== ApiState.READY
+      )
+        return;
+      const currentTimeslice = (
+        (await coretimeApi.query.broker.status()).toJSON() as any
+      ).lastCommittedTimeslice;
+      const now = await timesliceToTimestamp(
+        relayApi,
+        currentTimeslice,
+        timeslicePeriod
+      );
+      const expiry = await timesliceToTimestamp(
+        relayApi,
+        parachains[activeIdx].when,
+        timeslicePeriod
+      );
+      setExpiryTimestamp(expiry - now);
+    };
+
+    getExpiry();
+  }, [coretimeApi, coretimeApiState, relayApi, relayApiState, activeIdx]);
 
   useEffect(() => {
     if (!router.isReady || status !== Status.LOADED || parachains.length === 0)
@@ -81,13 +126,6 @@ const Renewal = () => {
     }
     setActiveIdx(index);
   }, [router, parachains, status, parachains.length, toastError]);
-
-  const onHome = () => {
-    router.push({
-      pathname: '/',
-      query: { network },
-    });
-  };
 
   return status === Status.LOADING ? (
     <Backdrop open>
@@ -165,50 +203,66 @@ const Renewal = () => {
             </FormControl>
             <Stack
               direction='column'
-              alignItems='center'
+              padding='1rem'
               mt={'2rem'}
-              gap='1rem'
+              gap='0.5rem'
+              border='1px solid'
+              borderColor={theme.palette.grey[400]}
+              borderRadius='1rem'
             >
-              <Typography variant='h6' color='black'>
-                {`Core number: ${parachains[activeIdx].core}`}
-              </Typography>
-              <Typography color='black'>
-                Renewal price: &nbsp;
-                {getBalanceString(
+              <Property
+                property='Core number:'
+                value={parachains[activeIdx].core}
+              />
+              <Property
+                property='Expiry in:'
+                value={formatDuration(expiryTimestamp)}
+              />
+              <Property
+                property='Renewal price: '
+                value={getBalanceString(
                   parachains[activeIdx].price.toString(),
                   decimals,
                   symbol
                 )}
-              </Typography>
+              />
             </Stack>
           </Stack>
-        </Paper>
-        <Stack
-          direction='row'
-          gap='1rem'
-          alignItems='center'
-          marginTop='2em'
-          justifyContent='space-between'
-        >
-          <Button
-            variant='outlined'
-            sx={{
-              borderRadius: 100,
-              bgcolor: theme.palette.common.white,
-              textTransform: 'capitalize',
-            }}
-            onClick={onHome}
+          <Stack
+            direction='row'
+            gap='1rem'
+            marginTop='2em'
+            justifyContent='center'
           >
-            &lt; Home
-          </Button>
-          <ProgressButton
-            label='Renew'
-            onClick={handleRenew}
-            loading={working}
-          />
-        </Stack>
+            <ProgressButton
+              label='Renew'
+              onClick={handleRenew}
+              loading={working}
+              width='200px'
+            />
+          </Stack>
+        </Paper>
       </Box>
     </>
   );
 };
+
+interface PropertyProps {
+  property: string;
+  value: any;
+}
+
+export const Property = ({ property, value }: PropertyProps) => {
+  return (
+    <Box display='flex' justifyContent='space-between' mx='1rem'>
+      <Typography fontWeight='light' color='black'>
+        {property}
+      </Typography>
+      <Typography fontWeight='bold' color='black'>
+        {value}
+      </Typography>
+    </Box>
+  );
+};
+
 export default Renewal;
