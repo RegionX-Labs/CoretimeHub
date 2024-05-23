@@ -122,7 +122,7 @@ const ParachainManagement = () => {
             variant='subtitle1'
             sx={{ color: theme.palette.common.black }}
           >
-            Project Management
+            Parachain Dashboard
           </Typography>
           <Typography
             variant='subtitle2'
