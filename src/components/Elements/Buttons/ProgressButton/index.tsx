@@ -7,12 +7,14 @@ interface ProgressButtonProps {
   onClick: () => void;
   loading: boolean;
   disabled?: boolean;
+  width?: string;
 }
 export const ProgressButton = ({
   label,
   onClick,
   loading,
   disabled = false,
+  width,
 }: ProgressButtonProps) => {
   return (
     <LoadingButton
@@ -21,6 +23,9 @@ export const ProgressButton = ({
       loading={loading}
       className={styles.buttonContainer}
       disabled={disabled}
+      sx={{
+        width: width ? width : 'inherent',
+      }}
     >
       {label}
     </LoadingButton>
