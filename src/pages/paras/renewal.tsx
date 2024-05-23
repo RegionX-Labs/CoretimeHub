@@ -1,7 +1,6 @@
 import {
   Backdrop,
   Box,
-  Button,
   CircularProgress,
   FormControl,
   InputLabel,
@@ -9,9 +8,11 @@ import {
   Paper,
   Select,
   Stack,
+  Tooltip,
   Typography,
   useTheme,
 } from '@mui/material';
+import { humanizer } from 'humanize-duration';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -27,12 +28,11 @@ import { Balance, ProgressButton } from '@/components';
 import { chainData } from '@/chaindata';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+import { ApiState } from '@/contexts/apis/types';
 import { useBalances } from '@/contexts/balance';
+import { useCommon } from '@/contexts/common';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
-import { ApiState } from '@/contexts/apis/types';
-import { humanizer } from 'humanize-duration';
-import { useCommon } from '@/contexts/common';
 
 const Renewal = () => {
   const router = useRouter();
@@ -54,6 +54,7 @@ const Renewal = () => {
   const { toastError, toastInfo, toastSuccess } = useToast();
   const { network } = useNetwork();
   const { timeslicePeriod } = useCommon();
+  const [loading, setLoading] = useState(false);
 
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [working, setWorking] = useState(false);
@@ -87,11 +88,13 @@ const Renewal = () => {
 
   useEffect(() => {
     const getExpiry = async () => {
+      setLoading(true);
       if (
         !coretimeApi ||
         coretimeApiState !== ApiState.READY ||
         !relayApi ||
-        relayApiState !== ApiState.READY
+        relayApiState !== ApiState.READY ||
+        !parachains[activeIdx]
       )
         return;
       const currentTimeslice = (
@@ -108,10 +111,18 @@ const Renewal = () => {
         timeslicePeriod
       );
       setExpiryTimestamp(expiry - now);
+      setLoading(false);
     };
 
     getExpiry();
-  }, [coretimeApi, coretimeApiState, relayApi, relayApiState, activeIdx]);
+  }, [
+    coretimeApi,
+    coretimeApiState,
+    relayApi,
+    relayApiState,
+    activeIdx,
+    parachains,
+  ]);
 
   useEffect(() => {
     if (!router.isReady || status !== Status.LOADED || parachains.length === 0)
@@ -215,8 +226,9 @@ const Renewal = () => {
                 value={parachains[activeIdx].core}
               />
               <Property
+                tooltip='The parachain will stop with block production once it expires.'
                 property='Expiry in:'
-                value={formatDuration(expiryTimestamp)}
+                value={loading ? '...' : formatDuration(expiryTimestamp)}
               />
               <Property
                 property='Renewal price: '
@@ -250,17 +262,27 @@ const Renewal = () => {
 interface PropertyProps {
   property: string;
   value: any;
+  tooltip?: string;
 }
 
-export const Property = ({ property, value }: PropertyProps) => {
+export const Property = ({ property, value, tooltip }: PropertyProps) => {
   return (
     <Box display='flex' justifyContent='space-between' mx='1rem'>
       <Typography fontWeight='light' color='black'>
         {property}
       </Typography>
-      <Typography fontWeight='bold' color='black'>
-        {value}
-      </Typography>
+      <Box display='flex'>
+        {tooltip && (
+          <Tooltip title={tooltip} arrow sx={{ fontSize: '1rem' }}>
+            <Typography color='black' mr='.5rem' sx={{ cursor: 'default' }}>
+              &#9432;
+            </Typography>
+          </Tooltip>
+        )}
+        <Typography fontWeight='bold' color='black'>
+          {value}
+        </Typography>
+      </Box>
     </Box>
   );
 };
