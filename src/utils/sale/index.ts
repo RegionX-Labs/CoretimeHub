@@ -1,6 +1,6 @@
 import { Timeslice } from 'coretime-utils';
 
-import { BlockNumber, SaleConfig, SaleInfo, SalePhase } from '@/models';
+import { BlockNumber, SaleInfo, SalePhase } from '@/models';
 
 import { leadinFactorAt, rcBlockToParachainBlock } from '../coretime';
 
@@ -17,12 +17,12 @@ export const getCurrentPhase = (
   }
 };
 
+// The block number at which the sale starts, i.e., the leading phase.
 export const getSaleStartInBlocks = (saleInfo: SaleInfo) => {
-  // `saleInfo.saleStart` defines the start of the leadin phase.
-  // However, we want to account for the interlude period as well.
   return saleInfo.saleStart;
 };
 
+// The block number at which the sale ends, i.e., the end of the fixed price phase.
 export const getSaleEndInBlocks = (
   saleInfo: SaleInfo,
   blockNumber: BlockNumber,
@@ -35,32 +35,10 @@ export const getSaleEndInBlocks = (
   );
 };
 
-// Returns a range between 0 and 100.
-export const getSaleProgress = (
-  saleInfo: SaleInfo,
-  config: SaleConfig,
+// The price of a core at a specific block number.
+export const getCorePriceAt = (
   blockNumber: number,
-  lastCommittedTimeslice: number,
-  network: any
-): number => {
-  const start = getSaleStartInBlocks(saleInfo) - config.interludeLength;
-  const end = getSaleEndInBlocks(
-    saleInfo,
-    blockNumber,
-    lastCommittedTimeslice,
-    network
-  );
-
-  const saleDuration = end - start;
-  const elapsed = blockNumber - start;
-
-  const progress = elapsed / saleDuration;
-  return Number((progress * 100).toFixed(2));
-};
-
-export const getCurrentPrice = (
   saleInfo: SaleInfo,
-  blockNumber: number,
   network: any
 ) => {
   const num = Math.min(blockNumber - saleInfo.saleStart, saleInfo.leadinLength);
