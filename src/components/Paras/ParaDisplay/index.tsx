@@ -21,7 +21,13 @@ export const ParaDisplay = ({ paraId, network }: ParaDisplayProps) => {
       {logo === undefined ? (
         <></>
       ) : (
-        <Image src={logo} width={32} height={32} alt='' />
+        <Image
+          src={logo}
+          width={32}
+          height={32}
+          style={{ borderRadius: '100%' }}
+          alt=''
+        />
       )}
       {name}
     </Stack>

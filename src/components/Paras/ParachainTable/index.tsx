@@ -152,7 +152,13 @@ export const ParachainTable = ({
                   {logo === undefined ? (
                     <></>
                   ) : (
-                    <Image src={logo} alt='' width={32} height={32} />
+                    <Image
+                      src={logo}
+                      alt=''
+                      width={32}
+                      height={32}
+                      style={{ borderRadius: '100%' }}
+                    />
                   )}
                   {name}
                 </Stack>
