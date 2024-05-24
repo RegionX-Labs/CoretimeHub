@@ -1,9 +1,8 @@
 import { Box, Button, Paper, Typography, useTheme } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 
-import { SalePhaseCard } from '@/components/Elements';
+import { CountDown, SalePhaseCard } from '@/components/Elements';
 
 import { useNetwork } from '@/contexts/network';
 import { PhaseEndpoints, SalePhase } from '@/models';
@@ -29,12 +28,8 @@ export const SalePhaseInfoPanel = ({
       query: { network },
     });
   };
-  const minuteSeconds = 60;
-  const hourSeconds = 3600;
-  const daySeconds = 86400;
 
   const [remainingTime, setRemainingTime] = useState(0);
-  const [daysDuration, setDaysDuration] = useState(0);
 
   const valEndpoints = JSON.stringify(endpoints);
 
@@ -51,54 +46,10 @@ export const SalePhaseInfoPanel = ({
       _remainingTime = Math.floor((endpoints.fixed.end - Date.now()) / 1000);
     } else return;
 
-    const days = Math.ceil(_remainingTime / daySeconds);
-    const _daysDuration = days * daySeconds;
-
-    setDaysDuration(_daysDuration);
     setRemainingTime(_remainingTime);
   }, [valEndpoints, currentPhase]);
 
-  const timerProps = {
-    isPlaying: true,
-    size: 96,
-    strokeWidth: 2,
-  };
-
-  const renderTime = (dimension: string, time: number) => {
-    return (
-      <div className={styles.timeElement}>
-        <Typography
-          sx={{
-            fontWeight: 700,
-            fontSize: '1rem',
-            color: theme.palette.common.black,
-          }}
-        >
-          {time}
-        </Typography>
-        <Typography
-          sx={{
-            fontWeight: 400,
-            fontSize: '0.75rem',
-            color: theme.palette.text.primary,
-          }}
-        >
-          {dimension}
-        </Typography>
-      </div>
-    );
-  };
-
-  const getTimeSeconds = (time: number) => (minuteSeconds - time) | 0;
-  const getTimeMinutes = (time: number) =>
-    ((time % hourSeconds) / minuteSeconds) | 0;
-  const getTimeHours = (time: number) =>
-    ((time % daySeconds) / hourSeconds) | 0;
-  const getTimeDays = (time: number) => (time / daySeconds) | 0;
-
-  return remainingTime <= 0 ? (
-    <></>
-  ) : (
+  return (
     <Paper className={styles.container}>
       <Box className={styles.titleWrapper}>
         <Typography
@@ -129,68 +80,7 @@ export const SalePhaseInfoPanel = ({
           <SalePhaseCard label='' value={currentPhase} />
         </Box>
         <Typography>Ends in:</Typography>
-        <Box className={styles.countDown}>
-          <CountdownCircleTimer
-            {...timerProps}
-            colors='#64A537'
-            duration={daysDuration}
-            initialRemainingTime={remainingTime}
-          >
-            {({ elapsedTime, color }) => (
-              <span style={{ color }}>
-                {renderTime('days', getTimeDays(daysDuration - elapsedTime))}
-              </span>
-            )}
-          </CountdownCircleTimer>
-          <CountdownCircleTimer
-            {...timerProps}
-            colors='#64A537'
-            duration={daySeconds}
-            initialRemainingTime={remainingTime % daySeconds}
-            onComplete={(totalElapsedTime) => ({
-              shouldRepeat: remainingTime - totalElapsedTime > hourSeconds,
-            })}
-          >
-            {({ elapsedTime, color }) => (
-              <span style={{ color }}>
-                {renderTime('hours', getTimeHours(daySeconds - elapsedTime))}
-              </span>
-            )}
-          </CountdownCircleTimer>
-          <CountdownCircleTimer
-            {...timerProps}
-            colors='#64A537'
-            duration={hourSeconds}
-            initialRemainingTime={remainingTime % hourSeconds}
-            onComplete={(totalElapsedTime) => ({
-              shouldRepeat: remainingTime - totalElapsedTime > minuteSeconds,
-            })}
-          >
-            {({ elapsedTime, color }) => (
-              <span style={{ color }}>
-                {renderTime(
-                  'minutes',
-                  getTimeMinutes(hourSeconds - elapsedTime)
-                )}
-              </span>
-            )}
-          </CountdownCircleTimer>
-          <CountdownCircleTimer
-            {...timerProps}
-            colors='#64A537'
-            duration={minuteSeconds}
-            initialRemainingTime={remainingTime % minuteSeconds}
-            onComplete={(totalElapsedTime) => ({
-              shouldRepeat: remainingTime - totalElapsedTime > 0,
-            })}
-          >
-            {({ elapsedTime, color }) => (
-              <span style={{ color }}>
-                {renderTime('seconds', getTimeSeconds(elapsedTime))}
-              </span>
-            )}
-          </CountdownCircleTimer>
-        </Box>
+        <CountDown remainingTime={remainingTime} />
       </Box>
     </Paper>
   );
