@@ -17,6 +17,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 import { useRelayApi } from '@/contexts/apis';
@@ -89,7 +90,7 @@ export const ParachainTable = ({
   const ParaActionButton = styled(Button)(paraActionStyle);
 
   const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
+    _event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => {
     setPage(newPage);
@@ -133,7 +134,7 @@ export const ParachainTable = ({
                 page * rowsPerPage + rowsPerPage
               )
             : parachains
-          ).map(({ id, name, state, watching }, index) => (
+          ).map(({ id, name, state, watching, logo }, index) => (
             <StyledTableRow key={index}>
               <StyledTableCell style={{ width: '5%' }}>
                 <Button
@@ -146,7 +147,16 @@ export const ParachainTable = ({
                   {id}
                 </Button>
               </StyledTableCell>
-              <StyledTableCell style={{ width: '25%' }}>{name}</StyledTableCell>
+              <StyledTableCell style={{ width: '25%' }}>
+                <Stack direction='row' alignItems='center' gap='1rem'>
+                  {logo === undefined ? (
+                    <></>
+                  ) : (
+                    <Image src={logo} alt='' width={32} height={32} />
+                  )}
+                  {name}
+                </Stack>
+              </StyledTableCell>
               <StyledTableCell style={{ margin: 0, width: '20%' }}>
                 <ParaStateCard state={state} />
               </StyledTableCell>
