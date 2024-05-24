@@ -23,9 +23,8 @@ import {
   timesliceToTimestamp,
 } from '@/utils/functions';
 
-import { Balance, ProgressButton } from '@/components';
+import { Balance, ParaDisplay, ProgressButton } from '@/components';
 
-import { chainData } from '@/chaindata';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
@@ -207,7 +206,7 @@ const Renewal = () => {
               >
                 {parachains.map(({ paraId }, index) => (
                   <MenuItem key={index} value={index}>
-                    {`${paraId} ${chainData[network][paraId] || ''}`}
+                    <ParaDisplay {...{ network, paraId }} />
                   </MenuItem>
                 ))}
               </Select>
