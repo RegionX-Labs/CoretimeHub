@@ -1,3 +1,4 @@
+import { encodeAddress } from '@polkadot/util-crypto';
 import { CoreIndex, getEncodedRegionId, Region } from 'coretime-utils';
 import React, {
   createContext,
@@ -17,7 +18,6 @@ import { EXPERIMENTAL } from '../apis/consts';
 import { useRegionXApi } from '../apis/RegionXApi';
 import { useCommon } from '../common';
 import { Tasks, useTasks } from '../tasks';
-import { encodeAddress } from '@polkadot/util-crypto';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
