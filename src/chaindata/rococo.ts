@@ -18,15 +18,18 @@ import {
   chainsVirtoPNG,
   chainsWatrPNG,
   nodesArcticPNG,
+  nodesAssetHubSVG,
   nodesAventusSVG,
   nodesBajunPNG,
   nodesBasiliskPNG,
+  nodesBridgeHubBlackSVG,
   nodesCentrifugePNG,
   nodesConftiSVG,
   nodesCrustParachainSVG,
   nodesCurioSVG,
   nodesDatahighwayPNG,
   nodesDolphinSVG,
+  nodesEncointerBlueSVG,
   nodesGiantPNG,
   nodesGiediPNG,
   nodesHelixstreetPNG,
@@ -51,6 +54,7 @@ import {
   nodesSocietalSVG,
   nodesSoonsocialXPNG,
   nodesSoraSubstrateSVG,
+  nodesSubstrateContractsNodePNG,
   nodesUnitnetworkPNG,
   nodesYerbanetworkPNG,
   nodesZeitgeistPNG,
@@ -469,6 +473,47 @@ const testParasRococo: ChainDetails[] = [
     ui: {
       logo: nodesZeitgeistPNG,
     },
+  },
+  {
+    paraId: 1000,
+    teleport: [-1],
+    text: 'AssetHub',
+    ui: {
+      logo: nodesAssetHubSVG,
+    },
+  },
+  {
+    paraId: 1013,
+    text: 'Bridgehub',
+    ui: {
+      logo: nodesBridgeHubBlackSVG,
+    },
+  },
+  {
+    paraId: 1002,
+    relayName: 'rococo',
+    text: 'Contracts',
+    ui: {
+      logo: nodesSubstrateContractsNodePNG,
+    },
+  },
+  {
+    paraId: 1005,
+    text: 'Coretime',
+    ui: {},
+  },
+  {
+    homepage: 'https://encointer.org/',
+    paraId: 1003,
+    text: 'Encointer Lietaer',
+    ui: {
+      logo: nodesEncointerBlueSVG,
+    },
+  },
+  {
+    paraId: 1004,
+    text: 'People',
+    ui: {},
   },
 ];
 
