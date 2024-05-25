@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useReducer } from 'react';
 
-import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
 import { NetworkType } from '@/models';
@@ -35,19 +34,13 @@ const CoretimeApiContext = React.createContext(defaultValue);
 
 const CoretimeApiContextProvider = (props: any) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { toastError, toastSuccess } = useToast();
+  const { toastError } = useToast();
 
   const { network } = useNetwork();
 
   useEffect(() => {
     state.apiError && toastError(`Failed to connect to Coretime chain`);
   }, [state.apiError, toastError]);
-
-  useEffect(() => {
-    state.apiState === ApiState.READY &&
-      state.name &&
-      toastSuccess(`Successfully connected to ${state.name}`);
-  }, [state.apiState, state.name, toastSuccess]);
 
   const getUrl = (network: any): string => {
     return network === NetworkType.ROCOCO

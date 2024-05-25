@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useReducer } from 'react';
 
-import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
 
 import { connect, disconnect, initialState, reducer } from '../common';
@@ -87,17 +86,11 @@ const RegionXApiContext = React.createContext(defaultValue);
 
 const RegionXApiContextProvider = (props: any) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { toastError, toastSuccess } = useToast();
+  const { toastError } = useToast();
 
   useEffect(() => {
     state.apiError && toastError(`Failed to connect to RegionX chain`);
   }, [state.apiError, toastError]);
-
-  useEffect(() => {
-    state.apiState === ApiState.READY &&
-      state.name &&
-      toastSuccess(`Successfully connected to ${state.name}`);
-  }, [state.apiState, state.name, toastSuccess]);
 
   const disconnectRegionX = () => disconnect(state);
 

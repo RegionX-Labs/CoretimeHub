@@ -1,5 +1,5 @@
 import CircleIcon from '@mui/icons-material/Circle';
-import { CircularProgress, Typography, useTheme } from '@mui/material';
+import { CircularProgress, Tooltip, Typography, useTheme } from '@mui/material';
 
 import { ApiState } from '@/contexts/apis/types';
 
@@ -24,12 +24,18 @@ export const StatusIndicator = ({ state, label }: StatusIndicatorProps) => {
         {label}
       </Typography>
       {state === ApiState.CONNECTING || state === ApiState.CONNECT_INIT ? (
-        <CircularProgress size='0.5rem' />
+        <Tooltip title='connecting'>
+          <CircularProgress size='0.5rem' />
+        </Tooltip>
       ) : (
-        <CircleIcon
-          sx={{ width: '0.5rem', height: '0.5rem' }}
-          color={state === ApiState.READY ? 'success' : 'error'}
-        />
+        <Tooltip
+          title={state == ApiState.READY ? 'connected' : 'connection error'}
+        >
+          <CircleIcon
+            sx={{ width: '0.5rem', height: '0.5rem' }}
+            color={state === ApiState.READY ? 'success' : 'error'}
+          />
+        </Tooltip>
       )}
     </div>
   );
