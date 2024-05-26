@@ -164,6 +164,7 @@ export const ParachainTable = ({
                       if (sort !== orderBy) newDir = dir[sort];
                       handleSort(sort, newDir);
                       setDir({ ...dir, [sort]: newDir });
+                      setPage(0);
                     }}
                   >
                     {dir[sort] === 'asc' ? (
