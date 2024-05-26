@@ -17,15 +17,16 @@ import { useParasInfo } from '@/hooks';
 
 import {
   ActionButton,
+  Order,
   ParachainTable,
   RegisterModal,
   ReserveModal,
 } from '@/components';
 
+import { leases } from '@/chaindata';
 import { useNetwork } from '@/contexts/network';
 import { useSettings } from '@/contexts/settings';
-import { ParachainInfo } from '@/models';
-
+import { LeaseState, ParachainInfo } from '@/models';
 const ParachainManagement = () => {
   const theme = useTheme();
 
@@ -47,6 +48,14 @@ const ParachainManagement = () => {
 
   const [reserveModalOpen, openReserveModal] = useState(false);
   const [registerModalOpen, openRegisterModal] = useState(false);
+
+  const [orderBy, setOrderBy] = useState('id');
+  const [direction, setDirection] = useState<Order>('asc');
+
+  const handleSort = (_orderBy: string, _direction: Order) => {
+    setOrderBy(_orderBy);
+    setDirection(_direction);
+  };
 
   // Register a parathread
   const onRegister = (paraId: number) => {
@@ -95,18 +104,41 @@ const ParachainManagement = () => {
   };
 
   useEffect(() => {
+    const compId = (a: ParachainInfo, b: ParachainInfo) => {
+      let result = a.id - b.id;
+      if (direction === 'desc') result = -result;
+      return result;
+    };
+    const compExpiry = (a: ParachainInfo, b: ParachainInfo) => {
+      const chainData: LeaseState[] =
+        (leases as Record<string, LeaseState[]>)[network.toString()] ?? [];
+
+      const record1 = chainData.find((x) => x.paraId === a.id);
+      const record2 = chainData.find((x) => x.paraId === b.id);
+      const until1 =
+        record1?.until ?? (direction === 'asc' ? Infinity : -Infinity);
+      const until2 =
+        record2?.until ?? (direction === 'asc' ? Infinity : -Infinity);
+      let result = until1 - until2;
+      if (direction === 'desc') result = -result;
+      return result;
+    };
     const parasWithWatchInfo = parachains.map((para) => ({
       ...para,
       watching: watchList.includes(para.id),
     }));
-    setParas2Show(
-      parasWithWatchInfo.filter(
-        (para) =>
-          para.id.toString().includes(search) &&
-          (watchAll ? true : para.watching === true)
-      )
+    const filtered = parasWithWatchInfo.filter(
+      (para) =>
+        para.id.toString().includes(search) &&
+        (watchAll ? true : para.watching === true)
     );
-  }, [parachains, watchList, watchAll, search]);
+    if (orderBy === 'id') {
+      filtered.sort(compId);
+    } else if (orderBy === 'expiry') {
+      filtered.sort(compExpiry);
+    }
+    setParas2Show(filtered);
+  }, [parachains, watchList, watchAll, search, orderBy, direction, network]);
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -182,6 +214,9 @@ const ParachainManagement = () => {
             {...{
               parachains: paras2Show,
               handlers: { onBuy, onRenew, onRegister, onUpgrade, onWatch },
+              orderBy,
+              direction,
+              handleSort,
             }}
           />
           <ReserveModal
