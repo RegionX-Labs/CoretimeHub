@@ -8,9 +8,9 @@ export const getCurrentPhase = (
   saleInfo: SaleInfo,
   blockNumber: number
 ): SalePhase => {
-  if (saleInfo.saleStart > blockNumber) {
+  if (blockNumber < saleInfo.saleStart) {
     return SalePhase.Interlude;
-  } else if (saleInfo.saleStart + saleInfo.leadinLength > blockNumber) {
+  } else if (blockNumber < saleInfo.saleStart + saleInfo.leadinLength) {
     return SalePhase.Leadin;
   } else {
     return SalePhase.Regular;
@@ -39,7 +39,7 @@ export const getSaleEndInBlocks = (
 export const getCorePriceAt = (
   blockNumber: number,
   saleInfo: SaleInfo,
-  network: any
+  network: NetworkType
 ) => {
   const num = Math.min(blockNumber - saleInfo.saleStart, saleInfo.leadinLength);
   const through = num / saleInfo.leadinLength;

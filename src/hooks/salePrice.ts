@@ -1,8 +1,8 @@
-import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 
 import { getCorePriceAt } from '@/utils/sale';
 
+import { useNetwork } from '@/contexts/network';
 import { useSaleInfo } from '@/contexts/sales';
 
 interface SalePriceProps {
@@ -13,8 +13,7 @@ const useSalePrice = ({ at }: SalePriceProps) => {
   const { saleInfo } = useSaleInfo();
 
   const [currentPrice, setCurrentPrice] = useState(0);
-  const router = useRouter();
-  const { network } = router.query;
+  const { network } = useNetwork();
 
   const fetchCurrentPrice = useCallback(
     async (at: number) => {

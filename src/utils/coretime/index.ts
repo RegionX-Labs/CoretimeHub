@@ -6,8 +6,8 @@ import { RegionId } from 'coretime-utils';
 
 import { NetworkType } from '@/models';
 
-export const leadinFactorAt = (network: any, when: number) => {
-  if (network === 'rococo') return 2 - when;
+export const leadinFactorAt = (network: NetworkType, when: number) => {
+  if (network === NetworkType.ROCOCO) return 2 - when;
   else {
     return 5 - 4 * when;
   }
