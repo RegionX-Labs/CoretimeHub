@@ -41,7 +41,7 @@ const Purchase = () => {
   const {
     state: { activeSigner, activeAccount },
   } = useAccounts();
-  const { toastError, toastSuccess, toastInfo } = useToast();
+  const { toastError, toastSuccess, toastInfo, toastWarning } = useToast();
 
   const { saleInfo, loading } = useSaleInfo();
   const { saleStartTimestamp, saleEndTimestamp } = useSalePhase();
@@ -77,6 +77,13 @@ const Purchase = () => {
   const purchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
       return;
+
+    if (currentPhase === SalePhase.Interlude) {
+      toastWarning(
+        'Sales start after the interlude period ends. Purchases can then be made.'
+      );
+      return;
+    }
 
     const txPurchase = api.tx.broker.purchase(currentPrice);
 
@@ -168,7 +175,6 @@ const Purchase = () => {
                 onClick={purchase}
                 loading={working}
                 label='Purchase Core'
-                disabled={currentPhase === SalePhase.Interlude}
               />
             </Box>
           </Box>
