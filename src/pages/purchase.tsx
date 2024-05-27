@@ -174,6 +174,7 @@ const Purchase = () => {
                 onClick={purchase}
                 loading={working}
                 label='Purchase Core'
+                disabled={currentPhase === SalePhase.Interlude}
               />
             </Box>
           </Box>
