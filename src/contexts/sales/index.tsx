@@ -79,10 +79,10 @@ const SaleInfoProvider = ({ children }: Props) => {
         ...info,
         selloutPrice: info.selloutPrice ? info.saleStart : null,
       });
-      const cfg = (
+      const config = (
         await coretimeApi.query.broker.configuration()
       ).toJSON() as SaleConfig;
-      setConfig(cfg);
+      setConfig(config);
     } else {
       setSaleInfo(defaultSaleData.saleInfo);
       setConfig(defaultSaleData.config);

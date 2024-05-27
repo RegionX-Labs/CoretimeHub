@@ -14,8 +14,6 @@ import styles from './index.module.scss';
 
 interface SalePhaseInfoPanelProps {
   currentPhase: SalePhase;
-  saleEndTimestamp: number;
-  saleStartTimestamp: number;
   endpoints: PhaseEndpoints;
 }
 
