@@ -1,3 +1,4 @@
+import { encodeAddress } from '@polkadot/util-crypto';
 import { CoreIndex, getEncodedRegionId, Region } from 'coretime-utils';
 import React, {
   createContext,
@@ -140,7 +141,10 @@ const RegionDataProvider = ({ children }: Props) => {
     commitment?: string
   ): Promise<RegionMetadata | null> => {
     // Only user owned non-expired regions.
-    if (region.getOwner() !== owner || region.consumed(context) > 1)
+    if (
+      encodeAddress(region.getOwner(), 42) !== encodeAddress(owner, 42) ||
+      region.consumed(context) > 1
+    )
       return null;
 
     const rawId = getEncodedRegionId(

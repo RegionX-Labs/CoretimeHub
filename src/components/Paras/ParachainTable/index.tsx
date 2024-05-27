@@ -1,3 +1,4 @@
+import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
 import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderRounded';
 import StarIcon from '@mui/icons-material/StarRounded';
 import {
@@ -16,7 +17,9 @@ import {
   TablePagination,
   TableRow,
   Typography,
+  useTheme,
 } from '@mui/material';
+import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 import { useRelayApi } from '@/contexts/apis';
@@ -28,6 +31,8 @@ import { CoreExpiryCard } from '../CoreExpiryCard';
 import { LeaseStateCard } from '../LeaseStateCard';
 import { ParaStateCard } from '../ParaStateCard';
 
+export type Order = 'asc' | 'desc';
+
 interface ParachainTableProps {
   parachains: ParachainInfo[];
   handlers: {
@@ -37,59 +42,81 @@ interface ParachainTableProps {
     onWatch: (_id: number, _watching: boolean) => void;
     onRenew: (_id: number) => void;
   };
+  orderBy: string;
+  direction: Order;
+  handleSort: (_orderBy: string, _direction: Order) => void;
 }
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+    fontSize: '1rem',
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+    color: theme.palette.common.black,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
+
+const ParaActionButton = styled(Button)(({ theme }: any) => ({
+  width: 'mind-width',
+  fontWeight: 'bold',
+  padding: 0,
+  color: theme.palette.primary.main,
+  display: 'flex',
+  justifyContent: 'flex-start',
+}));
 
 export const ParachainTable = ({
   parachains,
   handlers,
+  orderBy,
+  direction,
+  handleSort,
 }: ParachainTableProps) => {
+  const theme = useTheme();
+
   const { onRegister, onUpgrade, onBuy, onRenew, onWatch } = handlers;
 
-  const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
-      fontSize: '1rem',
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-      color: theme.palette.common.black,
-    },
-  }));
-
-  const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-      border: 0,
-    },
-  }));
+  const {
+    state: { api: relayApi, apiState: relayApiState },
+  } = useRelayApi();
+  const { network } = useNetwork();
 
   // table pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const { network } = useNetwork();
-  const {
-    state: { api: relayApi, apiState: relayApiState },
-  } = useRelayApi();
   const [height, setHeight] = useState(0);
 
-  const paraActionStyle = ({ theme }: any) => ({
-    width: 'mind-width',
-    fontWeight: 'bold',
-    padding: 0,
-    color: theme.palette.primary.main,
-    display: 'flex',
-    justifyContent: 'flex-start',
-  });
+  const headers = [
+    { name: 'Para ID', sort: 'id' },
+    { name: 'Para Name' },
+    { name: 'State' },
+    { name: 'Expiry', sort: 'expiry' },
+    { name: 'Action' },
+    { name: 'Watchlist' },
+  ];
 
-  const ParaActionButton = styled(Button)(paraActionStyle);
+  const initialDir: Record<string, Order> = {
+    id: 'asc',
+    expiry: 'asc',
+  };
+
+  const [dir, setDir] = useState(initialDir);
 
   const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
+    _event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => {
     setPage(newPage);
@@ -113,17 +140,44 @@ export const ParachainTable = ({
     fetchHeight();
   }, [relayApi, relayApiState]);
 
+  useEffect(() => {
+    setDir(initialDir);
+  }, []);
+
   return (
     <TableContainer component={Paper} sx={{ maxHeight: '100%' }}>
       <Table stickyHeader>
         <TableHead>
           <TableRow>
-            <StyledTableCell>Para ID</StyledTableCell>
-            <StyledTableCell>Para Name</StyledTableCell>
-            <StyledTableCell>State</StyledTableCell>
-            <StyledTableCell>Expiry</StyledTableCell>
-            <StyledTableCell>Action</StyledTableCell>
-            <StyledTableCell>Watchlist</StyledTableCell>
+            {headers.map(({ name, sort }, index) => (
+              <StyledTableCell key={index}>
+                {sort !== undefined && (
+                  <IconButton
+                    sx={{
+                      color:
+                        sort === orderBy
+                          ? theme.palette.common.white
+                          : theme.palette.grey['200'],
+                    }}
+                    onClick={() => {
+                      let newDir: Order = direction === 'asc' ? 'desc' : 'asc';
+                      if (sort !== orderBy) newDir = dir[sort];
+                      handleSort(sort, newDir);
+                      setDir({ ...dir, [sort]: newDir });
+                      setPage(0);
+                    }}
+                  >
+                    {dir[sort] === 'asc' ? (
+                      <ArrowUpward fontSize='small' />
+                    ) : (
+                      <ArrowDownward fontSize='small' />
+                    )}
+                  </IconButton>
+                )}
+
+                {name}
+              </StyledTableCell>
+            ))}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -133,9 +187,9 @@ export const ParachainTable = ({
                 page * rowsPerPage + rowsPerPage
               )
             : parachains
-          ).map(({ id, name, state, watching }, index) => (
+          ).map(({ id, name, state, watching, logo }, index) => (
             <StyledTableRow key={index}>
-              <StyledTableCell style={{ width: '5%' }}>
+              <StyledTableCell style={{ width: '10%' }}>
                 <Button
                   onClick={() => {
                     window.open(
@@ -146,7 +200,22 @@ export const ParachainTable = ({
                   {id}
                 </Button>
               </StyledTableCell>
-              <StyledTableCell style={{ width: '25%' }}>{name}</StyledTableCell>
+              <StyledTableCell style={{ width: '25%' }}>
+                <Stack direction='row' alignItems='center' gap='1rem'>
+                  {logo === undefined ? (
+                    <></>
+                  ) : (
+                    <Image
+                      src={logo}
+                      alt=''
+                      width={32}
+                      height={32}
+                      style={{ borderRadius: '100%' }}
+                    />
+                  )}
+                  {name}
+                </Stack>
+              </StyledTableCell>
               <StyledTableCell style={{ margin: 0, width: '20%' }}>
                 <ParaStateCard state={state} />
               </StyledTableCell>

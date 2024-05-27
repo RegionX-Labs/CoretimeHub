@@ -74,7 +74,7 @@ export const useRenewableParachains = () => {
         });
       }
 
-      setParachains(chains);
+      setParachains(chains.sort((a, b) => a.paraId - b.paraId));
 
       setStatus(Status.LOADED);
     };

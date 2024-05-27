@@ -260,6 +260,7 @@ export type ParachainInfo = {
   state: ParaState;
   name: string;
   watching?: boolean;
+  logo?: string;
 };
 
 export type LeaseState = {

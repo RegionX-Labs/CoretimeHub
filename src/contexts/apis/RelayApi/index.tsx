@@ -22,7 +22,7 @@ const RelayApiContext = React.createContext(defaultValue);
 
 const RelayApiContextProvider = (props: any) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { toastError, toastSuccess } = useToast();
+  const { toastError } = useToast();
   const [paraIds, setParaIds] = useState<ParaId[]>([]);
 
   const { network } = useNetwork();
@@ -30,12 +30,6 @@ const RelayApiContextProvider = (props: any) => {
   useEffect(() => {
     state.apiError && toastError(`Failed to connect to relay chain`);
   }, [state.apiError, toastError]);
-
-  useEffect(() => {
-    state.apiState === ApiState.READY &&
-      state.name &&
-      toastSuccess(`Successfully connected to ${state.name}`);
-  }, [state.apiState, state.name, toastSuccess]);
 
   const disconnectRelay = () => disconnect(state);
 
