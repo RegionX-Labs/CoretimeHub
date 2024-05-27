@@ -1,5 +1,4 @@
-import { ApiPromise } from '@polkadot/api';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { getBlockTime, getBlockTimestamp } from '@/utils/functions';
 import {
@@ -42,10 +41,14 @@ const useSalePhase = () => {
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
 
-  const [endpoints, SetEndpoints] = useState<PhaseEndpoints | null>(null);
+  const [endpoints, setEndpoints] = useState<PhaseEndpoints | null>(null);
 
-  const fetchCurrentPhase = useCallback(
-    async (api: ApiPromise) => {
+  useEffect(() => {
+    if (!api || apiState !== ApiState.READY) return;
+
+    const asyncFetchCurrentPhase = async () => {
+      setLoading(true);
+
       const blockNumber = (await api.query.system.number()).toJSON() as number;
       const { lastCommittedTimeslice } = (
         await api.query.broker.status()
@@ -74,39 +77,28 @@ const useSalePhase = () => {
 
       setCurrentPhase(getCurrentPhase(saleInfo, blockNumber));
 
+      const blockTime = getBlockTime(network);
+
       const _endpoints = {
         interlude: {
-          start:
-            _saleStartTimestamp -
-            config.interludeLength * getBlockTime(network),
+          start: _saleStartTimestamp - config.interludeLength * blockTime,
           end: _saleStartTimestamp,
         },
         leadin: {
           start: _saleStartTimestamp,
-          end:
-            _saleStartTimestamp + config.leadinLength * getBlockTime(network),
+          end: _saleStartTimestamp + config.leadinLength * blockTime,
         },
         fixed: {
-          start:
-            _saleStartTimestamp + config.leadinLength * getBlockTime(network),
+          start: _saleStartTimestamp + config.leadinLength * blockTime,
           end: _saleEndTimestamp,
         },
       };
-      SetEndpoints(_endpoints);
-    },
-    [saleInfo, config, network]
-  );
-
-  useEffect(() => {
-    if (!api || apiState !== ApiState.READY) return;
-
-    const asyncFetchCurrentPhase = async () => {
-      setLoading(true);
-      await fetchCurrentPhase(api);
+      setEndpoints(_endpoints);
       setLoading(false);
     };
+
     asyncFetchCurrentPhase();
-  }, [fetchCurrentPhase, api, apiState]);
+  }, [api, apiState]);
 
   return {
     saleStart,
