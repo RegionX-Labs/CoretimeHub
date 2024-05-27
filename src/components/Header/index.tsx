@@ -61,10 +61,10 @@ export const Header = () => {
         <Box className={styles.menu}>
           {activeAccount && (
             <Box display='flex' alignItems='center' sx={{ margin: '1rem' }}>
+              <p>{truncateAddres(activeAccount.address)}</p>
               <Button onClick={copyAddress}>
                 <ContentCopyIcon sx={{ color: theme.palette.grey['600'] }} />
               </Button>
-              <p>{truncateAddres(activeAccount.address)}</p>
             </Box>
           )}
           <div>
