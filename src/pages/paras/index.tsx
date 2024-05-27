@@ -13,7 +13,7 @@ import {
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-import { useParasInfo } from '@/hooks';
+import { useParasInfo, useRenewableParachains } from '@/hooks';
 
 import {
   ActionButton,
@@ -40,6 +40,7 @@ const ParachainManagement = () => {
     config: { nextParaId, reservationCost, dataDepositPerByte, maxCodeSize },
     fetchParaStates,
   } = useParasInfo();
+  const { parachains: renewableChains } = useRenewableParachains();
 
   const [watchAll, watchAllParas] = useState(true);
   const [paras2Show, setParas2Show] = useState<ParachainInfo[]>([]);
@@ -51,6 +52,9 @@ const ParachainManagement = () => {
 
   const [orderBy, setOrderBy] = useState('id');
   const [direction, setDirection] = useState<Order>('asc');
+
+  const chainLeases: LeaseState[] =
+    (leases as Record<string, LeaseState[]>)[network.toString()] ?? [];
 
   const handleSort = (_orderBy: string, _direction: Order) => {
     setOrderBy(_orderBy);
@@ -109,17 +113,26 @@ const ParachainManagement = () => {
       if (direction === 'desc') result = -result;
       return result;
     };
-    const compExpiry = (a: ParachainInfo, b: ParachainInfo) => {
-      const chainData: LeaseState[] =
-        (leases as Record<string, LeaseState[]>)[network.toString()] ?? [];
 
-      const record1 = chainData.find((x) => x.paraId === a.id);
-      const record2 = chainData.find((x) => x.paraId === b.id);
-      const until1 =
-        record1?.until ?? (direction === 'asc' ? Infinity : -Infinity);
-      const until2 =
-        record2?.until ?? (direction === 'asc' ? Infinity : -Infinity);
-      let result = until1 - until2;
+    const getExpiry = (id: number): number | undefined => {
+      const leaseExpiry = chainLeases.find((x) => x.paraId === id);
+      const coretimeExpiry = renewableChains.find((x) => x.paraId === id);
+      if (coretimeExpiry !== undefined) return coretimeExpiry.when;
+      if (leaseExpiry !== undefined) return leaseExpiry.until;
+      return undefined;
+    };
+
+    const compExpiry = (a: ParachainInfo, b: ParachainInfo) => {
+      let value1 = getExpiry(a.id);
+      let value2 = getExpiry(b.id);
+
+      if (value1 === undefined)
+        value1 = direction === 'asc' ? Infinity : -Infinity;
+      if (value2 === undefined)
+        value2 = direction === 'asc' ? Infinity : -Infinity;
+
+      let result = value1 - value2;
+
       if (direction === 'desc') result = -result;
       return result;
     };
