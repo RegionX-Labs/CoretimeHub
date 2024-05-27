@@ -52,11 +52,12 @@ export const SaleInfoPanel = ({
         title='Sale details'
         items={{
           left: {
-            label: 'Started at',
+            label:
+              saleStartTimestamp < Date.now() ? 'Started at' : 'Starts at:',
             value: moment(saleStartTimestamp).format('D MMM HH:mm'),
           },
           right: {
-            label: 'End at',
+            label: 'Ends at',
             value: moment(saleEndTimestamp).format('D MMMM HH:mm'),
           },
         }}
