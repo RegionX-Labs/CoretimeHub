@@ -74,7 +74,7 @@ const SaleInfoProvider = ({ children }: Props) => {
     const info = (
       await coretimeApi.query.broker.saleInfo()
     ).toJSON() as SaleInfo;
-    if (saleInfo && Object.keys(saleInfo).length) {
+    if (info && Object.keys(info).length) {
       setSaleInfo({
         ...info,
         selloutPrice: info.selloutPrice ? info.saleStart : null,
