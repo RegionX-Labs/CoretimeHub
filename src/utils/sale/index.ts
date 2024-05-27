@@ -41,8 +41,9 @@ export const getCorePriceAt = (
   saleInfo: SaleInfo,
   network: NetworkType
 ) => {
-  const num = Math.min(blockNumber - saleInfo.saleStart, saleInfo.leadinLength);
-  const through = num / saleInfo.leadinLength;
+  const { saleStart, leadinLength, price } = saleInfo;
+  const num = Math.min(blockNumber - saleStart, leadinLength);
+  const through = num / leadinLength;
 
-  return Number((leadinFactorAt(network, through) * saleInfo.price).toFixed());
+  return Number((leadinFactorAt(network, through) * price).toFixed());
 };

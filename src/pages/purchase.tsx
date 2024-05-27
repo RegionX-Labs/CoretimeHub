@@ -51,7 +51,7 @@ const Purchase = () => {
   const { fetchRegions } = useRegions();
 
   const { balance } = useBalances();
-  const currentPrice = useSalePrice({ at });
+  const currentPrice = useSalePrice(at);
   const {
     saleStart,
     currentPhase,
