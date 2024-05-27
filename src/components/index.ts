@@ -4,4 +4,5 @@ export * from './Layout';
 export * from './Modals';
 export * from './Panels';
 export * from './Paras';
+export * from './Regions';
 export * from './Sidebar';

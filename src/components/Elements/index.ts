@@ -6,6 +6,5 @@ export * from './CountDown';
 export * from './Inputs';
 export * from './Label';
 export * from './MarketFilters';
-export * from './Region';
 export * from './Selectors';
 export * from './StatusIndicator';
