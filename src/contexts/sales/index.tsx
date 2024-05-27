@@ -6,8 +6,6 @@ import React, {
   useState,
 } from 'react';
 
-import { parseHNString } from '@/utils/functions';
-
 import { SaleConfig, SaleInfo } from '@/models';
 
 import { useCoretimeApi } from '../apis';
@@ -71,46 +69,24 @@ const SaleInfoProvider = ({ children }: Props) => {
       coretimeApiState !== ApiState.READY ||
       !coretimeApi.query.broker
     )
-      return {};
+      return;
 
-    const saleInfo: any = (await coretimeApi.query.broker.saleInfo()).toHuman();
+    const info = (
+      await coretimeApi.query.broker.saleInfo()
+    ).toJSON() as SaleInfo;
     if (saleInfo && Object.keys(saleInfo).length) {
       setSaleInfo({
-        coresOffered: parseHNString(saleInfo.coresOffered.toString()),
-        coresSold: parseHNString(saleInfo.coresSold.toString()),
-        firstCore: parseHNString(saleInfo.firstCore.toString()),
-        idealCoresSold: parseHNString(saleInfo.idealCoresSold.toString()),
-        leadinLength: parseHNString(saleInfo.leadinLength.toString()),
-        price: parseHNString(saleInfo.price.toString()),
-        regionBegin: parseHNString(saleInfo.regionBegin.toString()),
-        regionEnd: parseHNString(saleInfo.regionEnd.toString()),
-        saleStart: parseHNString(saleInfo.saleStart.toString()),
-        selloutPrice: saleInfo.selloutPrice
-          ? parseHNString(saleInfo.saleStart.toString())
-          : null,
+        ...info,
+        selloutPrice: info.selloutPrice ? info.saleStart : null,
       });
-      const config: any = (
+      const cfg = (
         await coretimeApi.query.broker.configuration()
-      ).toHuman();
-      setConfig({
-        advanceNotice: parseHNString(config.advanceNotice.toString()),
-        contributionTimeout: parseHNString(
-          config.contributionTimeout.toString()
-        ),
-        idealBulkProportion: config.idealBulkProportion,
-        interludeLength: parseHNString(config.interludeLength.toString()),
-        leadinLength: parseHNString(config.leadinLength.toString()),
-        limitCoresOffered: config.limitCoresOffered
-          ? parseHNString(config.limitCoresOffered.toString())
-          : null,
-        regionLength: parseHNString(config.regionLength.toString()),
-        renewalBump: config.renewalBump,
-      });
+      ).toJSON() as SaleConfig;
+      setConfig(cfg);
     } else {
       setSaleInfo(defaultSaleData.saleInfo);
       setConfig(defaultSaleData.config);
     }
-
     setLoading(false);
   }, [coretimeApi, coretimeApiState]);
 
