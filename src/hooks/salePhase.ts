@@ -31,7 +31,7 @@ const useSalePhase = () => {
   } = useCoretimeApi();
   const { network } = useNetwork();
 
-  const { saleInfo, config } = useSaleInfo();
+  const { saleInfo, config, loading: loadingSaleInfo } = useSaleInfo();
 
   const [currentPhase, setCurrentPhase] = useState<SalePhase | null>(null);
   const [loading, setLoading] = useState(false);
@@ -44,7 +44,7 @@ const useSalePhase = () => {
   const [endpoints, setEndpoints] = useState<PhaseEndpoints | null>(null);
 
   useEffect(() => {
-    if (!api || apiState !== ApiState.READY) return;
+    if (!api || apiState !== ApiState.READY || loadingSaleInfo) return;
 
     const asyncFetchCurrentPhase = async () => {
       setLoading(true);
@@ -98,7 +98,7 @@ const useSalePhase = () => {
     };
 
     asyncFetchCurrentPhase();
-  }, [api, apiState, network]);
+  }, [api, apiState, network, loadingSaleInfo]);
 
   return {
     saleStart,
