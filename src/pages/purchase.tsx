@@ -44,6 +44,7 @@ const Purchase = () => {
   const { toastError, toastSuccess, toastInfo } = useToast();
 
   const { saleInfo, loading } = useSaleInfo();
+  const { saleStartTimestamp, saleEndTimestamp } = useSalePhase();
   const {
     state: { api, apiState },
   } = useCoretimeApi();
@@ -137,7 +138,13 @@ const Purchase = () => {
           <Box
             sx={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
           >
-            <SaleInfoPanel currentPrice={currentPrice} />
+            <SaleInfoPanel
+              currentPhase={currentPhase}
+              saleStartTimestamp={saleStartTimestamp}
+              saleEndTimestamp={saleEndTimestamp}
+              floorPrice={saleInfo.price}
+              currentPrice={currentPrice}
+            />
             <Box sx={{ display: 'flex', gap: '1rem' }}>
               <CoreDetailsPanel saleInfo={saleInfo} />
               {endpoints && (

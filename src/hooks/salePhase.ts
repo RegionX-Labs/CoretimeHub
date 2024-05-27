@@ -98,7 +98,7 @@ const useSalePhase = () => {
     };
 
     asyncFetchCurrentPhase();
-  }, [api, apiState]);
+  }, [api, apiState, network]);
 
   return {
     saleStart,

@@ -95,9 +95,9 @@ export const SalePhaseInfoPanel = ({
     ((time % daySeconds) / hourSeconds) | 0;
   const getTimeDays = (time: number) => (time / daySeconds) | 0;
 
-  if (remainingTime <= 0) return <></>;
-
-  return (
+  return remainingTime <= 0 ? (
+    <></>
+  ) : (
     <Paper className={styles.container}>
       <Box className={styles.titleWrapper}>
         <Typography

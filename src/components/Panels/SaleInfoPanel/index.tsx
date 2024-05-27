@@ -3,7 +3,6 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
 import moment from 'moment';
 
-import useSalePhase from '@/hooks/salePhase';
 import { getBalanceString } from '@/utils/functions';
 
 import { SalePhaseCard } from '@/components/Elements';
@@ -12,36 +11,35 @@ import DollarIcon from '@/assets/dollar.png';
 import ListIcon from '@/assets/list.png';
 import ShoppingIcon from '@/assets/shopping.png';
 import { useCoretimeApi } from '@/contexts/apis';
-import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
 
 import { DetailCard } from './DetailCard';
 import styles from './index.module.scss';
 
 interface SaleInfoPanelProps {
+  currentPhase: SalePhase;
+  saleStartTimestamp: number;
+  saleEndTimestamp: number;
   currentPrice: number;
+  floorPrice: number;
 }
 
-export const SaleInfoPanel = ({ currentPrice }: SaleInfoPanelProps) => {
+export const SaleInfoPanel = ({
+  currentPhase,
+  saleStartTimestamp,
+  saleEndTimestamp,
+  currentPrice,
+  floorPrice,
+}: SaleInfoPanelProps) => {
   TimeAgo.addLocale(en);
 
   const {
     state: { symbol, decimals },
   } = useCoretimeApi();
 
-  const { saleInfo, loading: loadingSaleInfo } = useSaleInfo();
-  const {
-    currentPhase,
-    saleStartTimestamp,
-    saleEndTimestamp,
-    loading: loadingSalePhase,
-  } = useSalePhase();
-
-  if (loadingSaleInfo || loadingSalePhase || !currentPhase) return <></>;
-
-  const nextPhase = (): SalePhase => {
+  const nextPhase = (phase: SalePhase): SalePhase => {
     const phases = Object.values(SalePhase);
-    const currentIndex = phases.indexOf(currentPhase);
+    const currentIndex = phases.indexOf(phase);
 
     // Calculate the index of the next phase
     const nextIndex = (currentIndex + 1) % phases.length;
@@ -67,7 +65,7 @@ export const SaleInfoPanel = ({ currentPrice }: SaleInfoPanelProps) => {
       />
       <DetailCard icon={ListIcon} title='Phase details'>
         <SalePhaseCard label='Current phase' value={currentPhase} />
-        <SalePhaseCard label='Upcoming phase' value={nextPhase()} />
+        <SalePhaseCard label='Upcoming phase' value={nextPhase(currentPhase)} />
       </DetailCard>
       <DetailCard
         icon={DollarIcon}
@@ -82,11 +80,7 @@ export const SaleInfoPanel = ({ currentPrice }: SaleInfoPanelProps) => {
           },
           right: {
             label: 'Floor price',
-            value: getBalanceString(
-              saleInfo.price.toString(),
-              decimals,
-              symbol
-            ),
+            value: getBalanceString(floorPrice.toString(), decimals, symbol),
           },
         }}
       />
