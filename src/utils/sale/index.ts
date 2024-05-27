@@ -1,6 +1,6 @@
 import { Timeslice } from 'coretime-utils';
 
-import { BlockNumber, SaleConfig, SaleInfo, SalePhase } from '@/models';
+import { BlockNumber, NetworkType, SaleInfo, SalePhase } from '@/models';
 
 import { leadinFactorAt, rcBlockToParachainBlock } from '../coretime';
 
@@ -8,26 +8,26 @@ export const getCurrentPhase = (
   saleInfo: SaleInfo,
   blockNumber: number
 ): SalePhase => {
-  if (saleInfo.saleStart > blockNumber) {
+  if (blockNumber < saleInfo.saleStart) {
     return SalePhase.Interlude;
-  } else if (saleInfo.saleStart + saleInfo.leadinLength > blockNumber) {
+  } else if (blockNumber < saleInfo.saleStart + saleInfo.leadinLength) {
     return SalePhase.Leadin;
   } else {
     return SalePhase.Regular;
   }
 };
 
+// The block number at which the sale starts, i.e., the leading phase.
 export const getSaleStartInBlocks = (saleInfo: SaleInfo) => {
-  // `saleInfo.saleStart` defines the start of the leadin phase.
-  // However, we want to account for the interlude period as well.
   return saleInfo.saleStart;
 };
 
+// The block number at which the sale ends, i.e., the end of the fixed price phase.
 export const getSaleEndInBlocks = (
   saleInfo: SaleInfo,
   blockNumber: BlockNumber,
   lastCommittedTimeslice: Timeslice,
-  network: any
+  network: NetworkType
 ) => {
   const timeslicesUntilSaleEnd = saleInfo.regionBegin - lastCommittedTimeslice;
   return (
@@ -35,36 +35,15 @@ export const getSaleEndInBlocks = (
   );
 };
 
-// Returns a range between 0 and 100.
-export const getSaleProgress = (
-  saleInfo: SaleInfo,
-  config: SaleConfig,
+// The price of a core at a specific block number.
+export const getCorePriceAt = (
   blockNumber: number,
-  lastCommittedTimeslice: number,
-  network: any
-): number => {
-  const start = getSaleStartInBlocks(saleInfo) - config.interludeLength;
-  const end = getSaleEndInBlocks(
-    saleInfo,
-    blockNumber,
-    lastCommittedTimeslice,
-    network
-  );
-
-  const saleDuration = end - start;
-  const elapsed = blockNumber - start;
-
-  const progress = elapsed / saleDuration;
-  return Number((progress * 100).toFixed(2));
-};
-
-export const getCurrentPrice = (
   saleInfo: SaleInfo,
-  blockNumber: number,
-  network: any
+  network: NetworkType
 ) => {
-  const num = Math.min(blockNumber - saleInfo.saleStart, saleInfo.leadinLength);
-  const through = num / saleInfo.leadinLength;
+  const { saleStart, leadinLength, price } = saleInfo;
+  const num = Math.min(blockNumber - saleStart, leadinLength);
+  const through = num / leadinLength;
 
-  return Number((leadinFactorAt(network, through) * saleInfo.price).toFixed());
+  return Number((leadinFactorAt(network, through) * price).toFixed());
 };

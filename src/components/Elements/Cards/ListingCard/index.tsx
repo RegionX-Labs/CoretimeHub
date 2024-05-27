@@ -90,14 +90,21 @@ const ListingCardInner = ({
   } = useRelayApi();
   const { timeslicePeriod } = useCommon();
 
+  // FIXME: network-based block time
   const setTimestamps = useCallback(
-    (api: ApiPromise) => {
-      timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then(
-        (value) => setBeginTimestamp(value)
+    async (api: ApiPromise) => {
+      const begin = await timesliceToTimestamp(
+        api,
+        region.getBegin(),
+        timeslicePeriod
       );
-      timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then(
-        (value) => setEndTimestamp(value)
+      const end = await timesliceToTimestamp(
+        api,
+        region.getEnd(),
+        timeslicePeriod
       );
+      setBeginTimestamp(begin);
+      setEndTimestamp(end);
     },
     [region, timeslicePeriod]
   );
@@ -125,10 +132,9 @@ const ListingCardInner = ({
   return (
     <Box className={styles.listingInfo}>
       <Box textAlign='center'>
-        <Typography
-          fontSize='18px'
-          variant='button'
-        >{`Core Index: #${region.getCore()}`}</Typography>
+        <Typography fontSize='18px' variant='button'>
+          {`Core Index: #${region.getCore()}`}
+        </Typography>
       </Box>
       <Box
         sx={{

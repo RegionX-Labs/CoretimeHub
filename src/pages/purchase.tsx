@@ -44,6 +44,7 @@ const Purchase = () => {
   const { toastError, toastSuccess, toastInfo } = useToast();
 
   const { saleInfo, loading } = useSaleInfo();
+  const { saleStartTimestamp, saleEndTimestamp } = useSalePhase();
   const {
     state: { api, apiState },
   } = useCoretimeApi();
@@ -51,23 +52,19 @@ const Purchase = () => {
   const { fetchRegions } = useRegions();
 
   const { balance } = useBalances();
-  const currentPrice = useSalePrice({ at });
+  const currentPrice = useSalePrice(at);
   const {
     saleStart,
     currentPhase,
-    saleStartTimestamp,
-    saleEndTimestamp,
     loading: loadingSalePhase,
     endpoints,
   } = useSalePhase();
-
-  const duration = saleEndTimestamp - saleStartTimestamp;
 
   useEffect(() => {
     if (!currentPhase) return;
 
     // If the sale hasn't started yet, get the price from when the sale begins.
-    if ((currentPhase as SalePhase) === SalePhase.Interlude) {
+    if (currentPhase === SalePhase.Interlude) {
       setAt(saleStart);
     } else {
       if (!api || apiState !== ApiState.READY) return;
@@ -131,7 +128,7 @@ const Purchase = () => {
           <Backdrop open>
             <CircularProgress />
           </Backdrop>
-        ) : !currentPhase || !saleStartTimestamp || !saleEndTimestamp ? (
+        ) : !currentPhase ? (
           <>
             <Typography variant='h5' align='center'>
               Check your network conection and connect your wallet
@@ -143,10 +140,10 @@ const Purchase = () => {
           >
             <SaleInfoPanel
               currentPhase={currentPhase}
-              currentPrice={currentPrice}
-              saleInfo={saleInfo}
               saleStartTimestamp={saleStartTimestamp}
               saleEndTimestamp={saleEndTimestamp}
+              floorPrice={saleInfo.price}
+              currentPrice={currentPrice}
             />
             <Box sx={{ display: 'flex', gap: '1rem' }}>
               <CoreDetailsPanel saleInfo={saleInfo} />
@@ -154,9 +151,6 @@ const Purchase = () => {
                 <SalePhaseInfoPanel
                   {...{
                     currentPhase,
-                    duration,
-                    saleEndTimestamp,
-                    saleStartTimestamp,
                     endpoints,
                   }}
                 />
@@ -174,6 +168,7 @@ const Purchase = () => {
                 onClick={purchase}
                 loading={working}
                 label='Purchase Core'
+                disabled={currentPhase === SalePhase.Interlude}
               />
             </Box>
           </Box>

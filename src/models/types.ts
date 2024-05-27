@@ -267,3 +267,11 @@ export type LeaseState = {
   paraId: number;
   until: number;
 };
+
+export type BrokerStatus = {
+  coreCount: number;
+  privatePoolSize: number;
+  systemPoolSize: number;
+  lastCommittedTimeslice: number;
+  lastTimeslice: number;
+};

@@ -1,10 +1,15 @@
-import { CORETIME_TOKEN_UNIT, SaleConfig, SaleInfo, SalePhase } from '@/models';
+import {
+  CORETIME_TOKEN_UNIT,
+  NetworkType,
+  SaleConfig,
+  SaleInfo,
+  SalePhase,
+} from '@/models';
 
 import {
+  getCorePriceAt,
   getCurrentPhase,
-  getCurrentPrice,
   getSaleEndInBlocks,
-  getSaleProgress,
   getSaleStartInBlocks,
 } from '.';
 
@@ -96,61 +101,29 @@ describe('Purchase page', () => {
           mockSaleInfo,
           blockNumber,
           lastCommittedTimeslice,
-          'rococo'
+          NetworkType.ROCOCO
         )
       ).toBe(mockSaleInfo.saleStart + mockConfig.regionLength * 80);
     });
   });
 
-  describe('getSaleProgress', () => {
-    it('works', () => {
-      let blockNumber = mockSaleInfo.saleStart - mockConfig.interludeLength;
-      const rcBlockNumber = 9_832_800;
-      const lastCommittedTimeslice = Math.floor(
-        (rcBlockNumber + mockConfig.advanceNotice) / 80
-      );
-
-      expect(
-        getSaleProgress(
-          mockSaleInfo,
-          mockConfig,
-          blockNumber,
-          lastCommittedTimeslice,
-          'rococo'
-        )
-      ).toBe(0);
-
-      blockNumber = mockSaleInfo.saleStart - mockConfig.interludeLength + 500;
-
-      expect(
-        getSaleProgress(
-          mockSaleInfo,
-          mockConfig,
-          blockNumber,
-          lastCommittedTimeslice,
-          'rococo'
-        )
-      ).toBe(0.49); // 0.49 %
-    });
-  });
-
-  describe('getCurrentPrice', () => {
+  describe('getCorePriceAt', () => {
     it('works for rococo', () => {
       const blockNumber = mockSaleInfo.saleStart;
 
       // leading factor is equal to 2 at the start of the sale.
-      expect(getCurrentPrice(mockSaleInfo, blockNumber, 'rococo')).toBe(
-        mockSaleInfo.price * 2
-      );
+      expect(
+        getCorePriceAt(blockNumber, mockSaleInfo, NetworkType.ROCOCO)
+      ).toBe(mockSaleInfo.price * 2);
     });
 
     it('works for kusama', () => {
       const blockNumber = mockSaleInfo.saleStart;
 
       // leading factor is equal to 2 at the start of the sale.
-      expect(getCurrentPrice(mockSaleInfo, blockNumber, 'kusama')).toBe(
-        mockSaleInfo.price * 5
-      );
+      expect(
+        getCorePriceAt(blockNumber, mockSaleInfo, NetworkType.KUSAMA)
+      ).toBe(mockSaleInfo.price * 5);
     });
   });
 });

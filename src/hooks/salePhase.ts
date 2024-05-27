@@ -1,12 +1,6 @@
-import { ApiPromise } from '@polkadot/api';
-import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import {
-  getBlockTime,
-  getBlockTimestamp,
-  parseHNString,
-} from '@/utils/functions';
+import { getBlockTime, getBlockTimestamp } from '@/utils/functions';
 import {
   getCurrentPhase,
   getSaleEndInBlocks,
@@ -15,8 +9,9 @@ import {
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
+import { useNetwork } from '@/contexts/network';
 import { useSaleInfo } from '@/contexts/sales';
-import { SalePhase } from '@/models';
+import { BrokerStatus, SalePhase } from '@/models';
 
 type Endpoint = {
   start: number;
@@ -34,6 +29,8 @@ const useSalePhase = () => {
   const {
     state: { api, apiState },
   } = useCoretimeApi();
+  const { network } = useNetwork();
+
   const { saleInfo, config } = useSaleInfo();
 
   const [currentPhase, setCurrentPhase] = useState<SalePhase | null>(null);
@@ -44,19 +41,18 @@ const useSalePhase = () => {
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
 
-  const [endpoints, SetEndpoints] = useState<PhaseEndpoints | null>(null);
+  const [endpoints, setEndpoints] = useState<PhaseEndpoints | null>(null);
 
-  const router = useRouter();
-  const { network } = router.query;
+  useEffect(() => {
+    if (!api || apiState !== ApiState.READY) return;
 
-  const fetchCurrentPhase = useCallback(
-    async (api: ApiPromise) => {
+    const asyncFetchCurrentPhase = async () => {
+      setLoading(true);
+
       const blockNumber = (await api.query.system.number()).toJSON() as number;
-      const lastCommittedTimeslice = parseHNString(
-        (
-          (await api.query.broker.status()).toHuman() as any
-        ).lastCommittedTimeslice.toString()
-      );
+      const { lastCommittedTimeslice } = (
+        await api.query.broker.status()
+      ).toJSON() as BrokerStatus;
 
       const _saleStart = getSaleStartInBlocks(saleInfo);
       const _saleEnd = getSaleEndInBlocks(
@@ -72,51 +68,37 @@ const useSalePhase = () => {
       const _saleStartTimestamp = await getBlockTimestamp(
         api,
         _saleStart,
-        getBlockTime(network)
+        network
       );
+      const _saleEndTimestamp = await getBlockTimestamp(api, _saleEnd, network);
+
       setSaleStartTimestamp(_saleStartTimestamp);
-      const _saleEndTimestamp = await getBlockTimestamp(
-        api,
-        _saleEnd,
-        getBlockTime(network)
-      );
       setSaleEndTimestamp(_saleEndTimestamp);
 
       setCurrentPhase(getCurrentPhase(saleInfo, blockNumber));
 
+      const blockTime = getBlockTime(network);
+
       const _endpoints = {
         interlude: {
-          start:
-            _saleStartTimestamp -
-            config.interludeLength * getBlockTime(network),
+          start: _saleStartTimestamp - config.interludeLength * blockTime,
           end: _saleStartTimestamp,
         },
         leadin: {
           start: _saleStartTimestamp,
-          end:
-            _saleStartTimestamp + config.leadinLength * getBlockTime(network),
+          end: _saleStartTimestamp + config.leadinLength * blockTime,
         },
         fixed: {
-          start:
-            _saleStartTimestamp + config.leadinLength * getBlockTime(network),
+          start: _saleStartTimestamp + config.leadinLength * blockTime,
           end: _saleEndTimestamp,
         },
       };
-      SetEndpoints(_endpoints);
-    },
-    [saleInfo, config, network]
-  );
-
-  useEffect(() => {
-    if (!api || apiState !== ApiState.READY) return;
-
-    const asyncFetchCurrentPhase = async () => {
-      setLoading(true);
-      await fetchCurrentPhase(api);
+      setEndpoints(_endpoints);
       setLoading(false);
     };
+
     asyncFetchCurrentPhase();
-  }, [fetchCurrentPhase, api, apiState]);
+  }, [api, apiState, network]);
 
   return {
     saleStart,

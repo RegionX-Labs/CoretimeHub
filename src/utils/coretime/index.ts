@@ -4,8 +4,10 @@
 
 import { RegionId } from 'coretime-utils';
 
-export const leadinFactorAt = (network: any, when: number) => {
-  if (network === 'rococo') return 2 - when;
+import { NetworkType } from '@/models';
+
+export const leadinFactorAt = (network: NetworkType, when: number) => {
+  if (network === NetworkType.ROCOCO) return 2 - when;
   else {
     return 5 - 4 * when;
   }
@@ -37,9 +39,16 @@ export const extractRegionIdFromRaw = (rawRegionId: bigint): RegionId => {
 };
 
 export const rcBlockToParachainBlock = (
-  network: any,
+  network: NetworkType,
   blockNumber: number
 ): number => {
   // Coretime on Rococo has async backing and due to this it has a block time of 6 seconds.
-  return network == 'rococo' ? blockNumber : Math.floor(blockNumber / 2);
+  switch (network) {
+    case NetworkType.ROCOCO:
+      return blockNumber;
+    case NetworkType.KUSAMA:
+      return Math.floor(blockNumber / 2);
+    default:
+      return 0;
+  }
 };

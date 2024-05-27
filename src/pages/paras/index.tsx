@@ -211,13 +211,11 @@ const ParachainManagement = () => {
       ) : (
         <Box sx={{ mt: '2rem', mb: '1rem', overflowY: 'auto' }}>
           <ParachainTable
-            {...{
-              parachains: paras2Show,
-              handlers: { onBuy, onRenew, onRegister, onUpgrade, onWatch },
-              orderBy,
-              direction,
-              handleSort,
-            }}
+            parachains={paras2Show}
+            handlers={{ onBuy, onRenew, onRegister, onUpgrade, onWatch }}
+            orderBy={orderBy}
+            direction={direction}
+            handleSort={handleSort}
           />
           <ReserveModal
             open={reserveModalOpen}

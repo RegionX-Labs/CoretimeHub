@@ -12,13 +12,12 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { ApiPromise } from '@polkadot/api';
 import { clsx } from 'clsx';
 import { humanizer } from 'humanize-duration';
 import TimeAgo from 'javascript-time-ago';
 // English.
 import en from 'javascript-time-ago/locale/en';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { timesliceToTimestamp } from '@/utils/functions';
 
@@ -103,25 +102,28 @@ const RegionCardInner = ({
 
   const { timeslicePeriod } = useCommon();
 
-  const setTimestamps = useCallback(
-    (api: ApiPromise) => {
-      timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then(
-        (value) => setBeginTimestamp(value)
-      );
-      timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then(
-        (value) => setEndTimestamp(value)
-      );
-    },
-    [region, timeslicePeriod]
-  );
-
   useEffect(() => {
     if (!api || apiState !== ApiState.READY) {
       return;
     }
 
-    setTimestamps(api);
-  }, [api, apiState, setTimestamps]);
+    const fetchTimestamps = async () => {
+      const begin = await timesliceToTimestamp(
+        api,
+        region.getBegin(),
+        timeslicePeriod
+      );
+      const end = await timesliceToTimestamp(
+        api,
+        region.getEnd(),
+        timeslicePeriod
+      );
+
+      setBeginTimestamp(begin);
+      setEndTimestamp(end);
+    };
+    fetchTimestamps();
+  }, [api, apiState]);
 
   const progress = [
     {

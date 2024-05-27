@@ -1,18 +1,15 @@
 import { ApiPromise } from '@polkadot/api';
 
-import { parseHNString } from './common';
+import { NetworkType } from '@/models';
 
 export const getBlockTimestamp = async (
   api: ApiPromise,
   height: number,
-  blockTime = 6000
+  network?: NetworkType
 ): Promise<number> => {
-  const [resHeight, resTimestamp] = await Promise.all([
-    api.query.system.number(),
-    api.query.timestamp.now(),
-  ]);
-  const currentHeight = parseHNString(resHeight.toString());
-  const currentTimestamp = parseHNString(resTimestamp.toString());
+  const blockTime = network !== undefined ? getBlockTime(network) : 6 * 1000;
+  const currentHeight = (await api.query.system.number()).toJSON() as number;
+  const currentTimestamp = (await api.query.timestamp.now()).toJSON() as number;
   if (height <= currentHeight) {
     return currentTimestamp - (currentHeight - height) * blockTime;
   } else {
@@ -38,12 +35,8 @@ export const timestampToTimeslice = async (
 ): Promise<number> => {
   // We have the current block number and the corresponding timestamp.
   // Assume that 1 block ~ 6 seconds..
-  const [resHeight, resTimestamp] = await Promise.all([
-    api.query.system.number(),
-    api.query.timestamp.now(),
-  ]);
-  const currentHeight = parseHNString(resHeight.toString());
-  const now = parseHNString(resTimestamp.toString());
+  const currentHeight = (await api.query.system.number()).toJSON() as number;
+  const now = (await api.query.timestamp.now()).toJSON() as number;
   if (now > timestamp) {
     // timestamps are in millis
     const diffInBlocks = currentHeight - (now - timestamp) / 6000;
@@ -55,8 +48,14 @@ export const timestampToTimeslice = async (
   }
 };
 
-export const getBlockTime = (network: any): number => {
+export const getBlockTime = (network: NetworkType): number => {
   // Coretime on Rococo has async backing and due to this it has a block time of 6 seconds.
-  const blockTime = !network || network == 'kusama' ? 12000 : 6000;
-  return blockTime;
+  switch (network) {
+    case NetworkType.ROCOCO:
+      return 6 * 1000;
+    case NetworkType.KUSAMA:
+      return 12 * 1000;
+    default:
+      return 0;
+  }
 };
