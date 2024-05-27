@@ -1,9 +1,8 @@
 import { Box, Paper, Stack, Typography, useTheme } from '@mui/material';
-import { ApiPromise } from '@polkadot/api';
 import { humanizer } from 'humanize-duration';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { timesliceToTimestamp } from '@/utils/functions';
 
@@ -37,25 +36,27 @@ export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
   const { region } = regionMetadata;
   const { timeslicePeriod } = useCommon();
 
-  const setTimestamps = useCallback(
-    (api: ApiPromise) => {
-      timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then(
-        (value) => setBeginTimestamp(value)
-      );
-      timesliceToTimestamp(api, region.getEnd(), timeslicePeriod).then(
-        (value) => setEndTimestamp(value)
-      );
-    },
-    [region, timeslicePeriod]
-  );
-
   useEffect(() => {
     if (!relayApi || relayApiState !== ApiState.READY) {
       return;
     }
+    const fetchTimestamps = async () => {
+      const begin = await timesliceToTimestamp(
+        relayApi,
+        region.getBegin(),
+        timeslicePeriod
+      );
+      const end = await timesliceToTimestamp(
+        relayApi,
+        region.getEnd(),
+        timeslicePeriod
+      );
 
-    setTimestamps(relayApi);
-  }, [relayApi, relayApiState, setTimestamps]);
+      setBeginTimestamp(begin);
+      setEndTimestamp(end);
+    };
+    fetchTimestamps();
+  }, [relayApi, relayApiState]);
   return (
     <Paper className={styles.container}>
       <Box className={styles.regionInfo}>

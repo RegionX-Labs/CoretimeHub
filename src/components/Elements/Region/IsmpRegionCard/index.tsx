@@ -9,10 +9,9 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { ApiPromise } from '@polkadot/api';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { timesliceToTimestamp } from '@/utils/functions';
 import { makeResponse, makeTimeout, queryRequest } from '@/utils/ismp';
@@ -60,22 +59,20 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
   const { timeslicePeriod } = useCommon();
   const { toastWarning, toastSuccess, toastInfo, toastError } = useToast();
 
-  const setTimestamps = useCallback(
-    (api: ApiPromise) => {
-      timesliceToTimestamp(api, region.getBegin(), timeslicePeriod).then(
-        (value) => setBeginTimestamp(value)
-      );
-    },
-    [region, timeslicePeriod]
-  );
-
   useEffect(() => {
     if (!relayApi || relayApiState !== ApiState.READY) {
       return;
     }
-
-    setTimestamps(relayApi);
-  }, [relayApi, relayApiState, setTimestamps]);
+    const fetchTimestamp = async () => {
+      const timestamp = await timesliceToTimestamp(
+        relayApi,
+        region.getBegin(),
+        timeslicePeriod
+      );
+      setBeginTimestamp(timestamp);
+    };
+    fetchTimestamp();
+  }, [relayApi, relayApiState]);
 
   useEffect(() => {
     if (

@@ -1,6 +1,6 @@
 import { Timeslice } from 'coretime-utils';
 
-import { BlockNumber, SaleInfo, SalePhase } from '@/models';
+import { BlockNumber, NetworkType, SaleInfo, SalePhase } from '@/models';
 
 import { leadinFactorAt, rcBlockToParachainBlock } from '../coretime';
 
@@ -27,7 +27,7 @@ export const getSaleEndInBlocks = (
   saleInfo: SaleInfo,
   blockNumber: BlockNumber,
   lastCommittedTimeslice: Timeslice,
-  network: any
+  network: NetworkType
 ) => {
   const timeslicesUntilSaleEnd = saleInfo.regionBegin - lastCommittedTimeslice;
   return (

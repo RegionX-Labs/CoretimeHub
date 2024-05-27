@@ -32,6 +32,7 @@ import { useBalances } from '@/contexts/balance';
 import { useCommon } from '@/contexts/common';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
+import { BrokerStatus } from '@/models';
 
 const Renewal = () => {
   const router = useRouter();
@@ -96,12 +97,13 @@ const Renewal = () => {
         !parachains[activeIdx]
       )
         return;
-      const currentTimeslice = (
-        (await coretimeApi.query.broker.status()).toJSON() as any
-      ).lastCommittedTimeslice;
+
+      const { lastCommittedTimeslice } = (
+        await coretimeApi.query.broker.status()
+      ).toJSON() as BrokerStatus;
       const now = await timesliceToTimestamp(
         relayApi,
-        currentTimeslice,
+        lastCommittedTimeslice,
         timeslicePeriod
       );
       const expiry = await timesliceToTimestamp(

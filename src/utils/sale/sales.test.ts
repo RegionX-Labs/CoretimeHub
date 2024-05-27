@@ -1,4 +1,10 @@
-import { CORETIME_TOKEN_UNIT, SaleConfig, SaleInfo, SalePhase } from '@/models';
+import {
+  CORETIME_TOKEN_UNIT,
+  NetworkType,
+  SaleConfig,
+  SaleInfo,
+  SalePhase,
+} from '@/models';
 
 import {
   getCorePriceAt,
@@ -95,7 +101,7 @@ describe('Purchase page', () => {
           mockSaleInfo,
           blockNumber,
           lastCommittedTimeslice,
-          'rococo'
+          NetworkType.ROCOCO
         )
       ).toBe(mockSaleInfo.saleStart + mockConfig.regionLength * 80);
     });
