@@ -70,14 +70,11 @@ export const CountDown = ({ remainingTime }: CountDownProps) => {
         duration={daysDuration}
         initialRemainingTime={remainingTime}
       >
-        {({ elapsedTime, color }) => {
-          console.log(daysDuration, elapsedTime, remainingTime);
-          return (
-            <span style={{ color }}>
-              {renderTime('days', getTimeDays(daysDuration - elapsedTime))}
-            </span>
-          );
-        }}
+        {({ elapsedTime, color }) => (
+          <span style={{ color }}>
+            {renderTime('days', getTimeDays(daysDuration - elapsedTime))}
+          </span>
+        )}
       </CountdownCircleTimer>
       <CountdownCircleTimer
         {...timerProps}
