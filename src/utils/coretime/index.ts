@@ -37,18 +37,3 @@ export const extractRegionIdFromRaw = (rawRegionId: bigint): RegionId => {
     mask: ('0x' + mask.toString(16)).padEnd(22, '0'),
   };
 };
-
-export const rcBlockToParachainBlock = (
-  network: NetworkType,
-  blockNumber: number
-): number => {
-  // Coretime on Rococo has async backing and due to this it has a block time of 6 seconds.
-  switch (network) {
-    case NetworkType.ROCOCO:
-      return blockNumber;
-    case NetworkType.KUSAMA:
-      return Math.floor(blockNumber / 2);
-    default:
-      return 0;
-  }
-};
