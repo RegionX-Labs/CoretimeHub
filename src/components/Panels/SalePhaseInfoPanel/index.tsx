@@ -3,12 +3,10 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 
-import { PhaseEndpoints } from '@/hooks/salePhase';
-
 import { SalePhaseCard } from '@/components/Elements';
 
 import { useNetwork } from '@/contexts/network';
-import { SalePhase } from '@/models';
+import { PhaseEndpoints, SalePhase } from '@/models';
 
 import styles from './index.module.scss';
 

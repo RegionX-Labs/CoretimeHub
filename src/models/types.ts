@@ -10,7 +10,12 @@ import {
   Timeslice,
 } from 'coretime-utils';
 
-import { ISMPRecordStatus, ParaState, RegionLocation } from './enums';
+import {
+  ISMPRecordStatus,
+  ParaState,
+  RegionLocation,
+  SalePhase,
+} from './enums';
 
 export type Percentage = number; // Percentage value between 0 and 1
 
@@ -94,6 +99,24 @@ export type SaleConfig = {
   renewalBump: any;
   /// The duration by which rewards for contributions to the InstaPool must be collected.
   contributionTimeout: Timeslice;
+};
+
+type Endpoint = {
+  start: number;
+  end: number;
+};
+
+export type PhaseEndpoints = {
+  interlude: Endpoint;
+  leadin: Endpoint;
+  fixed: Endpoint;
+};
+
+export type SalePhaseInfo = {
+  currentPhase: SalePhase;
+  saleStartTimestamp: number;
+  saleEndTimestamp: number;
+  endpoints: PhaseEndpoints;
 };
 
 export class RegionMetadata {

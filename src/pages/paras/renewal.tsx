@@ -29,7 +29,6 @@ import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useBalances } from '@/contexts/balance';
-import { useCommon } from '@/contexts/common';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
 import { BrokerStatus } from '@/models';
@@ -49,11 +48,11 @@ const Renewal = () => {
   } = useRelayApi();
   const {
     state: { api: coretimeApi, apiState: coretimeApiState, decimals, symbol },
+    timeslicePeriod,
   } = useCoretimeApi();
 
   const { toastError, toastInfo, toastSuccess } = useToast();
   const { network } = useNetwork();
-  const { timeslicePeriod } = useCommon();
   const [loading, setLoading] = useState(false);
 
   const [activeIdx, setActiveIdx] = useState<number>(0);
@@ -123,6 +122,7 @@ const Renewal = () => {
     relayApiState,
     activeIdx,
     parachains,
+    timeslicePeriod,
   ]);
 
   useEffect(() => {

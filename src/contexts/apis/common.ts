@@ -3,7 +3,7 @@
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc';
-import { DefinitionRpcExt } from '@polkadot/types/types';
+import { Codec, DefinitionRpcExt } from '@polkadot/types/types';
 
 import { ApiState } from './types';
 
@@ -16,6 +16,8 @@ export type State = {
   symbol: string;
   name: string;
   decimals: number;
+  height: number;
+  timestamp: number;
 };
 
 export const initialState: State = {
@@ -28,6 +30,8 @@ export const initialState: State = {
   symbol: '',
   name: '',
   decimals: 0,
+  height: 0,
+  timestamp: 0,
 };
 
 ///
@@ -65,6 +69,10 @@ export const reducer = (state: any, action: any) => {
       return { ...state, name: action.payload };
     case 'SET_DECIMALS':
       return { ...state, decimals: action.payload };
+    case 'SET_HEIGHT':
+      return { ...state, height: action.payload };
+    case 'SET_TIMESTAMP':
+      return { ...state, timestamp: action.payload };
     default:
       throw new Error(`Unknown type: ${action.type}`);
   }
@@ -81,6 +89,8 @@ export const connect = (
   customRpc?: any
 ) => {
   const { apiState, jsonrpc } = state;
+
+  let unsubHeight: any, unsubTimestamp: any;
 
   // We only want this function to be performed once
   if (apiState !== ApiState.DISCONNECTED && !newSocket) return;
@@ -119,9 +129,26 @@ export const connect = (
       type: 'SET_NAME',
       payload: name,
     });
+
+    unsubHeight = await _api.query.system.number((height: Codec) =>
+      dispatch({
+        type: 'SET_HEIGHT',
+        payload: height.toJSON() as number,
+      })
+    );
+    unsubTimestamp = await _api.query.timestamp.now((moment: Codec) =>
+      dispatch({
+        type: 'SET_TIMESTAMP',
+        payload: moment.toJSON() as number,
+      })
+    );
   });
   _api.on('error', (err) => dispatch({ type: 'CONNECT_ERROR', payload: err }));
-  _api.on('disconnected', () => dispatch({ type: 'DISCONNECTED' }));
+  _api.on('disconnected', () => {
+    unsubHeight();
+    unsubTimestamp();
+    dispatch({ type: 'DISCONNECTED' });
+  });
 };
 
 export const disconnect = (state: any) => {
