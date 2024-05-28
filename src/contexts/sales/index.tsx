@@ -8,7 +8,6 @@ import {
 } from '@/utils/sale';
 
 import {
-  BrokerStatus,
   PhaseEndpoints,
   SaleConfig,
   SaleInfo,
@@ -79,6 +78,10 @@ interface Props {
 
 const SaleInfoProvider = ({ children }: Props) => {
   const { network } = useNetwork();
+  const {
+    state: { api: coretimeApi, apiState: coretimeApiState, height },
+    timeslicePeriod,
+  } = useCoretimeApi();
 
   const [saleInfo, setSaleInfo] = useState<SaleInfo>(defaultSaleData.saleInfo);
   const [config, setConfig] = useState<SaleConfig>(defaultSaleData.config);
@@ -90,10 +93,6 @@ const SaleInfoProvider = ({ children }: Props) => {
   const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const [endpoints, setEndpoints] = useState<PhaseEndpoints>(defaultEndpoints);
-
-  const {
-    state: { api: coretimeApi, apiState: coretimeApiState, height },
-  } = useCoretimeApi();
 
   useEffect(() => {
     const fetchSaleInfo = async () => {
@@ -117,15 +116,8 @@ const SaleInfoProvider = ({ children }: Props) => {
       if (!coretimeApi || coretimeApiState !== ApiState.READY) return;
       setLoading(true);
 
-      const statusRaw = await coretimeApi.query.broker.status();
-      const { lastCommittedTimeslice } = statusRaw.toJSON() as BrokerStatus;
-
       const _saleStart = getSaleStartInBlocks(saleInfo);
-      const _saleEnd = getSaleEndInBlocks(
-        saleInfo,
-        lastCommittedTimeslice,
-        network
-      );
+      const _saleEnd = getSaleEndInBlocks(saleInfo, timeslicePeriod, network);
       const _saleStartTimestamp = await getBlockTimestamp(
         coretimeApi,
         _saleStart,

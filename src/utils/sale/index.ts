@@ -1,5 +1,3 @@
-import { Timeslice } from 'coretime-utils';
-
 import { NetworkType, SaleInfo, SalePhase } from '@/models';
 
 import { leadinFactorAt, rcBlockToParachainBlock } from '../coretime';
@@ -25,13 +23,12 @@ export const getSaleStartInBlocks = (saleInfo: SaleInfo) => {
 // The block number at which the sale ends, i.e., the end of the fixed price phase.
 export const getSaleEndInBlocks = (
   saleInfo: SaleInfo,
-  lastCommittedTimeslice: Timeslice,
+  timeslicePeriod: number,
   network: NetworkType
 ) => {
-  const timeslicesUntilSaleEnd = saleInfo.regionBegin - lastCommittedTimeslice;
-  return (
-    saleInfo.saleStart +
-    rcBlockToParachainBlock(network, 80 * timeslicesUntilSaleEnd)
+  return rcBlockToParachainBlock(
+    network,
+    saleInfo.regionBegin * timeslicePeriod
   );
 };
 

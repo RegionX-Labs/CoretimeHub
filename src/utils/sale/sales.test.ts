@@ -90,18 +90,9 @@ describe('Purchase page', () => {
 
   describe('getSaleEndInBlocks', () => {
     it('works', () => {
-      const rcBlockNumber = 9_832_800;
-      const lastCommittedTimeslice = Math.floor(
-        (rcBlockNumber + mockConfig.advanceNotice) / 80
+      expect(getSaleEndInBlocks(mockSaleInfo, 80, NetworkType.ROCOCO)).toBe(
+        mockSaleInfo.saleStart + mockConfig.regionLength * 80
       );
-
-      expect(
-        getSaleEndInBlocks(
-          mockSaleInfo,
-          lastCommittedTimeslice,
-          NetworkType.ROCOCO
-        )
-      ).toBe(mockSaleInfo.saleStart + mockConfig.regionLength * 80);
     });
   });
 
