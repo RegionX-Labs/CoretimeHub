@@ -3,8 +3,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getBlockTime, getBlockTimestamp } from '@/utils/functions';
 import {
   getCurrentPhase,
-  getSaleEndInBlocks,
-  getSaleStartInBlocks,
+  getSaleEndInRelayBlocks,
+  getSaleStartInRelayBlocks,
 } from '@/utils/sale';
 
 import {
@@ -15,7 +15,7 @@ import {
   SalePhaseInfo,
 } from '@/models';
 
-import { useCoretimeApi } from '../apis';
+import { useCoretimeApi, useRelayApi } from '../apis';
 import { ApiState } from '../apis/types';
 import { useNetwork } from '../network';
 
@@ -83,6 +83,10 @@ const SaleInfoProvider = ({ children }: Props) => {
     timeslicePeriod,
   } = useCoretimeApi();
 
+  const {
+    state: { api: relayApi, apiState: relayApiState },
+  } = useRelayApi();
+
   const [saleInfo, setSaleInfo] = useState<SaleInfo>(defaultSaleData.saleInfo);
   const [config, setConfig] = useState<SaleConfig>(defaultSaleData.config);
 
@@ -99,6 +103,8 @@ const SaleInfoProvider = ({ children }: Props) => {
       if (
         !coretimeApi ||
         coretimeApiState !== ApiState.READY ||
+        !relayApi ||
+        relayApiState !== ApiState.READY ||
         !coretimeApi.query.broker
       )
         return;
@@ -116,18 +122,10 @@ const SaleInfoProvider = ({ children }: Props) => {
       if (!coretimeApi || coretimeApiState !== ApiState.READY) return;
       setLoading(true);
 
-      const _saleStart = getSaleStartInBlocks(saleInfo);
-      const _saleEnd = getSaleEndInBlocks(saleInfo, timeslicePeriod, network);
-      const _saleStartTimestamp = await getBlockTimestamp(
-        coretimeApi,
-        _saleStart,
-        network
-      );
-      const _saleEndTimestamp = await getBlockTimestamp(
-        coretimeApi,
-        _saleEnd,
-        network
-      );
+      const _saleStart = getSaleStartInRelayBlocks(saleInfo, timeslicePeriod);
+      const _saleEnd = getSaleEndInRelayBlocks(saleInfo, timeslicePeriod);
+      const _saleStartTimestamp = await getBlockTimestamp(relayApi, _saleStart);
+      const _saleEndTimestamp = await getBlockTimestamp(relayApi, _saleEnd);
 
       setSaleStartTimestamp(_saleStartTimestamp);
       setSaleEndTimestamp(_saleEndTimestamp);
@@ -159,7 +157,7 @@ const SaleInfoProvider = ({ children }: Props) => {
       setLoading(false);
     };
     asyncFetchSaleInfo();
-  }, [network, coretimeApi, coretimeApiState]);
+  }, [network, coretimeApi, relayApi, relayApiState, coretimeApiState]);
 
   useEffect(() => {
     setCurrentPhase(getCurrentPhase(saleInfo, height));

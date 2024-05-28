@@ -1,7 +1,6 @@
 import {
   CORETIME_TOKEN_UNIT,
   NetworkType,
-  SaleConfig,
   SaleInfo,
   SalePhase,
 } from '@/models';
@@ -9,8 +8,8 @@ import {
 import {
   getCorePriceAt,
   getCurrentPhase,
-  getSaleEndInBlocks,
-  getSaleStartInBlocks,
+  getSaleEndInRelayBlocks,
+  getSaleStartInRelayBlocks,
 } from '.';
 
 describe('Purchase page', () => {
@@ -25,17 +24,6 @@ describe('Purchase page', () => {
     regionEnd: 125430, // Timeslice
     saleStart: 1001148, // Block number
     selloutPrice: null,
-  };
-
-  const mockConfig: SaleConfig = {
-    advanceNotice: 10, // RC block number
-    contributionTimeout: 1260, // Block number
-    idealBulkProportion: '40.00%',
-    interludeLength: 7200, // Block number
-    leadinLength: 21600, // Block number
-    limitCoresOffered: null,
-    regionLength: 1260, // Timeslice
-    renewalBump: '0.35%',
   };
 
   describe('getCurrentPhase', () => {
@@ -84,15 +72,13 @@ describe('Purchase page', () => {
 
   describe('getSaleStartInBlocks', () => {
     it('works', () => {
-      expect(getSaleStartInBlocks(mockSaleInfo)).toBe(mockSaleInfo.saleStart);
+      expect(getSaleStartInRelayBlocks(mockSaleInfo, 80)).toBe(9832800);
     });
   });
 
   describe('getSaleEndInBlocks', () => {
     it('works', () => {
-      expect(getSaleEndInBlocks(mockSaleInfo, 80, NetworkType.ROCOCO)).toBe(
-        mockSaleInfo.saleStart + mockConfig.regionLength * 80
-      );
+      expect(getSaleEndInRelayBlocks(mockSaleInfo, 80)).toBe(9933600);
     });
   });
 
