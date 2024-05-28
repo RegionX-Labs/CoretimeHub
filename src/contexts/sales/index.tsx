@@ -84,11 +84,11 @@ const SaleInfoProvider = ({ children }: Props) => {
   const [config, setConfig] = useState<SaleConfig>(defaultSaleData.config);
 
   const [loading, setLoading] = useState(true);
-  const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
-  const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
   const [currentPhase, setCurrentPhase] = useState<SalePhase>(
     SalePhase.Interlude
   );
+  const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
+  const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const [endpoints, setEndpoints] = useState<PhaseEndpoints>(defaultEndpoints);
 
   const {
@@ -97,8 +97,6 @@ const SaleInfoProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const fetchSaleInfo = async () => {
-      setLoading(true);
-
       if (
         !coretimeApi ||
         coretimeApiState !== ApiState.READY ||
@@ -106,19 +104,18 @@ const SaleInfoProvider = ({ children }: Props) => {
       )
         return;
 
-      const infoRaw = await coretimeApi.query.broker.saleInfo();
-      const info = infoRaw.toJSON() as SaleInfo;
+      const saleInfoRaw = await coretimeApi.query.broker.saleInfo();
+      const saleInfo = saleInfoRaw.toJSON() as SaleInfo;
 
-      if (info && Object.keys(info).length) {
-        setSaleInfo(info);
+      if (!saleInfo) return;
 
-        const configRaw = await coretimeApi.query.broker.configuration();
-        const config = configRaw.toJSON() as SaleConfig;
-        setConfig(config);
-      } else {
-        setSaleInfo(defaultSaleData.saleInfo);
-        setConfig(defaultSaleData.config);
-      }
+      setSaleInfo(saleInfo);
+
+      const configRaw = await coretimeApi.query.broker.configuration();
+      const config = configRaw.toJSON() as SaleConfig;
+      setConfig(config);
+      if (!coretimeApi || coretimeApiState !== ApiState.READY) return;
+      setLoading(true);
 
       const statusRaw = await coretimeApi.query.broker.status();
       const { lastCommittedTimeslice } = statusRaw.toJSON() as BrokerStatus;
@@ -126,7 +123,6 @@ const SaleInfoProvider = ({ children }: Props) => {
       const _saleStart = getSaleStartInBlocks(saleInfo);
       const _saleEnd = getSaleEndInBlocks(
         saleInfo,
-        height,
         lastCommittedTimeslice,
         network
       );
@@ -143,8 +139,6 @@ const SaleInfoProvider = ({ children }: Props) => {
 
       setSaleStartTimestamp(_saleStartTimestamp);
       setSaleEndTimestamp(_saleEndTimestamp);
-
-      setCurrentPhase(getCurrentPhase(saleInfo, height));
 
       const blockTime = getBlockTime(network);
 
@@ -167,8 +161,17 @@ const SaleInfoProvider = ({ children }: Props) => {
       setLoading(false);
     };
 
-    fetchSaleInfo();
+    const asyncFetchSaleInfo = async () => {
+      setLoading(true);
+      await fetchSaleInfo();
+      setLoading(false);
+    };
+    asyncFetchSaleInfo();
   }, [network, coretimeApi, coretimeApiState]);
+
+  useEffect(() => {
+    setCurrentPhase(getCurrentPhase(saleInfo, height));
+  }, [saleInfo, height]);
 
   return (
     <SaleDataContext.Provider
@@ -177,8 +180,8 @@ const SaleInfoProvider = ({ children }: Props) => {
         saleInfo,
         config,
         phase: {
-          saleStartTimestamp,
           currentPhase,
+          saleStartTimestamp,
           saleEndTimestamp,
           endpoints,
         },
@@ -190,4 +193,5 @@ const SaleInfoProvider = ({ children }: Props) => {
 };
 
 const useSaleInfo = () => useContext(SaleDataContext);
+
 export { SaleInfoProvider, useSaleInfo };
