@@ -12,6 +12,7 @@ const nextConfig = {
     WS_KUSAMA_RELAY_CHAIN: process.env.WS_KUSAMA_RELAY_CHAIN,
     EXPERIMENTAL: process.env.EXPERIMENTAL,
   },
+  transpilePackages: ['@mui/x-charts'],
 };
 
 module.exports = nextConfig;

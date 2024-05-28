@@ -8,6 +8,9 @@ import {
   useTheme,
 } from '@mui/material';
 
+import useSalePhase from '@/hooks/salePhase';
+
+import { SalePriceChart } from '@/components/Charts';
 import { ActionButton, CountDown } from '@/components/Elements';
 
 import { SalePhase } from '@/models';
@@ -28,6 +31,8 @@ export const PriceModal = ({
   saleInfo: { phase },
 }: PriceModalProps) => {
   const theme = useTheme();
+
+  const { saleStartTimestamp } = useSalePhase();
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
@@ -50,13 +55,17 @@ export const PriceModal = ({
               gap='1rem'
             >
               <Typography>Sale starts in:</Typography>
-              {/** TODO: MOCKUP */}
-              <CountDown remainingTime={30000} />
+              <CountDown
+                remainingTime={(saleStartTimestamp - Date.now()) / 1000}
+              />
             </Stack>
           </Box>
         ) : (
           <></>
         )}
+        <Box className={styles.chartContainer}>
+          <SalePriceChart />
+        </Box>
       </DialogContent>
       <DialogActions>
         <Box>
