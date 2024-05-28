@@ -13,7 +13,7 @@ import { ISMPRecordStatus, RegionLocation, RegionMetadata } from '@/models';
 import * as NativeRegions from './native';
 import * as RegionXRegions from './regionx';
 import { useAccounts } from '../account';
-import { useCoretimeApi } from '../apis';
+import { useCoretimeApi, useRelayApi } from '../apis';
 import { EXPERIMENTAL } from '../apis/consts';
 import { useRegionXApi } from '../apis/RegionXApi';
 import { Tasks, useTasks } from '../tasks';
@@ -47,8 +47,11 @@ const RegionDataProvider = ({ children }: Props) => {
     timeslicePeriod,
   } = useCoretimeApi();
   const {
-    state: { api: regionxApi, height: relayBlockNumber },
+    state: { api: regionxApi },
   } = useRegionXApi();
+  const {
+    state: { height: relayBlockNumber },
+  } = useRelayApi();
   const {
     state: { activeAccount },
   } = useAccounts();
