@@ -61,32 +61,36 @@ const TaskDataProvider = ({ children }: Props) => {
       !coretimeApi.query.broker
     )
       return {};
-    const workplan = await coretimeApi.query.broker.workplan.entries();
-    const tasks: Record<string, number | null> = {};
+    try {
+      const workplan = await coretimeApi.query.broker.workplan.entries();
+      const tasks: Record<string, number | null> = {};
 
-    for await (const [key, value] of workplan) {
-      const [[begin, core]] = key.toHuman() as [[number, number]];
-      const records = value.toHuman(undefined, true) as ScheduleItem[];
+      for await (const [key, value] of workplan) {
+        const [[begin, core]] = key.toHuman() as [[number, number]];
+        const records = value.toHuman(undefined, true) as ScheduleItem[];
 
-      records.forEach((record) => {
-        const { assignment, mask } = record;
-        const regionId = {
-          begin: parseHNString(begin.toString()),
-          core: parseHNString(core.toString()),
-          mask,
-        };
+        records.forEach((record) => {
+          const { assignment, mask } = record;
+          const regionId = {
+            begin: parseHNString(begin.toString()),
+            core: parseHNString(core.toString()),
+            mask,
+          };
 
-        if (assignment === 'Pool') {
-          tasks[getEncodedRegionId(regionId, coretimeApi).toString()] =
-            POOLING_TASK_ID;
-        } else {
-          tasks[getEncodedRegionId(regionId, coretimeApi).toString()] =
-            assignment.Task ? parseHNString(assignment.Task) : null;
-        }
-      });
+          if (assignment === 'Pool') {
+            tasks[getEncodedRegionId(regionId, coretimeApi).toString()] =
+              POOLING_TASK_ID;
+          } else {
+            tasks[getEncodedRegionId(regionId, coretimeApi).toString()] =
+              assignment.Task ? parseHNString(assignment.Task) : null;
+          }
+        });
+      }
+
+      return tasks;
+    } catch {
+      return {};
     }
-
-    return tasks;
   };
 
   // The tasks currently running on a Polkadot core.

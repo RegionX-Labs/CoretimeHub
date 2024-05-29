@@ -49,51 +49,61 @@ const useSalePhase = () => {
     const asyncFetchCurrentPhase = async () => {
       setLoading(true);
 
-      const blockNumber = (await api.query.system.number()).toJSON() as number;
-      const { lastCommittedTimeslice } = (
-        await api.query.broker.status()
-      ).toJSON() as BrokerStatus;
+      try {
+        const blockNumber = (
+          await api.query.system.number()
+        ).toJSON() as number;
+        const { lastCommittedTimeslice } = (
+          await api.query.broker.status()
+        ).toJSON() as BrokerStatus;
 
-      const _saleStart = getSaleStartInBlocks(saleInfo);
-      const _saleEnd = getSaleEndInBlocks(
-        saleInfo,
-        blockNumber,
-        lastCommittedTimeslice,
-        network
-      );
+        const _saleStart = getSaleStartInBlocks(saleInfo);
+        const _saleEnd = getSaleEndInBlocks(
+          saleInfo,
+          blockNumber,
+          lastCommittedTimeslice,
+          network
+        );
 
-      setSaleStart(_saleStart);
-      setSaleEnd(_saleEnd);
+        setSaleStart(_saleStart);
+        setSaleEnd(_saleEnd);
 
-      const _saleStartTimestamp = await getBlockTimestamp(
-        api,
-        _saleStart,
-        network
-      );
-      const _saleEndTimestamp = await getBlockTimestamp(api, _saleEnd, network);
+        const _saleStartTimestamp = await getBlockTimestamp(
+          api,
+          _saleStart,
+          network
+        );
+        const _saleEndTimestamp = await getBlockTimestamp(
+          api,
+          _saleEnd,
+          network
+        );
 
-      setSaleStartTimestamp(_saleStartTimestamp);
-      setSaleEndTimestamp(_saleEndTimestamp);
+        setSaleStartTimestamp(_saleStartTimestamp);
+        setSaleEndTimestamp(_saleEndTimestamp);
 
-      setCurrentPhase(getCurrentPhase(saleInfo, blockNumber));
+        setCurrentPhase(getCurrentPhase(saleInfo, blockNumber));
 
-      const blockTime = getBlockTime(network);
+        const blockTime = getBlockTime(network);
 
-      const _endpoints = {
-        interlude: {
-          start: _saleStartTimestamp - config.interludeLength * blockTime,
-          end: _saleStartTimestamp,
-        },
-        leadin: {
-          start: _saleStartTimestamp,
-          end: _saleStartTimestamp + config.leadinLength * blockTime,
-        },
-        fixed: {
-          start: _saleStartTimestamp + config.leadinLength * blockTime,
-          end: _saleEndTimestamp,
-        },
-      };
-      setEndpoints(_endpoints);
+        const _endpoints = {
+          interlude: {
+            start: _saleStartTimestamp - config.interludeLength * blockTime,
+            end: _saleStartTimestamp,
+          },
+          leadin: {
+            start: _saleStartTimestamp,
+            end: _saleStartTimestamp + config.leadinLength * blockTime,
+          },
+          fixed: {
+            start: _saleStartTimestamp + config.leadinLength * blockTime,
+            end: _saleEndTimestamp,
+          },
+        };
+        setEndpoints(_endpoints);
+      } catch {
+        /** */
+      }
       setLoading(false);
     };
 
