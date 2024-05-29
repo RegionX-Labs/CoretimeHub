@@ -127,7 +127,8 @@ const SaleInfoProvider = ({ children }: Props) => {
       const saleEnd = saleInfo.regionBegin * timeslicePeriod;
       const saleStartTimestamp = await getBlockTimestamp(
         coretimeApi,
-        saleStart
+        saleStart,
+        network
       );
       const saleEndTimestamp = await getBlockTimestamp(relayApi, saleEnd);
 
