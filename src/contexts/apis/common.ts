@@ -123,7 +123,7 @@ export const connect = (
       });
     }
 
-    const name = await _api.rpc.system.chain();
+    const name = (await _api.rpc.system.chain()).toString();
     dispatch({
       type: 'SET_NAME',
       payload: name,

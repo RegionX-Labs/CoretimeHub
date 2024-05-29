@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import { getBlockTimestamp } from '@/utils/functions';
+import { getBlockTime, getBlockTimestamp } from '@/utils/functions';
 import { getCurrentPhase } from '@/utils/sale';
 
 import {
@@ -134,7 +134,7 @@ const SaleInfoProvider = ({ children }: Props) => {
       setSaleStartTimestamp(saleStartTimestamp);
       setSaleEndTimestamp(saleEndTimestamp);
 
-      const blockTime = 6 * 1000; // Block time on the coretime chain
+      const blockTime = getBlockTime(network); // Block time on the coretime chain
 
       const _endpoints = {
         interlude: {
