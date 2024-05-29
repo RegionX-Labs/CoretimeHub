@@ -20,6 +20,7 @@ import {
   useTheme,
 } from '@mui/material';
 import Image from 'next/image';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 import { useRelayApi } from '@/contexts/apis';
@@ -187,7 +188,7 @@ export const ParachainTable = ({
                 page * rowsPerPage + rowsPerPage
               )
             : parachains
-          ).map(({ id, name, state, watching, logo }, index) => (
+          ).map(({ id, name, state, watching, logo, homepage }, index) => (
             <StyledTableRow key={index}>
               <StyledTableCell style={{ width: '10%' }}>
                 <Button
@@ -204,7 +205,7 @@ export const ParachainTable = ({
                 <Stack direction='row' alignItems='center' gap='1rem'>
                   {logo === undefined ? (
                     <></>
-                  ) : (
+                  ) : homepage === undefined ? (
                     <Image
                       src={logo}
                       alt=''
@@ -212,6 +213,16 @@ export const ParachainTable = ({
                       height={32}
                       style={{ borderRadius: '100%' }}
                     />
+                  ) : (
+                    <Link href={homepage} target='_blank'>
+                      <Image
+                        src={logo}
+                        alt=''
+                        width={32}
+                        height={32}
+                        style={{ borderRadius: '100%' }}
+                      />
+                    </Link>
                   )}
                   {name}
                 </Stack>
