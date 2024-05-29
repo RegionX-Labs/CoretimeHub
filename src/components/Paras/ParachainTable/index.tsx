@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
+import OpenInNewIcon from '@mui/icons-material/OpenInNewRounded';
 import React, { useEffect, useState } from 'react';
 
 import { useRelayApi } from '@/contexts/apis';
@@ -205,7 +206,7 @@ export const ParachainTable = ({
                 <Stack direction='row' alignItems='center' gap='1rem'>
                   {logo === undefined ? (
                     <></>
-                  ) : homepage === undefined ? (
+                  ) : (
                     <Image
                       src={logo}
                       alt=''
@@ -213,18 +214,21 @@ export const ParachainTable = ({
                       height={32}
                       style={{ borderRadius: '100%' }}
                     />
-                  ) : (
-                    <Link href={homepage} target='_blank'>
-                      <Image
-                        src={logo}
-                        alt=''
-                        width={32}
-                        height={32}
-                        style={{ borderRadius: '100%' }}
-                      />
-                    </Link>
                   )}
                   {name}
+                  {homepage === undefined ? (
+                    <></>
+                  ) : (
+                    <Link href={homepage} target='_blank'>
+                      <OpenInNewIcon
+                        sx={{
+                          color: theme.palette.grey[600],
+                          cursor: 'pointer',
+                          width: '1.2rem',
+                        }}
+                      ></OpenInNewIcon>
+                    </Link>
+                  )}
                 </Stack>
               </StyledTableCell>
               <StyledTableCell style={{ margin: 0, width: '20%' }}>
