@@ -59,6 +59,7 @@ const Purchase = () => {
   const getCurrentPrice = (): number => {
     if (status !== ContextStatus.LOADED) return 0;
 
+    // If the sale hasn't started yet, get the price from when the sale begins.
     const at =
       currentPhase === SalePhase.Interlude ? saleInfo.saleStart : height;
     const price = getCorePriceAt(at, saleInfo, network);
