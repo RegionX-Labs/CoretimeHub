@@ -16,7 +16,7 @@ import { humanizer } from 'humanize-duration';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { Status, useRenewableParachains } from '@/hooks/renewableParas';
+import { useRenewableParachains } from '@/hooks/renewableParas';
 import {
   getBalanceString,
   sendTx,
@@ -31,7 +31,7 @@ import { ApiState } from '@/contexts/apis/types';
 import { useBalances } from '@/contexts/balance';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
-import { BrokerStatus } from '@/models';
+import { BrokerStatus, ContextStatus } from '@/models';
 
 const Renewal = () => {
   const router = useRouter();
@@ -126,7 +126,11 @@ const Renewal = () => {
   ]);
 
   useEffect(() => {
-    if (!router.isReady || status !== Status.LOADED || parachains.length === 0)
+    if (
+      !router.isReady ||
+      status !== ContextStatus.LOADED ||
+      parachains.length === 0
+    )
       return;
     const { query } = router;
     if (query['paraId'] === undefined) return;
@@ -139,7 +143,7 @@ const Renewal = () => {
     setActiveIdx(index);
   }, [router, parachains, status, parachains.length, toastError]);
 
-  return status === Status.LOADING ? (
+  return status !== ContextStatus.LOADED ? (
     <Backdrop open>
       <CircularProgress />
     </Backdrop>
