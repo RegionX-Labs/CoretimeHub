@@ -1,4 +1,5 @@
 import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
+import OpenInNewIcon from '@mui/icons-material/OpenInNewRounded';
 import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderRounded';
 import StarIcon from '@mui/icons-material/StarRounded';
 import {
@@ -21,7 +22,6 @@ import {
 } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
-import OpenInNewIcon from '@mui/icons-material/OpenInNewRounded';
 import React, { useEffect, useState } from 'react';
 
 import { useRelayApi } from '@/contexts/apis';
