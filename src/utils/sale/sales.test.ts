@@ -1,17 +1,11 @@
 import {
   CORETIME_TOKEN_UNIT,
   NetworkType,
-  SaleConfig,
   SaleInfo,
   SalePhase,
 } from '@/models';
 
-import {
-  getCorePriceAt,
-  getCurrentPhase,
-  getSaleEndInBlocks,
-  getSaleStartInBlocks,
-} from '.';
+import { getCorePriceAt, getCurrentPhase } from '.';
 
 describe('Purchase page', () => {
   const mockSaleInfo: SaleInfo = {
@@ -25,17 +19,6 @@ describe('Purchase page', () => {
     regionEnd: 125430, // Timeslice
     saleStart: 1001148, // Block number
     selloutPrice: null,
-  };
-
-  const mockConfig: SaleConfig = {
-    advanceNotice: 10, // RC block number
-    contributionTimeout: 1260, // Block number
-    idealBulkProportion: '40.00%',
-    interludeLength: 7200, // Block number
-    leadinLength: 21600, // Block number
-    limitCoresOffered: null,
-    regionLength: 1260, // Timeslice
-    renewalBump: '0.35%',
   };
 
   describe('getCurrentPhase', () => {
@@ -79,31 +62,6 @@ describe('Purchase page', () => {
       expect(getCurrentPhase(mockSaleInfo, blockNumber)).toBe(
         SalePhase.Regular
       );
-    });
-  });
-
-  describe('getSaleStartInBlocks', () => {
-    it('works', () => {
-      expect(getSaleStartInBlocks(mockSaleInfo)).toBe(mockSaleInfo.saleStart);
-    });
-  });
-
-  describe('getSaleEndInBlocks', () => {
-    it('works', () => {
-      const blockNumber = mockSaleInfo.saleStart;
-      const rcBlockNumber = 9_832_800;
-      const lastCommittedTimeslice = Math.floor(
-        (rcBlockNumber + mockConfig.advanceNotice) / 80
-      );
-
-      expect(
-        getSaleEndInBlocks(
-          mockSaleInfo,
-          blockNumber,
-          lastCommittedTimeslice,
-          NetworkType.ROCOCO
-        )
-      ).toBe(mockSaleInfo.saleStart + mockConfig.regionLength * 80);
     });
   });
 

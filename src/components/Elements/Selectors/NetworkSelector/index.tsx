@@ -35,7 +35,7 @@ const RelaySelect = () => {
     },
   ];
 
-  return network !== NetworkType.NONE ? (
+  return (
     <FormControl size='small'>
       <Select
         id='network-select'
@@ -75,8 +75,6 @@ const RelaySelect = () => {
         ))}
       </Select>
     </FormControl>
-  ) : (
-    <></>
   );
 };
 

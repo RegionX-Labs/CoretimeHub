@@ -13,10 +13,9 @@ import { ISMPRecordStatus, RegionLocation, RegionMetadata } from '@/models';
 import * as NativeRegions from './native';
 import * as RegionXRegions from './regionx';
 import { useAccounts } from '../account';
-import { useCoretimeApi } from '../apis';
+import { useCoretimeApi, useRelayApi } from '../apis';
 import { EXPERIMENTAL } from '../apis/consts';
 import { useRegionXApi } from '../apis/RegionXApi';
-import { useCommon } from '../common';
 import { Tasks, useTasks } from '../tasks';
 
 interface RegionsData {
@@ -45,17 +44,19 @@ interface Props {
 const RegionDataProvider = ({ children }: Props) => {
   const {
     state: { api: coretimeApi },
+    timeslicePeriod,
   } = useCoretimeApi();
   const {
     state: { api: regionxApi },
   } = useRegionXApi();
   const {
+    state: { height: relayBlockNumber },
+  } = useRelayApi();
+  const {
     state: { activeAccount },
   } = useAccounts();
 
   const { fetchWorkplan, fetchRegionWorkload } = useTasks();
-
-  const context = useCommon();
 
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
   const [loading, setLoading] = useState(false);
@@ -123,13 +124,7 @@ const RegionDataProvider = ({ children }: Props) => {
 
     setRegions(_regions);
     setLoading(false);
-  }, [
-    activeAccount,
-    context,
-    coretimeApi,
-    fetchWorkplan,
-    _getTaskFromWorkloadId,
-  ]);
+  }, [activeAccount, coretimeApi, fetchWorkplan, _getTaskFromWorkloadId]);
 
   const constructRegionMetadata = async (
     region: Region,
@@ -143,7 +138,7 @@ const RegionDataProvider = ({ children }: Props) => {
     // Only user owned non-expired regions.
     if (
       encodeAddress(region.getOwner(), 42) !== encodeAddress(owner, 42) ||
-      region.consumed(context) > 1
+      region.consumed({ timeslicePeriod, relayBlockNumber }) > 1
     )
       return null;
 
@@ -158,14 +153,14 @@ const RegionDataProvider = ({ children }: Props) => {
     let task = tasks[rawId.toString()] ?? null;
 
     // If the region isn't still active it cannot be in the workload.
-    if (region.consumed(context) != 0) {
+    if (region.consumed({ timeslicePeriod, relayBlockNumber }) != 0) {
       if (!task) {
         task = await _getTaskFromWorkloadId(region.getCore(), region.getMask());
       }
     }
 
     return RegionMetadata.construct(
-      context,
+      { timeslicePeriod, relayBlockNumber },
       getEncodedRegionId(region.getRegionId(), coretimeApi),
       region,
       name,

@@ -6,9 +6,8 @@ import { useEffect, useState } from 'react';
 
 import { timesliceToTimestamp } from '@/utils/functions';
 
-import { useRelayApi } from '@/contexts/apis';
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
-import { useCommon } from '@/contexts/common';
 import { RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
@@ -34,7 +33,7 @@ export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
   const [endTimestamp, setEndTimestamp] = useState(0);
 
   const { region } = regionMetadata;
-  const { timeslicePeriod } = useCommon();
+  const { timeslicePeriod } = useCoretimeApi();
 
   useEffect(() => {
     if (!relayApi || relayApiState !== ApiState.READY) {
@@ -56,7 +55,7 @@ export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
       setEndTimestamp(end);
     };
     fetchTimestamps();
-  }, [relayApi, relayApiState]);
+  }, [relayApi, relayApiState, region, timeslicePeriod]);
   return (
     <Paper className={styles.container}>
       <Box className={styles.regionInfo}>

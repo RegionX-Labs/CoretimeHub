@@ -25,7 +25,6 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNewRounded';
 import React, { useEffect, useState } from 'react';
 
 import { useRelayApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { ParachainInfo, ParaState } from '@/models';
 
@@ -92,14 +91,13 @@ export const ParachainTable = ({
   const { onRegister, onUpgrade, onBuy, onRenew, onWatch } = handlers;
 
   const {
-    state: { api: relayApi, apiState: relayApiState },
+    state: { height },
   } = useRelayApi();
   const { network } = useNetwork();
 
   // table pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [height, setHeight] = useState(0);
 
   const headers = [
     { name: 'Para ID', sort: 'id' },
@@ -130,17 +128,6 @@ export const ParachainTable = ({
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
-  useEffect(() => {
-    const fetchHeight = async () => {
-      if (!relayApi || relayApiState !== ApiState.READY) return;
-      const data = await relayApi.query.system.number();
-      const height = data.toJSON() as number;
-      setHeight(height);
-    };
-
-    fetchHeight();
-  }, [relayApi, relayApiState]);
 
   useEffect(() => {
     setDir(initialDir);

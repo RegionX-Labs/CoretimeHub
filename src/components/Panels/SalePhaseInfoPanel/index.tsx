@@ -3,12 +3,10 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 
-import { PhaseEndpoints } from '@/hooks/salePhase';
-
 import { SalePhaseCard } from '@/components/Elements';
 
 import { useNetwork } from '@/contexts/network';
-import { SalePhase } from '@/models';
+import { PhaseEndpoints, SalePhase } from '@/models';
 
 import styles from './index.module.scss';
 
@@ -38,8 +36,11 @@ export const SalePhaseInfoPanel = ({
   const [remainingTime, setRemainingTime] = useState(0);
   const [daysDuration, setDaysDuration] = useState(0);
 
+  const valEndpoints = JSON.stringify(endpoints);
+
   useEffect(() => {
     let _remainingTime;
+
     if (currentPhase == SalePhase.Interlude) {
       _remainingTime = Math.floor(
         (endpoints.interlude.end - Date.now()) / 1000
@@ -55,7 +56,7 @@ export const SalePhaseInfoPanel = ({
 
     setDaysDuration(_daysDuration);
     setRemainingTime(_remainingTime);
-  }, [endpoints, currentPhase]);
+  }, [valEndpoints, currentPhase]);
 
   const timerProps = {
     isPlaying: true,
