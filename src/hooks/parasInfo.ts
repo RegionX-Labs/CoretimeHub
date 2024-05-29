@@ -96,8 +96,11 @@ export const useParasInfo = () => {
         const [strId] = key.toHuman() as [string];
         const id = parseInt(strId.replace(/,/g, ''));
         const strState = value.toString();
-        const name = chainData[network][id]?.name ?? '';
-        const logo = chainData[network][id]?.logo;
+
+        const data = chainData[network][id];
+        const name = data?.name ?? '';
+        const logo = data?.logo;
+        const homepage = data?.homepage;
         const isActive = activeParas.indexOf(id) !== -1;
         const isInWorkplan = workplanParas.indexOf(id) !== -1;
         const isLeaseHolding = leaseHoldingParas.indexOf(id) !== -1;
@@ -117,7 +120,7 @@ export const useParasInfo = () => {
                     ? ParaState.ONDEMAND_PARACHAIN
                     : ParaState.IDLE_PARA;
 
-        paras.push({ id, state, name, logo } as ParachainInfo);
+        paras.push({ id, state, name, logo, homepage } as ParachainInfo);
       }
       return paras;
     };

@@ -19,4 +19,5 @@ export type ChainDetails = {
 export type BaseChainInfo = {
   name: string;
   logo?: string;
+  homepage?: string;
 };

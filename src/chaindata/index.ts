@@ -7,8 +7,8 @@ import { BaseChainInfo, ChainDetails } from './types';
 
 const transformData = (data: ChainDetails[]): Record<number, BaseChainInfo> => {
   const mapping: Record<number, BaseChainInfo> = {};
-  data.forEach(({ paraId, text, ui: { logo } }) => {
-    mapping[paraId] = { name: text, logo };
+  data.forEach(({ paraId, text, ui: { logo }, homepage }) => {
+    mapping[paraId] = { name: text, logo, homepage };
   });
   return mapping;
 };

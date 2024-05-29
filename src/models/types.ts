@@ -284,6 +284,7 @@ export type ParachainInfo = {
   name: string;
   watching?: boolean;
   logo?: string;
+  homepage?: string;
 };
 
 export type LeaseState = {

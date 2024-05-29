@@ -1,4 +1,5 @@
 import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
+import OpenInNewIcon from '@mui/icons-material/OpenInNewRounded';
 import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderRounded';
 import StarIcon from '@mui/icons-material/StarRounded';
 import {
@@ -20,6 +21,7 @@ import {
   useTheme,
 } from '@mui/material';
 import Image from 'next/image';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 import { useRelayApi } from '@/contexts/apis';
@@ -174,7 +176,7 @@ export const ParachainTable = ({
                 page * rowsPerPage + rowsPerPage
               )
             : parachains
-          ).map(({ id, name, state, watching, logo }, index) => (
+          ).map(({ id, name, state, watching, logo, homepage }, index) => (
             <StyledTableRow key={index}>
               <StyledTableCell style={{ width: '10%' }}>
                 <Button
@@ -201,6 +203,19 @@ export const ParachainTable = ({
                     />
                   )}
                   {name}
+                  {homepage === undefined ? (
+                    <></>
+                  ) : (
+                    <Link href={homepage} target='_blank'>
+                      <OpenInNewIcon
+                        sx={{
+                          color: theme.palette.grey[600],
+                          cursor: 'pointer',
+                          width: '1.2rem',
+                        }}
+                      ></OpenInNewIcon>
+                    </Link>
+                  )}
                 </Stack>
               </StyledTableCell>
               <StyledTableCell style={{ margin: 0, width: '20%' }}>
