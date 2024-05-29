@@ -22,7 +22,7 @@ interface Props {
 }
 
 const NetworkProvider = ({ children }: Props) => {
-  const [activeNetwork, setActiveNetwork] = useState(NetworkType.NONE);
+  const [activeNetwork, setActiveNetwork] = useState(NetworkType.KUSAMA);
 
   const router = useRouter();
   const { network } = router.query;

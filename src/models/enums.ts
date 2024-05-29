@@ -20,8 +20,6 @@ export enum ChainType {
 
 export enum NetworkType {
   // eslint-disable-next-line no-unused-vars
-  NONE = 'none',
-  // eslint-disable-next-line no-unused-vars
   ROCOCO = 'rococo',
   // eslint-disable-next-line no-unused-vars
   KUSAMA = 'kusama',
@@ -78,4 +76,14 @@ export enum ParaState {
   LEASE_HOLDING = 'Lease Holding',
   // eslint-disable-next-line no-unused-vars
   SYSTEM = 'System Parachain',
+}
+
+// eslint-disable-next-line no-unused-vars
+export enum ContextStatus {
+  // eslint-disable-next-line no-unused-vars
+  UNINITIALIZED,
+  // eslint-disable-next-line no-unused-vars
+  LOADING,
+  // eslint-disable-next-line no-unused-vars
+  LOADED,
 }

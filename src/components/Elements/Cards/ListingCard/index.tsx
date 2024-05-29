@@ -18,9 +18,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { getBalanceString, timesliceToTimestamp } from '@/utils/functions';
 
-import { useRelayApi } from '@/contexts/apis';
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
-import { useCommon } from '@/contexts/common';
 import { Listing } from '@/models';
 
 import styles from './index.module.scss';
@@ -88,7 +87,7 @@ const ListingCardInner = ({
   const {
     state: { api, apiState, symbol, decimals },
   } = useRelayApi();
-  const { timeslicePeriod } = useCommon();
+  const { timeslicePeriod } = useCoretimeApi();
 
   // FIXME: network-based block time
   const setTimestamps = useCallback(

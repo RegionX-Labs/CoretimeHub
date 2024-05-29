@@ -21,9 +21,8 @@ import React, { useEffect, useState } from 'react';
 
 import { timesliceToTimestamp } from '@/utils/functions';
 
-import { useRelayApi } from '@/contexts/apis';
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
-import { useCommon } from '@/contexts/common';
 import { useTasks } from '@/contexts/tasks';
 import { POOLING_TASK_ID, RegionLocation, RegionMetadata } from '@/models';
 
@@ -100,7 +99,7 @@ const RegionCardInner = ({
     state: { api, apiState },
   } = useRelayApi();
 
-  const { timeslicePeriod } = useCommon();
+  const { timeslicePeriod } = useCoretimeApi();
 
   useEffect(() => {
     if (!api || apiState !== ApiState.READY) {
@@ -123,7 +122,7 @@ const RegionCardInner = ({
       setEndTimestamp(end);
     };
     fetchTimestamps();
-  }, [api, apiState]);
+  }, [api, apiState, region, timeslicePeriod]);
 
   const progress = [
     {

@@ -20,7 +20,6 @@ import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { ApiState } from '@/contexts/apis/types';
-import { useCommon } from '@/contexts/common';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { ISMPRecordStatus, RegionMetadata } from '@/models';
@@ -56,7 +55,7 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
   const [beginTimestamp, setBeginTimestamp] = useState(0);
 
   const { region, coreOccupancy, status } = regionMetadata;
-  const { timeslicePeriod } = useCommon();
+  const { timeslicePeriod } = useCoretimeApi();
   const { toastWarning, toastSuccess, toastInfo, toastError } = useToast();
 
   useEffect(() => {
@@ -72,7 +71,7 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
       setBeginTimestamp(timestamp);
     };
     fetchTimestamp();
-  }, [relayApi, relayApiState]);
+  }, [relayApi, relayApiState, timeslicePeriod, region]);
 
   useEffect(() => {
     if (

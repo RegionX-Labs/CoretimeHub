@@ -21,7 +21,6 @@ import {
 import { EXPERIMENTAL } from '@/contexts/apis/consts';
 import { RegionXApiContextProvider } from '@/contexts/apis/RegionXApi';
 import { BalanceProvider } from '@/contexts/balance';
-import { ContextDataProvider } from '@/contexts/common';
 import { MarketProvider } from '@/contexts/market';
 import { NetworkProvider } from '@/contexts/network';
 import { RegionDataProvider } from '@/contexts/regions';
@@ -47,19 +46,17 @@ export default function MyApp(props: MyAppProps) {
   const Content = (
     <RelayApiContextProvider>
       <BalanceProvider>
-        <ContextDataProvider>
-          <TaskDataProvider>
-            <RegionDataProvider>
-              <MarketProvider>
-                <SaleInfoProvider>
-                  <SettingsProvider>
-                    {getLayout(<Component {...pageProps} />)}
-                  </SettingsProvider>
-                </SaleInfoProvider>
-              </MarketProvider>
-            </RegionDataProvider>
-          </TaskDataProvider>
-        </ContextDataProvider>
+        <TaskDataProvider>
+          <RegionDataProvider>
+            <MarketProvider>
+              <SaleInfoProvider>
+                <SettingsProvider>
+                  {getLayout(<Component {...pageProps} />)}
+                </SettingsProvider>
+              </SaleInfoProvider>
+            </MarketProvider>
+          </RegionDataProvider>
+        </TaskDataProvider>
       </BalanceProvider>
     </RelayApiContextProvider>
   );

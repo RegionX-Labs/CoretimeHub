@@ -15,7 +15,6 @@ import { ProgressButton, RegionOverview } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
-import { useCommon } from '@/contexts/common';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import {
@@ -68,7 +67,7 @@ export const PartitionModal = ({
   } = useCoretimeApi();
 
   const { fetchRegions } = useRegions();
-  const { timeslicePeriod } = useCommon();
+  const { timeslicePeriod } = useCoretimeApi();
 
   const { toastError, toastSuccess, toastInfo } = useToast();
 

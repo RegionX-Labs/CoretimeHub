@@ -7,11 +7,10 @@ import {
 } from '@mui/material';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import useSalePhase from '@/hooks/salePhase';
-import useSalePrice from '@/hooks/salePrice';
-import { parseHNString, sendTx } from '@/utils/functions';
+import { sendTx } from '@/utils/functions';
+import { getCorePriceAt } from '@/utils/sale';
 
 import {
   Balance,
@@ -25,16 +24,16 @@ import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useBalances } from '@/contexts/balance';
+import { useNetwork } from '@/contexts/network';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
-import { SalePhase } from '@/models';
+import { ContextStatus, SalePhase } from '@/models';
 
 const Purchase = () => {
   const theme = useTheme();
 
   const [working, setWorking] = useState(false);
-  const [at, setAt] = useState<number | undefined>(undefined);
   TimeAgo.addLocale(en);
   // Create formatter (English).
 
@@ -43,36 +42,31 @@ const Purchase = () => {
   } = useAccounts();
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast();
 
-  const { saleInfo, loading } = useSaleInfo();
-  const { saleStartTimestamp, saleEndTimestamp } = useSalePhase();
+  const { network } = useNetwork();
   const {
-    state: { api, apiState },
+    saleInfo,
+    status,
+    phase: { currentPhase, saleStartTimestamp, saleEndTimestamp, endpoints },
+  } = useSaleInfo();
+  const {
+    state: { api, apiState, height },
   } = useCoretimeApi();
 
   const { fetchRegions } = useRegions();
 
   const { balance } = useBalances();
-  const currentPrice = useSalePrice(at);
-  const {
-    saleStart,
-    currentPhase,
-    loading: loadingSalePhase,
-    endpoints,
-  } = useSalePhase();
 
-  useEffect(() => {
-    if (!currentPhase) return;
+  const getCurrentPrice = (): number => {
+    if (status !== ContextStatus.LOADED) return 0;
 
     // If the sale hasn't started yet, get the price from when the sale begins.
-    if (currentPhase === SalePhase.Interlude) {
-      setAt(saleStart);
-    } else {
-      if (!api || apiState !== ApiState.READY) return;
-      api.query.system.number().then((height) => {
-        setAt(parseHNString(height.toHuman() as string));
-      });
-    }
-  }, [api, apiState, saleStart, currentPhase]);
+    const at =
+      currentPhase === SalePhase.Interlude ? saleInfo.saleStart : height;
+    const price = getCorePriceAt(at, saleInfo, network);
+    return price;
+  };
+
+  const currentPrice = getCurrentPrice();
 
   const purchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
@@ -131,16 +125,10 @@ const Purchase = () => {
         />
       </Box>
       <Box>
-        {loading || loadingSalePhase ? (
+        {status !== ContextStatus.LOADED ? (
           <Backdrop open>
             <CircularProgress />
           </Backdrop>
-        ) : !currentPhase ? (
-          <>
-            <Typography variant='h5' align='center'>
-              Check your network conection and connect your wallet
-            </Typography>
-          </>
         ) : (
           <Box
             sx={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
@@ -154,14 +142,10 @@ const Purchase = () => {
             />
             <Box sx={{ display: 'flex', gap: '1rem' }}>
               <CoreDetailsPanel saleInfo={saleInfo} />
-              {endpoints && (
-                <SalePhaseInfoPanel
-                  {...{
-                    currentPhase,
-                    endpoints,
-                  }}
-                />
-              )}
+              <SalePhaseInfoPanel
+                currentPhase={currentPhase}
+                endpoints={endpoints}
+              />
             </Box>
 
             <Box

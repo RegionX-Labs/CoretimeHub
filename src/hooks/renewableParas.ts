@@ -4,6 +4,7 @@ import { parseHNString } from '@/utils/functions';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
+import { ContextStatus } from '@/models';
 
 type RenewableParachain = {
   core: number;
@@ -13,34 +14,26 @@ type RenewableParachain = {
   when: number;
 };
 
-// eslint-disable-next-line no-unused-vars
-export enum Status {
-  // eslint-disable-next-line no-unused-vars
-  UNINITIALIZED,
-  // eslint-disable-next-line no-unused-vars
-  LOADING,
-  // eslint-disable-next-line no-unused-vars
-  LOADED,
-}
-
 export const useRenewableParachains = () => {
   const {
     state: { api, apiState },
   } = useCoretimeApi();
 
-  const [status, setStatus] = useState<Status>(Status.UNINITIALIZED);
+  const [status, setStatus] = useState<ContextStatus>(
+    ContextStatus.UNINITIALIZED
+  );
   const [parachains, setParachains] = useState<RenewableParachain[]>([]);
 
   useEffect(() => {
     if (apiState !== ApiState.READY) {
-      setStatus(Status.UNINITIALIZED);
+      setStatus(ContextStatus.UNINITIALIZED);
       setParachains([]);
     }
 
     const asyncFetchParaIds = async () => {
       if (!api || apiState !== ApiState.READY) return;
 
-      setStatus(Status.LOADING);
+      setStatus(ContextStatus.LOADING);
 
       const renewals = await api.query.broker.allowedRenewals.entries();
       const chains: RenewableParachain[] = [];
@@ -76,7 +69,7 @@ export const useRenewableParachains = () => {
 
       setParachains(chains.sort((a, b) => a.paraId - b.paraId));
 
-      setStatus(Status.LOADED);
+      setStatus(ContextStatus.LOADED);
     };
 
     asyncFetchParaIds();

@@ -58,7 +58,7 @@ export const SaleInfoPanel = ({
             value: moment(saleStartTimestamp).format('D MMM HH:mm'),
           },
           right: {
-            label: 'Ends at',
+            label: saleEndTimestamp > Date.now() ? 'Ends at' : 'Ended at:',
             value: moment(saleEndTimestamp).format('D MMMM HH:mm'),
           },
         }}

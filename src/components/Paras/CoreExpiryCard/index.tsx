@@ -3,7 +3,7 @@ import { humanizer } from 'humanize-duration';
 
 import { useRenewableParachains } from '@/hooks';
 
-import { useCommon } from '@/contexts/common';
+import { useCoretimeApi } from '@/contexts/apis';
 import { RELAY_CHAIN_BLOCK_TIME } from '@/models';
 
 interface CoreExpiryProps {
@@ -15,7 +15,7 @@ export const CoreExpiryCard = ({ paraId, height }: CoreExpiryProps) => {
   const theme = useTheme();
 
   const { parachains } = useRenewableParachains();
-  const { timeslicePeriod } = useCommon();
+  const { timeslicePeriod } = useCoretimeApi();
 
   const formatDuration = humanizer({ units: ['w', 'd'], round: true });
 

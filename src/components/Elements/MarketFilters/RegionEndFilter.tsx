@@ -6,9 +6,8 @@ import { useState } from 'react';
 
 import { timestampToTimeslice } from '@/utils/functions';
 
-import { useRelayApi } from '@/contexts/apis';
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
-import { useCommon } from '@/contexts/common';
 
 import { FilterProps } from '.';
 
@@ -18,7 +17,7 @@ const RegionEndFilter = ({ filters, updateFilters }: FilterProps) => {
   const {
     state: { api: relayApi, apiState },
   } = useRelayApi();
-  const { timeslicePeriod } = useCommon();
+  const { timeslicePeriod } = useCoretimeApi();
 
   const handleChange = async (newValue: Date | null) => {
     if (!relayApi || apiState !== ApiState.READY) return;
