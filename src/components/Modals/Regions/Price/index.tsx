@@ -8,11 +8,10 @@ import {
   useTheme,
 } from '@mui/material';
 
-import useSalePhase from '@/hooks/salePhase';
-
 import { SalePriceChart } from '@/components/Charts';
 import { ActionButton, CountDown } from '@/components/Elements';
 
+import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
 
 import styles from './index.module.scss';
@@ -32,7 +31,9 @@ export const PriceModal = ({
 }: PriceModalProps) => {
   const theme = useTheme();
 
-  const { saleStartTimestamp } = useSalePhase();
+  const {
+    phase: { saleStartTimestamp },
+  } = useSaleInfo();
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
