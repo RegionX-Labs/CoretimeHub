@@ -1,13 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import { getBlockTime, getBlockTimestamp } from '@/utils/functions';
-import {
-  getCurrentPhase,
-  getSaleEndInRelayBlocks,
-  getSaleStartInRelayBlocks,
-} from '@/utils/sale';
+import { getBlockTimestamp } from '@/utils/functions';
+import { getCurrentPhase } from '@/utils/sale';
 
 import {
+  ContextStatus,
   PhaseEndpoints,
   SaleConfig,
   SaleInfo,
@@ -20,7 +17,7 @@ import { ApiState } from '../apis/types';
 import { useNetwork } from '../network';
 
 interface SaleData {
-  loading: boolean;
+  status: ContextStatus;
   saleInfo: SaleInfo;
   config: SaleConfig;
   phase: SalePhaseInfo;
@@ -64,7 +61,7 @@ const defaultSalePhase = {
 };
 
 const defaultSaleData: SaleData = {
-  loading: true,
+  status: ContextStatus.UNINITIALIZED,
   saleInfo: defaultSaleInfo,
   config: defaultSaleConfig,
   phase: defaultSalePhase,
@@ -90,7 +87,7 @@ const SaleInfoProvider = ({ children }: Props) => {
   const [saleInfo, setSaleInfo] = useState<SaleInfo>(defaultSaleData.saleInfo);
   const [config, setConfig] = useState<SaleConfig>(defaultSaleData.config);
 
-  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState(ContextStatus.UNINITIALIZED);
   const [currentPhase, setCurrentPhase] = useState<SalePhase>(
     SalePhase.Interlude
   );
@@ -100,64 +97,72 @@ const SaleInfoProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const fetchSaleInfo = async () => {
+      setStatus(ContextStatus.LOADING);
       if (
         !coretimeApi ||
         coretimeApiState !== ApiState.READY ||
         !relayApi ||
         relayApiState !== ApiState.READY ||
         !coretimeApi.query.broker
-      )
+      ) {
+        setStatus(ContextStatus.UNINITIALIZED);
         return;
+      }
 
       const saleInfoRaw = await coretimeApi.query.broker.saleInfo();
       const saleInfo = saleInfoRaw.toJSON() as SaleInfo;
 
-      if (!saleInfo) return;
+      if (!saleInfo) {
+        setStatus(ContextStatus.UNINITIALIZED);
+        return;
+      }
 
       setSaleInfo(saleInfo);
 
       const configRaw = await coretimeApi.query.broker.configuration();
       const config = configRaw.toJSON() as SaleConfig;
       setConfig(config);
-      if (!coretimeApi || coretimeApiState !== ApiState.READY) return;
-      setLoading(true);
 
-      const _saleStart = getSaleStartInRelayBlocks(saleInfo, timeslicePeriod);
-      const _saleEnd = getSaleEndInRelayBlocks(saleInfo, timeslicePeriod);
-      const _saleStartTimestamp = await getBlockTimestamp(relayApi, _saleStart);
-      const _saleEndTimestamp = await getBlockTimestamp(relayApi, _saleEnd);
+      const saleStart = saleInfo.saleStart;
+      const saleEnd = saleInfo.regionBegin * timeslicePeriod;
+      const saleStartTimestamp = await getBlockTimestamp(
+        coretimeApi,
+        saleStart
+      );
+      const saleEndTimestamp = await getBlockTimestamp(relayApi, saleEnd);
 
-      setSaleStartTimestamp(_saleStartTimestamp);
-      setSaleEndTimestamp(_saleEndTimestamp);
+      setSaleStartTimestamp(saleStartTimestamp);
+      setSaleEndTimestamp(saleEndTimestamp);
 
-      const blockTime = getBlockTime(network);
+      const blockTime = 6 * 1000; // Block time on the coretime chain
 
       const _endpoints = {
         interlude: {
-          start: _saleStartTimestamp - config.interludeLength * blockTime,
-          end: _saleStartTimestamp,
+          start: saleStartTimestamp - config.interludeLength * blockTime,
+          end: saleStartTimestamp,
         },
         leadin: {
-          start: _saleStartTimestamp,
-          end: _saleStartTimestamp + config.leadinLength * blockTime,
+          start: saleStartTimestamp,
+          end: saleStartTimestamp + config.leadinLength * blockTime,
         },
         fixed: {
-          start: _saleStartTimestamp + config.leadinLength * blockTime,
-          end: _saleEndTimestamp,
+          start: saleStartTimestamp + config.leadinLength * blockTime,
+          end: saleEndTimestamp,
         },
       };
       setEndpoints(_endpoints);
-
-      setLoading(false);
+      setStatus(ContextStatus.LOADED);
     };
 
-    const asyncFetchSaleInfo = async () => {
-      setLoading(true);
-      await fetchSaleInfo();
-      setLoading(false);
-    };
-    asyncFetchSaleInfo();
-  }, [network, coretimeApi, relayApi, relayApiState, coretimeApiState]);
+    fetchSaleInfo();
+  }, [
+    network,
+    coretimeApi,
+    relayApi,
+    relayApiState,
+    coretimeApiState,
+    timeslicePeriod,
+  ]);
 
   useEffect(() => {
     setCurrentPhase(getCurrentPhase(saleInfo, height));
@@ -166,7 +171,7 @@ const SaleInfoProvider = ({ children }: Props) => {
   return (
     <SaleDataContext.Provider
       value={{
-        loading,
+        status,
         saleInfo,
         config,
         phase: {
@@ -181,7 +186,6 @@ const SaleInfoProvider = ({ children }: Props) => {
     </SaleDataContext.Provider>
   );
 };
-
 const useSaleInfo = () => useContext(SaleDataContext);
 
 export { SaleInfoProvider, useSaleInfo };

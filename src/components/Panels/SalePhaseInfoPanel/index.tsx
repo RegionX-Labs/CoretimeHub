@@ -36,8 +36,11 @@ export const SalePhaseInfoPanel = ({
   const [remainingTime, setRemainingTime] = useState(0);
   const [daysDuration, setDaysDuration] = useState(0);
 
+  const valEndpoints = JSON.stringify(endpoints);
+
   useEffect(() => {
     let _remainingTime;
+
     if (currentPhase == SalePhase.Interlude) {
       _remainingTime = Math.floor(
         (endpoints.interlude.end - Date.now()) / 1000
@@ -53,7 +56,7 @@ export const SalePhaseInfoPanel = ({
 
     setDaysDuration(_daysDuration);
     setRemainingTime(_remainingTime);
-  }, [endpoints, currentPhase]);
+  }, [valEndpoints, currentPhase]);
 
   const timerProps = {
     isPlaying: true,

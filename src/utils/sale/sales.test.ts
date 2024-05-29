@@ -5,12 +5,7 @@ import {
   SalePhase,
 } from '@/models';
 
-import {
-  getCorePriceAt,
-  getCurrentPhase,
-  getSaleEndInRelayBlocks,
-  getSaleStartInRelayBlocks,
-} from '.';
+import { getCorePriceAt, getCurrentPhase } from '.';
 
 describe('Purchase page', () => {
   const mockSaleInfo: SaleInfo = {
@@ -67,18 +62,6 @@ describe('Purchase page', () => {
       expect(getCurrentPhase(mockSaleInfo, blockNumber)).toBe(
         SalePhase.Regular
       );
-    });
-  });
-
-  describe('getSaleStartInBlocks', () => {
-    it('works', () => {
-      expect(getSaleStartInRelayBlocks(mockSaleInfo, 80)).toBe(9832800);
-    });
-  });
-
-  describe('getSaleEndInBlocks', () => {
-    it('works', () => {
-      expect(getSaleEndInRelayBlocks(mockSaleInfo, 80)).toBe(9933600);
     });
   });
 

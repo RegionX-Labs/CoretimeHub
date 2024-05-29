@@ -30,13 +30,11 @@ import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 
 const coretimeIcons = {
-  [NetworkType.NONE]: RococoCoretime,
   [NetworkType.KUSAMA]: KusamaCoretime,
   [NetworkType.ROCOCO]: RococoCoretime,
 };
 
 const relayIcons = {
-  [NetworkType.NONE]: Rococo,
   [NetworkType.KUSAMA]: Kusama,
   [NetworkType.ROCOCO]: Rococo,
 };

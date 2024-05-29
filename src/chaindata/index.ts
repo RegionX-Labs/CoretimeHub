@@ -14,7 +14,6 @@ const transformData = (data: ChainDetails[]): Record<number, BaseChainInfo> => {
 };
 
 const chainData: Record<NetworkType, Record<number, BaseChainInfo>> = {
-  [NetworkType.NONE]: {},
   [NetworkType.KUSAMA]: transformData(KusamaChains),
   [NetworkType.ROCOCO]: transformData(RococoChains),
 };

@@ -110,7 +110,6 @@ export const connect = (
     _api.isReady.then(() => dispatch({ type: 'CONNECT_SUCCESS' }));
   });
   _api.on('ready', async () => {
-    dispatch({ type: 'CONNECT_SUCCESS' });
     const chainInfo = _api.registry.getChainProperties();
     if (chainInfo) {
       const { tokenDecimals, tokenSymbol } = chainInfo.toHuman() as any;
@@ -142,6 +141,7 @@ export const connect = (
         payload: moment.toJSON() as number,
       })
     );
+    dispatch({ type: 'CONNECT_SUCCESS' });
   });
   _api.on('error', (err) => dispatch({ type: 'CONNECT_ERROR', payload: err }));
   _api.on('disconnected', () => {

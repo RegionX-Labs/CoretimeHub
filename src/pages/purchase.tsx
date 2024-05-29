@@ -9,8 +9,8 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
 import { useState } from 'react';
 
-import useSalePrice from '@/hooks/salePrice';
 import { sendTx } from '@/utils/functions';
+import { getCorePriceAt } from '@/utils/sale';
 
 import {
   Balance,
@@ -24,10 +24,11 @@ import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useBalances } from '@/contexts/balance';
+import { useNetwork } from '@/contexts/network';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
-import { SalePhase } from '@/models';
+import { ContextStatus, SalePhase } from '@/models';
 
 const Purchase = () => {
   const theme = useTheme();
@@ -41,9 +42,10 @@ const Purchase = () => {
   } = useAccounts();
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast();
 
+  const { network } = useNetwork();
   const {
     saleInfo,
-    loading,
+    status,
     phase: { currentPhase, saleStartTimestamp, saleEndTimestamp, endpoints },
   } = useSaleInfo();
   const {
@@ -54,9 +56,16 @@ const Purchase = () => {
 
   const { balance } = useBalances();
 
-  const currentPrice = useSalePrice(
-    currentPhase === SalePhase.Interlude ? saleInfo.saleStart : height
-  );
+  const getCurrentPrice = (): number => {
+    if (status !== ContextStatus.LOADED) return 0;
+
+    const at =
+      currentPhase === SalePhase.Interlude ? saleInfo.saleStart : height;
+    const price = getCorePriceAt(at, saleInfo, network);
+    return price;
+  };
+
+  const currentPrice = getCurrentPrice();
 
   const purchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
@@ -115,16 +124,10 @@ const Purchase = () => {
         />
       </Box>
       <Box>
-        {loading ? (
+        {status !== ContextStatus.LOADED ? (
           <Backdrop open>
             <CircularProgress />
           </Backdrop>
-        ) : !currentPhase ? (
-          <>
-            <Typography variant='h5' align='center'>
-              Check your network conection and connect your wallet
-            </Typography>
-          </>
         ) : (
           <Box
             sx={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
@@ -138,12 +141,10 @@ const Purchase = () => {
             />
             <Box sx={{ display: 'flex', gap: '1rem' }}>
               <CoreDetailsPanel saleInfo={saleInfo} />
-              {endpoints && (
-                <SalePhaseInfoPanel
-                  currentPhase={currentPhase}
-                  endpoints={endpoints}
-                />
-              )}
+              <SalePhaseInfoPanel
+                currentPhase={currentPhase}
+                endpoints={endpoints}
+              />
             </Box>
 
             <Box
