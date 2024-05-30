@@ -1,42 +1,85 @@
-import { ChartContainer } from '@mui/x-charts/ChartContainer';
+import { ResponsiveChartContainer } from '@mui/x-charts';
 import { ChartsReferenceLine } from '@mui/x-charts/ChartsReferenceLine';
 import { ChartsXAxis } from '@mui/x-charts/ChartsXAxis';
 import { ChartsYAxis } from '@mui/x-charts/ChartsYAxis';
-import { LinePlot, MarkPlot } from '@mui/x-charts/LineChart';
+import { AreaPlot, MarkPlot } from '@mui/x-charts/LineChart';
+import moment from 'moment';
 import * as React from 'react';
 
-const uData = [4000, 3000, 2000, 2780, 1890, 2390, 3490];
-const pData = [2400, 1398, 9800, 3908, 4800, 3800, 4300];
-const xLabels = [
-  'Page A',
-  'Page B',
-  'Page C',
-  'Page D',
-  'Page E',
-  'Page F',
-  'Page G',
-];
+import { planckBnToUnit } from '@/utils/functions';
+import { getCorePriceAt } from '@/utils/sale';
+
+import { useCoretimeApi } from '@/contexts/apis';
+import { useNetwork } from '@/contexts/network';
+import { useSaleInfo } from '@/contexts/sales';
 
 export const SalePriceChart = () => {
+  const {
+    state: { timestamp: currentTimestamp, decimals },
+  } = useCoretimeApi();
+
+  const {
+    saleInfo,
+    phase: { endpoints },
+  } = useSaleInfo();
+  const { network } = useNetwork();
+
+  const { saleStart } = saleInfo;
+
+  const startPrice = planckBnToUnit(
+    getCorePriceAt(saleStart, saleInfo, network).toString(),
+    decimals
+  );
+  const floorPrice = planckBnToUnit(saleInfo.price.toString(), decimals);
+
+  const xLabels = [
+    endpoints.interlude.start,
+    endpoints.leadin.start,
+    endpoints.fixed.start,
+    endpoints.fixed.end,
+  ];
+
   return (
-    <ChartContainer
-      width={500}
-      height={300}
+    <ResponsiveChartContainer
+      width={512}
+      height={320}
       series={[
-        { data: pData, label: 'pv', type: 'line' },
-        { data: uData, label: 'uv', type: 'line' },
+        {
+          data: [startPrice, startPrice, null, null],
+          type: 'line',
+          curve: 'linear',
+          area: true,
+          color: '#aaa',
+        },
+        {
+          data: [null, startPrice, floorPrice, null],
+          type: 'line',
+          curve: 'linear',
+          area: true,
+          color: '#bbb',
+        },
+        {
+          data: [null, null, floorPrice, floorPrice],
+          type: 'line',
+          curve: 'linear',
+          color: '#ccc',
+        },
       ]}
-      xAxis={[{ scaleType: 'point', data: xLabels }]}
+      xAxis={[
+        {
+          scaleType: 'pow',
+          data: xLabels,
+          min: endpoints.interlude.start,
+          valueFormatter: (v) => moment(v).format('D MMM'),
+        },
+      ]}
+      yAxis={[{ min: 0, max: startPrice }]}
     >
-      <LinePlot />
+      <AreaPlot />
       <MarkPlot />
-      <ChartsReferenceLine
-        x='Page C'
-        label='Max PV PAGE'
-        lineStyle={{ stroke: 'red' }}
-      />
-      <ChartsXAxis />
+      <ChartsReferenceLine x={currentTimestamp} lineStyle={{ stroke: 'red' }} />
+      <ChartsXAxis stroke='red' />
       <ChartsYAxis />
-    </ChartContainer>
+    </ResponsiveChartContainer>
   );
 };
