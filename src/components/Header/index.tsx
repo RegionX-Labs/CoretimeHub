@@ -1,5 +1,4 @@
 import { ExpandMore } from '@mui/icons-material';
-import ContentCopyIcon from '@mui/icons-material/ContentCopyRounded';
 import {
   Box,
   Button,
@@ -9,6 +8,7 @@ import {
   ListItemButton,
   useTheme,
 } from '@mui/material';
+import Identicon from '@polkadot/react-identicon';
 import React, { useState } from 'react';
 
 import { KeyringState, useAccounts } from '@/contexts/account';
@@ -61,10 +61,14 @@ export const Header = () => {
         <Box className={styles.menu}>
           {activeAccount && (
             <Box display='flex' alignItems='center' sx={{ margin: '1rem' }}>
-              <p>{truncateAddres(activeAccount.address)}</p>
               <Button onClick={copyAddress}>
-                <ContentCopyIcon sx={{ color: theme.palette.grey['600'] }} />
+                <Identicon
+                  value={activeAccount.address}
+                  theme='polkadot'
+                  size={32}
+                />
               </Button>
+              <p>{truncateAddres(activeAccount.address)}</p>
             </Box>
           )}
           <div>
