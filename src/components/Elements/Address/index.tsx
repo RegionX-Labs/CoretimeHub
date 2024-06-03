@@ -1,7 +1,7 @@
 import { IconButton, Stack } from '@mui/material';
 import Identicon from '@polkadot/react-identicon';
 
-import { truncateAddres } from '@/utils/functions';
+import { truncateAddres, writeToClipboard } from '@/utils/functions';
 
 import { useToast } from '@/contexts/toast';
 
@@ -24,7 +24,7 @@ export const Address = ({
     if (!isCopy) return;
 
     const asyncCopy = async () => {
-      await navigator.clipboard.writeText(value);
+      await writeToClipboard(value);
       toastInfo('Address copied');
     };
     asyncCopy();
