@@ -19,3 +19,9 @@ export const isValidAddress = (chainAddress: string, ss58Prefix = 42) => {
     return false;
   }
 };
+
+export const truncateAddres = (address: string) => {
+  return (
+    address.substring(0, 6) + '...' + address.substring(address.length - 6)
+  );
+};

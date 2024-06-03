@@ -1,21 +1,18 @@
 import { ExpandMore } from '@mui/icons-material';
 import {
   Box,
-  Button,
   Collapse,
   Divider,
   List,
   ListItemButton,
   useTheme,
 } from '@mui/material';
-import Identicon from '@polkadot/react-identicon';
 import React, { useState } from 'react';
 
 import { KeyringState, useAccounts } from '@/contexts/account';
-import { useToast } from '@/contexts/toast';
 
 import styles from './index.module.scss';
-import { ProgressButton } from '../Elements';
+import { Address, ProgressButton } from '../Elements';
 import NetworkSelector from '../Elements/Selectors/NetworkSelector';
 
 export const Header = () => {
@@ -28,24 +25,10 @@ export const Header = () => {
   } = useAccounts();
 
   const [accountsOpen, openAccounts] = useState(false);
-  const { toastInfo } = useToast();
 
   const onDisconnect = () => {
     openAccounts(false);
     disconnectWallet();
-  };
-
-  const truncateAddres = (address: string) => {
-    return (
-      address.substring(0, 6) + '...' + address.substring(address.length - 6)
-    );
-  };
-
-  const copyAddress = async () => {
-    if (!activeAccount) return;
-
-    await navigator.clipboard.writeText(activeAccount.address);
-    toastInfo('Address copied');
   };
 
   return (
@@ -60,16 +43,7 @@ export const Header = () => {
       >
         <Box className={styles.menu}>
           {activeAccount && (
-            <Box display='flex' alignItems='center' sx={{ margin: '1rem' }}>
-              <Button onClick={copyAddress}>
-                <Identicon
-                  value={activeAccount.address}
-                  theme='polkadot'
-                  size={32}
-                />
-              </Button>
-              <p>{truncateAddres(activeAccount.address)}</p>
-            </Box>
+            <Address value={activeAccount.address} isCopy isShort />
           )}
           <div>
             <NetworkSelector />
