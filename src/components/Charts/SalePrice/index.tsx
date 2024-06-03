@@ -15,7 +15,7 @@ const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 export const SalePriceChart = () => {
   const {
-    state: { timestamp: currentTimestamp, decimals },
+    state: { timestamp: currentTimestamp, decimals, symbol },
   } = useCoretimeApi();
 
   const {
@@ -106,7 +106,7 @@ export const SalePriceChart = () => {
     yaxis: {
       min: 0,
       title: {
-        text: 'Price',
+        text: `Price (${symbol})`,
       },
       labels: {
         formatter: (v: number) => v?.toFixed(2),
