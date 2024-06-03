@@ -6,6 +6,12 @@
   gap: 1.5rem;
 }
 
+.headerWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .titleWrapper {
   display: flex;
   align-items: center;

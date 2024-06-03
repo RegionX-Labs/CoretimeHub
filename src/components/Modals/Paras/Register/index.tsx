@@ -14,8 +14,7 @@ import { useEffect, useState } from 'react';
 
 import { getBalanceString } from '@/utils/functions';
 
-import { ProgressButton } from '@/components/Elements';
-import InputFile from '@/components/Elements/InputFile';
+import { FileInput, ProgressButton } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useRelayApi } from '@/contexts/apis';
@@ -153,13 +152,13 @@ export const RegisterModal = ({
           </Box>
         </Box>
         <Box className={styles.buttons}>
-          <InputFile
+          <FileInput
             label='Upload Genesis Head'
             icon={<CloudUploadOutlinedIcon />}
             onChange={(data) => setGenesisHead(data)}
             onCancel={() => setGenesisHead(new Uint8Array())}
           />
-          <InputFile
+          <FileInput
             label='Upload Validation Code'
             icon={<CodeOutlinedIcon />}
             onChange={(data) => setWasmCode(data)}

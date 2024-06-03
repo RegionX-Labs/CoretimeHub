@@ -9,7 +9,7 @@ import {
 import { Region } from 'coretime-utils';
 import { useState } from 'react';
 
-import { RegionMetaCard } from '@/components/Elements';
+import { RegionMetaCard } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
 import { useMarket } from '@/contexts/market';

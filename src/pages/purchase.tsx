@@ -10,7 +10,6 @@ import en from 'javascript-time-ago/locale/en.json';
 import { useState } from 'react';
 
 import { sendTx } from '@/utils/functions';
-import { getCorePriceAt } from '@/utils/sale';
 
 import {
   Balance,
@@ -24,7 +23,6 @@ import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useBalances } from '@/contexts/balance';
-import { useNetwork } from '@/contexts/network';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
@@ -42,31 +40,18 @@ const Purchase = () => {
   } = useAccounts();
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast();
 
-  const { network } = useNetwork();
   const {
     saleInfo,
     status,
-    phase: { currentPhase, saleStartTimestamp, saleEndTimestamp, endpoints },
+    phase: { currentPhase, currentPrice },
   } = useSaleInfo();
   const {
-    state: { api, apiState, height },
+    state: { api, apiState },
   } = useCoretimeApi();
 
   const { fetchRegions } = useRegions();
 
   const { balance } = useBalances();
-
-  const getCurrentPrice = (): number => {
-    if (status !== ContextStatus.LOADED) return 0;
-
-    // If the sale hasn't started yet, get the price from when the sale begins.
-    const at =
-      currentPhase === SalePhase.Interlude ? saleInfo.saleStart : height;
-    const price = getCorePriceAt(at, saleInfo, network);
-    return price;
-  };
-
-  const currentPrice = getCurrentPrice();
 
   const purchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
@@ -133,19 +118,10 @@ const Purchase = () => {
           <Box
             sx={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
           >
-            <SaleInfoPanel
-              currentPhase={currentPhase}
-              saleStartTimestamp={saleStartTimestamp}
-              saleEndTimestamp={saleEndTimestamp}
-              floorPrice={saleInfo.price}
-              currentPrice={currentPrice}
-            />
+            <SaleInfoPanel />
             <Box sx={{ display: 'flex', gap: '1rem' }}>
               <CoreDetailsPanel saleInfo={saleInfo} />
-              <SalePhaseInfoPanel
-                currentPhase={currentPhase}
-                endpoints={endpoints}
-              />
+              <SalePhaseInfoPanel />
             </Box>
 
             <Box

@@ -120,4 +120,4 @@ function InputFile({
   );
 }
 
-export default React.memo(InputFile);
+export const FileInput = React.memo(InputFile);

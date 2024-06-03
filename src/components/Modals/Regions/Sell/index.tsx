@@ -11,11 +11,8 @@ import {
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
-import {
-  AmountInput,
-  RecipientInput,
-  RegionMetaCard,
-} from '@/components/Elements';
+import { AmountInput, RecipientInput } from '@/components/Elements';
+import { RegionMetaCard } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';

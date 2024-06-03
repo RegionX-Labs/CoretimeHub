@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { getBlockTime, getBlockTimestamp } from '@/utils/functions';
-import { getCurrentPhase } from '@/utils/sale';
+import { getCorePriceAt, getCurrentPhase } from '@/utils/sale';
 
 import {
   ContextStatus,
@@ -55,6 +55,7 @@ const defaultEndpoints = {
 
 const defaultSalePhase = {
   currentPhase: SalePhase.Interlude,
+  currentPrice: 0,
   saleStartTimestamp: 0,
   saleEndTimestamp: 0,
   endpoints: defaultEndpoints,
@@ -91,9 +92,23 @@ const SaleInfoProvider = ({ children }: Props) => {
   const [currentPhase, setCurrentPhase] = useState<SalePhase>(
     SalePhase.Interlude
   );
+  const [at, setAt] = useState(0);
+  const [currentPrice, setCurrentPrice] = useState(0);
   const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const [endpoints, setEndpoints] = useState<PhaseEndpoints>(defaultEndpoints);
+
+  useEffect(() => {
+    setAt(currentPhase === SalePhase.Interlude ? saleInfo.saleStart : height);
+  }, [saleInfo.saleStart, height, currentPhase]);
+
+  useEffect(() => {
+    setCurrentPrice(
+      status !== ContextStatus.LOADED
+        ? 0
+        : getCorePriceAt(at, saleInfo, network)
+    );
+  }, [status, at, network, saleInfo]);
 
   useEffect(() => {
     const fetchSaleInfo = async () => {
@@ -177,6 +192,7 @@ const SaleInfoProvider = ({ children }: Props) => {
         config,
         phase: {
           currentPhase,
+          currentPrice,
           saleStartTimestamp,
           saleEndTimestamp,
           endpoints,

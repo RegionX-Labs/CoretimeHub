@@ -14,11 +14,8 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import {
-  FinalitySelector,
-  ProgressButton,
-  RegionOverview,
-} from '@/components/Elements';
+import { FinalitySelector, ProgressButton } from '@/components/Elements';
+import { RegionOverview } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';

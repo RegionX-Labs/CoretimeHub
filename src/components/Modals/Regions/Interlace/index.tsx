@@ -13,7 +13,8 @@ import {
 import { maskFromBin, maskFromChunk, maskToBin } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
-import { ProgressButton, RegionOverview } from '@/components/Elements';
+import { ProgressButton } from '@/components/Elements';
+import { RegionOverview } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
