@@ -100,7 +100,7 @@ export const ParachainTable = ({
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const headers = [
-    { name: 'Para ID', sort: 'id' },
+    { name: 'Id', sort: 'id' },
     { name: 'Para Name' },
     { name: 'State' },
     { name: 'Expiry', sort: 'expiry' },
