@@ -5,22 +5,22 @@ import { useEffect, useState } from 'react';
 import { CountDown, SalePhaseCard } from '@/components/Elements';
 
 import { useNetwork } from '@/contexts/network';
-import { PhaseEndpoints, SalePhase } from '@/models';
+import { useSaleInfo } from '@/contexts/sales';
+import { SalePhase } from '@/models';
 
 import styles from './index.module.scss';
-
-interface SalePhaseInfoPanelProps {
-  currentPhase: SalePhase;
-  endpoints: PhaseEndpoints;
-}
-
-export const SalePhaseInfoPanel = ({
-  currentPhase,
-  endpoints,
-}: SalePhaseInfoPanelProps) => {
+export const SalePhaseInfoPanel = () => {
   const theme = useTheme();
   const router = useRouter();
   const { network } = useNetwork();
+
+  const {
+    phase: { currentPhase, endpoints },
+  } = useSaleInfo();
+
+  const [remainingTime, setRemainingTime] = useState(0);
+
+  const valEndpoints = JSON.stringify(endpoints);
 
   const onManage = () => {
     router.push({
@@ -28,10 +28,6 @@ export const SalePhaseInfoPanel = ({
       query: { network },
     });
   };
-
-  const [remainingTime, setRemainingTime] = useState(0);
-
-  const valEndpoints = JSON.stringify(endpoints);
 
   useEffect(() => {
     let _remainingTime;

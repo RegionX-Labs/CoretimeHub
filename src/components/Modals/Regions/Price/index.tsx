@@ -20,19 +20,16 @@ interface PriceModalProps {
   open: boolean;
   onClose: () => void;
   saleInfo: {
-    phase: SalePhase;
+    currentPhase: SalePhase;
+    currentPrice: number;
   };
 }
 
-export const PriceModal = ({
-  open,
-  onClose,
-  saleInfo: { phase },
-}: PriceModalProps) => {
+export const PriceModal = ({ open, onClose }: PriceModalProps) => {
   const theme = useTheme();
 
   const {
-    phase: { saleStartTimestamp },
+    phase: { currentPhase, saleStartTimestamp },
   } = useSaleInfo();
 
   return (
@@ -46,7 +43,7 @@ export const PriceModal = ({
             Price Analysis
           </Typography>
         </Box>
-        {phase === SalePhase.Interlude ? (
+        {currentPhase === SalePhase.Interlude ? (
           <Box>
             <Typography>{"Sale hasn't started yet."}</Typography>
             <Stack

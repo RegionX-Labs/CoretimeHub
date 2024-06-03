@@ -13,26 +13,13 @@ import DollarIcon from '@/assets/dollar.png';
 import ListIcon from '@/assets/list.png';
 import ShoppingIcon from '@/assets/shopping.png';
 import { useCoretimeApi } from '@/contexts/apis';
+import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
 
 import { DetailCard } from './DetailCard';
 import styles from './index.module.scss';
 
-interface SaleInfoPanelProps {
-  currentPhase: SalePhase;
-  saleStartTimestamp: number;
-  saleEndTimestamp: number;
-  currentPrice: number;
-  floorPrice: number;
-}
-
-export const SaleInfoPanel = ({
-  currentPhase,
-  saleStartTimestamp,
-  saleEndTimestamp,
-  currentPrice,
-  floorPrice,
-}: SaleInfoPanelProps) => {
+export const SaleInfoPanel = () => {
   TimeAgo.addLocale(en);
 
   const theme = useTheme();
@@ -40,6 +27,11 @@ export const SaleInfoPanel = ({
   const {
     state: { symbol, decimals },
   } = useCoretimeApi();
+
+  const {
+    phase: { currentPhase, currentPrice, saleStartTimestamp, saleEndTimestamp },
+    saleInfo,
+  } = useSaleInfo();
 
   const [priceModalOpen, openPriceModal] = useState(false);
 
@@ -87,7 +79,7 @@ export const SaleInfoPanel = ({
           items={{
             left: {
               label:
-                (currentPhase as SalePhase) === SalePhase.Interlude
+                currentPhase === SalePhase.Interlude
                   ? 'Start price'
                   : 'Current price',
               value: getBalanceString(
@@ -98,7 +90,11 @@ export const SaleInfoPanel = ({
             },
             right: {
               label: 'Floor price',
-              value: getBalanceString(floorPrice.toString(), decimals, symbol),
+              value: getBalanceString(
+                saleInfo.price.toString(),
+                decimals,
+                symbol
+              ),
             },
           }}
           button={
@@ -120,7 +116,7 @@ export const SaleInfoPanel = ({
       <PriceModal
         open={priceModalOpen}
         onClose={() => openPriceModal(false)}
-        saleInfo={{ phase: currentPhase }}
+        saleInfo={{ currentPrice, currentPhase }}
       />
     </>
   );
