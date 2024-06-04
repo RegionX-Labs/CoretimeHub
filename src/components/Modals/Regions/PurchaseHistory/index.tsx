@@ -52,6 +52,13 @@ export const PurchaseHistoryModal = ({
           >
             Purchase History
           </Typography>
+          <Typography
+            variant='subtitle2'
+            sx={{ color: theme.palette.text.primary }}
+          >
+            Get an insight into all purchases and renewals made during the
+            current bulk period.
+          </Typography>
         </Box>
         <Box>
           {loading || isError ? (

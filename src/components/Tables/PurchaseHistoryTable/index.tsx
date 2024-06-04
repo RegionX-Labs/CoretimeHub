@@ -11,7 +11,7 @@ import en from 'javascript-time-ago/locale/en';
 
 import { planckBnToUnit } from '@/utils/functions';
 
-import { Link } from '@/components/Elements';
+import { Address, Link } from '@/components/Elements';
 
 import { SUBSCAN_URL } from '@/consts';
 import { useCoretimeApi } from '@/contexts/apis';
@@ -33,12 +33,6 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
   const {
     state: { symbol, decimals },
   } = useCoretimeApi();
-
-  const truncateAddres = (address: string) => {
-    return (
-      address.substring(0, 6) + '...' + address.substring(address.length - 6)
-    );
-  };
 
   return (
     <TableContainer
@@ -77,7 +71,12 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
                     href={`${SUBSCAN_URL[network]}/account/${address}`}
                     target='_blank'
                   >
-                    {truncateAddres(address)}
+                    <Address
+                      value={address}
+                      isCopy={true}
+                      isShort={true}
+                      size={24}
+                    />
                   </Link>
                 </StyledTableCell>
                 <StyledTableCell align='right'>{core}</StyledTableCell>
