@@ -10,8 +10,6 @@ import {
   styled,
   Table,
   TableBody,
-  TableCell,
-  tableCellClasses,
   TableContainer,
   TableFooter,
   TableHead,
@@ -21,16 +19,19 @@ import {
   useTheme,
 } from '@mui/material';
 import Image from 'next/image';
-import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
+import { Link } from '@/components/Elements';
+
+import { SUBSCAN_URL } from '@/consts';
 import { useRelayApi } from '@/contexts/apis';
 import { useNetwork } from '@/contexts/network';
 import { ParachainInfo, ParaState } from '@/models';
 
-import { CoreExpiryCard } from '../CoreExpiryCard';
-import { LeaseStateCard } from '../LeaseStateCard';
-import { ParaStateCard } from '../ParaStateCard';
+import { StyledTableCell, StyledTableRow } from '../common';
+import { CoreExpiryCard } from '../../Paras/CoreExpiryCard';
+import { LeaseStateCard } from '../../Paras/LeaseStateCard';
+import { ParaStateCard } from '../../Paras/ParaStateCard';
 
 export type Order = 'asc' | 'desc';
 
@@ -47,28 +48,6 @@ interface ParachainTableProps {
   direction: Order;
   handleSort: (_orderBy: string, _direction: Order) => void;
 }
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-    fontSize: '1rem',
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-    color: theme.palette.common.black,
-  },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0,
-  },
-}));
 
 const ParaActionButton = styled(Button)(({ theme }: any) => ({
   width: 'mind-width',
@@ -179,15 +158,9 @@ export const ParachainTable = ({
           ).map(({ id, name, state, watching, logo, homepage }, index) => (
             <StyledTableRow key={index}>
               <StyledTableCell style={{ width: '10%' }}>
-                <Button
-                  onClick={() => {
-                    window.open(
-                      `https://${network}.subscan.io/parachain/${id}`
-                    );
-                  }}
-                >
+                <Link href={`${SUBSCAN_URL[network]}/parachain/${id}`}>
                   {id}
-                </Button>
+                </Link>
               </StyledTableCell>
               <StyledTableCell style={{ width: '25%' }}>
                 <Stack direction='row' alignItems='center' gap='1rem'>

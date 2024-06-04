@@ -1,33 +1,24 @@
 import { Box, Button, Paper, Typography, useTheme } from '@mui/material';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { CountDown, SalePhaseCard } from '@/components/Elements';
+import { PurchaseHistoryModal } from '@/components/Modals';
 
-import { useNetwork } from '@/contexts/network';
 import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
 
 import styles from './index.module.scss';
 export const SalePhaseInfoPanel = () => {
   const theme = useTheme();
-  const router = useRouter();
-  const { network } = useNetwork();
 
   const {
     phase: { currentPhase, endpoints },
   } = useSaleInfo();
 
   const [remainingTime, setRemainingTime] = useState(0);
+  const [historyModalOpen, openHistoryModal] = useState(false);
 
   const valEndpoints = JSON.stringify(endpoints);
-
-  const onManage = () => {
-    router.push({
-      pathname: '/regions',
-      query: { network },
-    });
-  };
 
   useEffect(() => {
     let _remainingTime;
@@ -46,38 +37,44 @@ export const SalePhaseInfoPanel = () => {
   }, [valEndpoints, currentPhase]);
 
   return (
-    <Paper className={styles.container}>
-      <Box className={styles.titleWrapper}>
-        <Typography
-          sx={{
-            color: theme.palette.common.black,
-            fontSize: '1rem',
-            fontWeight: 700,
-          }}
-        >
-          Current Phase
-        </Typography>
+    <>
+      <Paper className={styles.container}>
+        <Box className={styles.titleWrapper}>
+          <Typography
+            sx={{
+              color: theme.palette.common.black,
+              fontSize: '1rem',
+              fontWeight: 700,
+            }}
+          >
+            Current Phase
+          </Typography>
 
-        <Button
-          size='small'
-          variant='text'
-          className={styles.buttonWrapper}
-          sx={{
-            background: '#e8eff7',
-            color: theme.palette.text.secondary,
-          }}
-          onClick={onManage}
-        >
-          Manage your regions
-        </Button>
-      </Box>
-      <Box className={styles.timerWrapper}>
-        <Box className={styles.currentPhase}>
-          <SalePhaseCard label='' value={currentPhase} />
+          <Button
+            size='small'
+            variant='text'
+            className={styles.buttonWrapper}
+            sx={{
+              background: '#e8eff7',
+              color: theme.palette.text.secondary,
+            }}
+            onClick={() => openHistoryModal(true)}
+          >
+            Purchase History
+          </Button>
         </Box>
-        <Typography>Ends in:</Typography>
-        <CountDown remainingTime={remainingTime} />
-      </Box>
-    </Paper>
+        <Box className={styles.timerWrapper}>
+          <Box className={styles.currentPhase}>
+            <SalePhaseCard label='' value={currentPhase} />
+          </Box>
+          <Typography>Ends in:</Typography>
+          <CountDown remainingTime={remainingTime} />
+        </Box>
+      </Paper>
+      <PurchaseHistoryModal
+        open={historyModalOpen}
+        onClose={() => openHistoryModal(false)}
+      />
+    </>
   );
 };
