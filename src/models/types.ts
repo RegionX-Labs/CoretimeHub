@@ -300,3 +300,34 @@ export type BrokerStatus = {
   lastCommittedTimeslice: number;
   lastTimeslice: number;
 };
+
+export type PurchaseHistoryResponseItem = {
+  account: {
+    address: string;
+  };
+  begin: number;
+  block_num: number;
+  block_timestamp: number;
+  core: number;
+  core_index: string;
+  end: number;
+  event_index: string;
+  extrinsic_index: string;
+  mask: string;
+  price: number;
+  purchased_type: string;
+};
+
+export type PurchaseHistoryResponse = {
+  count: number;
+  list: PurchaseHistoryResponseItem[];
+};
+
+export type PurchaseHistoryItem = {
+  address: string;
+  core: number;
+  extrinsic_index: string;
+  timestamp: number;
+  price: number;
+  type: string;
+};

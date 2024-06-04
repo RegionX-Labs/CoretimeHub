@@ -1,12 +1,14 @@
 import {
   Backdrop,
   Box,
+  Button,
   CircularProgress,
   Typography,
   useTheme,
 } from '@mui/material';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import { sendTx } from '@/utils/functions';
@@ -23,6 +25,7 @@ import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useBalances } from '@/contexts/balance';
+import { useNetwork } from '@/contexts/network';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
@@ -48,6 +51,8 @@ const Purchase = () => {
   const {
     state: { api, apiState },
   } = useCoretimeApi();
+  const router = useRouter();
+  const { network } = useNetwork();
 
   const { fetchRegions } = useRegions();
 
@@ -78,6 +83,13 @@ const Purchase = () => {
       error: () => {
         toastError(`Failed to purchase a region`);
       },
+    });
+  };
+
+  const onManage = () => {
+    router.push({
+      pathname: '/regions',
+      query: { network },
     });
   };
 
@@ -127,10 +139,25 @@ const Purchase = () => {
             <Box
               sx={{
                 display: 'flex',
-                gap: '1rem',
-                justifyContent: 'flex-end',
+                gap: '2rem',
+                justifyContent: 'space-between',
               }}
             >
+              <Button
+                size='small'
+                variant='outlined'
+                sx={{
+                  bgcolor: theme.palette.common.white,
+                  padding: '0.5rem 0.75rem',
+                  borderRadius: 100,
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  marginLeft: 'auto',
+                }}
+                onClick={onManage}
+              >
+                Manage your regions
+              </Button>
               <ProgressButton
                 onClick={purchase}
                 loading={working}

@@ -7,3 +7,4 @@ export * from './Panels';
 export * from './Paras';
 export * from './Regions';
 export * from './Sidebar';
+export * from './Tables';

@@ -106,7 +106,7 @@ export const SalePriceChart = () => {
     yaxis: {
       min: 0,
       title: {
-        text: `Price (${symbol})`,
+        text: symbol ? `Price (${symbol})` : 'Price',
       },
       labels: {
         formatter: (v: number) => v?.toFixed(2),
