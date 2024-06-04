@@ -23,11 +23,11 @@ import {
 } from '@/utils/transfers/native';
 
 import {
+  AddressInput,
   AmountInput,
   Balance,
   ChainSelector,
   ProgressButton,
-  RecipientInput,
   RegionMetaCard,
   RegionSelector,
 } from '@/components';
@@ -435,7 +435,7 @@ const TransferPage = () => {
             >
               Transfer to:
             </Typography>
-            <RecipientInput recipient={newOwner} setRecipient={setNewOwner} />
+            <AddressInput address={newOwner} onChange={setNewOwner} />
           </Stack>
           {asset === AssetType.TOKEN &&
             originChain !== ChainType.NONE &&
