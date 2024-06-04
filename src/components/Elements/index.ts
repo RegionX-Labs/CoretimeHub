@@ -1,3 +1,4 @@
+export * from './Address';
 export * from './Balance';
 export * from './Banner';
 export * from './Buttons';

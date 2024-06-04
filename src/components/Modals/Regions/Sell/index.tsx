@@ -11,7 +11,7 @@ import {
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
-import { AmountInput, RecipientInput } from '@/components/Elements';
+import { AddressInput, AmountInput } from '@/components/Elements';
 import { RegionMetaCard } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
@@ -123,10 +123,7 @@ export const SellModal = ({
             />
           </Stack>
           <Stack direction='column' gap={2}>
-            <RecipientInput
-              setRecipient={setSaleRecipient}
-              recipient={saleRecipient}
-            />
+            <AddressInput onChange={setSaleRecipient} address={saleRecipient} />
           </Stack>
         </Stack>
       </DialogContent>
