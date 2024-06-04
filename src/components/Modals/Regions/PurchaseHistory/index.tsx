@@ -39,7 +39,7 @@ export const PurchaseHistoryModal = ({
     network,
     regionBegin,
     0,
-    10
+    20
   );
 
   return (

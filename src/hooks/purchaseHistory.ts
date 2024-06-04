@@ -37,6 +37,11 @@ export const usePurchaseHistory = (
             setError(true);
             setData([]);
           } else {
+            if (jsonData.data.count == 0) {
+              setData([]);
+              setLoading(false);
+              return;
+            }
             const data = jsonData.data as PurchaseHistoryResponse;
             setData(
               data.list.map(
