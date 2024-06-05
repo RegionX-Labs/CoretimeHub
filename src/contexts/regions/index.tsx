@@ -173,7 +173,7 @@ const RegionDataProvider = ({ children }: Props) => {
 
   useEffect(() => {
     fetchRegions();
-  }, [fetchRegions]);
+  }, []);
 
   const updateRegionName = (index: number, name: string) => {
     const _regions = [...regions];
