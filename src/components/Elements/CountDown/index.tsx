@@ -54,10 +54,13 @@ export const CountDown = ({ remainingTime }: CountDownProps) => {
   };
 
   useEffect(() => {
-    const days = Math.ceil(remainingTime / daySeconds);
-    const _daysDuration = days * daySeconds;
-
-    setDaysDuration(_daysDuration);
+    if (remainingTime <= 0) {
+      setDaysDuration(0);
+    } else {
+      const days = Math.ceil(remainingTime / daySeconds);
+      const _daysDuration = days * daySeconds;
+      setDaysDuration(_daysDuration);
+    }
   }, [remainingTime]);
 
   return remainingTime <= 0 ? (

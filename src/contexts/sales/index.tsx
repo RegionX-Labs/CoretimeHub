@@ -185,6 +185,7 @@ const SaleInfoProvider = ({ children }: Props) => {
   ]);
 
   useEffect(() => {
+    if (height === 0) return;
     setCurrentPhase(getCurrentPhase(saleInfo, height));
   }, [saleInfo, height]);
 
