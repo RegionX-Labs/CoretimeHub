@@ -34,7 +34,7 @@ interface RegionsData {
 }
 const defaultRegionData: RegionsData = {
   regions: [],
-  loading: ContextStatus.UNINITIALIZED,
+  status: ContextStatus.UNINITIALIZED,
   updateRegionName: () => {
     /** */
   },
