@@ -9,7 +9,11 @@ import { parseHNString } from './common';
  * @param units the chain decimal points, that is used to calculate the balance denominator for the chain (e.g. 10 for polkadot, 12 for Kusama)
  * @returns A number that contains the equivalent value of the balance val in chain token unit. (e.g. DOT for polkadot, KSM for Kusama)
  */
-export const planckBnToUnit = (value: string, units: number): number => {
+export const planckBnToUnit = (
+  value: string,
+  units: number,
+  precision = 4
+): number => {
   // BN only supports integers.
   // We need to calculate the whole section and the decimal section separately and calculate the final representation by concatenating the two sections as string.
   const Bn10 = new BN(10);
@@ -27,7 +31,7 @@ export const planckBnToUnit = (value: string, units: number): number => {
   // the final number in string
   const result = `${whole}.${decimal || '0'}`;
 
-  return parseFloat(Number(result).toFixed(4));
+  return parseFloat(Number(result).toFixed(precision));
 };
 
 export const humanNumber = (val: number): string => {
@@ -39,9 +43,12 @@ export const humanNumber = (val: number): string => {
 export const getBalanceString = (
   balance: string,
   decimals: number,
-  symbol: string
+  symbol: string,
+  precision = 4
 ) => {
-  return `${humanNumber(planckBnToUnit(balance, decimals))} ${symbol}`;
+  return `${humanNumber(
+    planckBnToUnit(balance, decimals, precision)
+  )} ${symbol}`;
 };
 
 export const fetchBalance = async (
