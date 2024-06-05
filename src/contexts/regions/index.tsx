@@ -16,6 +16,7 @@ import { useAccounts } from '../account';
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { EXPERIMENTAL } from '../apis/consts';
 import { useRegionXApi } from '../apis/RegionXApi';
+import { useNetwork } from '../network';
 import { Tasks, useTasks } from '../tasks';
 
 interface RegionsData {
@@ -43,7 +44,7 @@ interface Props {
 
 const RegionDataProvider = ({ children }: Props) => {
   const {
-    state: { api: coretimeApi },
+    state: { api: coretimeApi, apiState: coretimeApiState },
     timeslicePeriod,
   } = useCoretimeApi();
   const {
@@ -60,6 +61,7 @@ const RegionDataProvider = ({ children }: Props) => {
 
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
   const [loading, setLoading] = useState(false);
+  const { network } = useNetwork();
 
   const _getTaskFromWorkloadId = useCallback(
     async (core: CoreIndex, mask: string): Promise<number | null> => {
@@ -173,7 +175,7 @@ const RegionDataProvider = ({ children }: Props) => {
 
   useEffect(() => {
     fetchRegions();
-  }, [activeAccount, coretimeApi]);
+  }, [network, activeAccount, coretimeApi, coretimeApiState, relayBlockNumber]);
 
   const updateRegionName = (index: number, name: string) => {
     const _regions = [...regions];

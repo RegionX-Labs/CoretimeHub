@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer, useState } from 'react';
+import React, { useContext, useEffect, useReducer } from 'react';
 
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
@@ -6,7 +6,6 @@ import { NetworkType } from '@/models';
 
 import { connect, disconnect, initialState, reducer } from '../common';
 import { WS_KUSAMA_CORETIME_CHAIN, WS_ROCOCO_CORETIME_CHAIN } from '../consts';
-import { ApiState } from '../types';
 
 const types = {
   CoreIndex: 'u32',
@@ -40,12 +39,16 @@ const CoretimeApiContextProvider = (props: any) => {
 
   const { network } = useNetwork();
 
-  const [timeslicePeriod, setTimeslicePeriod] = useState(80);
+  const TIMESLICE_PERIOD = 80;
 
-  const getUrl = (network: any): string => {
-    return network === NetworkType.ROCOCO
-      ? WS_ROCOCO_CORETIME_CHAIN
-      : WS_KUSAMA_CORETIME_CHAIN;
+  const getUrl = (network: any): string | null => {
+    if (network === NetworkType.ROCOCO) {
+      return WS_ROCOCO_CORETIME_CHAIN;
+    } else if (network === NetworkType.KUSAMA) {
+      return WS_KUSAMA_CORETIME_CHAIN;
+    } else {
+      return null;
+    }
   };
 
   const disconnectCoretime = () => disconnect(state);
@@ -59,24 +62,15 @@ const CoretimeApiContextProvider = (props: any) => {
     const updateNetwork = state.socket != getUrl(network);
     if (updateNetwork) {
       disconnect(state);
-      connect(state, getUrl(network), dispatch, updateNetwork, types);
+      const url = getUrl(network);
+      if (!url) return;
+      connect(state, url, dispatch, updateNetwork, types);
     }
   }, [network, state]);
 
-  useEffect(() => {
-    const { api, apiState } = state;
-
-    if (!api || apiState !== ApiState.READY) return;
-
-    const timeslicePeriod =
-      api.consts.broker.timeslicePeriod.toJSON() as number;
-
-    setTimeslicePeriod(timeslicePeriod);
-  }, [state]);
-
   return (
     <CoretimeApiContext.Provider
-      value={{ state, disconnectCoretime, timeslicePeriod }}
+      value={{ state, disconnectCoretime, timeslicePeriod: TIMESLICE_PERIOD }}
     >
       {props.children}
     </CoretimeApiContext.Provider>

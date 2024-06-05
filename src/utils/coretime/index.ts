@@ -8,8 +8,10 @@ import { NetworkType } from '@/models';
 
 export const leadinFactorAt = (network: NetworkType, when: number) => {
   if (network === NetworkType.ROCOCO) return 2 - when;
-  else {
+  else if (network === NetworkType.KUSAMA) {
     return 5 - 4 * when;
+  } else {
+    return 0;
   }
 };
 

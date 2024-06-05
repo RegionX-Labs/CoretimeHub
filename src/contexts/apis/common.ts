@@ -3,7 +3,7 @@
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc';
-import { Codec, DefinitionRpcExt } from '@polkadot/types/types';
+import { DefinitionRpcExt } from '@polkadot/types/types';
 
 import { ApiState } from './types';
 
@@ -90,8 +90,6 @@ export const connect = (
 ) => {
   const { apiState, jsonrpc } = state;
 
-  let unsubHeight: any, unsubTimestamp: any;
-
   // We only want this function to be performed once
   if (apiState !== ApiState.DISCONNECTED && !newSocket) return;
 
@@ -129,24 +127,20 @@ export const connect = (
       payload: name,
     });
 
-    unsubHeight = await _api.query.system.number((height: Codec) =>
-      dispatch({
-        type: 'SET_HEIGHT',
-        payload: height.toJSON() as number,
-      })
-    );
-    unsubTimestamp = await _api.query.timestamp.now((moment: Codec) =>
-      dispatch({
-        type: 'SET_TIMESTAMP',
-        payload: moment.toJSON() as number,
-      })
-    );
+    const height = await _api.query.system.number();
+    dispatch({
+      type: 'SET_HEIGHT',
+      payload: height.toJSON() as number,
+    });
+    const timestamp = await _api.query.timestamp.now();
+    dispatch({
+      type: 'SET_TIMESTAMP',
+      payload: timestamp.toJSON() as number,
+    });
     dispatch({ type: 'CONNECT_SUCCESS' });
   });
   _api.on('error', (err) => dispatch({ type: 'CONNECT_ERROR', payload: err }));
   _api.on('disconnected', () => {
-    unsubHeight();
-    unsubTimestamp();
     dispatch({ type: 'DISCONNECTED' });
   });
 };

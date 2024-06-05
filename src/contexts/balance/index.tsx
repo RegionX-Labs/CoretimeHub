@@ -52,21 +52,21 @@ const BalanceProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const subscribeBalances = async () => {
+      if (
+        coretimeApiState !== ApiState.READY ||
+        relayApiState !== ApiState.READY ||
+        !coretimeApi ||
+        !relayApi
+      )
+        return;
+
       if (!activeAccount) {
         setCoretimeBalance(0);
         setRelayBalance(0);
         return;
       }
-      if (
-        coretimeApiState !== ApiState.READY ||
-        relayApiState !== ApiState.READY
-      )
-        return;
-
-      if (!coretimeApi || !relayApi) return;
 
       const { address } = activeAccount;
-
       const unsubscribeCoretime = await coretimeApi.queryMulti(
         [[coretimeApi.query.system.account, address]],
         ([
