@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 
 import {
+  ContextStatus,
   ISMPRecordStatus,
   NetworkType,
   RegionLocation,
@@ -27,13 +28,13 @@ import { Tasks, useTasks } from '../tasks';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
-  loading: boolean;
+  status: ContextStatus;
   updateRegionName: (_index: number, _name: string) => void;
   fetchRegions: () => Promise<void>;
 }
 const defaultRegionData: RegionsData = {
   regions: [],
-  loading: false,
+  loading: ContextStatus.UNINITIALIZED,
   updateRegionName: () => {
     /** */
   },
@@ -57,17 +58,19 @@ const RegionDataProvider = ({ children }: Props) => {
     state: { api: regionxApi },
   } = useRegionXApi();
   const {
-    state: { height: relayBlockNumber },
+    state: { api: relayApi, apiState: relayApiState, height: relayBlockNumber },
   } = useRelayApi();
   const {
     state: { activeAccount },
   } = useAccounts();
+  const { network } = useNetwork();
 
   const { fetchWorkplan, fetchRegionWorkload } = useTasks();
 
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
-  const [loading, setLoading] = useState(false);
-  const { network } = useNetwork();
+  const [status, setStatus] = useState<ContextStatus>(
+    ContextStatus.UNINITIALIZED
+  );
 
   const _getTaskFromWorkloadId = useCallback(
     async (core: CoreIndex, mask: string): Promise<number | null> => {
@@ -129,7 +132,8 @@ const RegionDataProvider = ({ children }: Props) => {
         commitment
       );
     };
-    setLoading(true);
+
+    setStatus(ContextStatus.LOADING);
 
     const tasks = await fetchWorkplan();
 
@@ -144,7 +148,9 @@ const RegionDataProvider = ({ children }: Props) => {
         tasks,
         _regions.length
       );
-      if (!regionMetadata) continue;
+      if (!regionMetadata) {
+        continue;
+      }
       _regions.push(regionMetadata);
     }
 
@@ -178,27 +184,43 @@ const RegionDataProvider = ({ children }: Props) => {
     }
 
     setRegions(_regions);
-    setLoading(false);
+    setStatus(ContextStatus.LOADED);
   };
 
   useEffect(() => {
-    if (network === NetworkType.NONE) return;
-    if (!coretimeApi || coretimeApiState !== ApiState.READY) return;
-    fetchRegions();
-  }, [network, activeAccount, coretimeApi, coretimeApiState]);
+    setStatus(ContextStatus.UNINITIALIZED);
+    setRegions([]);
+  }, [network]);
 
   useEffect(() => {
-    if (regions.length === 0 || relayBlockNumber === 0) return;
+    if (!activeAccount) return;
+    if (network === NetworkType.NONE) return;
+    if (!coretimeApi || coretimeApiState !== ApiState.READY) return;
+    if (!relayApi || relayApiState !== ApiState.READY) return;
+    if (relayBlockNumber === 0) return;
 
-    const reload =
-      regions.findIndex(
-        ({ region }) =>
-          region.getBegin() * timeslicePeriod + 1 === relayBlockNumber ||
-          region.getEnd() * timeslicePeriod + 1 === relayBlockNumber
-      ) !== -1;
-
-    if (reload) fetchRegions();
-  }, [relayBlockNumber]);
+    if (status === ContextStatus.LOADED) {
+      const found =
+        regions.findIndex(
+          ({ region }) =>
+            region.getBegin() * timeslicePeriod + 1 === relayBlockNumber ||
+            region.getEnd() * timeslicePeriod + 1 === relayBlockNumber
+        ) !== -1;
+      if (!found) return;
+    } else if (status === ContextStatus.LOADING) {
+      return;
+    }
+    fetchRegions();
+  }, [
+    network,
+    activeAccount,
+    coretimeApi,
+    coretimeApiState,
+    relayApi,
+    relayApiState,
+    relayBlockNumber,
+    status,
+  ]);
 
   const updateRegionName = (index: number, name: string) => {
     const _regions = [...regions];
@@ -211,7 +233,7 @@ const RegionDataProvider = ({ children }: Props) => {
     <RegionDataContext.Provider
       value={{
         regions,
-        loading,
+        status,
         updateRegionName,
         fetchRegions,
       }}

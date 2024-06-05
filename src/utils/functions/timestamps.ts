@@ -7,10 +7,16 @@ export const getBlockTimestamp = async (
   height: number,
   network?: NetworkType
 ): Promise<number> => {
-  const blockTime = network !== undefined ? getBlockTime(network) : 6 * 1000;
-  const currentHeight = (await api.query.system.number()).toJSON() as number;
-  const currentTimestamp = (await api.query.timestamp.now()).toJSON() as number;
-  return currentTimestamp + (height - currentHeight) * blockTime;
+  try {
+    const blockTime = network !== undefined ? getBlockTime(network) : 6 * 1000;
+    const currentHeight = (await api.query.system.number()).toJSON() as number;
+    const currentTimestamp = (
+      await api.query.timestamp.now()
+    ).toJSON() as number;
+    return currentTimestamp + (height - currentHeight) * blockTime;
+  } catch {
+    return 0;
+  }
 };
 
 export const timesliceToTimestamp = async (

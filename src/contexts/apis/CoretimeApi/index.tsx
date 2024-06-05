@@ -58,13 +58,16 @@ const CoretimeApiContextProvider = (props: any) => {
   }, [state.apiError, toastError]);
 
   useEffect(() => {
-    if (state.socket == getUrl(network)) return;
-    const updateNetwork = state.socket != getUrl(network);
-    if (updateNetwork) {
-      disconnect(state);
-      const url = getUrl(network);
-      if (!url) return;
-      connect(state, url, dispatch, updateNetwork, types);
+    const url = getUrl(network);
+    if (state.socket === url) return;
+    if (!url) return;
+    if (state.socket !== url) {
+      try {
+        disconnect(state);
+      } catch {
+        /** empty error handler */
+      }
+      connect(state, url, dispatch, true, types);
     }
   }, [network, state]);
 

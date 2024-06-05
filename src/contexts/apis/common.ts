@@ -53,7 +53,14 @@ export const reducer = (state: any, action: any) => {
         apiState: ApiState.CONNECTING,
       };
     case 'CONNECT_SUCCESS':
-      return { ...state, apiState: ApiState.READY };
+      return {
+        ...state,
+        apiState: ApiState.READY,
+        symbol: '',
+        name: '',
+        height: 0,
+        timestamp: 0,
+      };
     case 'CONNECT_ERROR':
       return { ...state, apiState: ApiState.ERROR, apiError: action.payload };
     case 'DISCONNECTED':
@@ -62,6 +69,8 @@ export const reducer = (state: any, action: any) => {
         apiState: ApiState.DISCONNECTED,
         symbol: '',
         name: '',
+        height: 0,
+        timestamp: 0,
       };
     case 'SET_SYMBOL':
       return { ...state, symbol: action.payload };
@@ -93,24 +102,24 @@ export const connect = (
   // We only want this function to be performed once
   if (apiState !== ApiState.DISCONNECTED && !newSocket) return;
 
-  try {
-    const provider = new WsProvider(socket);
-    const _api = new ApiPromise({
-      provider,
-      rpc: { ...jsonrpc, ...customRpc },
-      types,
-    });
-    dispatch({ type: 'CONNECT_INIT', socket });
+  const provider = new WsProvider(socket);
+  const _api = new ApiPromise({
+    provider,
+    rpc: { ...jsonrpc, ...customRpc },
+    types,
+  });
+  dispatch({ type: 'CONNECT_INIT', socket });
 
-    let unsubHeight: any, unsubTimestamp: any;
+  let unsubHeight: any, unsubTimestamp: any;
 
-    // Set listeners for disconnection and reconnection event.
-    _api.on('connected', () => {
-      dispatch({ type: 'CONNECT', payload: _api, socket });
-      // `ready` event is not emitted upon reconnection and is checked explicitly here.
-      _api.isReady.then(() => dispatch({ type: 'CONNECT_SUCCESS' }));
-    });
-    _api.on('ready', async () => {
+  // Set listeners for disconnection and reconnection event.
+  _api.on('connected', () => {
+    dispatch({ type: 'CONNECT', payload: _api, socket });
+    // `ready` event is not emitted upon reconnection and is checked explicitly here.
+    _api.isReady.then(() => dispatch({ type: 'CONNECT_SUCCESS' }));
+  });
+  _api.on('ready', async () => {
+    try {
       const chainInfo = _api.registry.getChainProperties();
       if (chainInfo) {
         const { tokenDecimals, tokenSymbol } = chainInfo.toHuman() as any;
@@ -143,22 +152,30 @@ export const connect = (
         })
       );
       dispatch({ type: 'CONNECT_SUCCESS' });
-    });
-    _api.on('error', (err) =>
-      dispatch({ type: 'CONNECT_ERROR', payload: err })
-    );
-    _api.on('disconnected', () => {
+    } catch {
+      /** empty error handler */
+    }
+  });
+  _api.on('error', (err) => {
+    dispatch({ type: 'CONNECT_ERROR', payload: err });
+  });
+  _api.on('disconnected', () => {
+    try {
       if (unsubHeight) unsubHeight();
       if (unsubTimestamp) unsubTimestamp();
       dispatch({ type: 'DISCONNECTED' });
-    });
-  } catch (err) {
-    dispatch({ type: 'CONNECT_ERROR', payload: err });
-  }
+    } catch {
+      /** empty error handler */
+    }
+  });
 };
 
 export const disconnect = (state: any) => {
   const { api, apiState } = state;
   if (!api || apiState === ApiState.DISCONNECTED) return;
-  api.disconnect();
+  try {
+    api.disconnect();
+  } catch {
+    /** empty error handler */
+  }
 };
