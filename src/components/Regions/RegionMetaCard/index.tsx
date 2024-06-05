@@ -102,7 +102,7 @@ const RegionCardInner = ({
   const { timeslicePeriod } = useCoretimeApi();
 
   useEffect(() => {
-    if (!api || apiState !== ApiState.READY) {
+    if (!api || apiState !== ApiState.READY || !api.isConnected) {
       return;
     }
 

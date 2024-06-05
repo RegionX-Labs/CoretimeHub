@@ -8,7 +8,12 @@ import React, {
   useState,
 } from 'react';
 
-import { ISMPRecordStatus, RegionLocation, RegionMetadata } from '@/models';
+import {
+  ISMPRecordStatus,
+  NetworkType,
+  RegionLocation,
+  RegionMetadata,
+} from '@/models';
 
 import * as NativeRegions from './native';
 import * as RegionXRegions from './regionx';
@@ -16,6 +21,7 @@ import { useAccounts } from '../account';
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { EXPERIMENTAL } from '../apis/consts';
 import { useRegionXApi } from '../apis/RegionXApi';
+import { ApiState } from '../apis/types';
 import { useNetwork } from '../network';
 import { Tasks, useTasks } from '../tasks';
 
@@ -71,7 +77,7 @@ const RegionDataProvider = ({ children }: Props) => {
     [fetchRegionWorkload]
   );
 
-  const fetchRegions = useCallback(async (): Promise<void> => {
+  const fetchRegions = async (): Promise<void> => {
     if (!activeAccount) {
       setRegions([]);
       return;
@@ -173,20 +179,24 @@ const RegionDataProvider = ({ children }: Props) => {
 
     setRegions(_regions);
     setLoading(false);
-  }, [activeAccount, coretimeApi, regionxApi]);
+  };
 
   useEffect(() => {
+    if (network === NetworkType.NONE) return;
+    if (!coretimeApi || coretimeApiState !== ApiState.READY) return;
     fetchRegions();
   }, [network, activeAccount, coretimeApi, coretimeApiState]);
 
   useEffect(() => {
     if (regions.length === 0 || relayBlockNumber === 0) return;
+
     const reload =
-      regions.find(
+      regions.findIndex(
         ({ region }) =>
-          region.getBegin() * timeslicePeriod === relayBlockNumber ||
-          region.getEnd() * timeslicePeriod === relayBlockNumber
-      ) !== undefined;
+          region.getBegin() * timeslicePeriod + 1 === relayBlockNumber ||
+          region.getEnd() * timeslicePeriod + 1 === relayBlockNumber
+      ) !== -1;
+
     if (reload) fetchRegions();
   }, [relayBlockNumber]);
 

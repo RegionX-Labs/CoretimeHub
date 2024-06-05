@@ -93,62 +93,68 @@ export const connect = (
   // We only want this function to be performed once
   if (apiState !== ApiState.DISCONNECTED && !newSocket) return;
 
-  const provider = new WsProvider(socket);
-  const _api = new ApiPromise({
-    provider,
-    rpc: { ...jsonrpc, ...customRpc },
-    types,
-  });
-  dispatch({ type: 'CONNECT_INIT', socket });
-
-  let unsubHeight: any, unsubTimestamp: any;
-
-  // Set listeners for disconnection and reconnection event.
-  _api.on('connected', () => {
-    dispatch({ type: 'CONNECT', payload: _api, socket });
-    // `ready` event is not emitted upon reconnection and is checked explicitly here.
-    _api.isReady.then(() => dispatch({ type: 'CONNECT_SUCCESS' }));
-  });
-  _api.on('ready', async () => {
-    const chainInfo = _api.registry.getChainProperties();
-    if (chainInfo) {
-      const { tokenDecimals, tokenSymbol } = chainInfo.toHuman() as any;
-      dispatch({
-        type: 'SET_SYMBOL',
-        payload: tokenSymbol ? tokenSymbol[0] : 'UNIT',
-      });
-      dispatch({
-        type: 'SET_DECIMALS',
-        payload: tokenDecimals ? tokenDecimals[0] : 12,
-      });
-    }
-
-    const name = (await _api.rpc.system.chain()).toString();
-    dispatch({
-      type: 'SET_NAME',
-      payload: name,
+  try {
+    const provider = new WsProvider(socket);
+    const _api = new ApiPromise({
+      provider,
+      rpc: { ...jsonrpc, ...customRpc },
+      types,
     });
+    dispatch({ type: 'CONNECT_INIT', socket });
 
-    unsubHeight = await _api.query.system.number((height: Codec) =>
+    let unsubHeight: any, unsubTimestamp: any;
+
+    // Set listeners for disconnection and reconnection event.
+    _api.on('connected', () => {
+      dispatch({ type: 'CONNECT', payload: _api, socket });
+      // `ready` event is not emitted upon reconnection and is checked explicitly here.
+      _api.isReady.then(() => dispatch({ type: 'CONNECT_SUCCESS' }));
+    });
+    _api.on('ready', async () => {
+      const chainInfo = _api.registry.getChainProperties();
+      if (chainInfo) {
+        const { tokenDecimals, tokenSymbol } = chainInfo.toHuman() as any;
+        dispatch({
+          type: 'SET_SYMBOL',
+          payload: tokenSymbol ? tokenSymbol[0] : 'UNIT',
+        });
+        dispatch({
+          type: 'SET_DECIMALS',
+          payload: tokenDecimals ? tokenDecimals[0] : 12,
+        });
+      }
+
+      const name = (await _api.rpc.system.chain()).toString();
       dispatch({
-        type: 'SET_HEIGHT',
-        payload: height.toJSON() as number,
-      })
+        type: 'SET_NAME',
+        payload: name,
+      });
+
+      unsubHeight = await _api.query.system.number((height: Codec) =>
+        dispatch({
+          type: 'SET_HEIGHT',
+          payload: height.toJSON() as number,
+        })
+      );
+      unsubTimestamp = await _api.query.timestamp.now((moment: Codec) =>
+        dispatch({
+          type: 'SET_TIMESTAMP',
+          payload: moment.toJSON() as number,
+        })
+      );
+      dispatch({ type: 'CONNECT_SUCCESS' });
+    });
+    _api.on('error', (err) =>
+      dispatch({ type: 'CONNECT_ERROR', payload: err })
     );
-    unsubTimestamp = await _api.query.timestamp.now((moment: Codec) =>
-      dispatch({
-        type: 'SET_TIMESTAMP',
-        payload: moment.toJSON() as number,
-      })
-    );
-    dispatch({ type: 'CONNECT_SUCCESS' });
-  });
-  _api.on('error', (err) => dispatch({ type: 'CONNECT_ERROR', payload: err }));
-  _api.on('disconnected', () => {
-    if (unsubHeight) unsubHeight();
-    if (unsubTimestamp) unsubTimestamp();
-    dispatch({ type: 'DISCONNECTED' });
-  });
+    _api.on('disconnected', () => {
+      if (unsubHeight) unsubHeight();
+      if (unsubTimestamp) unsubTimestamp();
+      dispatch({ type: 'DISCONNECTED' });
+    });
+  } catch (err) {
+    dispatch({ type: 'CONNECT_ERROR', payload: err });
+  }
 };
 
 export const disconnect = (state: any) => {
