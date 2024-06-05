@@ -51,6 +51,14 @@ export const SaleInfoPanel = () => {
     openPriceModal(true);
   };
 
+  const formatBalance = (x: number) =>
+    getBalanceString(
+      x.toString(),
+      decimals,
+      symbol,
+      network === NetworkType.ROCOCO ? 7 : currentPrice > 1 ? 2 : 3
+    );
+
   return (
     <>
       <Box className={styles.grid}>
@@ -85,21 +93,11 @@ export const SaleInfoPanel = () => {
                 currentPhase === SalePhase.Interlude
                   ? 'Start price'
                   : 'Current price',
-              value: getBalanceString(
-                currentPrice.toString(),
-                decimals,
-                symbol,
-                network === NetworkType.ROCOCO ? 7 : 2
-              ),
+              value: formatBalance(currentPrice),
             },
             right: {
               label: 'Floor price',
-              value: getBalanceString(
-                saleInfo.price.toString(),
-                decimals,
-                symbol,
-                network === NetworkType.ROCOCO ? 7 : 2
-              ),
+              value: formatBalance(saleInfo.price),
             },
           }}
           button={
