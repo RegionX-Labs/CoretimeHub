@@ -56,7 +56,7 @@ export const SaleInfoPanel = () => {
       x.toString(),
       decimals,
       symbol,
-      network === NetworkType.ROCOCO ? 7 : currentPrice > 1 ? 2 : 3
+      network === NetworkType.ROCOCO ? 7 : x > 1 ? 2 : 3
     );
 
   return (
