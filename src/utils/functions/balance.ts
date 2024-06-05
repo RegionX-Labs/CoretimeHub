@@ -1,7 +1,4 @@
-import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
-
-import { parseHNString } from './common';
 
 /**
  * Converts an on chain balance value in BN planck to a decimal value in token unit (1 token token = 10^units planck)
@@ -49,15 +46,4 @@ export const getBalanceString = (
   return `${humanNumber(
     planckBnToUnit(balance, decimals, precision)
   )} ${symbol}`;
-};
-
-export const fetchBalance = async (
-  api: ApiPromise,
-  address: string
-): Promise<number> => {
-  const coretimeAccount = (
-    await api.query.system.account(address)
-  ).toHuman() as any;
-
-  return parseHNString(coretimeAccount.data.free.toString());
 };

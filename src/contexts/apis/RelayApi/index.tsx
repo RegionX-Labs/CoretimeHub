@@ -33,18 +33,27 @@ const RelayApiContextProvider = (props: any) => {
 
   const disconnectRelay = () => disconnect(state);
 
-  const getUrl = (network: any): string => {
-    return network === NetworkType.ROCOCO
-      ? WS_ROCOCO_RELAY_CHAIN
-      : WS_KUSAMA_RELAY_CHAIN;
+  const getUrl = (network: any): string | null => {
+    if (network === NetworkType.ROCOCO) {
+      return WS_ROCOCO_RELAY_CHAIN;
+    } else if (network === NetworkType.KUSAMA) {
+      return WS_KUSAMA_RELAY_CHAIN;
+    } else {
+      return null;
+    }
   };
 
   useEffect(() => {
-    if (state.socket == getUrl(network)) return;
-    const updateNetwork = state.socket != getUrl(network);
-    if (updateNetwork) {
-      disconnect(state);
-      connect(state, getUrl(network), dispatch, updateNetwork);
+    const url = getUrl(network);
+    if (state.socket === url) return;
+    if (!url) return;
+    if (state.socket !== url) {
+      try {
+        disconnect(state);
+      } catch {
+        /** empty error handler */
+      }
+      connect(state, url, dispatch, true);
     }
   }, [network, state]);
 

@@ -32,11 +32,13 @@ import { useNetwork } from '@/contexts/network';
 const coretimeIcons = {
   [NetworkType.KUSAMA]: KusamaCoretime,
   [NetworkType.ROCOCO]: RococoCoretime,
+  [NetworkType.NONE]: '',
 };
 
 const relayIcons = {
   [NetworkType.KUSAMA]: Kusama,
   [NetworkType.ROCOCO]: Rococo,
+  [NetworkType.NONE]: '',
 };
 
 export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {

@@ -206,14 +206,14 @@ const CoremaskCircularProgress = ({
     <Box position='relative' display='inline-flex'>
       <CircularProgress
         className={styles.circular}
-        size='200px'
+        size='12rem'
         variant='determinate'
         value={100}
         style={{ position: 'absolute', color: '#d3d3d3' }} // Secondary color
       />
       <CircularProgress
         className={styles.circular}
-        size='200px'
+        size='12rem'
         variant='determinate'
         value={getCircularProgressValue(position, oneStart, oneEnd)}
       />

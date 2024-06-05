@@ -34,14 +34,14 @@ import {
   PartitionIcon,
   TransferIcon,
 } from '@/icons';
-import { ISMPRecordStatus, RegionLocation } from '@/models';
+import { ContextStatus, ISMPRecordStatus, RegionLocation } from '@/models';
 
 const Dashboard = () => {
   const theme = useTheme();
   const {
     state: { activeAccount },
   } = useAccounts();
-  const { regions, loading, updateRegionName } = useRegions();
+  const { regions, status, updateRegionName } = useRegions();
 
   const [currentRegionIndex, setCurrentRegionIndex] = useState<number>();
   const [partitionModalOpen, openPartitionModal] = useState(false);
@@ -163,7 +163,7 @@ const Dashboard = () => {
             },
           }}
         >
-          {loading && (
+          {status !== ContextStatus.LOADED && (
             <Backdrop open>
               <CircularProgress />
             </Backdrop>
