@@ -53,7 +53,12 @@ export const reducer = (state: any, action: any) => {
         apiState: ApiState.CONNECTING,
       };
     case 'CONNECT_SUCCESS':
-      return { ...state, apiState: ApiState.READY };
+      return {
+        ...state,
+        apiState: ApiState.READY,
+        height: 0,
+        timestamp: 0,
+      };
     case 'CONNECT_ERROR':
       return { ...state, apiState: ApiState.ERROR, apiError: action.payload };
     case 'DISCONNECTED':
@@ -62,6 +67,8 @@ export const reducer = (state: any, action: any) => {
         apiState: ApiState.DISCONNECTED,
         symbol: '',
         name: '',
+        height: 0,
+        timestamp: 0,
       };
     case 'SET_SYMBOL':
       return { ...state, symbol: action.payload };
@@ -90,8 +97,6 @@ export const connect = (
 ) => {
   const { apiState, jsonrpc } = state;
 
-  let unsubHeight: any, unsubTimestamp: any;
-
   // We only want this function to be performed once
   if (apiState !== ApiState.DISCONNECTED && !newSocket) return;
 
@@ -103,6 +108,8 @@ export const connect = (
   });
   dispatch({ type: 'CONNECT_INIT', socket });
 
+  let unsubHeight: any, unsubTimestamp: any;
+
   // Set listeners for disconnection and reconnection event.
   _api.on('connected', () => {
     dispatch({ type: 'CONNECT', payload: _api, socket });
@@ -110,49 +117,63 @@ export const connect = (
     _api.isReady.then(() => dispatch({ type: 'CONNECT_SUCCESS' }));
   });
   _api.on('ready', async () => {
-    const chainInfo = _api.registry.getChainProperties();
-    if (chainInfo) {
-      const { tokenDecimals, tokenSymbol } = chainInfo.toHuman() as any;
+    try {
+      const chainInfo = _api.registry.getChainProperties();
+      if (chainInfo) {
+        const { tokenDecimals, tokenSymbol } = chainInfo.toHuman() as any;
+        dispatch({
+          type: 'SET_SYMBOL',
+          payload: tokenSymbol ? tokenSymbol[0] : 'UNIT',
+        });
+        dispatch({
+          type: 'SET_DECIMALS',
+          payload: tokenDecimals ? tokenDecimals[0] : 12,
+        });
+      }
+
+      const name = (await _api.rpc.system.chain()).toString();
       dispatch({
-        type: 'SET_SYMBOL',
-        payload: tokenSymbol ? tokenSymbol[0] : 'UNIT',
+        type: 'SET_NAME',
+        payload: name,
       });
-      dispatch({
-        type: 'SET_DECIMALS',
-        payload: tokenDecimals ? tokenDecimals[0] : 12,
-      });
+
+      unsubHeight = await _api.query.system.number((height: Codec) =>
+        dispatch({
+          type: 'SET_HEIGHT',
+          payload: height.toJSON() as number,
+        })
+      );
+      unsubTimestamp = await _api.query.timestamp.now((moment: Codec) =>
+        dispatch({
+          type: 'SET_TIMESTAMP',
+          payload: moment.toJSON() as number,
+        })
+      );
+      dispatch({ type: 'CONNECT_SUCCESS' });
+    } catch {
+      /** empty error handler */
     }
-
-    const name = (await _api.rpc.system.chain()).toString();
-    dispatch({
-      type: 'SET_NAME',
-      payload: name,
-    });
-
-    unsubHeight = await _api.query.system.number((height: Codec) =>
-      dispatch({
-        type: 'SET_HEIGHT',
-        payload: height.toJSON() as number,
-      })
-    );
-    unsubTimestamp = await _api.query.timestamp.now((moment: Codec) =>
-      dispatch({
-        type: 'SET_TIMESTAMP',
-        payload: moment.toJSON() as number,
-      })
-    );
-    dispatch({ type: 'CONNECT_SUCCESS' });
   });
-  _api.on('error', (err) => dispatch({ type: 'CONNECT_ERROR', payload: err }));
+  _api.on('error', (err) => {
+    dispatch({ type: 'CONNECT_ERROR', payload: err });
+  });
   _api.on('disconnected', () => {
-    unsubHeight();
-    unsubTimestamp();
-    dispatch({ type: 'DISCONNECTED' });
+    try {
+      if (unsubHeight) unsubHeight();
+      if (unsubTimestamp) unsubTimestamp();
+      dispatch({ type: 'DISCONNECTED' });
+    } catch {
+      /** empty error handler */
+    }
   });
 };
 
 export const disconnect = (state: any) => {
   const { api, apiState } = state;
   if (!api || apiState === ApiState.DISCONNECTED) return;
-  api.disconnect();
+  try {
+    api.disconnect();
+  } catch {
+    /** empty error handler */
+  }
 };

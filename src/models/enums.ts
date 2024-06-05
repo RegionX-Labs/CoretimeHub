@@ -23,6 +23,8 @@ export enum NetworkType {
   ROCOCO = 'rococo',
   // eslint-disable-next-line no-unused-vars
   KUSAMA = 'kusama',
+  // eslint-disable-next-line no-unused-vars
+  NONE = 'none',
 }
 
 export enum FinalityType {
