@@ -1,4 +1,4 @@
-import { Stack, TextField, Typography } from '@mui/material';
+import { InputAdornment, Stack, TextField, Typography } from '@mui/material';
 
 interface AmountInputProps {
   amount: string;
@@ -49,11 +49,15 @@ export const AmountInput = ({
         {caption && <Typography>{caption}</Typography>}
       </Stack>
       <TextField
-        value={`${amount} ${currency}`}
+        value={amount}
         placeholder={`Enter ${currency} amount`}
         InputProps={{
+          endAdornment: (
+            <InputAdornment positoin='end'>{currency}</InputAdornment>
+          ),
           style: {
             borderRadius: '1rem',
+            textAlign: 'center',
           },
         }}
         onChange={(e) => {

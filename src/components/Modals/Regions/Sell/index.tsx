@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import { Region } from 'coretime-utils';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { AddressInput, AmountInput } from '@/components/Elements';
 import { RegionMetaCard } from '@/components/Regions';
@@ -44,12 +44,6 @@ export const SellModal = ({
   const [regionPrice, setRegionPrice] = useState('');
   const [saleRecipient, setSaleRecipient] = useState<string>('');
   const [working, setWorking] = useState(false);
-
-  useEffect(() => {
-    if (activeAccount) {
-      setSaleRecipient(activeAccount.address);
-    }
-  }, [activeAccount]);
 
   const listOnSale = async () => {
     await approveXcRegion(regionMetadata.region);
