@@ -69,7 +69,7 @@ const RegionDataProvider = ({ children }: Props) => {
     [fetchRegionWorkload]
   );
 
-  const fetchRegions = useCallback(async (): Promise<void> => {
+  const fetchRegions = async (): Promise<void> => {
     if (!activeAccount) {
       setRegions([]);
       return;
@@ -124,7 +124,7 @@ const RegionDataProvider = ({ children }: Props) => {
 
     setRegions(_regions);
     setLoading(false);
-  }, [activeAccount, coretimeApi, fetchWorkplan, _getTaskFromWorkloadId]);
+  };
 
   const constructRegionMetadata = async (
     region: Region,
@@ -173,7 +173,7 @@ const RegionDataProvider = ({ children }: Props) => {
 
   useEffect(() => {
     fetchRegions();
-  }, []);
+  }, [activeAccount, coretimeApi]);
 
   const updateRegionName = (index: number, name: string) => {
     const _regions = [...regions];
