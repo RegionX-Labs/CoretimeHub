@@ -145,8 +145,8 @@ export const connect = (
   });
   _api.on('error', (err) => dispatch({ type: 'CONNECT_ERROR', payload: err }));
   _api.on('disconnected', () => {
-    unsubHeight();
-    unsubTimestamp();
+    if (unsubHeight) unsubHeight();
+    if (unsubTimestamp) unsubTimestamp();
     dispatch({ type: 'DISCONNECTED' });
   });
 };
