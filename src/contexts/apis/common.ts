@@ -56,8 +56,6 @@ export const reducer = (state: any, action: any) => {
       return {
         ...state,
         apiState: ApiState.READY,
-        symbol: '',
-        name: '',
         height: 0,
         timestamp: 0,
       };
