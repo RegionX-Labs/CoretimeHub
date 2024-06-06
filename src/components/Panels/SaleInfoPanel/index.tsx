@@ -112,15 +112,11 @@ export const SaleInfoPanel = () => {
           }
         />
       </Box>
-      {currentPrice !== undefined ? (
-        <PriceModal
-          open={priceModalOpen}
-          onClose={() => openPriceModal(false)}
-          saleInfo={{ currentPrice, currentPhase }}
-        />
-      ) : (
-        <></>
-      )}
+      <PriceModal
+        open={priceModalOpen}
+        onClose={() => openPriceModal(false)}
+        saleInfo={{ currentPrice, currentPhase }}
+      />
     </>
   );
 };

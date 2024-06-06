@@ -93,7 +93,7 @@ const SaleInfoProvider = ({ children }: Props) => {
     SalePhase.Interlude
   );
   const [at, setAt] = useState(0);
-  const [currentPrice, setCurrentPrice] = useState<number | undefined>();
+  const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const [endpoints, setEndpoints] = useState<PhaseEndpoints>(defaultEndpoints);
@@ -105,7 +105,7 @@ const SaleInfoProvider = ({ children }: Props) => {
   useEffect(() => {
     setCurrentPrice(
       status !== ContextStatus.LOADED || height === 0
-        ? undefined
+        ? 0
         : getCorePriceAt(at, saleInfo, network)
     );
   }, [status, at, height, network, saleInfo]);
