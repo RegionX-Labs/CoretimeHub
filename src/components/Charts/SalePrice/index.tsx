@@ -1,10 +1,9 @@
-import { formatNumber } from '@polkadot/util';
 import { ApexOptions } from 'apexcharts';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 import * as React from 'react';
 
-import { planckBnToUnit } from '@/utils/functions';
+import { formatNumber, planckBnToUnit } from '@/utils/functions';
 import { getCorePriceAt } from '@/utils/sale';
 
 import { useCoretimeApi } from '@/contexts/apis';
@@ -117,7 +116,8 @@ export const SalePriceChart = () => {
       },
     },
     tooltip: {
-      intersect: false,
+      intersect: true,
+      shared: false,
       x: {
         formatter: (v: number) =>
           v === currentTimestamp ? 'Now' : moment(v).format('D MMM HH:mm'),
