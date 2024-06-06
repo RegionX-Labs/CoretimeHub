@@ -1,3 +1,4 @@
+import { formatNumber } from '@polkadot/util';
 import { ApexOptions } from 'apexcharts';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
@@ -109,7 +110,7 @@ export const SalePriceChart = () => {
         text: symbol ? `Price (${symbol})` : 'Price',
       },
       labels: {
-        formatter: (v: number) => v?.toFixed(2),
+        formatter: (v: number) => (v ? formatNumber(v).toString() : '0'),
       },
       axisBorder: {
         show: true,
@@ -156,5 +157,13 @@ export const SalePriceChart = () => {
     },
   ];
 
-  return <Chart options={options} series={series} type='line' width={560} />;
+  return (
+    <Chart
+      options={options}
+      series={series}
+      type='line'
+      width={560}
+      height={320}
+    />
+  );
 };

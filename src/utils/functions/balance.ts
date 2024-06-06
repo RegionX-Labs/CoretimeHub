@@ -24,7 +24,28 @@ export const planckBnToUnit = (value: string, units: number): number => {
   // the final number in string
   const result = `${whole}.${decimal || '0'}`;
 
-  return parseFloat(Number(result).toFixed(4));
+  return formatNumber(Number(result));
+};
+
+export const formatNumber = (num: number): number => {
+  if (num < 1) {
+    const str = num.toString();
+    const nonZeroIndex = str.search(/[1-9]/); // Find the first non-zero digit
+    if (nonZeroIndex > 0) {
+      // Extract the digits we want to keep.
+      const formatted = num.toFixed(nonZeroIndex + 2);
+      return parseFloat(formatted);
+    }
+  }
+
+  const str = num.toString();
+  const decimalIndex = str.indexOf('.');
+  if (decimalIndex !== -1) {
+    const truncated = str.slice(0, decimalIndex + 3); // Keep up to 2 decimal places
+    return parseFloat(truncated);
+  } else {
+    return num;
+  }
 };
 
 export const humanNumber = (val: number): string => {

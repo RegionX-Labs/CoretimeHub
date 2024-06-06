@@ -81,7 +81,7 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
                 </StyledTableCell>
                 <StyledTableCell align='right'>{core}</StyledTableCell>
                 <StyledTableCell align='right'>
-                  {planckBnToUnit(price.toString(), decimals).toFixed(2)}
+                  {planckBnToUnit(price.toString(), decimals)}
                 </StyledTableCell>
                 <StyledTableCell>{type}</StyledTableCell>
                 <StyledTableCell>
