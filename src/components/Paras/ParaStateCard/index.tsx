@@ -3,7 +3,7 @@ import { Tooltip, Typography } from '@mui/material';
 import { ParaState } from '@/models';
 
 export const ParaStateCard = ({ state }: { state: ParaState }) => {
-  const styles = {
+  const properties = {
     [ParaState.RESERVED]: {
       title: 'Reserved',
       color: '#008000',
@@ -63,21 +63,21 @@ export const ParaStateCard = ({ state }: { state: ParaState }) => {
     },
   };
   return (
-    <Tooltip title={styles[state].tooltip} arrow>
+    <Tooltip title={properties[state].tooltip} arrow>
       <Typography
         sx={{
-          color: styles[state].color,
-          bgcolor: styles[state].background,
+          color: properties[state].color,
+          bgcolor: properties[state].background,
           padding: '0.5rem 1rem',
           borderRadius: '1rem',
-          border: `1px solid ${styles[state].color}`,
+          border: `1px solid ${properties[state].color}`,
           width: '12.5rem',
           textAlign: 'center',
           height: 'fit-content',
           cursor: 'default',
         }}
       >
-        {styles[state].title}
+        {properties[state].title}
       </Typography>
     </Tooltip>
   );
