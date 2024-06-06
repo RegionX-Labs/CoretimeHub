@@ -81,7 +81,6 @@ const Renewal = () => {
     const { core } = parachains[activeIdx];
 
     const txRenewal = coretimeApi.tx.broker.renew(core);
-
     sendTx(txRenewal, activeAccount.address, activeSigner, defaultHandler);
   };
 

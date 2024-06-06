@@ -216,7 +216,7 @@ export const ParachainTable = ({
                   <ParaActionButton onClick={onBuy}>
                     Buy Coretime
                   </ParaActionButton>
-                ) : state === ParaState.ACTIVE_PARA ? (
+                ) : state === ParaState.ACTIVE_RENEWABLE_PARA ? (
                   <ParaActionButton onClick={() => onRenew(id)}>
                     Renew Coretime
                   </ParaActionButton>

@@ -63,21 +63,23 @@ export enum SalePhase {
 
 export enum ParaState {
   // eslint-disable-next-line no-unused-vars
-  RESERVED = 'Reserved',
+  RESERVED,
   // eslint-disable-next-line no-unused-vars
-  ONBOARDING = 'Onboarding',
+  ONBOARDING,
   // eslint-disable-next-line no-unused-vars
-  ONDEMAND_PARACHAIN = 'On-Demand Parachain',
+  ONDEMAND_PARACHAIN,
   // eslint-disable-next-line no-unused-vars
-  IDLE_PARA = 'Parachain(Idle)',
+  IDLE_PARA,
   // eslint-disable-next-line no-unused-vars
-  ACTIVE_PARA = 'Parachain(Active)',
+  ACTIVE_PARA,
   // eslint-disable-next-line no-unused-vars
-  IN_WORKPLAN = 'Idle(In workplan)',
+  ACTIVE_RENEWABLE_PARA,
   // eslint-disable-next-line no-unused-vars
-  LEASE_HOLDING = 'Lease Holding',
+  IN_WORKPLAN,
   // eslint-disable-next-line no-unused-vars
-  SYSTEM = 'System Parachain',
+  LEASE_HOLDING,
+  // eslint-disable-next-line no-unused-vars
+  SYSTEM,
 }
 
 // eslint-disable-next-line no-unused-vars
