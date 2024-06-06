@@ -112,62 +112,66 @@ const SaleInfoProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const fetchSaleInfo = async () => {
-      setStatus(ContextStatus.LOADING);
-      if (
-        !coretimeApi ||
-        coretimeApiState !== ApiState.READY ||
-        !relayApi ||
-        relayApiState !== ApiState.READY ||
-        !coretimeApi.query.broker
-      ) {
-        setStatus(ContextStatus.UNINITIALIZED);
-        return;
+      try {
+        setStatus(ContextStatus.LOADING);
+        if (
+          !coretimeApi ||
+          coretimeApiState !== ApiState.READY ||
+          !relayApi ||
+          relayApiState !== ApiState.READY ||
+          !coretimeApi.query.broker
+        ) {
+          setStatus(ContextStatus.UNINITIALIZED);
+          return;
+        }
+
+        const saleInfoRaw = await coretimeApi.query.broker.saleInfo();
+        const saleInfo = saleInfoRaw.toJSON() as SaleInfo;
+
+        if (!saleInfo) {
+          setStatus(ContextStatus.UNINITIALIZED);
+          return;
+        }
+
+        setSaleInfo(saleInfo);
+
+        const configRaw = await coretimeApi.query.broker.configuration();
+        const config = configRaw.toJSON() as SaleConfig;
+        setConfig(config);
+
+        const saleStart = saleInfo.saleStart;
+        const saleEnd = saleInfo.regionBegin * timeslicePeriod;
+        const saleStartTimestamp = await getBlockTimestamp(
+          coretimeApi,
+          saleStart,
+          network
+        );
+        const saleEndTimestamp = await getBlockTimestamp(relayApi, saleEnd);
+
+        setSaleStartTimestamp(saleStartTimestamp);
+        setSaleEndTimestamp(saleEndTimestamp);
+
+        const blockTime = getBlockTime(network); // Block time on the coretime chain
+
+        const _endpoints = {
+          interlude: {
+            start: saleStartTimestamp - config.interludeLength * blockTime,
+            end: saleStartTimestamp,
+          },
+          leadin: {
+            start: saleStartTimestamp,
+            end: saleStartTimestamp + config.leadinLength * blockTime,
+          },
+          fixed: {
+            start: saleStartTimestamp + config.leadinLength * blockTime,
+            end: saleEndTimestamp,
+          },
+        };
+        setEndpoints(_endpoints);
+        setStatus(ContextStatus.LOADED);
+      } catch (e) {
+        /** empty error handler */
       }
-
-      const saleInfoRaw = await coretimeApi.query.broker.saleInfo();
-      const saleInfo = saleInfoRaw.toJSON() as SaleInfo;
-
-      if (!saleInfo) {
-        setStatus(ContextStatus.UNINITIALIZED);
-        return;
-      }
-
-      setSaleInfo(saleInfo);
-
-      const configRaw = await coretimeApi.query.broker.configuration();
-      const config = configRaw.toJSON() as SaleConfig;
-      setConfig(config);
-
-      const saleStart = saleInfo.saleStart;
-      const saleEnd = saleInfo.regionBegin * timeslicePeriod;
-      const saleStartTimestamp = await getBlockTimestamp(
-        coretimeApi,
-        saleStart,
-        network
-      );
-      const saleEndTimestamp = await getBlockTimestamp(relayApi, saleEnd);
-
-      setSaleStartTimestamp(saleStartTimestamp);
-      setSaleEndTimestamp(saleEndTimestamp);
-
-      const blockTime = getBlockTime(network); // Block time on the coretime chain
-
-      const _endpoints = {
-        interlude: {
-          start: saleStartTimestamp - config.interludeLength * blockTime,
-          end: saleStartTimestamp,
-        },
-        leadin: {
-          start: saleStartTimestamp,
-          end: saleStartTimestamp + config.leadinLength * blockTime,
-        },
-        fixed: {
-          start: saleStartTimestamp + config.leadinLength * blockTime,
-          end: saleEndTimestamp,
-        },
-      };
-      setEndpoints(_endpoints);
-      setStatus(ContextStatus.LOADED);
     };
 
     fetchSaleInfo();
@@ -181,6 +185,7 @@ const SaleInfoProvider = ({ children }: Props) => {
   ]);
 
   useEffect(() => {
+    if (height === 0) return;
     setCurrentPhase(getCurrentPhase(saleInfo, height));
   }, [saleInfo, height]);
 

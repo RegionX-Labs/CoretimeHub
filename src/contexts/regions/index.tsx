@@ -8,7 +8,13 @@ import React, {
   useState,
 } from 'react';
 
-import { ISMPRecordStatus, RegionLocation, RegionMetadata } from '@/models';
+import {
+  ContextStatus,
+  ISMPRecordStatus,
+  NetworkType,
+  RegionLocation,
+  RegionMetadata,
+} from '@/models';
 
 import * as NativeRegions from './native';
 import * as RegionXRegions from './regionx';
@@ -21,13 +27,13 @@ import { Tasks, useTasks } from '../tasks';
 
 interface RegionsData {
   regions: Array<RegionMetadata>;
-  loading: boolean;
+  status: ContextStatus;
   updateRegionName: (_index: number, _name: string) => void;
   fetchRegions: () => Promise<void>;
 }
 const defaultRegionData: RegionsData = {
   regions: [],
-  loading: false,
+  status: ContextStatus.UNINITIALIZED,
   updateRegionName: () => {
     /** */
   },
@@ -51,11 +57,12 @@ const RegionDataProvider = ({ children }: Props) => {
     state: { api: regionxApi },
   } = useRegionXApi();
   const {
-    state: { height: relayBlockNumber },
+    state: { api: relayApi, apiState: relayApiState, height: relayBlockNumber },
   } = useRelayApi();
   const {
     state: { activeAccount },
   } = useAccounts();
+  const { network } = useNetwork();
 
   const { fetchWorkplan, fetchRegionWorkload } = useTasks();
 
@@ -76,7 +83,55 @@ const RegionDataProvider = ({ children }: Props) => {
       setRegions([]);
       return;
     }
-    setLoading(true);
+    const constructRegionMetadata = async (
+      region: Region,
+      location: RegionLocation,
+      owner: string,
+      tasks: Tasks,
+      index: number,
+      recordStatus: ISMPRecordStatus = ISMPRecordStatus.AVAILABLE,
+      commitment?: string
+    ): Promise<RegionMetadata | null> => {
+      // Only user owned non-expired regions.
+      if (
+        encodeAddress(region.getOwner(), 42) !== encodeAddress(owner, 42) ||
+        region.consumed({ timeslicePeriod, relayBlockNumber }) > 1
+      )
+        return null;
+
+      const rawId = getEncodedRegionId(
+        region.getRegionId(),
+        location === RegionLocation.CORETIME_CHAIN ? coretimeApi : regionxApi
+      ).toString();
+
+      const name =
+        localStorage.getItem(`region-${rawId}`) ?? `Region #${index + 1}`;
+
+      let task = tasks[rawId.toString()] ?? null;
+
+      // If the region isn't still active it cannot be in the workload.
+      if (region.consumed({ timeslicePeriod, relayBlockNumber }) != 0) {
+        if (!task) {
+          task = await _getTaskFromWorkloadId(
+            region.getCore(),
+            region.getMask()
+          );
+        }
+      }
+
+      return RegionMetadata.construct(
+        { timeslicePeriod, relayBlockNumber },
+        getEncodedRegionId(region.getRegionId(), coretimeApi),
+        region,
+        name,
+        location,
+        task,
+        recordStatus,
+        commitment
+      );
+    };
+
+    setStatus(ContextStatus.LOADING);
 
     const tasks = await fetchWorkplan();
 
@@ -91,7 +146,9 @@ const RegionDataProvider = ({ children }: Props) => {
         tasks,
         _regions.length
       );
-      if (!regionMetadata) continue;
+      if (!regionMetadata) {
+        continue;
+      }
       _regions.push(regionMetadata);
     }
 
@@ -174,6 +231,28 @@ const RegionDataProvider = ({ children }: Props) => {
   };
 
   useEffect(() => {
+    setStatus(ContextStatus.UNINITIALIZED);
+    setRegions([]);
+  }, [network]);
+
+  useEffect(() => {
+    if (!activeAccount) return;
+    if (network === NetworkType.NONE) return;
+    if (!coretimeApi || coretimeApiState !== ApiState.READY) return;
+    if (!relayApi || relayApiState !== ApiState.READY) return;
+    if (relayBlockNumber === 0) return;
+
+    if (status === ContextStatus.LOADED) {
+      const found =
+        regions.findIndex(
+          ({ region }) =>
+            region.getBegin() * timeslicePeriod + 1 === relayBlockNumber ||
+            region.getEnd() * timeslicePeriod + 1 === relayBlockNumber
+        ) !== -1;
+      if (!found) return;
+    } else if (status === ContextStatus.LOADING) {
+      return;
+    }
     fetchRegions();
   }, [network, activeAccount, coretimeApi, coretimeApiState, relayBlockNumber]);
 
@@ -188,7 +267,7 @@ const RegionDataProvider = ({ children }: Props) => {
     <RegionDataContext.Provider
       value={{
         regions,
-        loading,
+        status,
         updateRegionName,
         fetchRegions,
       }}
