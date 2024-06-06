@@ -16,7 +16,7 @@ import { Address, Link } from '@/components/Elements';
 import { SUBSCAN_URL } from '@/consts';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useNetwork } from '@/contexts/network';
-import { NetworkType, PurchaseHistoryItem } from '@/models';
+import { PurchaseHistoryItem } from '@/models';
 
 import { StyledTableCell } from '../common';
 
@@ -81,11 +81,7 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
                 </StyledTableCell>
                 <StyledTableCell align='right'>{core}</StyledTableCell>
                 <StyledTableCell align='right'>
-                  {planckBnToUnit(
-                    price.toString(),
-                    decimals,
-                    network === NetworkType.ROCOCO ? 6 : 2
-                  )}
+                  {planckBnToUnit(price.toString(), decimals)}
                 </StyledTableCell>
                 <StyledTableCell>{type}</StyledTableCell>
                 <StyledTableCell>

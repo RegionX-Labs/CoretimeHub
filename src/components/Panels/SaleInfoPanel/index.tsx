@@ -13,9 +13,8 @@ import DollarIcon from '@/assets/dollar.png';
 import ListIcon from '@/assets/list.png';
 import ShoppingIcon from '@/assets/shopping.png';
 import { useCoretimeApi } from '@/contexts/apis';
-import { useNetwork } from '@/contexts/network';
 import { useSaleInfo } from '@/contexts/sales';
-import { NetworkType, SalePhase } from '@/models';
+import { SalePhase } from '@/models';
 
 import { DetailCard } from './DetailCard';
 import styles from './index.module.scss';
@@ -24,8 +23,6 @@ export const SaleInfoPanel = () => {
   TimeAgo.addLocale(en);
 
   const theme = useTheme();
-
-  const { network } = useNetwork();
 
   const {
     state: { symbol, decimals },
@@ -52,12 +49,7 @@ export const SaleInfoPanel = () => {
   };
 
   const formatBalance = (x: number) =>
-    getBalanceString(
-      x.toString(),
-      decimals,
-      symbol,
-      network === NetworkType.ROCOCO ? 7 : x > 1 ? 2 : 3
-    );
+    getBalanceString(x.toString(), decimals, symbol);
 
   return (
     <>

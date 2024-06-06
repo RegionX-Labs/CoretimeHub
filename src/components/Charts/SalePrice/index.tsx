@@ -1,3 +1,4 @@
+import { formatNumber } from '@polkadot/util';
 import { ApexOptions } from 'apexcharts';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
@@ -9,7 +10,7 @@ import { getCorePriceAt } from '@/utils/sale';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useNetwork } from '@/contexts/network';
 import { useSaleInfo } from '@/contexts/sales';
-import { NetworkType, SalePhase } from '@/models';
+import { SalePhase } from '@/models';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -26,19 +27,12 @@ export const SalePriceChart = () => {
 
   const { saleStart } = saleInfo;
 
-  const precision = network === NetworkType.ROCOCO ? 7 : 4;
-
   const startPrice = planckBnToUnit(
     getCorePriceAt(saleStart, saleInfo, network).toString(),
-    decimals,
-    precision
+    decimals
   );
-  const curPrice = planckBnToUnit(currentPrice.toString(), decimals, precision);
-  const floorPrice = planckBnToUnit(
-    saleInfo.price.toString(),
-    decimals,
-    precision
-  );
+  const curPrice = planckBnToUnit(currentPrice.toString(), decimals);
+  const floorPrice = planckBnToUnit(saleInfo.price.toString(), decimals);
 
   const data = [
     {
@@ -116,7 +110,7 @@ export const SalePriceChart = () => {
         text: symbol ? `Price (${symbol})` : 'Price',
       },
       labels: {
-        formatter: (v: number) => v?.toFixed(precision),
+        formatter: (v: number) => (v ? formatNumber(v).toString() : '0'),
       },
       axisBorder: {
         show: true,
