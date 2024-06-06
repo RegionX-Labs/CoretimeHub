@@ -93,7 +93,7 @@ const SaleInfoProvider = ({ children }: Props) => {
     SalePhase.Interlude
   );
   const [at, setAt] = useState(0);
-  const [currentPrice, setCurrentPrice] = useState(0);
+  const [currentPrice, setCurrentPrice] = useState<number | undefined>();
   const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
   const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const [endpoints, setEndpoints] = useState<PhaseEndpoints>(defaultEndpoints);
@@ -104,11 +104,11 @@ const SaleInfoProvider = ({ children }: Props) => {
 
   useEffect(() => {
     setCurrentPrice(
-      status !== ContextStatus.LOADED
-        ? 0
+      status !== ContextStatus.LOADED || height === 0
+        ? undefined
         : getCorePriceAt(at, saleInfo, network)
     );
-  }, [status, at, network, saleInfo]);
+  }, [status, at, height, network, saleInfo]);
 
   useEffect(() => {
     const fetchSaleInfo = async () => {
@@ -208,6 +208,7 @@ const SaleInfoProvider = ({ children }: Props) => {
     </SaleDataContext.Provider>
   );
 };
+
 const useSaleInfo = () => useContext(SaleDataContext);
 
 export { SaleInfoProvider, useSaleInfo };

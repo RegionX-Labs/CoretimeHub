@@ -1,4 +1,4 @@
-import { Box, Button, useTheme } from '@mui/material';
+import { Box, Button, CircularProgress, useTheme } from '@mui/material';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
 import moment from 'moment';
@@ -85,7 +85,11 @@ export const SaleInfoPanel = () => {
                 currentPhase === SalePhase.Interlude
                   ? 'Start price'
                   : 'Current price',
-              value: formatBalance(currentPrice),
+              value: currentPrice ? (
+                formatBalance(currentPrice)
+              ) : (
+                <CircularProgress size={16} />
+              ),
             },
             right: {
               label: 'Floor price',
@@ -108,11 +112,15 @@ export const SaleInfoPanel = () => {
           }
         />
       </Box>
-      <PriceModal
-        open={priceModalOpen}
-        onClose={() => openPriceModal(false)}
-        saleInfo={{ currentPrice, currentPhase }}
-      />
+      {currentPrice !== undefined ? (
+        <PriceModal
+          open={priceModalOpen}
+          onClose={() => openPriceModal(false)}
+          saleInfo={{ currentPrice, currentPhase }}
+        />
+      ) : (
+        <></>
+      )}
     </>
   );
 };

@@ -6,7 +6,7 @@ import styles from './index.module.scss';
 
 interface ItemDetail {
   label: string;
-  value: string;
+  value: string | React.ReactNode;
 }
 
 interface DetailCardProps {

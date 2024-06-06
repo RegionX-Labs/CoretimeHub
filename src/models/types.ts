@@ -114,7 +114,7 @@ export type PhaseEndpoints = {
 
 export type SalePhaseInfo = {
   currentPhase: SalePhase;
-  currentPrice: number;
+  currentPrice: number | undefined;
   saleStartTimestamp: number;
   saleEndTimestamp: number;
   endpoints: PhaseEndpoints;
