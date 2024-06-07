@@ -109,10 +109,6 @@ export const ParachainTable = ({
   };
 
   useEffect(() => {
-    setDir(initialDir);
-  }, []);
-
-  useEffect(() => {
     setPage(0);
   }, [parachains]);
 

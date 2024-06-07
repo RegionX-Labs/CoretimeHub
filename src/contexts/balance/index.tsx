@@ -3,7 +3,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAccounts } from '../account';
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { ApiState } from '../apis/types';
-import { useToast } from '../toast';
 
 interface Props {
   children: React.ReactNode;
@@ -29,23 +28,10 @@ const BalanceProvider = ({ children }: Props) => {
   const {
     state: { activeAccount },
   } = useAccounts();
-  const { toastWarning } = useToast();
-  const {
-    state: {
-      api: coretimeApi,
-      apiState: coretimeApiState,
-      symbol: coretimeSymbol,
-      name: coretimeChain,
-    },
-  } = useCoretimeApi();
-  const {
-    state: {
-      api: relayApi,
-      apiState: relayApiState,
-      symbol: relaySymbol,
-      name: relayChain,
-    },
-  } = useRelayApi();
+  const { state: coretimeState } = useCoretimeApi();
+  const { state: relayState } = useRelayApi();
+  const { api: coretimeApi, apiState: coretimeApiState } = coretimeState;
+  const { api: relayApi, apiState: relayApiState } = relayState;
 
   const [coretimeBalance, setCoretimeBalance] = useState(0);
   const [relayBalance, setRelayBalance] = useState(0);
@@ -75,10 +61,6 @@ const BalanceProvider = ({ children }: Props) => {
           },
         ]: [any]) => {
           setCoretimeBalance(free as number);
-          free === 0 &&
-            toastWarning(
-              `The selected account does not have any ${coretimeSymbol} tokens on ${coretimeChain}.`
-            );
         }
       );
 
@@ -90,10 +72,6 @@ const BalanceProvider = ({ children }: Props) => {
           },
         ]: [any]) => {
           setRelayBalance(free as number);
-          free === 0 &&
-            toastWarning(
-              `The selected account does not have any ${relaySymbol} tokens on ${relayChain}.`
-            );
         }
       );
       return () => {

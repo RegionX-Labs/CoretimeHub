@@ -107,19 +107,19 @@ const ParachainManagement = () => {
     setWatchList(newList);
   };
 
+  const getExpiry = (id: number): number | undefined => {
+    const leaseExpiry = chainLeases.find((x) => x.paraId === id);
+    const coretimeExpiry = renewableChains.find((x) => x.paraId === id);
+    if (coretimeExpiry !== undefined) return coretimeExpiry.when;
+    if (leaseExpiry !== undefined) return leaseExpiry.until;
+    return undefined;
+  };
+
   useEffect(() => {
     const compId = (a: ParachainInfo, b: ParachainInfo) => {
       let result = a.id - b.id;
       if (direction === 'desc') result = -result;
       return result;
-    };
-
-    const getExpiry = (id: number): number | undefined => {
-      const leaseExpiry = chainLeases.find((x) => x.paraId === id);
-      const coretimeExpiry = renewableChains.find((x) => x.paraId === id);
-      if (coretimeExpiry !== undefined) return coretimeExpiry.when;
-      if (leaseExpiry !== undefined) return leaseExpiry.until;
-      return undefined;
     };
 
     const compExpiry = (a: ParachainInfo, b: ParachainInfo) => {
@@ -151,6 +151,7 @@ const ParachainManagement = () => {
       filtered.sort(compExpiry);
     }
     setParas2Show(filtered);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parachains, watchList, watchAll, search, orderBy, direction, network]);
 
   return (
