@@ -21,7 +21,8 @@ export const useParasInfo = () => {
   const {
     state: { activeAccount },
   } = useAccounts();
-  const { parachains: renewableParas } = useRenewableParachains();
+  const { parachains: renewableParas, status: renewableParasStatus } =
+    useRenewableParachains();
   const { network } = useNetwork();
 
   const [loading, setLoading] = useState(false);
@@ -196,6 +197,7 @@ export const useParasInfo = () => {
     activeAccount,
     coretimeApi,
     coretimeApiState,
+    renewableParasStatus,
     network,
   ]);
 
