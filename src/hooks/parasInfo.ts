@@ -9,6 +9,8 @@ import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { ParachainInfo, ParaState } from '@/models';
 
+import { useRenewableParachains } from './renewableParas';
+
 export const useParasInfo = () => {
   const {
     state: { api: relayApi, apiState: relayApiState },
@@ -19,6 +21,7 @@ export const useParasInfo = () => {
   const {
     state: { activeAccount },
   } = useAccounts();
+  const { parachains: renewableParas } = useRenewableParachains();
   const { network } = useNetwork();
 
   const [loading, setLoading] = useState(false);
@@ -105,6 +108,7 @@ export const useParasInfo = () => {
         const isInWorkplan = workplanParas.indexOf(id) !== -1;
         const isLeaseHolding = leaseHoldingParas.indexOf(id) !== -1;
         const isSystemPara = systemParas.indexOf(id) !== -1;
+        const isRenewable = renewableParas.find((p) => p.paraId === id);
 
         const state = isSystemPara
           ? ParaState.SYSTEM
@@ -112,13 +116,15 @@ export const useParasInfo = () => {
             ? ParaState.LEASE_HOLDING
             : strState === 'Onboarding'
               ? ParaState.ONBOARDING
-              : isActive
-                ? ParaState.ACTIVE_PARA
-                : isInWorkplan
-                  ? ParaState.IN_WORKPLAN
-                  : strState === 'Parathread'
-                    ? ParaState.ONDEMAND_PARACHAIN
-                    : ParaState.IDLE_PARA;
+              : isRenewable
+                ? ParaState.ACTIVE_RENEWABLE_PARA
+                : isActive
+                  ? ParaState.ACTIVE_PARA
+                  : isInWorkplan
+                    ? ParaState.IN_WORKPLAN
+                    : strState === 'Parathread'
+                      ? ParaState.ONDEMAND_PARACHAIN
+                      : ParaState.IDLE_PARA;
 
         paras.push({ id, state, name, logo, homepage } as ParachainInfo);
       }
