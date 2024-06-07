@@ -130,7 +130,7 @@ export const Sidebar = () => {
       {
         label: 'Explore the Market',
         route: '/marketplace',
-        enabled: false,
+        enabled: true,
         icon: <ExploreIcon />,
       },
     ],

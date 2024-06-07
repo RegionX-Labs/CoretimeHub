@@ -42,7 +42,7 @@ const MarketProvider = ({ children }: Props) => {
 
   useEffect(() => {
     fetchMarket();
-  }, [fetchMarket]);
+  }, []);
 
   return (
     <MarketDataContext.Provider value={{ loading, listedRegions, fetchMarket }}>

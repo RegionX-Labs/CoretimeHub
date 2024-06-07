@@ -53,7 +53,7 @@ export const AmountInput = ({
         placeholder={`Enter ${currency} amount`}
         InputProps={{
           endAdornment: (
-            <InputAdornment positoin='end'>{currency}</InputAdornment>
+            <InputAdornment position='end'>{currency}</InputAdornment>
           ),
           style: {
             borderRadius: '1rem',
