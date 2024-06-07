@@ -162,7 +162,7 @@ export const RegisterModal = ({
             label='Upload Validation Code'
             icon={<CodeOutlinedIcon />}
             onChange={(data) => setWasmCode(data)}
-            onCancel={() => setGenesisHead(new Uint8Array())}
+            onCancel={() => setWasmCode(new Uint8Array())}
           />
         </Box>
       </DialogContent>
