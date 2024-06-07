@@ -62,22 +62,25 @@ export const ParaStateCard = ({ state }: { state: ParaState }) => {
       tooltip: 'Parachain responsible for core Polkadot protocol features.',
     },
   };
+
+  const { tooltip, color, background, title } = properties[state];
+
   return (
-    <Tooltip title={properties[state].tooltip} arrow>
+    <Tooltip title={tooltip} arrow>
       <Typography
         sx={{
-          color: properties[state].color,
-          bgcolor: properties[state].background,
+          color,
+          bgcolor: background,
           padding: '0.5rem 1rem',
           borderRadius: '1rem',
-          border: `1px solid ${properties[state].color}`,
+          border: `1px solid ${color}`,
           width: '12.5rem',
           textAlign: 'center',
           height: 'fit-content',
           cursor: 'default',
         }}
       >
-        {properties[state].title}
+        {title}
       </Typography>
     </Tooltip>
   );
