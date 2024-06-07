@@ -112,6 +112,10 @@ export const ParachainTable = ({
     setDir(initialDir);
   }, []);
 
+  useEffect(() => {
+    setPage(0);
+  }, [parachains]);
+
   return (
     <TableContainer component={Paper} sx={{ maxHeight: '100%' }}>
       <Table stickyHeader>
