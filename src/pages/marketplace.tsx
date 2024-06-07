@@ -13,13 +13,14 @@ import {
   Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { Timeslice } from 'coretime-utils';
-import { useEffect, useState } from 'react';
+import { BN } from '@polkadot/util';
+import { Region, RegionId, RegionRecord, Timeslice } from 'coretime-utils';
+import { useState } from 'react';
 
 import {
   ActionButton,
   DateInput,
-  ListingCard,
+  MarketRegion,
   PurchaseModal,
 } from '@/components';
 
@@ -86,18 +87,39 @@ const durationOptions: DurationOption[] = [
   { duration: 3 * WEEK_IN_TIMESLICES, label: '3 weeks' },
   { duration: 4 * WEEK_IN_TIMESLICES, label: '4 weeks' },
 ];
+const mockup = {
+  region: new Region(
+    {
+      begin: 135510,
+      core: 40,
+      mask: '0x0000000000000000ffff',
+    } as RegionId,
+    {
+      end: 136050,
+      owner: '5EULYMVuML584aiyacnwjw1sb9iXu9NkdMVLz3MCgCrHmSFn',
+      paid: null,
+    } as RegionRecord
+  ),
+  regionConsumed: 0.75,
+  regionCoreOccupancy: 0.8,
+  seller: '5EULYMVuML584aiyacnwjw1sb9iXu9NkdMVLz3MCgCrHmSFn',
+  timeslicePrice: new BN('2300000000000'),
+  currentPrice: new BN('5300000000000'),
+  saleRecepient: null,
+} as Listing;
 
 const Marketplace = () => {
   const theme = useTheme();
-  const { listedRegions, fetchMarket } = useMarket();
+  const { fetchMarket } = useMarket();
   const {
     state: { symbol },
   } = useCoretimeApi();
 
   const [purchaseModalOpen, openPurhcaseModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
-  const [filteredListings, setFilteredListings] =
-    useState<Listing[]>(listedRegions);
+  const [filteredListings] = useState<Listing[]>(
+    [1, 2, 3, 4, 5, 6].map(() => mockup)
+  );
 
   // Filters
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -110,7 +132,7 @@ const Marketplace = () => {
   // Filter popover
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const id = open ? 'popover-filters' : undefined;
   const openFilters = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -124,9 +146,9 @@ const Marketplace = () => {
     openPurhcaseModal(true);
   };
 
-  useEffect(() => {
-    setFilteredListings(listedRegions);
-  }, [listedRegions]);
+  // useEffect(() => {
+  //   setFilteredListings(listedRegions);
+  // }, [listedRegions]);
 
   const clearFilters = () => {
     setSelectedRange(rangeOptions[0].limit);
@@ -374,11 +396,7 @@ const Marketplace = () => {
         >
           {filteredListings.map((listing, indx) => (
             <Box key={indx} margin='1em'>
-              <ListingCard
-                listing={listing}
-                readOnly={false}
-                onPurchase={onPurchase}
-              />
+              <MarketRegion listing={listing} onPurchase={onPurchase} />
             </Box>
           ))}
         </Box>
