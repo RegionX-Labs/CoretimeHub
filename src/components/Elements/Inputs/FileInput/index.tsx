@@ -97,6 +97,11 @@ function InputFile({
     onDrop,
   });
 
+  const handleCancel = () => {
+    setFile(undefined);
+    onCancel && onCancel();
+  };
+
   return (
     <div className={styles.container}>
       {!file ? (
@@ -107,7 +112,7 @@ function InputFile({
         </div>
       ) : (
         <div className={styles.hasFile}>
-          <IconButton className={styles.closeIcon} onClick={onCancel}>
+          <IconButton className={styles.closeIcon} onClick={handleCancel}>
             <CloseIcon />
           </IconButton>
           <div className={styles.fileName}>{file.name}</div>
