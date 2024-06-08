@@ -112,7 +112,7 @@ const AccountProvider = ({ children }: Props) => {
   const disconnectWallet = () => dispatch({ type: 'DISCONNECT' });
 
   useEffect(() => {
-    const { accounts } = state;
+    const accounts = state.accounts;
 
     if (accounts.length) {
       const activeAccount = localStorage.getItem(LOCAL_STORAGE_ACTIVE_ACCOUNT);
@@ -128,7 +128,7 @@ const AccountProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const getInjector = async () => {
-      const { activeAccount } = state;
+      const activeAccount = state.activeAccount;
       if (!activeAccount) return;
 
       const { web3FromSource } = await import('@polkadot/extension-dapp');

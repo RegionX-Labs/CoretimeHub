@@ -21,8 +21,7 @@ export const useParasInfo = () => {
   const {
     state: { activeAccount },
   } = useAccounts();
-  const { parachains: renewableParas, status: renewableParasStatus } =
-    useRenewableParachains();
+  const { parachains: renewableParas } = useRenewableParachains();
   const { network } = useNetwork();
 
   const [loading, setLoading] = useState(false);
@@ -114,18 +113,18 @@ export const useParasInfo = () => {
         const state = isSystemPara
           ? ParaState.SYSTEM
           : isLeaseHolding
-            ? ParaState.LEASE_HOLDING
-            : strState === 'Onboarding'
-              ? ParaState.ONBOARDING
-              : isRenewable
-                ? ParaState.ACTIVE_RENEWABLE_PARA
-                : isActive
-                  ? ParaState.ACTIVE_PARA
-                  : isInWorkplan
-                    ? ParaState.IN_WORKPLAN
-                    : strState === 'Parathread'
-                      ? ParaState.ONDEMAND_PARACHAIN
-                      : ParaState.IDLE_PARA;
+          ? ParaState.LEASE_HOLDING
+          : strState === 'Onboarding'
+          ? ParaState.ONBOARDING
+          : isRenewable
+          ? ParaState.ACTIVE_RENEWABLE_PARA
+          : isActive
+          ? ParaState.ACTIVE_PARA
+          : isInWorkplan
+          ? ParaState.IN_WORKPLAN
+          : strState === 'Parathread'
+          ? ParaState.ONDEMAND_PARACHAIN
+          : ParaState.IDLE_PARA;
 
         paras.push({ id, state, name, logo, homepage } as ParachainInfo);
       }
@@ -197,8 +196,8 @@ export const useParasInfo = () => {
     activeAccount,
     coretimeApi,
     coretimeApiState,
-    renewableParasStatus,
     network,
+    renewableParas,
   ]);
 
   useEffect(() => {

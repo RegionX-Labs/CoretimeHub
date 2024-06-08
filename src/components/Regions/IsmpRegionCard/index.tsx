@@ -148,6 +148,7 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
         ? respond(regionMetadata.requestCommitment)
         : onError();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coretimeApi, regionxApi, coretimeApiState, regionxApiState]);
 
   const requestRegionRecord = async () => {

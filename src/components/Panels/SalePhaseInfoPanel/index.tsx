@@ -18,8 +18,6 @@ export const SalePhaseInfoPanel = () => {
   const [remainingTime, setRemainingTime] = useState(0);
   const [historyModalOpen, openHistoryModal] = useState(false);
 
-  const valEndpoints = JSON.stringify(endpoints);
-
   useEffect(() => {
     let _remainingTime;
 
@@ -34,7 +32,12 @@ export const SalePhaseInfoPanel = () => {
     } else return;
 
     setRemainingTime(_remainingTime);
-  }, [valEndpoints, currentPhase]);
+  }, [
+    endpoints.interlude.end,
+    endpoints.leadin.end,
+    endpoints.fixed.end,
+    currentPhase,
+  ]);
 
   return (
     <>
