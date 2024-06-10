@@ -113,9 +113,14 @@ export const PoolingModal = ({
           </Typography>
           <Typography
             variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
+            sx={{
+              color: theme.palette.text.primary,
+              textWrap: 'wrap',
+              maxWidth: '35rem',
+            }}
           >
-            You can contribute your region to the pool of instantaneous regions
+            You can contribute your region to the instantaneous coretime pool to
+            earn rewards.
           </Typography>
         </Box>
         <Box className={styles.content}>

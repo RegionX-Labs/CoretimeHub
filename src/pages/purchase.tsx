@@ -82,6 +82,7 @@ const Purchase = () => {
       },
       error: () => {
         toastError(`Failed to purchase a region`);
+        setWorking(false);
       },
     });
   };

@@ -140,9 +140,14 @@ export const PartitionModal = ({
           </Typography>
           <Typography
             variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
+            sx={{
+              color: theme.palette.text.primary,
+              textWrap: 'wrap',
+              maxWidth: '35rem',
+            }}
           >
-            Here you can split region into few small parts
+            Split your region into two new ones with different start and end
+            points. They will be divided at the selected pivot point.
           </Typography>
         </Box>
         <Box className={styles.content}>

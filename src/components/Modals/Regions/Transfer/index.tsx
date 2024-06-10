@@ -147,7 +147,7 @@ export const TransferModal = ({
             variant='subtitle2'
             sx={{ color: theme.palette.text.primary }}
           >
-            Here you can transfer region to new owner
+            Here you can transfer your region to a new owner
           </Typography>
         </Box>
         <Box className={styles.content}>

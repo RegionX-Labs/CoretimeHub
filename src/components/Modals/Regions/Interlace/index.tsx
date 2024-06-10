@@ -114,9 +114,27 @@ export const InterlaceModal = ({
           </Typography>
           <Typography
             variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
+            sx={{
+              color: theme.palette.text.primary,
+              textWrap: 'wrap',
+              maxWidth: '35rem',
+            }}
           >
-            Interlace your region
+            Interlace your region into two new regions, each of which can be
+            assigned to a different task while both run on the same core.
+          </Typography>
+          <br></br>
+          <Typography
+            variant='subtitle2'
+            sx={{
+              color: theme.palette.text.primary,
+              textWrap: 'wrap',
+              maxWidth: '35rem',
+            }}
+          >
+            Select the percentage of core resources that will be allocated to
+            one of the newly created regions, while the rest will be allocated
+            to the other.
           </Typography>
         </Box>
         <RegionOverview regionMetadata={regionMetadata} />

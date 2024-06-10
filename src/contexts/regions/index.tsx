@@ -211,6 +211,7 @@ const RegionDataProvider = ({ children }: Props) => {
       return;
     }
     fetchRegions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     network,
     activeAccount,

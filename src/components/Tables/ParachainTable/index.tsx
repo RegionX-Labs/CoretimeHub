@@ -109,8 +109,8 @@ export const ParachainTable = ({
   };
 
   useEffect(() => {
-    setDir(initialDir);
-  }, []);
+    setPage(0);
+  }, [parachains]);
 
   return (
     <TableContainer component={Paper} sx={{ maxHeight: '100%' }}>
@@ -216,7 +216,7 @@ export const ParachainTable = ({
                   <ParaActionButton onClick={onBuy}>
                     Buy Coretime
                   </ParaActionButton>
-                ) : state === ParaState.ACTIVE_PARA ? (
+                ) : state === ParaState.ACTIVE_RENEWABLE_PARA ? (
                   <ParaActionButton onClick={() => onRenew(id)}>
                     Renew Coretime
                   </ParaActionButton>

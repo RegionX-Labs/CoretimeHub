@@ -47,7 +47,7 @@ const NetworkProvider = ({ children }: Props) => {
         { shallow: false }
       );
     }
-  }, [network, router.isReady]);
+  }, [network, router, router.isReady]);
 
   const setNetwork = (network: NetworkType) => setActiveNetwork(network);
 
