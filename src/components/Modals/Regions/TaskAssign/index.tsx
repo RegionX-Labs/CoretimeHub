@@ -124,7 +124,7 @@ export const TaskAssignModal = ({
               variant='subtitle2'
               sx={{ color: theme.palette.text.primary }}
             >
-              Here you can transfer region to new owner
+              Here you can assign your region to a specific task
             </Typography>
           </Box>
           <Box className={styles.content}>
