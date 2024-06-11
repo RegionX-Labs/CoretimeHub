@@ -1,7 +1,8 @@
-import theme from '@/utils/muiTheme';
 import CloseIcon from '@mui/icons-material/Close';
 import { Alert, IconButton } from '@mui/material';
 import React, { useState } from 'react';
+
+import theme from '@/utils/muiTheme';
 
 interface BannerProps {
   content: string;

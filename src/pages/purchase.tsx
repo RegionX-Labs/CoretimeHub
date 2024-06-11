@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import { sendTx } from '@/utils/functions';
+import { isNewPricing } from '@/utils/sale';
 
 import {
   Balance,
@@ -31,7 +32,6 @@ import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
 import { ContextStatus, SalePhase } from '@/models';
-import { isNewPricing } from '@/utils/sale';
 
 const Purchase = () => {
   const theme = useTheme();
