@@ -15,6 +15,7 @@ import { sendTx } from '@/utils/functions';
 
 import {
   Balance,
+  Banner,
   CoreDetailsPanel,
   ProgressButton,
   SaleInfoPanel,
@@ -120,6 +121,16 @@ const Purchase = () => {
         <Balance
           coretimeBalance={balance.coretime}
           relayBalance={balance.relay}
+        />
+      </Box>
+      <Box mt={'.5rem'}>
+        <Banner
+          content='Learn more about the new Coretime pricing model coming to Kusama: '
+          link={{
+            title: 'Agile Coretime Pricing Explained',
+            href: 'https://grillapp.net/12935/agile-coretime-pricing-explained-166522?ref=12935',
+          }}
+          severity='info'
         />
       </Box>
       <Box>
