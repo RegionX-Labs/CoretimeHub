@@ -72,16 +72,16 @@ describe('Purchase page', () => {
       // leading factor is equal to 2 at the start of the sale.
       expect(
         getCorePriceAt(blockNumber, mockSaleInfo, NetworkType.ROCOCO)
-      ).toBe(mockSaleInfo.price * 2);
+      ).toBe(mockSaleInfo.price * 100);
     });
 
     it('works for kusama', () => {
       const blockNumber = mockSaleInfo.saleStart;
 
-      // leading factor is equal to 2 at the start of the sale.
+      // leading factor is equal to 5 at the start of the sale.
       expect(
         getCorePriceAt(blockNumber, mockSaleInfo, NetworkType.KUSAMA)
-      ).toBe(mockSaleInfo.price * 5);
+      ).toBe(mockSaleInfo.price * 100);
     });
   });
 });
