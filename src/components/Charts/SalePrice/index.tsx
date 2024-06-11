@@ -7,7 +7,6 @@ import { formatNumber, planckBnToUnit } from '@/utils/functions';
 import { getCorePriceAt } from '@/utils/sale';
 
 import { useCoretimeApi } from '@/contexts/apis';
-import { useNetwork } from '@/contexts/network';
 import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
 
@@ -22,16 +21,17 @@ export const SalePriceChart = () => {
     saleInfo,
     phase: { currentPhase, currentPrice, endpoints },
   } = useSaleInfo();
-  const { network } = useNetwork();
 
   const { saleStart } = saleInfo;
 
   const startPrice = planckBnToUnit(
-    getCorePriceAt(saleStart, saleInfo, network).toString(),
+    getCorePriceAt(saleStart, saleInfo).toString(),
     decimals
   );
   const curPrice = planckBnToUnit(currentPrice.toString(), decimals);
   const floorPrice = planckBnToUnit(saleInfo.price.toString(), decimals);
+
+  const leadinDuration = endpoints.leadin.end - endpoints.leadin.start;
 
   const data = [
     {
@@ -47,6 +47,11 @@ export const SalePriceChart = () => {
     {
       timestamp: endpoints.leadin.start,
       value: startPrice,
+      phase: SalePhase.Leadin,
+    },
+    {
+      timestamp: endpoints.leadin.start + leadinDuration / 2,
+      value: floorPrice * 10,
       phase: SalePhase.Leadin,
     },
     {
@@ -88,9 +93,7 @@ export const SalePriceChart = () => {
       dashArray: [0, 5, 0],
     },
     markers: {
-      size: data.map(({ timestamp }) =>
-        timestamp === currentTimestamp ? 10 : 5
-      ),
+      size: 5,
       hover: {
         sizeOffset: 2,
       },

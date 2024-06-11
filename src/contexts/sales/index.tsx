@@ -106,7 +106,7 @@ const SaleInfoProvider = ({ children }: Props) => {
     setCurrentPrice(
       status !== ContextStatus.LOADED || height === 0
         ? 0
-        : getCorePriceAt(at, saleInfo, network)
+        : getCorePriceAt(at, saleInfo)
     );
   }, [status, at, height, network, saleInfo]);
 

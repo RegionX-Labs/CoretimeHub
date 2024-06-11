@@ -1,5 +1,4 @@
-import { NetworkType, SaleInfo, SalePhase } from '@/models';
-
+import { SaleInfo, SalePhase } from '@/models';
 import { leadinFactorAt } from '../coretime';
 
 export const getCurrentPhase = (
@@ -17,13 +16,16 @@ export const getCurrentPhase = (
 
 // The price of a core at a specific block number.
 export const getCorePriceAt = (
-  blockNumber: number,
+  now: number,
   saleInfo: SaleInfo,
-  network: NetworkType
 ) => {
-  const { saleStart, leadinLength, price } = saleInfo;
-  const num = Math.min(blockNumber - saleStart, leadinLength);
+  /* NOTE: the runtime api is not implemented for Kusama.
+  const salePrice = await coretimeApi.rpc.state.call('BrokerApi_sale_price', '');
+  const price = coretimeApi.createType('Option<u128>', salePrice);
+  */
+  const { saleStart, leadinLength, price: endPrice } = saleInfo;
+  const num = Math.min(now - saleStart, leadinLength);
   const through = num / leadinLength;
 
-  return Number((leadinFactorAt(network, through) * price).toFixed());
+  return leadinFactorAt(through) * endPrice;
 };
