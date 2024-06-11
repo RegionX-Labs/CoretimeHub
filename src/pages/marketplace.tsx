@@ -1,8 +1,10 @@
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import SettingsInputComponentRoundedIcon from '@mui/icons-material/SettingsInputComponentRounded';
 import {
+  Backdrop,
   Box,
   Button,
+  CircularProgress,
   FormControl,
   MenuItem,
   Paper,
@@ -13,9 +15,8 @@ import {
   Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { BN } from '@polkadot/util';
-import { Region, RegionId, RegionRecord, Timeslice } from 'coretime-utils';
-import { useState } from 'react';
+import { Timeslice } from 'coretime-utils';
+import { useEffect, useState } from 'react';
 
 import {
   ActionButton,
@@ -26,7 +27,7 @@ import {
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { useMarket } from '@/contexts/market';
-import { Listing, WEEK_IN_TIMESLICES } from '@/models';
+import { ContextStatus, Listing, WEEK_IN_TIMESLICES } from '@/models';
 
 // eslint-disable-next-line no-unused-vars
 enum SortOption {
@@ -87,39 +88,17 @@ const durationOptions: DurationOption[] = [
   { duration: 3 * WEEK_IN_TIMESLICES, label: '3 weeks' },
   { duration: 4 * WEEK_IN_TIMESLICES, label: '4 weeks' },
 ];
-const mockup = {
-  region: new Region(
-    {
-      begin: 135510,
-      core: 40,
-      mask: '0x0000000000000000ffff',
-    } as RegionId,
-    {
-      end: 136050,
-      owner: '5EULYMVuML584aiyacnwjw1sb9iXu9NkdMVLz3MCgCrHmSFn',
-      paid: null,
-    } as RegionRecord
-  ),
-  regionConsumed: 0.75,
-  regionCoreOccupancy: 0.8,
-  seller: '5EULYMVuML584aiyacnwjw1sb9iXu9NkdMVLz3MCgCrHmSFn',
-  timeslicePrice: new BN('2300000000000'),
-  currentPrice: new BN('5300000000000'),
-  saleRecepient: null,
-} as Listing;
 
 const Marketplace = () => {
   const theme = useTheme();
-  const { fetchMarket } = useMarket();
+  const { fetchMarket, listedRegions, status } = useMarket();
   const {
     state: { symbol },
   } = useCoretimeApi();
 
   const [purchaseModalOpen, openPurhcaseModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
-  const [filteredListings] = useState<Listing[]>(
-    [1, 2, 3, 4, 5, 6].map(() => mockup)
-  );
+  const [filteredListings, setFilteredListings] = useState<Listing[]>([]);
 
   // Filters
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -146,9 +125,9 @@ const Marketplace = () => {
     openPurhcaseModal(true);
   };
 
-  // useEffect(() => {
-  //   setFilteredListings(listedRegions);
-  // }, [listedRegions]);
+  useEffect(() => {
+    setFilteredListings(listedRegions);
+  }, [listedRegions]);
 
   const clearFilters = () => {
     setSelectedRange(rangeOptions[0].limit);
@@ -162,6 +141,11 @@ const Marketplace = () => {
 
   return (
     <Box>
+      {status !== ContextStatus.LOADED && (
+        <Backdrop open>
+          <CircularProgress />
+        </Backdrop>
+      )}
       <Box
         sx={{
           display: 'flex',
@@ -209,7 +193,7 @@ const Marketplace = () => {
                   ? theme.palette.common.white
                   : theme.palette.common.black,
                 borderRadius: '2rem',
-                px: '1rem',
+                px: '1.5rem',
                 height: '100%',
                 fontSize: '1rem',
                 fontWeight: 400,

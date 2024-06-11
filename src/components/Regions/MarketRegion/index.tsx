@@ -18,6 +18,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { getBalanceString, timesliceToTimestamp } from '@/utils/functions';
 
+import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { Listing } from '@/models';
@@ -63,16 +64,21 @@ const MarketRegionInner = ({ listing, onPurchase }: MarketRegionInnerProps) => {
   const timeAgo = new TimeAgo('en-US');
 
   const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
-  const { region, regionCoreOccupancy, regionConsumed } = listing;
-  const theme = useTheme();
 
-  const [beginTimestamp, setBeginTimestamp] = useState(0);
-  const [endTimestamp, setEndTimestamp] = useState(0);
+  const theme = useTheme();
+  const {
+    state: { activeAccount },
+  } = useAccounts();
+  const { timeslicePeriod } = useCoretimeApi();
 
   const {
     state: { api, apiState, symbol, decimals },
   } = useRelayApi();
-  const { timeslicePeriod } = useCoretimeApi();
+
+  const [beginTimestamp, setBeginTimestamp] = useState(0);
+  const [endTimestamp, setEndTimestamp] = useState(0);
+
+  const { region, regionCoreOccupancy, regionConsumed } = listing;
 
   // FIXME: network-based block time
   const setTimestamps = useCallback(
@@ -233,21 +239,28 @@ const MarketRegionInner = ({ listing, onPurchase }: MarketRegionInnerProps) => {
           ))}
         </Stack>
       </Paper>
-      <Box sx={{ marginTop: '1em' }} display='flex' justifyContent='center'>
-        <Button
-          sx={{
-            width: '100%',
-            background: theme.palette.primary.contrastText,
-            color: theme.palette.primary.main,
-            fontSize: '0.75rem',
-            borderRadius: '2rem',
-            height: '2.5rem',
-          }}
-          onClick={() => onPurchase(listing)}
-        >
-          Purchase
-        </Button>
-      </Box>
+      {activeAccount ? (
+        <Box sx={{ marginTop: '1em' }} display='flex' justifyContent='center'>
+          <Button
+            sx={{
+              width: '100%',
+              background: theme.palette.primary.contrastText,
+              color: theme.palette.primary.main,
+              fontSize: '0.75rem',
+              borderRadius: '2rem',
+              height: '2.5rem',
+            }}
+            // TODO:
+            onClick={() => onPurchase(listing)}
+          >
+            {region.getOwner() === activeAccount?.address
+              ? 'Unlist'
+              : 'Purchase'}
+          </Button>
+        </Box>
+      ) : (
+        <></>
+      )}
     </Box>
   );
 };

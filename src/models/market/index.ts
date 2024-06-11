@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util';
 import { ContextData, Region } from 'coretime-utils';
 
-import { Percentage } from '../common';
+import { Address, Percentage } from '../common';
 
 export class Listing {
   /// The reigon listed on sale.
@@ -22,10 +22,10 @@ export class Listing {
   public static construct(
     context: ContextData,
     region: Region,
-    seller: string,
+    seller: Address,
     timeslicePrice: BN,
     currentPrice: BN,
-    saleRecepient: string | null
+    saleRecepient: Address | null
   ): Listing {
     return new Listing(
       region,
@@ -56,3 +56,9 @@ export class Listing {
     this.saleRecepient = saleRecepient;
   }
 }
+
+export type ListingRecord = {
+  seller: Address;
+  timeslicePrice: number;
+  saleRecipient: Address | null;
+};

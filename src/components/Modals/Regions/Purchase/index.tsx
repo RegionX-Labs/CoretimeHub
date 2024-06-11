@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
-import { ListingCard } from '@/components/Elements';
+import { MarketRegion } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
 import { useToast } from '@/contexts/toast';
@@ -61,7 +61,7 @@ export const PurchaseModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent>
         <Stack direction='column' gap={3}>
-          <ListingCard listing={listing} readOnly={true} bordered={false} />
+          <MarketRegion listing={listing} bordered={false} />
         </Stack>
       </DialogContent>
       <DialogActions>
