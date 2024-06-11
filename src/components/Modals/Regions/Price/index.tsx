@@ -33,7 +33,7 @@ export const PriceModal = ({ open, onClose }: PriceModalProps) => {
   } = useSaleInfo();
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth='md'>
+    <Dialog open={open} onClose={onClose} maxWidth='md' data-cy='price-modal'>
       <DialogContent className={styles.container}>
         <Box>
           <Typography
@@ -67,7 +67,11 @@ export const PriceModal = ({ open, onClose }: PriceModalProps) => {
       </DialogContent>
       <DialogActions>
         <Box>
-          <ActionButton label='Close' onClick={onClose} />
+          <ActionButton
+            label='Close'
+            onClick={onClose}
+            data-cy='btn-close-price-modal'
+          />
         </Box>
       </DialogActions>
     </Dialog>

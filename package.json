@@ -7,6 +7,8 @@
     "build": "next build",
     "lint": "next lint",
     "format": "npx prettier --write '**/*.{js,jsx,ts,tsx}'",
+    "cy:open": "cypress open",
+    "cy:e2e": "cypress run",
     "test": "jest"
   },
   "dependencies": {
@@ -59,6 +61,7 @@
     "@typescript-eslint/parser": "^5.59.1",
     "babel-jest": "^29.7.0",
     "babel-loader": "^9.1.2",
+    "cypress": "^13.11.0",
     "eslint": "^8.39.0",
     "eslint-config-next": "^13.3.1",
     "eslint-config-prettier": "^8.8.0",

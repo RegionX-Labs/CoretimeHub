@@ -53,7 +53,7 @@ export const SaleInfoPanel = () => {
 
   return (
     <>
-      <Box className={styles.grid}>
+      <Box className={styles.grid} data-cy='sale-info'>
         <DetailCard
           icon={ShoppingIcon}
           title='Sale details'
@@ -106,6 +106,7 @@ export const SaleInfoPanel = () => {
                 background: '#e8eff7',
                 color: theme.palette.text.secondary,
               }}
+              data-cy='btn-analyze-price'
             >
               Analyze
             </Button>
@@ -116,6 +117,7 @@ export const SaleInfoPanel = () => {
         open={priceModalOpen}
         onClose={() => openPriceModal(false)}
         saleInfo={{ currentPrice, currentPhase }}
+        data-cy='price-modal'
       />
     </>
   );

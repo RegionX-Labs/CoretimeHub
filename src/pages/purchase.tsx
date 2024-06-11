@@ -124,7 +124,7 @@ const Purchase = () => {
       </Box>
       <Box>
         {status !== ContextStatus.LOADED ? (
-          <Backdrop open>
+          <Backdrop open data-cy='loading'>
             <CircularProgress />
           </Backdrop>
         ) : (
