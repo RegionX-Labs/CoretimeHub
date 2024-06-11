@@ -4,11 +4,23 @@
 
 import { RegionId } from 'coretime-utils';
 
+import { NetworkType } from '@/models';
+
 export const leadinFactorAt = (when: number) => {
   if (when <= 0.5) {
     return 100 - when * 180;
   } else {
     return 19 - when * 18;
+  }
+};
+
+// TODO: remove when transitioned to new pricing model
+export const leadinFactorAtLegacy = (network: NetworkType, when: number) => {
+  if (network === NetworkType.ROCOCO) return 2 - when;
+  else if (network === NetworkType.KUSAMA) {
+    return 5 - 4 * when;
+  } else {
+    return 0;
   }
 };
 

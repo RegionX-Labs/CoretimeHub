@@ -4,9 +4,10 @@ import dynamic from 'next/dynamic';
 import * as React from 'react';
 
 import { formatNumber, planckBnToUnit } from '@/utils/functions';
-import { getCorePriceAt } from '@/utils/sale';
+import { getCorePriceAt, isNewPricing } from '@/utils/sale';
 
 import { useCoretimeApi } from '@/contexts/apis';
+import { useNetwork } from '@/contexts/network';
 import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
 
@@ -14,7 +15,7 @@ const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 export const SalePriceChart = () => {
   const {
-    state: { timestamp: currentTimestamp, decimals, symbol },
+    state: { timestamp: currentTimestamp, height, decimals, symbol },
   } = useCoretimeApi();
 
   const {
@@ -23,15 +24,14 @@ export const SalePriceChart = () => {
   } = useSaleInfo();
 
   const { saleStart } = saleInfo;
+  const { network } = useNetwork();
 
   const startPrice = planckBnToUnit(
-    getCorePriceAt(saleStart, saleInfo).toString(),
+    getCorePriceAt(saleStart, saleInfo, network).toString(),
     decimals
   );
   const curPrice = planckBnToUnit(currentPrice.toString(), decimals);
   const floorPrice = planckBnToUnit(saleInfo.price.toString(), decimals);
-
-  const leadinDuration = endpoints.leadin.end - endpoints.leadin.start;
 
   const data = [
     {
@@ -47,11 +47,6 @@ export const SalePriceChart = () => {
     {
       timestamp: endpoints.leadin.start,
       value: startPrice,
-      phase: SalePhase.Leadin,
-    },
-    {
-      timestamp: endpoints.leadin.start + leadinDuration / 2,
-      value: floorPrice * 10,
       phase: SalePhase.Leadin,
     },
     {
@@ -74,7 +69,17 @@ export const SalePriceChart = () => {
       value: curPrice,
       phase: currentPhase,
     },
-  ].sort((a, b) => a.timestamp - b.timestamp);
+  ];
+
+  const leadinDuration = endpoints.leadin.end - endpoints.leadin.start;
+  if (isNewPricing(height, network))
+    data.push({
+      timestamp: endpoints.leadin.start + leadinDuration / 2,
+      value: floorPrice * 10,
+      phase: SalePhase.Leadin,
+    });
+
+  data.sort((a, b) => a.timestamp - b.timestamp);
 
   const options: ApexOptions = {
     chart: {
