@@ -31,6 +31,7 @@ import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
 import { ContextStatus, SalePhase } from '@/models';
+import { isNewPricing } from '@/utils/sale';
 
 const Purchase = () => {
   const theme = useTheme();
@@ -50,7 +51,7 @@ const Purchase = () => {
     phase: { currentPhase, currentPrice },
   } = useSaleInfo();
   const {
-    state: { api, apiState },
+    state: { api, apiState, height },
   } = useCoretimeApi();
   const router = useRouter();
   const { network } = useNetwork();
@@ -125,7 +126,11 @@ const Purchase = () => {
       </Box>
       <Box mt={'.5rem'}>
         <Banner
-          content='Learn more about the new Coretime pricing model coming to Kusama: '
+          content={
+            isNewPricing(height, network)
+              ? 'Learn about the new Coretime pricing model: '
+              : 'Learn about the new Coretime pricing model coming to Kusama soon: '
+          }
           link={{
             title: 'Agile Coretime Pricing Explained',
             href: 'https://grillapp.net/12935/agile-coretime-pricing-explained-166522?ref=12935',
