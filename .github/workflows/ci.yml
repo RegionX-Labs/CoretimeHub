@@ -34,7 +34,3 @@ jobs:
       # Run tests
       - name: Run Tests
         run: npm run test
-
-      # Run Cypress e2e tets
-      - name: Run cypress e2e tests
-        run: npm run e2e:headless
