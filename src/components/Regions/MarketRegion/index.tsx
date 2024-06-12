@@ -182,7 +182,7 @@ const MarketRegionInner = ({ listing, onPurchase }: MarketRegionInnerProps) => {
                 toastSuccess('Transaction successful');
                 fetchMarket();
               } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to list the region.`);
+                toastError(`Failed to unlist the region.`);
               }
             });
           }

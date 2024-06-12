@@ -127,6 +127,8 @@ const SaleInfoProvider = ({ children }: Props) => {
 
         const saleInfoRaw = await coretimeApi.query.broker.saleInfo();
         const saleInfo = saleInfoRaw.toJSON() as SaleInfo;
+        if ((saleInfoRaw.toJSON() as any).endPrice)
+          saleInfo.price = (saleInfoRaw.toJSON() as any).endPrice as number;
 
         if (!saleInfo) {
           setStatus(ContextStatus.UNINITIALIZED);

@@ -2,12 +2,18 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Alert, IconButton } from '@mui/material';
 import React, { useState } from 'react';
 
+import theme from '@/utils/muiTheme';
+
 interface BannerProps {
   content: string;
   severity: 'info' | 'error' | 'warning' | 'success';
+  link?: {
+    title: string;
+    href: string;
+  };
 }
 
-export const Banner = ({ content, severity }: BannerProps) => {
+export const Banner = ({ content, severity, link }: BannerProps) => {
   const [open, setOpen] = useState(true);
 
   const handleClose = () => {
@@ -33,6 +39,16 @@ export const Banner = ({ content, severity }: BannerProps) => {
       }
     >
       {content}
+      {link && (
+        <a
+          style={{ color: theme.palette.primary.light }}
+          rel='noopener noreferrer'
+          target='_blank'
+          href={link.href}
+        >
+          {link.title}
+        </a>
+      )}
     </Alert>
   );
 };
