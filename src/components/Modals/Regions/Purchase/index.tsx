@@ -1,11 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  Stack,
-} from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
 import { BN } from '@polkadot/util';
 import { useState } from 'react';
 
@@ -14,6 +8,8 @@ import { MarketRegion } from '@/components/Regions';
 import { useAccounts } from '@/contexts/account';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { ApiState } from '@/contexts/apis/types';
+import { useMarket } from '@/contexts/market';
+import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { Listing } from '@/models';
 
@@ -34,6 +30,8 @@ export const PurchaseModal = ({
   const {
     state: { api: regionXApi, apiState: regionXApiState },
   } = useRegionXApi();
+  const { fetchMarket } = useMarket();
+  const { fetchRegions } = useRegions();
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast();
 
@@ -76,6 +74,8 @@ export const PurchaseModal = ({
               events.forEach(({ event: { method } }) => {
                 if (method === 'ExtrinsicSuccess') {
                   toastSuccess('Transaction successful');
+                  fetchMarket();
+                  fetchRegions();
                   onClose();
                 } else if (method === 'ExtrinsicFailed') {
                   toastError(`Failed to unlist the region.`);
@@ -109,17 +109,23 @@ export const PurchaseModal = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent>
-        <Stack direction='column' gap={3}>
-          <MarketRegion listing={listing} bordered={false} />
-        </Stack>
+        <MarketRegion listing={listing} />
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+        sx={{
+          '& > button': {
+            flexBasis: '100%',
+          },
+          mt: '1rem',
+          pb: '1rem',
+        }}
+      >
         <LoadingButton
           onClick={() => purchaseRegion()}
           variant='contained'
           loading={working}
         >
-          Purchase from sale
+          Purchase
         </LoadingButton>
         <Button onClick={onClose} variant='outlined'>
           Cancel

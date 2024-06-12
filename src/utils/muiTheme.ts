@@ -79,13 +79,20 @@ let theme = createTheme({
           display: 'flex',
           gap: '1rem',
           flexGrow: 1,
-          padding: '0 1.5rem 2rem 1.5rem',
+          padding: '0 1.5rem 1rem 1.5rem',
           '> button': {
             flexGrow: 1,
             borderRadius: '2rem',
             height: '3rem',
             textTransform: 'capitalize',
           },
+        },
+      },
+    },
+    MuiDialogContentText: {
+      styleOverrides: {
+        root: {
+          color: 'black',
         },
       },
     },

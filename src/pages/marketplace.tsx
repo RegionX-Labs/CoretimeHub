@@ -15,7 +15,8 @@ import {
   Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { Timeslice } from 'coretime-utils';
+import { OnChainRegionId, Region, Timeslice } from 'coretime-utils';
+import { useConfirm } from 'material-ui-confirm';
 import { useEffect, useState } from 'react';
 
 import {
@@ -25,9 +26,12 @@ import {
   PurchaseModal,
 } from '@/components';
 
+import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
+import { useRegionXApi } from '@/contexts/apis/RegionXApi';
+import { ApiState } from '@/contexts/apis/types';
 import { useMarket } from '@/contexts/market';
-import { useRegions } from '@/contexts/regions';
+import { useToast } from '@/contexts/toast';
 import { ContextStatus, Listing, WEEK_IN_TIMESLICES } from '@/models';
 
 // eslint-disable-next-line no-unused-vars
@@ -91,17 +95,25 @@ const durationOptions: DurationOption[] = [
 ];
 
 const Marketplace = () => {
+  const confirm = useConfirm();
   const theme = useTheme();
 
+  const {
+    state: { activeAccount, activeSigner },
+  } = useAccounts();
   const { fetchMarket, listedRegions, status } = useMarket();
-  const { fetchRegions } = useRegions();
   const {
     state: { symbol },
   } = useCoretimeApi();
+  const {
+    state: { api: regionXApi, apiState: regionXApiState },
+  } = useRegionXApi();
+  const { toastError, toastSuccess, toastWarning, toastInfo } = useToast();
 
   const [purchaseModalOpen, openPurhcaseModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [filteredListings, setFilteredListings] = useState<Listing[]>([]);
+  const [working, setWorking] = useState(false);
 
   // Filters
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -128,9 +140,57 @@ const Marketplace = () => {
     openPurhcaseModal(true);
   };
 
-  useEffect(() => {
-    setFilteredListings(listedRegions);
-  }, [listedRegions]);
+  const unlistRegion = async (regionId: OnChainRegionId) => {
+    if (!regionXApi || regionXApiState !== ApiState.READY) {
+      toastWarning('Please check the connection to RegionX Chain');
+      return;
+    }
+    if (!activeAccount || !activeSigner) {
+      toastWarning('Please connect your wallet');
+      return;
+    }
+    try {
+      setWorking(true);
+
+      const txUnlist = regionXApi.tx.market.unlistRegion(regionId);
+
+      await txUnlist.signAndSend(
+        activeAccount.address,
+        { signer: activeSigner },
+        ({ status, events }) => {
+          if (status.isReady) toastInfo('Transaction was initiated');
+          else if (status.isInBlock) toastInfo(`In Block`);
+          else if (status.isFinalized) {
+            setWorking(false);
+            events.forEach(({ event: { method } }) => {
+              if (method === 'ExtrinsicSuccess') {
+                toastSuccess('Transaction successful');
+                fetchMarket();
+              } else if (method === 'ExtrinsicFailed') {
+                toastError(`Failed to unlist the region.`);
+              }
+            });
+          }
+        }
+      );
+    } catch (e: any) {
+      toastError(
+        `Failed to unlist the region. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
+        }`
+      );
+      setWorking(false);
+    }
+  };
+
+  const onUnlist = (region: Region) => {
+    confirm({
+      description:
+        'Are you sure that you are going to unlist the selected region from the market?',
+    }).then(() => unlistRegion(region.getOnChainRegionId()));
+  };
 
   const clearFilters = () => {
     setSelectedRange(rangeOptions[0].limit);
@@ -141,6 +201,10 @@ const Marketplace = () => {
   const applyFilters = () => {
     /** Apply filters */
   };
+
+  useEffect(() => {
+    setFilteredListings(listedRegions);
+  }, [listedRegions]);
 
   return (
     <Box>
@@ -381,10 +445,36 @@ const Marketplace = () => {
           flexWrap='wrap'
           justifyContent='space-around'
         >
-          {filteredListings.map((listing, indx) => (
-            <Box key={indx} margin='1em'>
-              <MarketRegion listing={listing} onPurchase={onPurchase} />
-            </Box>
+          {filteredListings.map((listing, index) => (
+            <Paper key={index}>
+              <Stack direction='column' sx={{ pb: '1rem' }}>
+                <MarketRegion listing={listing} />
+                {activeAccount ? (
+                  <Button
+                    sx={{
+                      background: theme.palette.primary.contrastText,
+                      color: theme.palette.primary.main,
+                      fontSize: '0.75rem',
+                      borderRadius: '2rem',
+                      height: '2.5rem',
+                      margin: '0 1.5rem',
+                    }}
+                    onClick={() =>
+                      activeAccount.address === listing.seller
+                        ? onUnlist(listing.region)
+                        : onPurchase(listing)
+                    }
+                    disabled={working}
+                  >
+                    {listing.seller === activeAccount.address
+                      ? 'Unlist'
+                      : 'Purchase'}
+                  </Button>
+                ) : (
+                  <></>
+                )}
+              </Stack>
+            </Paper>
           ))}
         </Box>
       )}
@@ -392,8 +482,6 @@ const Marketplace = () => {
         <PurchaseModal
           open={purchaseModalOpen}
           onClose={() => {
-            fetchMarket();
-            fetchRegions();
             openPurhcaseModal(false);
           }}
           listing={selectedListing}
