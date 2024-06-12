@@ -11,7 +11,7 @@ import {
   useTheme,
 } from '@mui/material';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   InterlaceModal,
@@ -26,6 +26,7 @@ import {
 } from '@/components';
 
 import { useAccounts } from '@/contexts/account';
+import { useMarket } from '@/contexts/market';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import {
@@ -34,7 +35,12 @@ import {
   PartitionIcon,
   TransferIcon,
 } from '@/icons';
-import { ContextStatus, ISMPRecordStatus, RegionLocation } from '@/models';
+import {
+  ContextStatus,
+  ISMPRecordStatus,
+  RegionLocation,
+  RegionMetadata,
+} from '@/models';
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -42,6 +48,9 @@ const Dashboard = () => {
     state: { activeAccount },
   } = useAccounts();
   const { regions, status, updateRegionName } = useRegions();
+  const { listedRegions } = useMarket();
+
+  const [regionsToShow, setRegionsToShow] = useState<RegionMetadata[]>([]);
 
   const [currentRegionIndex, setCurrentRegionIndex] = useState<number>();
   const [partitionModalOpen, openPartitionModal] = useState(false);
@@ -120,6 +129,19 @@ const Dashboard = () => {
     }
   };
 
+  useEffect(() => {
+    setRegionsToShow(
+      regions.filter(
+        ({ region }) =>
+          listedRegions.findIndex(
+            (item) =>
+              JSON.stringify(item.region.getRegionId()) ===
+              JSON.stringify(region.getRegionId())
+          ) === -1
+      )
+    );
+  }, [regions, listedRegions]);
+
   return (
     <Box
       sx={{
@@ -170,14 +192,14 @@ const Dashboard = () => {
           )}
           {!activeAccount ? (
             <Typography>Please connect your wallet.</Typography>
-          ) : regions.length === 0 ? (
+          ) : regionsToShow.length === 0 ? (
             <Typography>
               No regions owned. Go to <Link href='/purchase'>bulk sales</Link>{' '}
               to make a purchase
             </Typography>
           ) : (
             <>
-              {regions.map((region, index) => (
+              {regionsToShow.map((region, index) => (
                 <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
                   {region.status === ISMPRecordStatus.AVAILABLE ? (
                     <RegionMetaCard
