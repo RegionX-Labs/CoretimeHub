@@ -27,6 +27,7 @@ import {
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { useMarket } from '@/contexts/market';
+import { useRegions } from '@/contexts/regions';
 import { ContextStatus, Listing, WEEK_IN_TIMESLICES } from '@/models';
 
 // eslint-disable-next-line no-unused-vars
@@ -93,6 +94,7 @@ const Marketplace = () => {
   const theme = useTheme();
 
   const { fetchMarket, listedRegions, status } = useMarket();
+  const { fetchRegions } = useRegions();
   const {
     state: { symbol },
   } = useCoretimeApi();
@@ -391,6 +393,7 @@ const Marketplace = () => {
           open={purchaseModalOpen}
           onClose={() => {
             fetchMarket();
+            fetchRegions();
             openPurhcaseModal(false);
           }}
           listing={selectedListing}

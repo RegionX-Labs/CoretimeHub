@@ -313,6 +313,7 @@ const MarketRegionInner = ({ listing, onPurchase }: MarketRegionInnerProps) => {
             <ProgressButton
               label='Unlist'
               loading={working}
+              width='100%'
               onClick={onUnlist}
             />
           ) : (

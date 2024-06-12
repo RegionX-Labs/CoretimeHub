@@ -17,6 +17,7 @@ import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { ApiState } from '@/contexts/apis/types';
+import { useMarket } from '@/contexts/market';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { RegionMetadata } from '@/models';
@@ -43,6 +44,7 @@ export const SellModal = ({
   } = useRegionXApi();
 
   const { fetchRegions } = useRegions();
+  const { fetchMarket } = useMarket();
   const { toastError, toastInfo, toastSuccess, toastWarning } = useToast();
 
   const [price, setPrice] = useState<number | undefined>();
@@ -98,6 +100,7 @@ export const SellModal = ({
                 toastSuccess('Transaction successful');
                 onClose();
                 fetchRegions();
+                fetchMarket();
               } else if (method === 'ExtrinsicFailed') {
                 toastError(`Failed to list the region.`);
               }
