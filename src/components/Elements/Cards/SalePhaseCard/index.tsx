@@ -5,8 +5,9 @@ import { SalePhase } from '@/models';
 interface SalePhaseProps {
   label: string;
   value: SalePhase;
+  cyLabel?: string;
 }
-export const SalePhaseCard = ({ label, value }: SalePhaseProps) => {
+export const SalePhaseCard = ({ label, value, cyLabel }: SalePhaseProps) => {
   const theme = useTheme();
 
   const tooltip = {
@@ -31,6 +32,7 @@ export const SalePhaseCard = ({ label, value }: SalePhaseProps) => {
             color: 'inherit',
             cursor: 'default',
           }}
+          data-cy={cyLabel}
         >
           &#9432; {value}
         </Typography>

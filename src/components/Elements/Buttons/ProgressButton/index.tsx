@@ -8,6 +8,7 @@ interface ProgressButtonProps {
   loading: boolean;
   disabled?: boolean;
   width?: string;
+  [key: string]: any;
 }
 export const ProgressButton = ({
   label,
@@ -15,6 +16,7 @@ export const ProgressButton = ({
   loading,
   disabled = false,
   width,
+  ...props
 }: ProgressButtonProps) => {
   return (
     <LoadingButton
@@ -26,6 +28,7 @@ export const ProgressButton = ({
       sx={{
         width: width ? width : 'inherent',
       }}
+      {...props}
     >
       {label}
     </LoadingButton>

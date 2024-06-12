@@ -70,10 +70,15 @@ export const SaleInfoPanel = () => {
           }}
         />
         <DetailCard icon={ListIcon} title='Phase details'>
-          <SalePhaseCard label='Current phase' value={currentPhase} />
+          <SalePhaseCard
+            label='Current phase'
+            value={currentPhase}
+            cyLabel='txt-current-phase'
+          />
           <SalePhaseCard
             label='Upcoming phase'
             value={nextPhase(currentPhase)}
+            cyLabel='txt-upcoming-phase'
           />
         </DetailCard>
         <DetailCard
