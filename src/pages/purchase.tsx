@@ -71,22 +71,27 @@ const Purchase = () => {
       return;
     }
 
-    const txPurchase = api.tx.broker.purchase(currentPrice);
+    try {
+      const txPurchase = api.tx.broker.purchase(currentPrice);
 
-    setWorking(true);
-    sendTx(txPurchase, activeAccount.address, activeSigner, {
-      ready: () => toastInfo('Transaction was initiated'),
-      inBlock: () => toastInfo(`In Block`),
-      finalized: () => setWorking(false),
-      success: () => {
-        toastSuccess('Transaction successful');
-        fetchRegions();
-      },
-      error: () => {
-        toastError(`Failed to purchase a region`);
-        setWorking(false);
-      },
-    });
+      setWorking(true);
+      sendTx(txPurchase, activeAccount.address, activeSigner, {
+        ready: () => toastInfo('Transaction was initiated'),
+        inBlock: () => toastInfo(`In Block`),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Transaction successful');
+          fetchRegions();
+        },
+        error: () => {
+          toastError(`Failed to purchase a core`);
+          setWorking(false);
+        },
+      });
+    } catch (e) {
+      setWorking(false);
+      toastError(`Failed to purchase a core`);
+    }
   };
 
   const onManage = () => {
@@ -140,7 +145,7 @@ const Purchase = () => {
       </Box>
       <Box>
         {status !== ContextStatus.LOADED ? (
-          <Backdrop open>
+          <Backdrop open data-cy='loading'>
             <CircularProgress />
           </Backdrop>
         ) : (
@@ -172,6 +177,7 @@ const Purchase = () => {
                   marginLeft: 'auto',
                 }}
                 onClick={onManage}
+                data-cy='btn-manage-regions'
               >
                 Manage your regions
               </Button>
@@ -179,6 +185,7 @@ const Purchase = () => {
                 onClick={purchase}
                 loading={working}
                 label='Purchase Core'
+                data-cy='btn-purchase-core'
               />
             </Box>
           </Box>

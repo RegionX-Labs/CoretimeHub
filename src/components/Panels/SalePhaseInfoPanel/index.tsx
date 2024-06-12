@@ -41,7 +41,7 @@ export const SalePhaseInfoPanel = () => {
 
   return (
     <>
-      <Paper className={styles.container}>
+      <Paper className={styles.container} data-cy='sale-phase-info'>
         <Box className={styles.titleWrapper}>
           <Typography
             sx={{
@@ -62,6 +62,7 @@ export const SalePhaseInfoPanel = () => {
               color: theme.palette.text.secondary,
             }}
             onClick={() => openHistoryModal(true)}
+            data-cy='btn-purchase-history'
           >
             Purchase History
           </Button>

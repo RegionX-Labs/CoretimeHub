@@ -39,3 +39,6 @@ package-lock.json
 
 # typescript
 *.tsbuildinfo
+
+cypress/screenshots
+cypress/downloads
