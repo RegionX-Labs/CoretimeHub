@@ -1,6 +1,6 @@
 import { SalePhase } from '@/models';
 describe('E2E tests for the purchase page', () => {
-  it('Successfully loads the purchase page.', async () => {
+  it('Successfully loads the purchase page.', () => {
     cy.visit('/purchase');
 
     // Fetching the on-chain states
@@ -9,19 +9,19 @@ describe('E2E tests for the purchase page', () => {
     cy.get('[data-cy="loading"]', { timeout: 60 * 1000 }).should('not.exist');
 
     // Sale info panel and its sub panels exists
-    const saleInfo = cy.get('[data-cy="sale-info"]');
-    saleInfo.should('exist');
+    cy.get('[data-cy="sale-info"]').should('exist');
 
-    const cards = saleInfo.children();
-    cards.should('have.length', 3);
+    cy.get('[data-cy="sale-info"]').children().should('have.length', 3);
 
-    const currentPhase = await new Cypress.Promise<string>((resolve) => {
-      cy.get('[data-cy="txt-current-phase"')
-        .invoke('text')
-        .then((txt) => resolve(txt.toString()));
-    });
-
-    const isInterludePhase = currentPhase.includes(SalePhase.Interlude);
+    cy.get('[data-cy="txt-current-phase"')
+      .invoke('text')
+      .then((value) => {
+        if (value === SalePhase.Interlude) {
+          cy.get('[data-cy="btn-purchase-core"]').should('be.disabled');
+        } else {
+          cy.get('[data-cy="btn-purchase-core"]').should('be.enabled');
+        }
+      });
 
     // Clicking the analyze button should open the price modal
     cy.get('[data-cy="btn-analyze-price"]').click();
@@ -43,10 +43,6 @@ describe('E2E tests for the purchase page', () => {
 
     cy.get('[data-cy="btn-close-purchase-history-modal"]').click();
     cy.get('[data-cy="purchase-history-modal"]').should('not.exist');
-
-    cy.get('[data-cy="btn-purchase-core"]').should(
-      isInterludePhase ? 'be.disabled' : 'be.enabled'
-    );
 
     // Clicking 'Manage your regions' should redirect to the region dashboard page
     cy.get('[data-cy="btn-manage-regions"]').click();
