@@ -45,7 +45,7 @@ export const SellModal = ({
   const { fetchRegions } = useRegions();
   const { toastError, toastInfo, toastSuccess, toastWarning } = useToast();
 
-  const [timeslicePrice, setTimeslicePrice] = useState<number | undefined>();
+  const [price, setPrice] = useState<number | undefined>();
   const [saleRecipient, setSaleRecipient] = useState<string>('');
   const [working, setWorking] = useState(false);
 
@@ -62,8 +62,8 @@ export const SellModal = ({
       return;
     }
 
-    if (timeslicePrice === undefined) {
-      toastWarning('Please input the timeslice price');
+    if (price === undefined) {
+      toastWarning('Please input the price');
       return;
     }
 
@@ -76,9 +76,12 @@ export const SellModal = ({
       setWorking(true);
 
       const regionId = regionMetadata.region.getOnChainRegionId();
+      const end = regionMetadata.region.getEnd();
+      const durationInTimeslices = end - regionId.begin;
+      const pricePerTimeslice = price / durationInTimeslices;
       const txListOnMarket = regionXApi.tx.market.listRegion(
         regionId,
-        Math.floor(timeslicePrice * Math.pow(10, decimals)),
+        Math.floor(pricePerTimeslice * Math.pow(10, decimals)),
         saleRecipient
       );
 
@@ -125,11 +128,10 @@ export const SellModal = ({
           </Stack>
           <Stack direction='column' gap={2}>
             <AmountInput
-              amount={timeslicePrice}
-              title='Price'
-              caption='Price per timeslice'
+              amount={price}
+              caption='Total price of the region'
               currency={symbol}
-              setAmount={setTimeslicePrice}
+              setAmount={setPrice}
             />
           </Stack>
           <Stack direction='column' gap={2}>
