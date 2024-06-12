@@ -85,7 +85,7 @@ const TransferPage = () => {
   );
 
   const [asset, setAsset] = useState<AssetType>(AssetType.TOKEN);
-  const [transferAmount, setTransferAmount] = useState('');
+  const [transferAmount, setTransferAmount] = useState<number | undefined>();
 
   const { balance } = useBalances();
 
@@ -188,7 +188,12 @@ const TransferPage = () => {
       return;
     }
 
-    const amount = Number(transferAmount) * Math.pow(10, CORETIME_DECIMALS);
+    if (transferAmount === undefined) {
+      toastWarning('Please input the amount');
+      return;
+    }
+
+    const amount = transferAmount * Math.pow(10, CORETIME_DECIMALS);
     if (originChain === destinationChain) {
       if (!newOwner) {
         toastError('Recipient must be selected');

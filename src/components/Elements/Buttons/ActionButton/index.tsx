@@ -7,11 +7,13 @@ type ActionButtonProps = {
   onClick: () => void;
   disabled?: boolean;
   [key: string]: any;
+  fullWidth?: boolean;
 };
 export const ActionButton = ({
   label,
   onClick,
   disabled,
+  fullWidth = false,
   ...props
 }: ActionButtonProps) => {
   return (
@@ -20,6 +22,7 @@ export const ActionButton = ({
       onClick={onClick}
       className={styles.buttonContainer}
       disabled={disabled}
+      fullWidth={fullWidth}
       {...props}
     >
       {label}
