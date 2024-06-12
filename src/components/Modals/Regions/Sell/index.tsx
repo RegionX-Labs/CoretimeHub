@@ -8,7 +8,6 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { Region } from 'coretime-utils';
 import { useState } from 'react';
 
 import { AddressInput, AmountInput } from '@/components/Elements';
@@ -16,6 +15,8 @@ import { RegionMetaCard } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
+import { useRegionXApi } from '@/contexts/apis/RegionXApi';
+import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { RegionMetadata } from '@/models';
@@ -32,60 +33,75 @@ export const SellModal = ({
   regionMetadata,
 }: SellModalProps) => {
   const {
-    state: { activeAccount },
+    state: { activeAccount, activeSigner },
   } = useAccounts();
   const {
     state: { symbol },
   } = useCoretimeApi();
+  const {
+    state: { api: regionXApi, apiState: regionXApiState, decimals },
+  } = useRegionXApi();
 
   const { fetchRegions } = useRegions();
-  const { toastError, toastSuccess } = useToast();
+  const { toastError, toastInfo, toastSuccess, toastWarning } = useToast();
 
-  const [regionPrice, setRegionPrice] = useState('');
+  const [timeslicePrice, setTimeslicePrice] = useState<number | undefined>();
   const [saleRecipient, setSaleRecipient] = useState<string>('');
   const [working, setWorking] = useState(false);
 
   const listOnSale = async () => {
-    await approveXcRegion(regionMetadata.region);
-    await listRegion(regionMetadata.region);
-  };
-
-  const approveXcRegion = async (_region: Region) => {
-    if (!activeAccount) {
-      return;
-    }
-
-    try {
-      setWorking(true);
-
-      // TODO:
-
-      toastSuccess(`Successfully approved region to the market.`);
-      setWorking(false);
-    } catch (e: any) {
-      toastError(
-        `Failed to approve the region. Error: ${
-          e.errorMessage === 'Error' ? 'Please check your balance.' : e
-        }`
+    if (
+      !activeAccount ||
+      !activeSigner ||
+      !regionXApi ||
+      regionXApiState !== ApiState.READY
+    ) {
+      toastWarning(
+        'Please connect your wallet and check the network connection.'
       );
-      setWorking(false);
+      return;
     }
-  };
 
-  const listRegion = async (_region: Region) => {
-    if (!activeAccount) {
+    if (timeslicePrice === undefined) {
+      toastWarning('Please input the timeslice price');
+      return;
+    }
+
+    if (!saleRecipient) {
+      toastWarning('Please input the sale recipient');
       return;
     }
 
     try {
       setWorking(true);
 
-      // TODO
+      const regionId = regionMetadata.region.getOnChainRegionId();
+      const txListOnMarket = regionXApi.tx.market.listRegion(
+        regionId,
+        Math.floor(timeslicePrice * Math.pow(10, decimals)),
+        saleRecipient
+      );
 
-      toastSuccess(`Successfully listed region on sale.`);
-      onClose();
-      fetchRegions();
-      setWorking(false);
+      await txListOnMarket.signAndSend(
+        activeAccount.address,
+        { signer: activeSigner },
+        ({ status, events }) => {
+          if (status.isReady) toastInfo('Transaction was initiated');
+          else if (status.isInBlock) toastInfo(`In Block`);
+          else if (status.isFinalized) {
+            setWorking(false);
+            events.forEach(({ event: { method } }) => {
+              if (method === 'ExtrinsicSuccess') {
+                toastSuccess('Transaction successful');
+                onClose();
+                fetchRegions();
+              } else if (method === 'ExtrinsicFailed') {
+                toastError(`Failed to list the region.`);
+              }
+            });
+          }
+        }
+      );
     } catch (e: any) {
       toastError(
         `Failed to list the region. Error: ${
@@ -104,16 +120,16 @@ export const SellModal = ({
         <Stack direction='column' gap={3}>
           <RegionMetaCard regionMetadata={regionMetadata} bordered={false} />
           <Stack direction='column' gap={1} alignItems='center'>
-            <Typography>Sell Region</Typography>
+            <Typography>List on market</Typography>
             <ArrowDownwardOutlinedIcon />
           </Stack>
           <Stack direction='column' gap={2}>
             <AmountInput
-              amount={regionPrice}
-              title='Region price'
-              caption='The price for the entire region'
+              amount={timeslicePrice}
+              title='Price'
+              caption='Price per timeslice'
               currency={symbol}
-              setAmount={setRegionPrice}
+              setAmount={setTimeslicePrice}
             />
           </Stack>
           <Stack direction='column' gap={2}>

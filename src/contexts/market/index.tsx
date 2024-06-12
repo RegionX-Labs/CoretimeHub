@@ -51,14 +51,17 @@ const MarketProvider = ({ children }: Props) => {
       const regions: Region[] = [];
 
       for (const [key, value] of regionEntries) {
-        const [regionId] = key.toHuman() as [RegionId];
+        const [{ begin, core, mask }] = key.toHuman() as [any];
         const { owner, record } = value.toJSON() as any;
 
         if (!record.available) continue;
-        const region = new Region(regionId, {
-          ...record.available,
-          owner,
-        });
+        const region = new Region(
+          { begin: parseInt(begin), core: parseInt(core), mask } as RegionId,
+          {
+            ...record.available,
+            owner,
+          }
+        );
         regions.push(region);
       }
 
@@ -67,14 +70,19 @@ const MarketProvider = ({ children }: Props) => {
       const records: Listing[] = [];
 
       for (const [key, value] of listingEntries) {
-        const [regionId] = key.toHuman() as [RegionId];
+        const [{ begin, core, mask }] = key.toHuman() as [any];
         const { seller, timeslicePrice, saleRecipient } =
           value.toJSON() as ListingRecord;
 
+        const regionId = {
+          begin: parseInt(begin),
+          core: parseInt(core),
+          mask,
+        } as RegionId;
+
         const region = regions.find(
           (item) =>
-            JSON.stringify(item.getOnChainRegionId()) ===
-            JSON.stringify(regionId)
+            JSON.stringify(item.getRegionId()) === JSON.stringify(regionId)
         );
         if (!region) continue;
         const record: Listing = Listing.construct(

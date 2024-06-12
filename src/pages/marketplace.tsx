@@ -91,6 +91,7 @@ const durationOptions: DurationOption[] = [
 
 const Marketplace = () => {
   const theme = useTheme();
+
   const { fetchMarket, listedRegions, status } = useMarket();
   const {
     state: { symbol },

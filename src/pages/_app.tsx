@@ -2,6 +2,7 @@ import { CacheProvider, EmotionCache } from '@emotion/react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import { Analytics } from '@vercel/analytics/react';
+import { ConfirmProvider } from 'material-ui-confirm';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -51,7 +52,9 @@ export default function MyApp(props: MyAppProps) {
             <MarketProvider>
               <SaleInfoProvider>
                 <SettingsProvider>
-                  {getLayout(<Component {...pageProps} />)}
+                  <ConfirmProvider>
+                    {getLayout(<Component {...pageProps} />)}
+                  </ConfirmProvider>
                 </SettingsProvider>
               </SaleInfoProvider>
             </MarketProvider>

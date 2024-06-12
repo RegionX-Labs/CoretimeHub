@@ -10,17 +10,24 @@ import {
 } from '@mui/material';
 import { ApiPromise } from '@polkadot/api';
 import clsx from 'clsx';
+import { OnChainRegionId } from 'coretime-utils';
 import { humanizer } from 'humanize-duration';
 import TimeAgo from 'javascript-time-ago';
 // English.
 import en from 'javascript-time-ago/locale/en';
+import { useConfirm } from 'material-ui-confirm';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { getBalanceString, timesliceToTimestamp } from '@/utils/functions';
 
+import { ProgressButton } from '@/components/Elements';
+
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { ApiState } from '@/contexts/apis/types';
+import { useMarket } from '@/contexts/market';
+import { useToast } from '@/contexts/toast';
 import { Listing } from '@/models';
 
 import styles from './index.module.scss';
@@ -65,18 +72,27 @@ const MarketRegionInner = ({ listing, onPurchase }: MarketRegionInnerProps) => {
 
   const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
 
+  const confirm = useConfirm();
   const theme = useTheme();
   const {
-    state: { activeAccount },
+    state: { activeAccount, activeSigner },
   } = useAccounts();
   const { timeslicePeriod } = useCoretimeApi();
 
   const {
-    state: { api, apiState, symbol, decimals },
+    state: { api: relayApi, apiState: relayApiState, symbol, decimals },
   } = useRelayApi();
+
+  const {
+    state: { api: regionXApi, apiState: regionXApiState },
+  } = useRegionXApi();
+  const { fetchMarket } = useMarket();
+
+  const { toastError, toastInfo, toastWarning, toastSuccess } = useToast();
 
   const [beginTimestamp, setBeginTimestamp] = useState(0);
   const [endTimestamp, setEndTimestamp] = useState(0);
+  const [working, setWorking] = useState(false);
 
   const { region, regionCoreOccupancy, regionConsumed } = listing;
 
@@ -100,12 +116,12 @@ const MarketRegionInner = ({ listing, onPurchase }: MarketRegionInnerProps) => {
   );
 
   useEffect(() => {
-    if (!api || apiState !== ApiState.READY) {
+    if (!relayApi || relayApiState !== ApiState.READY) {
       return;
     }
 
-    setTimestamps(api);
-  }, [api, apiState, setTimestamps]);
+    setTimestamps(relayApi);
+  }, [relayApi, relayApiState, setTimestamps]);
 
   const progress = [
     {
@@ -138,6 +154,58 @@ const MarketRegionInner = ({ listing, onPurchase }: MarketRegionInnerProps) => {
       ),
     },
   ];
+
+  const unlistRegion = async (regionId: OnChainRegionId) => {
+    if (!regionXApi || regionXApiState !== ApiState.READY) {
+      toastWarning('Please check the connection to RegionX Chain');
+      return;
+    }
+    if (!activeAccount || !activeSigner) {
+      toastWarning('Please connect your wallet');
+      return;
+    }
+    try {
+      setWorking(true);
+
+      const txUnlist = regionXApi.tx.market.unlistRegion(regionId);
+
+      await txUnlist.signAndSend(
+        activeAccount.address,
+        { signer: activeSigner },
+        ({ status, events }) => {
+          if (status.isReady) toastInfo('Transaction was initiated');
+          else if (status.isInBlock) toastInfo(`In Block`);
+          else if (status.isFinalized) {
+            setWorking(false);
+            events.forEach(({ event: { method } }) => {
+              if (method === 'ExtrinsicSuccess') {
+                toastSuccess('Transaction successful');
+                fetchMarket();
+              } else if (method === 'ExtrinsicFailed') {
+                toastError(`Failed to list the region.`);
+              }
+            });
+          }
+        }
+      );
+    } catch (e: any) {
+      toastError(
+        `Failed to unlist the region. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
+        }`
+      );
+      setWorking(false);
+    }
+  };
+
+  const onUnlist = () => {
+    confirm({
+      description:
+        'Are you sure that you are going to unlist the selected region from the market?',
+    }).then(() => unlistRegion(region.getOnChainRegionId()));
+  };
 
   return (
     <Box className={styles.container}>
@@ -241,22 +309,27 @@ const MarketRegionInner = ({ listing, onPurchase }: MarketRegionInnerProps) => {
       </Paper>
       {activeAccount ? (
         <Box sx={{ marginTop: '1em' }} display='flex' justifyContent='center'>
-          <Button
-            sx={{
-              width: '100%',
-              background: theme.palette.primary.contrastText,
-              color: theme.palette.primary.main,
-              fontSize: '0.75rem',
-              borderRadius: '2rem',
-              height: '2.5rem',
-            }}
-            // TODO:
-            onClick={() => onPurchase(listing)}
-          >
-            {region.getOwner() === activeAccount?.address
-              ? 'Unlist'
-              : 'Purchase'}
-          </Button>
+          {region.getOwner() === activeAccount?.address ? (
+            <ProgressButton
+              label='Unlist'
+              loading={working}
+              onClick={onUnlist}
+            />
+          ) : (
+            <Button
+              sx={{
+                width: '100%',
+                background: theme.palette.primary.contrastText,
+                color: theme.palette.primary.main,
+                fontSize: '0.75rem',
+                borderRadius: '2rem',
+                height: '2.5rem',
+              }}
+              onClick={() => onPurchase(listing)}
+            >
+              Purchase
+            </Button>
+          )}
         </Box>
       ) : (
         <></>
