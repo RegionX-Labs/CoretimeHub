@@ -34,7 +34,8 @@ export const getCorePriceAt = (
   const num = Math.min(now - saleStart, leadinLength);
   const through = num / leadinLength;
 
-  return leadinFactorAt(through) * endPrice;
+  const price = leadinFactorAt(through) * endPrice;
+  return Number(price.toFixed());
 };
 
 // TODO: remove when transitioned to new pricing model

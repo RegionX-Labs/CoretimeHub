@@ -1,3 +1,4 @@
+import { CircularProgress, Stack } from '@mui/material';
 import { ApexOptions } from 'apexcharts';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
@@ -165,7 +166,11 @@ export const SalePriceChart = () => {
     },
   ];
 
-  return (
+  return currentPrice === 0 ? (
+    <Stack minHeight='20rem' alignItems='center' justifyContent='center'>
+      <CircularProgress />
+    </Stack>
+  ) : (
     <Chart
       options={options}
       series={series}
