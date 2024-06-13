@@ -145,7 +145,7 @@ const Marketplace = () => {
         return false;
       if (
         endDate &&
-        !moment(endTimestamp).isSameOrBefore(moment(endDate), 'day')
+        !moment(endTimestamp).isSameOrAfter(moment(endDate), 'day')
       )
         return false;
 

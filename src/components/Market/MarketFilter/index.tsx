@@ -20,6 +20,7 @@ import React, { useState } from 'react';
 import { ActionButton, DateInput } from '@/components/Elements';
 
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
+import { useMarket } from '@/contexts/market';
 import { MarketFilterOptions, WEEK_IN_TIMESLICES } from '@/models';
 
 type Range = {
@@ -70,7 +71,7 @@ const defaultFilterState: FilterState = {
   endDate: null,
   occupancyIndex: 0,
   durationIndex: 0,
-  priceRange: [0, 100],
+  priceRange: undefined,
 };
 
 interface FilterItemProps {
@@ -101,6 +102,20 @@ export const MarketFilter = ({ onChange }: MarketFilterProps) => {
   const {
     state: { symbol, decimals },
   } = useRegionXApi();
+  const { listedRegions } = useMarket();
+
+  const unit = Math.pow(10, decimals);
+  const maxPriceRange =
+    listedRegions.length === 0
+      ? 100
+      : Math.floor(
+          (Math.max(
+            ...listedRegions.map((item) => item.currentPrice.toNumber())
+          ) +
+            unit -
+            1) /
+            unit
+        );
 
   // Filters
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -108,7 +123,8 @@ export const MarketFilter = ({ onChange }: MarketFilterProps) => {
   const [occupancyIndex, setOccupancyIndex] = useState(0);
   const [durationIndex, setDurationIndex] = useState(0);
   const [priceRange, setPriceRange] = useState<[number, number] | undefined>([
-    0, 100,
+    0,
+    maxPriceRange,
   ]);
 
   const [filter, setFilter] = useState<FilterState>(defaultFilterState);
@@ -136,7 +152,7 @@ export const MarketFilter = ({ onChange }: MarketFilterProps) => {
     setEndDate(defaultFilterState.endDate);
     setOccupancyIndex(defaultFilterState.occupancyIndex);
     setDurationIndex(defaultFilterState.durationIndex);
-    setPriceRange(defaultFilterState.priceRange);
+    setPriceRange([0, maxPriceRange]);
 
     setFilter(defaultFilterState);
   };
@@ -150,8 +166,6 @@ export const MarketFilter = ({ onChange }: MarketFilterProps) => {
       durationIndex,
       priceRange,
     } as FilterState);
-
-    const unit = Math.pow(10, decimals);
 
     onChange({
       startDate,
@@ -289,7 +303,7 @@ export const MarketFilter = ({ onChange }: MarketFilterProps) => {
             <FilterItem label='Price range'>
               <Slider
                 value={priceRange}
-                max={150}
+                max={maxPriceRange}
                 onChange={(_event: Event, newValue: number | number[]) =>
                   setPriceRange(newValue as [number, number])
                 }
