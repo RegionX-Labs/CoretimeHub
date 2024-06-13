@@ -6,6 +6,7 @@ import { NetworkType } from '@/models';
 
 import { connect, disconnect, initialState, reducer } from '../common';
 import { WS_KUSAMA_CORETIME_CHAIN, WS_ROCOCO_CORETIME_CHAIN } from '../consts';
+import { ApiState } from '../types';
 
 const types = {
   CoreIndex: 'u32',
@@ -54,8 +55,9 @@ const CoretimeApiContextProvider = (props: any) => {
   const disconnectCoretime = () => disconnect(state);
 
   useEffect(() => {
-    state.apiError && toastError(`Failed to connect to Coretime chain`);
-  }, [state.apiError, toastError]);
+    state.apiState === ApiState.ERROR &&
+      toastError(`Failed to connect to Coretime chain`);
+  }, [state.apiState, toastError]);
 
   useEffect(() => {
     const url = getUrl(network);

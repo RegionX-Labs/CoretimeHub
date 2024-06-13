@@ -28,8 +28,9 @@ const RelayApiContextProvider = (props: any) => {
   const { network } = useNetwork();
 
   useEffect(() => {
-    state.apiError && toastError(`Failed to connect to relay chain`);
-  }, [state.apiError, toastError]);
+    state.apiState === ApiState.ERROR &&
+      toastError(`Failed to connect to relay chain`);
+  }, [state.apiState, toastError]);
 
   const disconnectRelay = () => disconnect(state);
 

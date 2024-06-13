@@ -7,17 +7,13 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { ApiPromise } from '@polkadot/api';
 import { humanizer } from 'humanize-duration';
-import TimeAgo from 'javascript-time-ago';
-// English.
-import en from 'javascript-time-ago/locale/en';
-import React, { useCallback, useEffect, useState } from 'react';
+import moment from 'moment';
+import React from 'react';
 
-import { getBalanceString, timesliceToTimestamp } from '@/utils/functions';
+import { getBalanceString } from '@/utils/functions';
 
-import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
+import { useRelayApi } from '@/contexts/apis';
 import { Listing } from '@/models';
 
 import styles from './index.module.scss';
@@ -27,50 +23,21 @@ interface MarketRegionProps {
 }
 
 export const MarketRegion = ({ listing }: MarketRegionProps) => {
-  TimeAgo.addLocale(en);
-  // Create formatter (English).
-  const timeAgo = new TimeAgo('en-US');
-
   const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
 
   const theme = useTheme();
-  const { timeslicePeriod } = useCoretimeApi();
 
   const {
-    state: { api: relayApi, apiState: relayApiState, symbol, decimals },
+    state: { symbol, decimals },
   } = useRelayApi();
 
-  const [beginTimestamp, setBeginTimestamp] = useState(0);
-  const [endTimestamp, setEndTimestamp] = useState(0);
-
-  const { region, regionCoreOccupancy, regionConsumed } = listing;
-
-  // FIXME: network-based block time
-  const setTimestamps = useCallback(
-    async (api: ApiPromise) => {
-      const begin = await timesliceToTimestamp(
-        api,
-        region.getBegin(),
-        timeslicePeriod
-      );
-      const end = await timesliceToTimestamp(
-        api,
-        region.getEnd(),
-        timeslicePeriod
-      );
-      setBeginTimestamp(begin);
-      setEndTimestamp(end);
-    },
-    [region, timeslicePeriod]
-  );
-
-  useEffect(() => {
-    if (!relayApi || relayApiState !== ApiState.READY) {
-      return;
-    }
-
-    setTimestamps(relayApi);
-  }, [relayApi, relayApiState, setTimestamps]);
+  const {
+    region,
+    regionCoreOccupancy,
+    regionConsumed,
+    beginTimestamp,
+    endTimestamp,
+  } = listing;
 
   const progress = [
     {
@@ -127,7 +94,7 @@ export const MarketRegion = ({ listing }: MarketRegionProps) => {
           <Typography
             sx={{ color: theme.palette.common.black, fontWeight: 500 }}
           >
-            {timeAgo.format(beginTimestamp)}
+            {moment(beginTimestamp).format('D MMM HH:mm')}
           </Typography>
         </Box>
         <Box className={styles.timeItem}>
@@ -135,7 +102,7 @@ export const MarketRegion = ({ listing }: MarketRegionProps) => {
           <Typography
             sx={{ color: theme.palette.common.black, fontWeight: 500 }}
           >
-            {timeAgo.format(endTimestamp)}
+            {moment(endTimestamp).format('D MMM HH:mm')}
           </Typography>
         </Box>
       </Box>

@@ -127,7 +127,7 @@ export const connect = (
         });
         dispatch({
           type: 'SET_DECIMALS',
-          payload: tokenDecimals ? tokenDecimals[0] : 12,
+          payload: tokenDecimals ? parseInt(tokenDecimals[0]) : 12,
         });
       }
 

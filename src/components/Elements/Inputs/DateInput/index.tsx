@@ -1,36 +1,33 @@
 import { useTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DatePicker, DatePickerProps } from '@mui/x-date-pickers/DatePicker';
 
-interface DateInputProps {
-  label: string;
-  value: Date | null;
-  onChange: (_v: Date | null) => void;
+interface DateInputProps extends DatePickerProps<Date> {
+  label?: string;
 }
 
-export const DateInput = ({ label, value, onChange }: DateInputProps) => {
+export const DateInput = ({ label = '', ...props }: DateInputProps) => {
   const theme = useTheme();
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <DatePicker
           label={label}
-          value={value}
-          onChange={onChange}
           sx={{
-            '& .MuiFormLabel-root': {
+            '.MuiFormLabel-root': {
               color: theme.palette.common.black,
             },
-            '& .MuiInputBase-root': {
+            '.MuiInputBase-root': {
               background: theme.palette.common.white,
-              borderRadius: '2rem',
-              width: '12rem',
+              borderRadius: '0.5rem',
             },
-            '& .MuiOutlinedInput-notchedOutline': {
-              border: 'none',
+            '.MuiOutlinedInput-input': {
+              height: '1em',
+              py: '1rem',
             },
           }}
+          {...props}
         />
       </LocalizationProvider>
     </>

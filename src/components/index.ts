@@ -2,6 +2,7 @@ export * from './Charts';
 export * from './Elements';
 export * from './Header';
 export * from './Layout';
+export * from './Market';
 export * from './Modals';
 export * from './Panels';
 export * from './Paras';

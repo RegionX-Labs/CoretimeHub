@@ -4,6 +4,7 @@ import { useToast } from '@/contexts/toast';
 
 import { connect, disconnect, initialState, reducer } from '../common';
 import { EXPERIMENTAL, WS_REGIONX_CHAIN } from '../consts';
+import { ApiState } from '../types';
 
 const types = {
   CoreIndex: 'u32',
@@ -89,8 +90,9 @@ const RegionXApiContextProvider = (props: any) => {
   const { toastError } = useToast();
 
   useEffect(() => {
-    state.apiError && toastError(`Failed to connect to RegionX chain`);
-  }, [state.apiError, toastError]);
+    state.apiState === ApiState.ERROR &&
+      toastError(`Failed to connect to RegionX chain`);
+  }, [state.apiState, toastError]);
 
   const disconnectRegionX = () => disconnect(state);
 

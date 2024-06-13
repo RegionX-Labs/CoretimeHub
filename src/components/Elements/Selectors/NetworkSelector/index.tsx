@@ -39,7 +39,7 @@ const RelaySelect = () => {
     <FormControl size='small'>
       <Select
         id='network-select'
-        value={network}
+        value={network === NetworkType.NONE ? '' : network}
         label='Relay chain'
         onChange={handleChange}
         sx={{
