@@ -19,10 +19,9 @@ import React, { useState } from 'react';
 
 import { ActionButton, DateInput } from '@/components/Elements';
 
-import { useRegionXApi } from '@/contexts/apis/RegionXApi';
+import { useRelayApi } from '@/contexts/apis';
 import { useMarket } from '@/contexts/market';
 import { MarketFilterOptions, WEEK_IN_TIMESLICES } from '@/models';
-
 type Range = {
   min: number;
   max: number;
@@ -101,7 +100,7 @@ export const MarketFilter = ({ onChange }: MarketFilterProps) => {
   const theme = useTheme();
   const {
     state: { symbol, decimals },
-  } = useRegionXApi();
+  } = useRelayApi();
   const { listedRegions } = useMarket();
 
   const unit = Math.pow(10, decimals);
