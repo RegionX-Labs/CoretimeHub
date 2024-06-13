@@ -43,7 +43,12 @@ export const PurchaseHistoryModal = ({
   );
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth='md'>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth='md'
+      data-cy='purchase-history-modal'
+    >
       <DialogContent className={styles.container}>
         <Box>
           <Typography
@@ -85,7 +90,12 @@ export const PurchaseHistoryModal = ({
       </DialogContent>
       <DialogActions>
         <Box>
-          <ActionButton label='Close' onClick={onClose} disabled={loading} />
+          <ActionButton
+            label='Close'
+            onClick={onClose}
+            disabled={loading}
+            data-cy='btn-close-purchase-history-modal'
+          />
         </Box>
       </DialogActions>
     </Dialog>
