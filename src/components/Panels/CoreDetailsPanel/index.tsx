@@ -59,7 +59,7 @@ interface CoreDetailsPanelProps {
 export const CoreDetailsPanel = ({ saleInfo }: CoreDetailsPanelProps) => {
   const theme = useTheme();
   return (
-    <Paper className={styles.container}>
+    <Paper className={styles.container} data-cy='core-details'>
       <Box className={styles.titleWrapper}>
         <Image src={GraphIcon} alt='graph' className={styles.iconWrapper} />
         <Typography

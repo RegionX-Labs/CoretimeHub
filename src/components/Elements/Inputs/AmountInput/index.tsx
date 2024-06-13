@@ -1,11 +1,11 @@
-import { Stack, TextField, Typography } from '@mui/material';
+import { InputAdornment, Stack, TextField, Typography } from '@mui/material';
 
 interface AmountInputProps {
-  amount: string;
+  amount?: number;
   currency: string;
   title?: string;
   caption?: string;
-  setAmount: (_: string) => void;
+  setAmount: (_: number) => void;
 }
 
 // TODO: Fetch dot price and show how much is the currency amount worth.
@@ -17,49 +17,32 @@ export const AmountInput = ({
   caption,
   setAmount,
 }: AmountInputProps) => {
-  const extractValue = (str: string): string => {
-    const firstSpaceIndex = str.indexOf(' ');
-
-    let result = '';
-    if (firstSpaceIndex != -1) {
-      result = str.substring(0, firstSpaceIndex);
-    } else {
-      result = str;
-    }
-
-    if (result == currency) {
-      return '';
-    }
-
-    return result;
-  };
-
-  const setCursor = (event: any) => {
-    // Set the cursor at the start.
-    setTimeout(() => {
-      event.target.selectionStart = 0;
-      event.target.selectionEnd = 0;
-    }, 0);
-  };
-
   return (
     <>
-      <Stack alignItems='center' direction='row' gap={1}>
-        {title && <Typography variant='h6'>{title}</Typography>}
-        {caption && <Typography>{caption}</Typography>}
+      <Stack alignItems='baseline' direction='row' gap={1}>
+        {title && (
+          <Typography variant='h6' lineHeight={1}>
+            {title}
+          </Typography>
+        )}
+        {caption && <Typography lineHeight={1}>{caption}</Typography>}
       </Stack>
       <TextField
-        value={`${amount} ${currency}`}
+        value={amount?.toString() || ''}
         placeholder={`Enter ${currency} amount`}
         InputProps={{
+          endAdornment: (
+            <InputAdornment position='end'>{currency}</InputAdornment>
+          ),
           style: {
             borderRadius: '1rem',
+            textAlign: 'center',
           },
         }}
+        type='number'
         onChange={(e) => {
-          setAmount(extractValue(e.target.value));
+          setAmount(parseFloat(e.target.value));
         }}
-        onFocus={setCursor}
         fullWidth
       />
     </>

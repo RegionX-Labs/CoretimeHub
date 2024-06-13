@@ -27,7 +27,9 @@ export const LeaseStateCard = ({ paraId, height }: LeaseStateProps) => {
   return (
     <Stack direction='column' gap='0.5rem' alignItems='start'>
       <Typography>
-        {`Lease expires in ${formatDuration((until - height) * RELAY_CHAIN_BLOCK_TIME)}`}
+        {`Lease expires in ${formatDuration(
+          (until - height) * RELAY_CHAIN_BLOCK_TIME
+        )}`}
       </Typography>
     </Stack>
   );

@@ -1,3 +1,4 @@
+import { expect } from '@jest/globals';
 import { completeMask, RegionId } from 'coretime-utils';
 
 import { parseHNString, parseHNStringToString } from '.';
