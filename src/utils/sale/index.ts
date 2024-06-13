@@ -52,9 +52,8 @@ export const getCorePriceAtLegacy = (
 };
 
 export const isNewPricing = (now: number, network: NetworkType): boolean => {
-  // The new pricing model is used after block 485639 for Kusama CT.
   return (
     (network == NetworkType.KUSAMA && now >= 485639) ||
-    (network == NetworkType.ROCOCO && now >= 1897262)
-  ); // The new pricing is applied right away.
+    (network == NetworkType.ROCOCO && now >= 1796462)
+  );
 };
