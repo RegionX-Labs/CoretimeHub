@@ -4,7 +4,8 @@ import { parseHNString } from '@/utils/functions';
 
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
-import { ContextStatus } from '@/models';
+import { ContextStatus, NetworkType } from '@/models';
+import { useNetwork } from '@/contexts/network';
 
 type RenewableParachain = {
   core: number;
@@ -23,6 +24,7 @@ export const useRenewableParachains = () => {
     ContextStatus.UNINITIALIZED
   );
   const [parachains, setParachains] = useState<RenewableParachain[]>([]);
+  const { network } = useNetwork();
 
   useEffect(() => {
     if (apiState !== ApiState.READY) {
@@ -35,7 +37,10 @@ export const useRenewableParachains = () => {
 
       setStatus(ContextStatus.LOADING);
 
-      const renewals = await api.query.broker.allowedRenewals.entries();
+      const renewals =
+        network === NetworkType.ROCOCO
+          ? await api.query.broker.potentialRenewals.entries()
+          : await api.query.broker.allowedRenewals.entries();
       const chains: RenewableParachain[] = [];
       for (const [key, value] of renewals) {
         const data: any = key.toHuman();
