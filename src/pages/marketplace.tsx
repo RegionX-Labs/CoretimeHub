@@ -1,34 +1,28 @@
-import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import SettingsInputComponentRoundedIcon from '@mui/icons-material/SettingsInputComponentRounded';
 import {
   Backdrop,
   Box,
   Button,
   CircularProgress,
-  FormControl,
   MenuItem,
   Paper,
-  Popover,
   Select,
-  Slider,
   Stack,
   Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { Timeslice } from 'coretime-utils';
+import { OnChainRegionId, Region } from 'coretime-utils';
+import { useConfirm } from 'material-ui-confirm';
+import moment from 'moment';
 import { useEffect, useState } from 'react';
 
-import {
-  ActionButton,
-  DateInput,
-  MarketRegion,
-  PurchaseModal,
-} from '@/components';
+import { MarketFilter, MarketRegion, PurchaseModal } from '@/components';
 
-import { useCoretimeApi } from '@/contexts/apis';
+import { useAccounts } from '@/contexts/account';
+import { useRegionXApi } from '@/contexts/apis/RegionXApi';
+import { ApiState } from '@/contexts/apis/types';
 import { useMarket } from '@/contexts/market';
-import { useRegions } from '@/contexts/regions';
-import { ContextStatus, Listing, WEEK_IN_TIMESLICES } from '@/models';
+import { useToast } from '@/contexts/toast';
+import { ContextStatus, Listing, MarketFilterOptions } from '@/models';
 
 // eslint-disable-next-line no-unused-vars
 enum SortOption {
@@ -59,88 +53,142 @@ const sortOptions: Option[] = [
   },
 ];
 
-type Range = {
-  lowerLimit: number;
-  upperLimit: number;
-};
-
-type RangeOption = {
-  limit: Range;
-  label: string;
-};
-
-const rangeOptions: RangeOption[] = [
-  { limit: { lowerLimit: 0, upperLimit: 1 }, label: 'Show All' },
-  { limit: { lowerLimit: 0, upperLimit: 0.25 }, label: '0% - 25%' },
-  { limit: { lowerLimit: 0.25, upperLimit: 0.5 }, label: '25% - 50%' },
-  { limit: { lowerLimit: 0.5, upperLimit: 0.75 }, label: '50% - 75%' },
-  { limit: { lowerLimit: 0.75, upperLimit: 1 }, label: '75% - 100%' },
-];
-
-type DurationOption = {
-  duration: Timeslice;
-  label: string;
-};
-
-const durationOptions: DurationOption[] = [
-  { duration: 0, label: 'Show All' },
-  { duration: WEEK_IN_TIMESLICES, label: '1 week' },
-  { duration: 2 * WEEK_IN_TIMESLICES, label: '2 weeks' },
-  { duration: 3 * WEEK_IN_TIMESLICES, label: '3 weeks' },
-  { duration: 4 * WEEK_IN_TIMESLICES, label: '4 weeks' },
-];
-
 const Marketplace = () => {
+  const confirm = useConfirm();
   const theme = useTheme();
 
-  const { fetchMarket, listedRegions, status } = useMarket();
-  const { fetchRegions } = useRegions();
   const {
-    state: { symbol },
-  } = useCoretimeApi();
+    state: { activeAccount, activeSigner },
+  } = useAccounts();
+  const { fetchMarket, listedRegions, status } = useMarket();
+
+  const {
+    state: { api: regionXApi, apiState: regionXApiState },
+  } = useRegionXApi();
+  const { toastError, toastSuccess, toastWarning, toastInfo } = useToast();
 
   const [purchaseModalOpen, openPurhcaseModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [filteredListings, setFilteredListings] = useState<Listing[]>([]);
+  const [working, setWorking] = useState(false);
 
-  // Filters
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [filterOptions, setFilterOptions] = useState<MarketFilterOptions>({});
   const [orderBy, setOrderBy] = useState<SortOption>(SortOption.CheapestFirst);
-  const [selectedRange, setSelectedRange] = useState(rangeOptions[0].limit);
-  const [selectedDuration, setSelectedDuration] = useState<Timeslice>(0);
-  const [priceRange, setPriceRange] = useState<number[]>([0, 100]);
-
-  // Filter popover
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const open = Boolean(anchorEl);
-  const id = open ? 'popover-filters' : undefined;
-  const openFilters = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const closeFilters = () => {
-    setAnchorEl(null);
-  };
 
   const onPurchase = (listing: Listing) => {
     setSelectedListing(listing);
     openPurhcaseModal(true);
   };
 
+  const unlistRegion = async (regionId: OnChainRegionId) => {
+    if (!regionXApi || regionXApiState !== ApiState.READY) {
+      toastWarning('Please check the connection to RegionX Chain');
+      return;
+    }
+    if (!activeAccount || !activeSigner) {
+      toastWarning('Please connect your wallet');
+      return;
+    }
+    try {
+      setWorking(true);
+
+      const txUnlist = regionXApi.tx.market.unlistRegion(regionId);
+
+      await txUnlist.signAndSend(
+        activeAccount.address,
+        { signer: activeSigner },
+        ({ status, events }) => {
+          if (status.isReady) toastInfo('Transaction was initiated');
+          else if (status.isInBlock) toastInfo(`In Block`);
+          else if (status.isFinalized) {
+            setWorking(false);
+            events.forEach(({ event: { method } }) => {
+              if (method === 'ExtrinsicSuccess') {
+                toastSuccess('Transaction successful');
+                fetchMarket();
+              } else if (method === 'ExtrinsicFailed') {
+                toastError(`Failed to unlist the region.`);
+              }
+            });
+          }
+        }
+      );
+    } catch (e: any) {
+      toastError(
+        `Failed to unlist the region. Error: ${
+          e.errorMessage === 'Error'
+            ? 'Please check your balance.'
+            : e.errorMessage
+        }`
+      );
+      setWorking(false);
+    }
+  };
+
+  const onUnlist = (region: Region) => {
+    confirm({
+      description:
+        'Are you sure that you are going to unlist the selected region from the market?',
+    }).then(() => unlistRegion(region.getOnChainRegionId()));
+  };
+
   useEffect(() => {
-    setFilteredListings(listedRegions);
-  }, [listedRegions]);
+    const checkConditions = (listing: Listing): boolean => {
+      const { region, beginTimestamp, endTimestamp, currentPrice } = listing;
+      const { startDate, endDate, coreOccupancy, minDuration, price } =
+        filterOptions;
 
-  const clearFilters = () => {
-    setSelectedRange(rangeOptions[0].limit);
-    setSelectedDuration(0);
-    setPriceRange([0, 100]);
-  };
+      if (
+        startDate &&
+        !moment(beginTimestamp).isSameOrAfter(moment(startDate), 'day')
+      )
+        return false;
+      if (
+        endDate &&
+        !moment(endTimestamp).isSameOrAfter(moment(endDate), 'day')
+      )
+        return false;
 
-  const applyFilters = () => {
-    /** Apply filters */
-  };
+      const occupancy = region.coreOccupancy();
+      if (
+        coreOccupancy &&
+        !(occupancy >= coreOccupancy.min && occupancy <= coreOccupancy.max)
+      )
+        return false;
+
+      const duration = endTimestamp - beginTimestamp;
+      if (minDuration && duration < minDuration) return false;
+
+      if (
+        price &&
+        !(currentPrice.cmp(price.min) >= 0 && currentPrice.cmp(price.max) <= 0)
+      ) {
+        return false;
+      }
+
+      return true;
+    };
+    const filtered: Array<Listing> = [];
+
+    listedRegions.forEach((listing) => {
+      if (checkConditions(listing)) filtered.push(listing);
+    });
+
+    filtered.sort((a: Listing, b: Listing) => {
+      switch (orderBy) {
+        case SortOption.CheapestFirst:
+          return a.currentPrice.sub(b.currentPrice).toNumber();
+        case SortOption.ExpensiveFirst:
+          return b.currentPrice.sub(a.currentPrice).toNumber();
+        case SortOption.LowestPptFirst:
+          return a.timeslicePrice.sub(b.timeslicePrice).toNumber();
+        case SortOption.HighestPptFirst:
+          return b.timeslicePrice.sub(a.timeslicePrice).toNumber();
+      }
+    });
+
+    setFilteredListings(filtered);
+  }, [listedRegions, filterOptions, orderBy]);
 
   return (
     <Box>
@@ -170,186 +218,8 @@ const Marketplace = () => {
           </Typography>
         </Box>
         <Stack direction='row' gap='0.5rem'>
-          <DateInput
-            label='Start date'
-            value={startDate}
-            onChange={(v) => setStartDate(v)}
-          />
-          <DateInput
-            label='End date'
-            value={endDate}
-            onChange={(v) =>
-              setEndDate(
-                v === null || startDate === null || v < startDate ? null : v
-              )
-            }
-          />
-          <Box>
-            <Button
-              aria-describedby={id}
-              onClick={(e) => openFilters(e)}
-              sx={{
-                background: open
-                  ? theme.palette.common.black
-                  : theme.palette.common.white,
-                color: open
-                  ? theme.palette.common.white
-                  : theme.palette.common.black,
-                borderRadius: '2rem',
-                px: '1.5rem',
-                height: '100%',
-                fontSize: '1rem',
-                fontWeight: 400,
-              }}
-              endIcon={<SettingsInputComponentRoundedIcon />}
-            >
-              Filters
-            </Button>
-            <Popover
-              id={id}
-              open={open}
-              anchorEl={anchorEl}
-              onClose={() => closeFilters()}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-            >
-              <Paper sx={{ padding: '1.5rem', width: '20rem' }}>
-                <Stack
-                  direction='row'
-                  justifyContent='space-between'
-                  alignItems='center'
-                >
-                  <Typography
-                    sx={{
-                      fontSize: '1rem',
-                      fontWeight: 700,
-                      color: theme.palette.common.black,
-                    }}
-                  >
-                    Filters
-                  </Typography>
-                  <Button
-                    startIcon={<CloseOutlinedIcon />}
-                    sx={{
-                      color: theme.palette.common.black,
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                    onClick={() => clearFilters()}
-                  >
-                    Clear all
-                  </Button>
-                </Stack>
-                <Stack direction='column' gap='1rem' sx={{ my: '1rem' }}>
-                  <Stack direction='column' gap='0.5rem'>
-                    <Typography
-                      sx={{
-                        color: theme.palette.common.black,
-                        fontWeight: 600,
-                        fontSize: '0.75rem',
-                      }}
-                    >
-                      Core Occupancy
-                    </Typography>
-                    <FormControl fullWidth>
-                      <Select
-                        value={JSON.stringify(selectedRange)}
-                        onChange={(e) =>
-                          setSelectedRange(JSON.parse(e.target.value) as Range)
-                        }
-                        sx={{
-                          '.MuiSelect-select': {
-                            background: theme.palette.common.white,
-                          },
-                          '.MuiOutlinedInput-notchedOutline': {
-                            borderRadius: '0.5rem',
-                          },
-                          '.MuiOutlinedInput-input': {
-                            py: '0.75rem',
-                          },
-                        }}
-                      >
-                        {rangeOptions.map(({ label, limit }) => (
-                          <MenuItem key={label} value={JSON.stringify(limit)}>
-                            {label}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Stack>
-                  <Stack direction='column' gap='0.5rem'>
-                    <Typography
-                      sx={{
-                        color: theme.palette.common.black,
-                        fontWeight: 600,
-                        fontSize: '0.75rem',
-                      }}
-                    >
-                      Region duration at least
-                    </Typography>
-                    <FormControl fullWidth>
-                      <Select
-                        value={selectedDuration}
-                        onChange={(e) =>
-                          setSelectedDuration(e.target.value as number)
-                        }
-                        sx={{
-                          '.MuiSelect-select': {
-                            background: theme.palette.common.white,
-                          },
-                          '.MuiOutlinedInput-notchedOutline': {
-                            borderRadius: '0.5rem',
-                          },
-                          '.MuiOutlinedInput-input': {
-                            py: '0.75rem',
-                          },
-                        }}
-                      >
-                        {durationOptions.map(({ label, duration }) => (
-                          <MenuItem key={label} value={duration}>
-                            {label}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Stack>
-                  <Stack direction='column' gap='0.5rem'>
-                    <Typography
-                      sx={{
-                        color: theme.palette.common.black,
-                        fontWeight: 600,
-                        fontSize: '0.75rem',
-                      }}
-                    >
-                      Price range
-                    </Typography>
-                  </Stack>
-                  <Slider
-                    value={priceRange}
-                    onChange={(_event: Event, newValue: number | number[]) =>
-                      setPriceRange(newValue as number[])
-                    }
-                    valueLabelDisplay='on'
-                    valueLabelFormat={(value) => `${value} ${symbol}`}
-                    sx={{ width: '90%', margin: '0 auto', mt: '2rem' }}
-                  />
-                </Stack>
-                <Box>
-                  <ActionButton
-                    label='Apply Filters'
-                    onClick={() => applyFilters()}
-                    fullWidth
-                  />
-                </Box>
-              </Paper>
-            </Popover>
-          </Box>
+          <MarketFilter onChange={(options) => setFilterOptions(options)} />
+
           <Select
             sx={{
               width: '16rem',
@@ -381,10 +251,36 @@ const Marketplace = () => {
           flexWrap='wrap'
           justifyContent='space-around'
         >
-          {filteredListings.map((listing, indx) => (
-            <Box key={indx} margin='1em'>
-              <MarketRegion listing={listing} onPurchase={onPurchase} />
-            </Box>
+          {filteredListings.map((listing, index) => (
+            <Paper key={index}>
+              <Stack direction='column' sx={{ pb: '1rem' }}>
+                <MarketRegion listing={listing} />
+                {activeAccount ? (
+                  <Button
+                    sx={{
+                      background: theme.palette.primary.contrastText,
+                      color: theme.palette.primary.main,
+                      fontSize: '0.75rem',
+                      borderRadius: '2rem',
+                      height: '2.5rem',
+                      margin: '0 1.5rem',
+                    }}
+                    onClick={() =>
+                      activeAccount.address === listing.seller
+                        ? onUnlist(listing.region)
+                        : onPurchase(listing)
+                    }
+                    disabled={working}
+                  >
+                    {listing.seller === activeAccount.address
+                      ? 'Unlist'
+                      : 'Purchase'}
+                  </Button>
+                ) : (
+                  <></>
+                )}
+              </Stack>
+            </Paper>
           ))}
         </Box>
       )}
@@ -392,8 +288,6 @@ const Marketplace = () => {
         <PurchaseModal
           open={purchaseModalOpen}
           onClose={() => {
-            fetchMarket();
-            fetchRegions();
             openPurhcaseModal(false);
           }}
           listing={selectedListing}

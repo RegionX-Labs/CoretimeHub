@@ -2,6 +2,8 @@ import { BN } from '@polkadot/util';
 import { ContextData, Region, RegionId } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
+import { timesliceToTimestamp } from '@/utils/functions';
+
 import { ContextStatus, Listing, ListingRecord } from '@/models';
 
 import { useCoretimeApi, useRelayApi } from '../apis';
@@ -34,14 +36,20 @@ const MarketProvider = ({ children }: Props) => {
   } = useRegionXApi();
   const { timeslicePeriod } = useCoretimeApi();
   const {
-    state: { height: relayBlockNumber },
+    state: { api: relayApi, apiState: relayApiState, height: relayBlockNumber },
   } = useRelayApi();
 
   const [status, setStatus] = useState(ContextStatus.UNINITIALIZED);
   const [listedRegions, setListedRegions] = useState<Array<Listing>>([]);
 
   const fetchMarket = async () => {
-    if (!regionXApi || regionXApiState !== ApiState.READY || !relayBlockNumber)
+    if (
+      !regionXApi ||
+      regionXApiState !== ApiState.READY ||
+      !relayApi ||
+      relayApiState !== ApiState.READY ||
+      !relayBlockNumber
+    )
       return;
 
     try {
@@ -69,7 +77,7 @@ const MarketProvider = ({ children }: Props) => {
 
       const records: Listing[] = [];
 
-      for (const [key, value] of listingEntries) {
+      for await (const [key, value] of listingEntries) {
         const [{ begin, core, mask }] = key.toHuman() as [any];
         const { seller, timeslicePrice, saleRecipient } =
           value.toJSON() as ListingRecord;
@@ -85,13 +93,25 @@ const MarketProvider = ({ children }: Props) => {
             JSON.stringify(item.getRegionId()) === JSON.stringify(regionId)
         );
         if (!region) continue;
+        const beginTimestamp = await timesliceToTimestamp(
+          relayApi,
+          region.getBegin(),
+          timeslicePeriod
+        );
+        const endTimestamp = await timesliceToTimestamp(
+          relayApi,
+          region.getEnd(),
+          timeslicePeriod
+        );
         const record: Listing = Listing.construct(
           { timeslicePeriod, relayBlockNumber } as ContextData,
           region,
           seller,
           new BN(timeslicePrice),
           new BN(timeslicePrice * (region.getEnd() - region.getBegin())),
-          saleRecipient
+          saleRecipient,
+          beginTimestamp,
+          endTimestamp
         );
         records.push(record);
       }

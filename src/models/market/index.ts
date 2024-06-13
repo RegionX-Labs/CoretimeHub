@@ -19,13 +19,21 @@ export class Listing {
   /// The recepient of the sale.
   public saleRecepient: string | null;
 
+  /// The begin timestamp of the region
+  public beginTimestamp: number;
+
+  /// The end timestamp of the region
+  public endTimestamp: number;
+
   public static construct(
     context: ContextData,
     region: Region,
     seller: Address,
     timeslicePrice: BN,
     currentPrice: BN,
-    saleRecepient: Address | null
+    saleRecepient: Address | null,
+    beginTimestamp: number,
+    endTimestamp: number
   ): Listing {
     return new Listing(
       region,
@@ -34,7 +42,9 @@ export class Listing {
       seller,
       timeslicePrice,
       currentPrice,
-      saleRecepient
+      saleRecepient,
+      beginTimestamp,
+      endTimestamp
     );
   }
 
@@ -45,7 +55,9 @@ export class Listing {
     seller: string,
     timeslicePrice: BN,
     currentPrice: BN,
-    saleRecepient: string | null
+    saleRecepient: string | null,
+    beginTimestamp: number,
+    endTimestamp: number
   ) {
     this.region = region;
     this.regionConsumed = regionConsumed;
@@ -54,6 +66,8 @@ export class Listing {
     this.timeslicePrice = timeslicePrice;
     this.currentPrice = currentPrice;
     this.saleRecepient = saleRecepient;
+    this.beginTimestamp = beginTimestamp;
+    this.endTimestamp = endTimestamp;
   }
 }
 
@@ -61,4 +75,18 @@ export type ListingRecord = {
   seller: Address;
   timeslicePrice: number;
   saleRecipient: Address | null;
+};
+
+export type MarketFilterOptions = {
+  startDate?: Date;
+  endDate?: Date;
+  coreOccupancy?: {
+    min: number;
+    max: number;
+  };
+  minDuration?: number;
+  price?: {
+    min: BN;
+    max: BN;
+  };
 };

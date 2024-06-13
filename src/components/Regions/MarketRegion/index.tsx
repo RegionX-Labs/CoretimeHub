@@ -1,127 +1,43 @@
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import {
   Box,
-  Button,
   LinearProgress,
   Paper,
   Stack,
   Typography,
   useTheme,
 } from '@mui/material';
-import { ApiPromise } from '@polkadot/api';
-import clsx from 'clsx';
-import { OnChainRegionId } from 'coretime-utils';
 import { humanizer } from 'humanize-duration';
-import TimeAgo from 'javascript-time-ago';
-// English.
-import en from 'javascript-time-ago/locale/en';
-import { useConfirm } from 'material-ui-confirm';
-import React, { useCallback, useEffect, useState } from 'react';
+import moment from 'moment';
+import React from 'react';
 
-import { getBalanceString, timesliceToTimestamp } from '@/utils/functions';
+import { getBalanceString } from '@/utils/functions';
 
-import { ProgressButton } from '@/components/Elements';
-
-import { useAccounts } from '@/contexts/account';
-import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
-import { useRegionXApi } from '@/contexts/apis/RegionXApi';
-import { ApiState } from '@/contexts/apis/types';
-import { useMarket } from '@/contexts/market';
-import { useToast } from '@/contexts/toast';
+import { useRelayApi } from '@/contexts/apis';
 import { Listing } from '@/models';
 
 import styles from './index.module.scss';
 
 interface MarketRegionProps {
   listing: Listing;
-  onPurchase?(_listing: Listing): void;
-  bordered?: boolean;
 }
 
-export const MarketRegion = ({
-  listing,
-  bordered = true,
-  onPurchase = (): void => {
-    /** */
-  },
-}: MarketRegionProps) => {
-  return (
-    <>
-      {bordered ? (
-        <Paper className={clsx(styles.container)}>
-          <MarketRegionInner listing={listing} onPurchase={onPurchase} />
-        </Paper>
-      ) : (
-        <div className={clsx(styles.container)}>
-          <MarketRegionInner listing={listing} onPurchase={onPurchase} />
-        </div>
-      )}
-    </>
-  );
-};
-
-interface MarketRegionInnerProps {
-  listing: Listing;
-  onPurchase(_listing: Listing): void;
-}
-
-const MarketRegionInner = ({ listing, onPurchase }: MarketRegionInnerProps) => {
-  TimeAgo.addLocale(en);
-  // Create formatter (English).
-  const timeAgo = new TimeAgo('en-US');
-
+export const MarketRegion = ({ listing }: MarketRegionProps) => {
   const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
 
-  const confirm = useConfirm();
   const theme = useTheme();
-  const {
-    state: { activeAccount, activeSigner },
-  } = useAccounts();
-  const { timeslicePeriod } = useCoretimeApi();
 
   const {
-    state: { api: relayApi, apiState: relayApiState, symbol, decimals },
+    state: { symbol, decimals },
   } = useRelayApi();
 
   const {
-    state: { api: regionXApi, apiState: regionXApiState },
-  } = useRegionXApi();
-  const { fetchMarket } = useMarket();
-
-  const { toastError, toastInfo, toastWarning, toastSuccess } = useToast();
-
-  const [beginTimestamp, setBeginTimestamp] = useState(0);
-  const [endTimestamp, setEndTimestamp] = useState(0);
-  const [working, setWorking] = useState(false);
-
-  const { region, regionCoreOccupancy, regionConsumed } = listing;
-
-  // FIXME: network-based block time
-  const setTimestamps = useCallback(
-    async (api: ApiPromise) => {
-      const begin = await timesliceToTimestamp(
-        api,
-        region.getBegin(),
-        timeslicePeriod
-      );
-      const end = await timesliceToTimestamp(
-        api,
-        region.getEnd(),
-        timeslicePeriod
-      );
-      setBeginTimestamp(begin);
-      setEndTimestamp(end);
-    },
-    [region, timeslicePeriod]
-  );
-
-  useEffect(() => {
-    if (!relayApi || relayApiState !== ApiState.READY) {
-      return;
-    }
-
-    setTimestamps(relayApi);
-  }, [relayApi, relayApiState, setTimestamps]);
+    region,
+    regionCoreOccupancy,
+    regionConsumed,
+    beginTimestamp,
+    endTimestamp,
+  } = listing;
 
   const progress = [
     {
@@ -155,58 +71,6 @@ const MarketRegionInner = ({ listing, onPurchase }: MarketRegionInnerProps) => {
     },
   ];
 
-  const unlistRegion = async (regionId: OnChainRegionId) => {
-    if (!regionXApi || regionXApiState !== ApiState.READY) {
-      toastWarning('Please check the connection to RegionX Chain');
-      return;
-    }
-    if (!activeAccount || !activeSigner) {
-      toastWarning('Please connect your wallet');
-      return;
-    }
-    try {
-      setWorking(true);
-
-      const txUnlist = regionXApi.tx.market.unlistRegion(regionId);
-
-      await txUnlist.signAndSend(
-        activeAccount.address,
-        { signer: activeSigner },
-        ({ status, events }) => {
-          if (status.isReady) toastInfo('Transaction was initiated');
-          else if (status.isInBlock) toastInfo(`In Block`);
-          else if (status.isFinalized) {
-            setWorking(false);
-            events.forEach(({ event: { method } }) => {
-              if (method === 'ExtrinsicSuccess') {
-                toastSuccess('Transaction successful');
-                fetchMarket();
-              } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to unlist the region.`);
-              }
-            });
-          }
-        }
-      );
-    } catch (e: any) {
-      toastError(
-        `Failed to unlist the region. Error: ${
-          e.errorMessage === 'Error'
-            ? 'Please check your balance.'
-            : e.errorMessage
-        }`
-      );
-      setWorking(false);
-    }
-  };
-
-  const onUnlist = () => {
-    confirm({
-      description:
-        'Are you sure that you are going to unlist the selected region from the market?',
-    }).then(() => unlistRegion(region.getOnChainRegionId()));
-  };
-
   return (
     <Box className={styles.container}>
       <Stack direction='row' alignItems='center' justifyContent='space-between'>
@@ -230,7 +94,7 @@ const MarketRegionInner = ({ listing, onPurchase }: MarketRegionInnerProps) => {
           <Typography
             sx={{ color: theme.palette.common.black, fontWeight: 500 }}
           >
-            {timeAgo.format(beginTimestamp)}
+            {moment(beginTimestamp).format('D MMM HH:mm')}
           </Typography>
         </Box>
         <Box className={styles.timeItem}>
@@ -238,7 +102,7 @@ const MarketRegionInner = ({ listing, onPurchase }: MarketRegionInnerProps) => {
           <Typography
             sx={{ color: theme.palette.common.black, fontWeight: 500 }}
           >
-            {timeAgo.format(endTimestamp)}
+            {moment(endTimestamp).format('D MMM HH:mm')}
           </Typography>
         </Box>
       </Box>
@@ -307,34 +171,6 @@ const MarketRegionInner = ({ listing, onPurchase }: MarketRegionInnerProps) => {
           ))}
         </Stack>
       </Paper>
-      {activeAccount ? (
-        <Box sx={{ marginTop: '1em' }} display='flex' justifyContent='center'>
-          {region.getOwner() === activeAccount?.address ? (
-            <ProgressButton
-              label='Unlist'
-              loading={working}
-              width='100%'
-              onClick={onUnlist}
-            />
-          ) : (
-            <Button
-              sx={{
-                width: '100%',
-                background: theme.palette.primary.contrastText,
-                color: theme.palette.primary.main,
-                fontSize: '0.75rem',
-                borderRadius: '2rem',
-                height: '2.5rem',
-              }}
-              onClick={() => onPurchase(listing)}
-            >
-              Purchase
-            </Button>
-          )}
-        </Box>
-      ) : (
-        <></>
-      )}
     </Box>
   );
 };
