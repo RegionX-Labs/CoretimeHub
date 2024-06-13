@@ -71,6 +71,11 @@ const Purchase = () => {
       return;
     }
 
+    if (currentPrice === 0) {
+      toastWarning('Wait for the price to be fetched');
+      return;
+    }
+
     try {
       const txPurchase = api.tx.broker.purchase(currentPrice);
 
