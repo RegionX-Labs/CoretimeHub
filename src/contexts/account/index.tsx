@@ -65,14 +65,14 @@ const reducer = (state: State, action: any) => {
 
 interface AccountData {
   state: State;
-  setActiveAccount: (_acct: InjectedAccountWithMeta) => void;
+  setActiveAccount: (_acct: InjectedAccountWithMeta | null) => void;
   connectWallet: () => void;
   disconnectWallet: () => void;
 }
 
 const defaultAccountData: AccountData = {
   state: initialState,
-  setActiveAccount: (_acct: InjectedAccountWithMeta) => {
+  setActiveAccount: (_acct: InjectedAccountWithMeta | null) => {
     /** */
   },
   connectWallet: () => {
@@ -88,8 +88,8 @@ const AccountDataContext = createContext<AccountData>(defaultAccountData);
 const AccountProvider = ({ children }: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const setActiveAccount = (acct: InjectedAccountWithMeta) => {
-    localStorage.setItem(LOCAL_STORAGE_ACTIVE_ACCOUNT, acct.address);
+  const setActiveAccount = (acct: InjectedAccountWithMeta | null) => {
+    localStorage.setItem(LOCAL_STORAGE_ACTIVE_ACCOUNT, acct?.address || '');
     dispatch({ type: 'SET_ACTIVE_ACCOUNT', payload: acct });
   };
 
@@ -119,7 +119,7 @@ const AccountProvider = ({ children }: Props) => {
       const account: InjectedAccountWithMeta = activeAccount
         ? accounts.find((acc: any) => acc.address == activeAccount) ??
           accounts[0]
-        : accounts[0];
+        : null;
 
       setActiveAccount(account);
       localStorage.setItem(LOCAL_STORAGE_ACCOUNTS, JSON.stringify(accounts));

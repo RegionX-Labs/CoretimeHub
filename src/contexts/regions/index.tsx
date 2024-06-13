@@ -193,11 +193,16 @@ const RegionDataProvider = ({ children }: Props) => {
   }, [network]);
 
   useEffect(() => {
-    if (!activeAccount) return;
     if (network === NetworkType.NONE) return;
     if (!coretimeApi || coretimeApiState !== ApiState.READY) return;
     if (!relayApi || relayApiState !== ApiState.READY) return;
     if (relayBlockNumber === 0) return;
+
+    if (!activeAccount) {
+      setStatus(ContextStatus.LOADED);
+      setRegions([]);
+      return;
+    }
 
     if (status === ContextStatus.LOADED) {
       const found =
