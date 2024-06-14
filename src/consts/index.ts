@@ -1,13 +1,7 @@
 import { NetworkType } from '@/models';
 
-export const CORETIME_API = {
-  [NetworkType.ROCOCO]: process.env.ROCOCO_CORETIME_API ?? '',
-  [NetworkType.KUSAMA]: process.env.KUSAMA_CORETIME_API ?? '',
-  [NetworkType.NONE]: '',
-};
-
 export const SUBSCAN_URL = {
-  [NetworkType.ROCOCO]: 'https://coretime-rococo.subscan.io',
-  [NetworkType.KUSAMA]: 'https://coretime-kusama.subscan.io',
+  [NetworkType.ROCOCO]: process.env.SUBSCAN_CORETIME_ROCOCO ?? '',
+  [NetworkType.KUSAMA]: process.env.SUBSCAN_CORETIME_KUSAMA ?? '',
   [NetworkType.NONE]: '',
 };

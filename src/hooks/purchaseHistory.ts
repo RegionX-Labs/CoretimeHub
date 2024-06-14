@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { CORETIME_API } from '@/consts';
+import { SUBSCAN_URL } from '@/consts';
 import {
   NetworkType,
   PurchaseHistoryItem,
@@ -21,7 +21,7 @@ export const usePurchaseHistory = (
     const asyncFetchData = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${CORETIME_API[network]}/broker/purchased`, {
+        const res = await fetch(`${SUBSCAN_URL[network]}/broker/purchased`, {
           method: 'POST',
           body: JSON.stringify({
             region_begin: regionBegin,
