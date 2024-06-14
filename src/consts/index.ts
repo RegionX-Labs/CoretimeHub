@@ -1,6 +1,6 @@
 import { NetworkType } from '@/models';
 
-export const CORETIME_API = {
+export const SUBSCAN_CORETIME_API = {
   [NetworkType.ROCOCO]: process.env.SUBSCAN_CORETIME_ROCOCO_API ?? '',
   [NetworkType.KUSAMA]: process.env.SUBSCAN_CORETIME_KUSAMA_API ?? '',
   [NetworkType.NONE]: '',
