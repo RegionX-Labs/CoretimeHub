@@ -22,7 +22,10 @@ export const LeaseStateCard = ({ paraId, height }: LeaseStateProps) => {
 
   const { until } = chain;
 
-  if (height > until) return <></>;
+  if (height > until)
+    return (
+      <Typography>{`lease expiry height = ${height} until = ${until}`}</Typography>
+    );
 
   return (
     <Stack direction='column' gap='0.5rem' alignItems='start'>
