@@ -77,7 +77,6 @@ describe('E2E tests for the wallet connection', () => {
       const txRequests = Object.values(req);
       cy.wrap(txRequests.length).should('eq', 1);
       cy.wrap(encodeAddress(txRequests[0].payload.address)).should('eq', BOB);
-      console.log(txRequests[0]);
     });
   });
 });
