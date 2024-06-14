@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
+import { useParasInfo } from '@/hooks';
 import { getBalanceString, sendTx } from '@/utils/functions';
 
 import { ProgressButton } from '@/components/Elements';
@@ -41,6 +42,7 @@ export const ReserveModal = ({
   const {
     state: { api, apiState, decimals, symbol },
   } = useRelayApi();
+  const { fetchParaStates } = useParasInfo();
   const { toastError, toastInfo, toastSuccess } = useToast();
 
   const [working, setWorking] = useState(false);
@@ -62,6 +64,7 @@ export const ReserveModal = ({
       finalized: () => setWorking(false),
       success: () => {
         toastSuccess('Reservation success');
+        fetchParaStates();
         onClose();
       },
       fail: () => {

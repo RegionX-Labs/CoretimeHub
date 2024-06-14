@@ -12,6 +12,7 @@ import {
 import { compactAddLength } from '@polkadot/util';
 import { useEffect, useState } from 'react';
 
+import { useParasInfo } from '@/hooks';
 import { getBalanceString, sendTx } from '@/utils/functions';
 
 import { FileInput, ProgressButton } from '@/components/Elements';
@@ -47,6 +48,7 @@ export const RegisterModal = ({
   const {
     state: { activeAccount, activeSigner },
   } = useAccounts();
+  const { fetchParaStates } = useParasInfo();
   const { toastError, toastInfo, toastSuccess } = useToast();
 
   const [working, setWorking] = useState(false);
@@ -85,6 +87,7 @@ export const RegisterModal = ({
       finalized: () => setWorking(false),
       success: () => {
         toastSuccess('Registration success');
+        fetchParaStates();
         onClose();
       },
       fail: () => {
