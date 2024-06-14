@@ -28,7 +28,6 @@ export const Header = () => {
 
   const onDisconnect = () => {
     openAccounts(false);
-    setActiveAccount(null);
     disconnectWallet();
   };
 
