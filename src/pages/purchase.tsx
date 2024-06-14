@@ -60,7 +60,7 @@ const Purchase = () => {
 
   const { balance } = useBalances();
 
-  const purchase = async () => {
+  const onPurchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
       return;
 
@@ -90,8 +90,8 @@ const Purchase = () => {
       fail: () => {
         toastError('Failed to purchase a core');
       },
-      error: () => {
-        toastError('Failed to purchase a core');
+      error: (e) => {
+        toastError(`Failed to purchase a core. ${e}`);
         setWorking(false);
       },
     });
@@ -185,7 +185,7 @@ const Purchase = () => {
                 Manage your regions
               </Button>
               <ProgressButton
-                onClick={purchase}
+                onClick={onPurchase}
                 loading={working}
                 label='Purchase Core'
                 data-cy='btn-purchase-core'

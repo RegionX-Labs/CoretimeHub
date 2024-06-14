@@ -91,10 +91,10 @@ export const TransferModal = ({
           fetchRegions();
         },
         fail: () => {
-          toastError(`Failed to transfer the region.`);
+          toastError('Failed to transfer the region.');
         },
-        error: () => {
-          toastError(`Failed to transfer the region.`);
+        error: (e) => {
+          toastError(`Failed to transfer the region. ${e}`);
           setWorking(false);
         },
       }
@@ -125,10 +125,10 @@ export const TransferModal = ({
           fetchRegions();
         },
         fail: () => {
-          toastError(`Failed to transfer the region.`);
+          toastError('Failed to transfer the region.');
         },
-        error: () => {
-          toastError(`Failed to transfer the region.`);
+        error: (e) => {
+          toastError(`Failed to transfer the region. ${e}`);
           setWorking(false);
         },
       }

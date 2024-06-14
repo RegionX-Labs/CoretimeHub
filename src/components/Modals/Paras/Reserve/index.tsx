@@ -70,8 +70,8 @@ export const ReserveModal = ({
       fail: () => {
         toastError('Failed to reserve a parathread');
       },
-      error: () => {
-        toastError('Failed to reserve a parathread');
+      error: (e) => {
+        toastError(`Failed to reserve a parathread ${e}`);
         setWorking(false);
       },
     });

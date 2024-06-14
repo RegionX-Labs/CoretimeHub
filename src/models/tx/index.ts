@@ -11,6 +11,6 @@ export type TxStatusHandlers = {
   finalized: () => void;
   success: () => void;
   fail: () => void;
-  error: (_: any) => void;
+  error: (_?: any) => void;
   finally?: () => void;
 };

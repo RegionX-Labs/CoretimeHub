@@ -99,8 +99,8 @@ const TransferPage = () => {
     fail: () => {
       toastError('Failed to transfer');
     },
-    error: () => {
-      toastError('Failed to transfer');
+    error: (e: any) => {
+      toastError(`Failed to transfer ${e}`);
       setWorking(false);
     },
   };
@@ -141,8 +141,8 @@ const TransferPage = () => {
           fail: () => {
             toastError(`Failed to fetch region record.`);
           },
-          error: () => {
-            toastError(`Failed to fetch region record.`);
+          error: (e) => {
+            toastError(`Failed to fetch region record. ${e}`);
           },
         }
       );

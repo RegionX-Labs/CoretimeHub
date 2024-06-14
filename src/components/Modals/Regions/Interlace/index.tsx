@@ -85,8 +85,8 @@ export const InterlaceModal = ({
       fail: () => {
         toastError('Failed to interlace the region');
       },
-      error: () => {
-        toastError('Failed to interlace the region');
+      error: (e) => {
+        toastError(`Failed to interlace the region ${e}`);
         setWorking(false);
       },
     });

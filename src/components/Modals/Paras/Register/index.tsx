@@ -93,8 +93,8 @@ export const RegisterModal = ({
       fail: () => {
         toastError('Failed to register');
       },
-      error: () => {
-        toastError('Failed to register');
+      error: (e) => {
+        toastError(`Failed to register ${e}`);
         setWorking(false);
       },
     });

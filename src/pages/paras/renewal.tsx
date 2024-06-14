@@ -78,8 +78,8 @@ const Renewal = () => {
       fail: () => {
         toastError(`Failed to renew the selected parachain`);
       },
-      error: () => {
-        toastError(`Failed to renew the selected parachain`);
+      error: (e) => {
+        toastError(`Failed to renew the selected parachain ${e}`);
         setWorking(false);
       },
     });

@@ -115,8 +115,8 @@ export const PartitionModal = ({
       fail: () => {
         toastError('Failed to partition the region');
       },
-      error: () => {
-        toastError('Failed to partition the region');
+      error: (e) => {
+        toastError(`Failed to partition the region ${e}`);
         setWorking(false);
       },
     });
