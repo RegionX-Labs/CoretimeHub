@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { SUBSCAN_URL } from '@/consts';
+import { CORETIME_API } from '@/consts';
 import {
   NetworkType,
   PurchaseHistoryItem,
@@ -21,14 +21,17 @@ export const usePurchaseHistory = (
     const asyncFetchData = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${SUBSCAN_URL[network]}/broker/purchased`, {
-          method: 'POST',
-          body: JSON.stringify({
-            region_begin: regionBegin,
-            row,
-            page,
-          }),
-        });
+        const res = await fetch(
+          `${CORETIME_API[network]}/api/scan/broker/purchased`,
+          {
+            method: 'POST',
+            body: JSON.stringify({
+              region_begin: regionBegin,
+              row,
+              page,
+            }),
+          }
+        );
         if (res.status !== 200) {
           setError(true);
         } else {
