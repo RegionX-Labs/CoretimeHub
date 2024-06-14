@@ -13,11 +13,13 @@ import { useTheme } from '@mui/material/styles';
 import { OnChainRegionId, Region } from 'coretime-utils';
 import { useConfirm } from 'material-ui-confirm';
 import moment from 'moment';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { MarketFilter, MarketRegion, PurchaseModal } from '@/components';
 
 import { useAccounts } from '@/contexts/account';
+import { EXPERIMENTAL } from '@/contexts/apis/consts';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { ApiState } from '@/contexts/apis/types';
 import { useMarket } from '@/contexts/market';
@@ -55,6 +57,7 @@ const sortOptions: Option[] = [
 
 const Marketplace = () => {
   const confirm = useConfirm();
+  const router = useRouter();
   const theme = useTheme();
 
   const {
@@ -189,6 +192,11 @@ const Marketplace = () => {
 
     setFilteredListings(filtered);
   }, [listedRegions, filterOptions, orderBy]);
+
+  if (!EXPERIMENTAL) {
+    router.push('/');
+    return;
+  }
 
   return (
     <Box>

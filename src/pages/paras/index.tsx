@@ -24,9 +24,11 @@ import {
 } from '@/components';
 
 import { leases } from '@/chaindata';
+import { useCoretimeApi } from '@/contexts/apis';
 import { useNetwork } from '@/contexts/network';
 import { useSettings } from '@/contexts/settings';
 import { LeaseState, ParachainInfo } from '@/models';
+
 const ParachainManagement = () => {
   const theme = useTheme();
 
@@ -41,6 +43,7 @@ const ParachainManagement = () => {
     fetchParaStates,
   } = useParasInfo();
   const { parachains: renewableChains } = useRenewableParachains();
+  const { timeslicePeriod } = useCoretimeApi();
 
   const [watchAll, watchAllParas] = useState(true);
   const [paras2Show, setParas2Show] = useState<ParachainInfo[]>([]);
@@ -110,7 +113,8 @@ const ParachainManagement = () => {
   const getExpiry = (id: number): number | undefined => {
     const leaseExpiry = chainLeases.find((x) => x.paraId === id);
     const coretimeExpiry = renewableChains.find((x) => x.paraId === id);
-    if (coretimeExpiry !== undefined) return coretimeExpiry.when;
+    if (coretimeExpiry !== undefined)
+      return coretimeExpiry.when * timeslicePeriod;
     if (leaseExpiry !== undefined) return leaseExpiry.until;
     return undefined;
   };
