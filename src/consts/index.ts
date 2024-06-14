@@ -7,7 +7,7 @@ export const CORETIME_API = {
 };
 
 export const SUBSCAN_URL = {
-  [NetworkType.ROCOCO]: 'https://rococo.subscan.io',
-  [NetworkType.KUSAMA]: 'https://kusama.subscan.io',
+  [NetworkType.ROCOCO]: 'https://coretime-rococo.subscan.io',
+  [NetworkType.KUSAMA]: 'https://coretime-kusama.subscan.io',
   [NetworkType.NONE]: '',
 };
