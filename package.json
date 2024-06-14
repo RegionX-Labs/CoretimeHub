@@ -13,6 +13,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@chainsafe/cypress-polkadot-wallet": "^2.1.0",
     "@date-io/date-fns": "^3.0.0",
     "@emotion/cache": "^11.7.1",
     "@emotion/react": "^11.7.1",
