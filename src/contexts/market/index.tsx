@@ -1,6 +1,12 @@
 import { BN } from '@polkadot/util';
 import { ContextData, Region, RegionId } from 'coretime-utils';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 import { timesliceToTimestamp } from '@/utils/functions';
 
@@ -42,7 +48,7 @@ const MarketProvider = ({ children }: Props) => {
   const [status, setStatus] = useState(ContextStatus.UNINITIALIZED);
   const [listedRegions, setListedRegions] = useState<Array<Listing>>([]);
 
-  const fetchMarket = async () => {
+  const fetchMarket = useCallback(async () => {
     if (
       !regionXApi ||
       regionXApiState !== ApiState.READY ||
@@ -123,12 +129,19 @@ const MarketProvider = ({ children }: Props) => {
       setStatus(ContextStatus.LOADED);
       setListedRegions([]);
     }
-  };
+  }, [
+    regionXApi,
+    regionXApiState,
+    relayApi,
+    relayApiState,
+    relayBlockNumber,
+    timeslicePeriod,
+  ]);
 
   useEffect(() => {
     if (relayBlockNumber > 0 && status === ContextStatus.UNINITIALIZED)
       fetchMarket();
-  }, [regionXApi, regionXApiState, relayBlockNumber, status]);
+  }, [fetchMarket, regionXApi, regionXApiState, relayBlockNumber, status]);
 
   return (
     <MarketDataContext.Provider value={{ status, listedRegions, fetchMarket }}>

@@ -12,7 +12,7 @@ import {
 import { compactAddLength } from '@polkadot/util';
 import { useEffect, useState } from 'react';
 
-import { getBalanceString } from '@/utils/functions';
+import { getBalanceString, sendTx } from '@/utils/functions';
 
 import { FileInput, ProgressButton } from '@/components/Elements';
 
@@ -73,36 +73,28 @@ export const RegisterModal = ({
       toastError('Please connect your wallet');
       return;
     }
-    const tx = api.tx.registrar.register(
+    const txRegister = api.tx.registrar.register(
       paraId,
       compactAddLength(genesisHead),
       compactAddLength(wasmCode)
     );
-    try {
-      setWorking(true);
-      await tx.signAndSend(
-        activeAccount.address,
-        { signer: activeSigner },
-        ({ status, events }) => {
-          if (status.isReady) toastInfo('Transaction was initiated');
-          else if (status.isInBlock) toastInfo(`In Block`);
-          else if (status.isFinalized) {
-            setWorking(false);
-            events.forEach(({ event: { method } }) => {
-              if (method === 'ExtrinsicSuccess') {
-                toastSuccess('Registration success');
-                onClose();
-              } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to register`);
-              }
-            });
-          }
-        }
-      );
-    } catch (e) {
-      toastError(`Failed to register.Error: ${e}`);
-      setWorking(false);
-    }
+    setWorking(true);
+    sendTx(txRegister, activeAccount.address, activeSigner, {
+      ready: () => toastInfo('Transaction was initiated'),
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Registration success');
+        onClose();
+      },
+      fail: () => {
+        toastError('Failed to register');
+      },
+      error: () => {
+        toastError('Failed to register');
+        setWorking(false);
+      },
+    });
   };
 
   useEffect(() => {

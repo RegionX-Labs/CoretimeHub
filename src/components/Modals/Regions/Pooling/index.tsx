@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import { isValidAddress } from '@/utils/functions';
+import { isValidAddress, sendTx } from '@/utils/functions';
 
 import { FinalitySelector, ProgressButton } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
@@ -62,36 +62,26 @@ export const PoolingModal = ({
       finality
     );
 
-    try {
-      setWorking(true);
-      await txPooling.signAndSend(
-        activeAccount.address,
-        { signer: activeSigner },
-        ({ status, events }) => {
-          if (status.isReady) toastInfo('Transaction was initiated');
-          else if (status.isInBlock) toastInfo(`In Block`);
-          else if (status.isFinalized) {
-            setWorking(false);
-            events.forEach(({ event: { method } }) => {
-              if (method === 'ExtrinsicSuccess') {
-                toastSuccess(
-                  'Successfully contributed to the instantaneous region pool'
-                );
-                onClose();
-                fetchRegions();
-              } else if (method === 'ExtrinsicFailed') {
-                toastError(
-                  `Failed to contribute to the instantaneous region pool`
-                );
-              }
-            });
-          }
-        }
-      );
-    } catch (e) {
-      toastError(`Failed to contribute to the instantaneous region pool ${e}`);
-      setWorking(false);
-    }
+    setWorking(true);
+    sendTx(txPooling, activeAccount.address, activeSigner, {
+      ready: () => toastInfo('Transaction was initiated'),
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess(
+          'Successfully contributed to the instantaneous region pool'
+        );
+        onClose();
+        fetchRegions();
+      },
+      fail: () => {
+        toastError('Failed to contribute to the instantaneous region pool');
+      },
+      error: () => {
+        toastError('Failed to contribute to the instantaneous region pool');
+        setWorking(false);
+      },
+    });
   };
 
   useEffect(() => {

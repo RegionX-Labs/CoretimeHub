@@ -14,6 +14,8 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
+import { sendTx } from '@/utils/functions';
+
 import { FinalitySelector, ProgressButton } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
 
@@ -71,32 +73,24 @@ export const TaskAssignModal = ({
       finality
     );
 
-    try {
-      setWorking(true);
-      await txAssign.signAndSend(
-        activeAccount.address,
-        { signer: activeSigner },
-        ({ status, events }) => {
-          if (status.isReady) toastInfo('Transaction was initiated');
-          else if (status.isInBlock) toastInfo(`In Block`);
-          else if (status.isFinalized) {
-            setWorking(false);
-            events.forEach(({ event: { method } }) => {
-              if (method === 'ExtrinsicSuccess') {
-                toastSuccess('Successfully assigned a task');
-                onClose();
-                fetchRegions();
-              } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to assign a task`);
-              }
-            });
-          }
-        }
-      );
-    } catch (e) {
-      toastError(`Failed to assign a task. ${e}`);
-      setWorking(false);
-    }
+    setWorking(true);
+    sendTx(txAssign, activeAccount.address, activeSigner, {
+      ready: () => toastInfo('Transaction was initiated'),
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Successfully assigned a task');
+        onClose();
+        fetchRegions();
+      },
+      fail: () => {
+        toastError('Failed to assign a task');
+      },
+      error: (e) => {
+        toastError(`Failed to assign a task. ${e}`);
+        setWorking(false);
+      },
+    });
   };
 
   useEffect(() => {

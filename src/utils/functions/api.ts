@@ -19,13 +19,13 @@ export const sendTx = (
           if (method === 'ExtrinsicSuccess') {
             handlers.success();
           } else if (method === 'ExtrinsicFailed') {
-            handlers.error();
+            handlers.fail();
           }
         });
       }
     });
-  } catch {
-    handlers.error();
+  } catch (e) {
+    handlers.error(e);
   } finally {
     handlers.finally && handlers.finally();
   }

@@ -83,12 +83,15 @@ export const TransferModal = ({
       newOwner,
       {
         ready: () => toastInfo('Transaction was initiated.'),
-        inBlock: () => toastInfo(`In Block`),
+        inBlock: () => toastInfo('In Block'),
         finalized: () => setWorking(false),
         success: () => {
           toastSuccess('Successfully transferred the region.');
           onClose();
           fetchRegions();
+        },
+        fail: () => {
+          toastError(`Failed to transfer the region.`);
         },
         error: () => {
           toastError(`Failed to transfer the region.`);
@@ -114,12 +117,15 @@ export const TransferModal = ({
       newOwner,
       {
         ready: () => toastInfo('Transaction was initiated.'),
-        inBlock: () => toastInfo(`In Block`),
+        inBlock: () => toastInfo('In Block'),
         finalized: () => setWorking(false),
         success: () => {
           toastSuccess('Successfully transferred the region.');
           onClose();
           fetchRegions();
+        },
+        fail: () => {
+          toastError(`Failed to transfer the region.`);
         },
         error: () => {
           toastError(`Failed to transfer the region.`);

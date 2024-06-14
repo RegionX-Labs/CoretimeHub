@@ -13,6 +13,8 @@ import {
 import { maskFromBin, maskFromChunk, maskToBin } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
+import { sendTx } from '@/utils/functions';
+
 import { ProgressButton } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
 
@@ -66,36 +68,28 @@ export const InterlaceModal = ({
 
     const mask = maskFromBin(newMask);
 
+    setWorking(true);
     const txInterlace = api.tx.broker.interlace(
       regionMetadata.region.getOnChainRegionId(),
       mask
     );
-    try {
-      setWorking(true);
-      await txInterlace.signAndSend(
-        activeAccount.address,
-        { signer: activeSigner },
-        ({ status, events }) => {
-          if (status.isReady) toastInfo('Transaction was initiated');
-          else if (status.isInBlock) toastInfo(`In Block`);
-          else if (status.isFinalized) {
-            setWorking(false);
-            events.forEach(({ event: { method } }) => {
-              if (method === 'ExtrinsicSuccess') {
-                toastSuccess('Transaction successful');
-                onClose();
-                fetchRegions();
-              } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to interlace the region`);
-              }
-            });
-          }
-        }
-      );
-    } catch (e) {
-      toastError(`Failed to interlace the region. ${e}`);
-      setWorking(false);
-    }
+    sendTx(txInterlace, activeAccount.address, activeSigner, {
+      ready: () => toastInfo('Transaction was initiated'),
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Successfully interlaced the region');
+        onClose();
+        fetchRegions();
+      },
+      fail: () => {
+        toastError('Failed to interlace the region');
+      },
+      error: () => {
+        toastError('Failed to interlace the region');
+        setWorking(false);
+      },
+    });
   };
 
   useEffect(() => {

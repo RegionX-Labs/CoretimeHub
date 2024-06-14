@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
-import { getBalanceString } from '@/utils/functions';
+import { getBalanceString, sendTx } from '@/utils/functions';
 
 import { ProgressButton } from '@/components/Elements';
 
@@ -54,32 +54,24 @@ export const ReserveModal = ({
       toastError('Please connect your wallet');
       return;
     }
-    const tx = api.tx.registrar.reserve();
-    try {
-      setWorking(true);
-      await tx.signAndSend(
-        activeAccount.address,
-        { signer: activeSigner },
-        ({ status, events }) => {
-          if (status.isReady) toastInfo('Transaction was initiated');
-          else if (status.isInBlock) toastInfo(`In Block`);
-          else if (status.isFinalized) {
-            setWorking(false);
-            events.forEach(({ event: { method } }) => {
-              if (method === 'ExtrinsicSuccess') {
-                toastSuccess('Reservation success');
-                onClose();
-              } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to reserve a parathread`);
-              }
-            });
-          }
-        }
-      );
-    } catch (e) {
-      toastError(`Failed to reserve.Error: ${e}`);
-      setWorking(false);
-    }
+    const txReserve = api.tx.registrar.reserve();
+    setWorking(true);
+    sendTx(txReserve, activeAccount.address, activeSigner, {
+      ready: () => toastInfo('Transaction was initiated'),
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Reservation success');
+        onClose();
+      },
+      fail: () => {
+        toastError('Failed to reserve a parathread');
+      },
+      error: () => {
+        toastError('Failed to reserve a parathread');
+        setWorking(false);
+      },
+    });
   };
 
   const items = [

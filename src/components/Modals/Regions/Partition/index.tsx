@@ -11,6 +11,8 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
+import { sendTx } from '@/utils/functions';
+
 import { ProgressButton } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
 
@@ -100,32 +102,24 @@ export const PartitionModal = ({
       pivotInTimeslice
     );
 
-    try {
-      setWorking(true);
-      await txPartition.signAndSend(
-        activeAccount.address,
-        { signer: activeSigner },
-        ({ status, events }) => {
-          if (status.isReady) toastInfo('Transaction was initiated');
-          else if (status.isInBlock) toastInfo(`In Block`);
-          else if (status.isFinalized) {
-            setWorking(false);
-            events.forEach(({ event: { method } }) => {
-              if (method === 'ExtrinsicSuccess') {
-                toastSuccess('Transaction successful');
-                onClose();
-                fetchRegions();
-              } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to partition the region`);
-              }
-            });
-          }
-        }
-      );
-    } catch (e) {
-      toastError(`Failed to partition the region. ${e}`);
-      setWorking(false);
-    }
+    setWorking(true);
+    sendTx(txPartition, activeAccount.address, activeSigner, {
+      ready: () => toastInfo('Transaction was initiated'),
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Successfully partitioned the region');
+        onClose();
+        fetchRegions();
+      },
+      fail: () => {
+        toastError('Failed to partition the region');
+      },
+      error: () => {
+        toastError('Failed to partition the region');
+        setWorking(false);
+      },
+    });
   };
 
   return (

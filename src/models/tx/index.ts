@@ -10,6 +10,7 @@ export type TxStatusHandlers = {
   inBlock: () => void;
   finalized: () => void;
   success: () => void;
-  error: () => void;
+  fail: () => void;
+  error: (_: any) => void;
   finally?: () => void;
 };

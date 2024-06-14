@@ -10,6 +10,8 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
+import { sendTx } from '@/utils/functions';
+
 import { AddressInput, AmountInput } from '@/components/Elements';
 import { RegionMetaCard } from '@/components/Regions';
 
@@ -74,50 +76,42 @@ export const SellModal = ({
       return;
     }
 
-    try {
-      setWorking(true);
+    setWorking(true);
 
-      const regionId = regionMetadata.region.getOnChainRegionId();
-      const end = regionMetadata.region.getEnd();
-      const durationInTimeslices = end - regionId.begin;
-      const pricePerTimeslice = price / durationInTimeslices;
-      const txListOnMarket = regionXApi.tx.market.listRegion(
-        regionId,
-        Math.floor(pricePerTimeslice * Math.pow(10, decimals)),
-        saleRecipient
-      );
+    const regionId = regionMetadata.region.getOnChainRegionId();
+    const end = regionMetadata.region.getEnd();
+    const durationInTimeslices = end - regionId.begin;
+    const pricePerTimeslice = price / durationInTimeslices;
+    const txListOnMarket = regionXApi.tx.market.listRegion(
+      regionId,
+      Math.floor(pricePerTimeslice * Math.pow(10, decimals)),
+      saleRecipient
+    );
 
-      await txListOnMarket.signAndSend(
-        activeAccount.address,
-        { signer: activeSigner },
-        ({ status, events }) => {
-          if (status.isReady) toastInfo('Transaction was initiated');
-          else if (status.isInBlock) toastInfo(`In Block`);
-          else if (status.isFinalized) {
-            setWorking(false);
-            events.forEach(({ event: { method } }) => {
-              if (method === 'ExtrinsicSuccess') {
-                toastSuccess('Transaction successful');
-                onClose();
-                fetchRegions();
-                fetchMarket();
-              } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to list the region.`);
-              }
-            });
-          }
-        }
-      );
-    } catch (e: any) {
-      toastError(
-        `Failed to list the region. Error: ${
-          e.errorMessage === 'Error'
-            ? 'Please check your balance.'
-            : e.errorMessage
-        }`
-      );
-      setWorking(false);
-    }
+    sendTx(txListOnMarket, activeAccount.address, activeSigner, {
+      ready: () => toastInfo('Transaction was initiated'),
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Successfully listed the region for sale');
+        onClose();
+        fetchRegions();
+        fetchMarket();
+      },
+      fail: () => {
+        toastError(`Failed to list the region`);
+      },
+      error: (e) => {
+        toastError(
+          `Failed to list the region. Error: ${
+            e.errorMessage === 'Error'
+              ? 'Please check your balance'
+              : e.errorMessage
+          }`
+        );
+        setWorking(false);
+      },
+    });
   };
 
   return (

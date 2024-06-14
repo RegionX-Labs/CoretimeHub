@@ -61,19 +61,6 @@ const Renewal = () => {
 
   const formatDuration = humanizer({ units: ['w', 'd'], round: true });
 
-  const defaultHandler = {
-    ready: () => toastInfo('Transaction was initiated.'),
-    inBlock: () => toastInfo(`In Block`),
-    finalized: () => setWorking(false),
-    success: () => {
-      toastSuccess('Successfully renewed the selected parachain.');
-    },
-    error: () => {
-      toastError(`Failed to renew the selected parachain.`);
-      setWorking(false);
-    },
-  };
-
   const handleRenew = () => {
     if (!activeAccount || !coretimeApi || !coretimeApiState || !activeSigner)
       return;
@@ -81,7 +68,21 @@ const Renewal = () => {
     const { core } = parachains[activeIdx];
 
     const txRenewal = coretimeApi.tx.broker.renew(core);
-    sendTx(txRenewal, activeAccount.address, activeSigner, defaultHandler);
+    sendTx(txRenewal, activeAccount.address, activeSigner, {
+      ready: () => toastInfo('Transaction was initiated'),
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Successfully renewed the selected parachain');
+      },
+      fail: () => {
+        toastError(`Failed to renew the selected parachain`);
+      },
+      error: () => {
+        toastError(`Failed to renew the selected parachain`);
+        setWorking(false);
+      },
+    });
   };
 
   useEffect(() => {

@@ -76,27 +76,25 @@ const Purchase = () => {
       return;
     }
 
-    try {
-      const txPurchase = api.tx.broker.purchase(currentPrice);
+    const txPurchase = api.tx.broker.purchase(currentPrice);
 
-      setWorking(true);
-      sendTx(txPurchase, activeAccount.address, activeSigner, {
-        ready: () => toastInfo('Transaction was initiated'),
-        inBlock: () => toastInfo(`In Block`),
-        finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess('Transaction successful');
-          fetchRegions();
-        },
-        error: () => {
-          toastError(`Failed to purchase a core`);
-          setWorking(false);
-        },
-      });
-    } catch (e) {
-      setWorking(false);
-      toastError(`Failed to purchase a core`);
-    }
+    setWorking(true);
+    sendTx(txPurchase, activeAccount.address, activeSigner, {
+      ready: () => toastInfo('Transaction was initiated'),
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Transaction successful');
+        fetchRegions();
+      },
+      fail: () => {
+        toastError('Failed to purchase a core');
+      },
+      error: () => {
+        toastError('Failed to purchase a core');
+        setWorking(false);
+      },
+    });
   };
 
   const onManage = () => {

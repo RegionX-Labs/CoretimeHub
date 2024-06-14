@@ -90,14 +90,17 @@ const TransferPage = () => {
   const { balance } = useBalances();
 
   const defaultHandler = {
-    ready: () => toastInfo('Transaction was initiated.'),
-    inBlock: () => toastInfo(`In Block`),
+    ready: () => toastInfo('Transaction was initiated'),
+    inBlock: () => toastInfo('In Block'),
     finalized: () => setWorking(false),
     success: () => {
-      toastSuccess('Successfully transferred.');
+      toastSuccess('Successfully transferred');
+    },
+    fail: () => {
+      toastError('Failed to transfer');
     },
     error: () => {
-      toastError(`Failed to transfer.`);
+      toastError('Failed to transfer');
       setWorking(false);
     },
   };
@@ -127,13 +130,16 @@ const TransferPage = () => {
         activeAccount.address,
         {
           ready: () => toastInfo('Fetching region record.'),
-          inBlock: () => toastInfo(`In Block`),
+          inBlock: () => toastInfo('In Block'),
           finalized: () => {
             /* */
           },
           success: () => {
             toastSuccess('Region record fetched.');
             fetchRegions();
+          },
+          fail: () => {
+            toastError(`Failed to fetch region record.`);
           },
           error: () => {
             toastError(`Failed to fetch region record.`);

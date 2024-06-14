@@ -13,7 +13,7 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import { useEffect, useState } from 'react';
 
-import { timesliceToTimestamp } from '@/utils/functions';
+import { sendTx, timesliceToTimestamp } from '@/utils/functions';
 import { makeResponse, makeTimeout, queryRequest } from '@/utils/ismp';
 
 import { useAccounts } from '@/contexts/account';
@@ -111,6 +111,9 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
             success: () => {
               fetchRegions();
             },
+            fail: () => {
+              /** */
+            },
             error: () => {
               /* */
             },
@@ -124,7 +127,7 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
             activeAccount.address,
             {
               ready: () => toastInfo('Fetching region record.'),
-              inBlock: () => toastInfo(`In Block`),
+              inBlock: () => toastInfo('In Block'),
               finalized: () => {
                 /* */
               },
@@ -132,8 +135,11 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
                 toastSuccess('Region record fetched.');
                 fetchRegions();
               },
-              error: () => {
+              fail: () => {
                 toastError(`Failed to fetch region record.`);
+              },
+              error: () => {
+                /** */
               },
             }
           );
@@ -164,28 +170,23 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
     const request = regionxApi.tx.regions.requestRegionRecord(
       region.getRegionId()
     );
-    try {
-      await request.signAndSend(
-        activeAccount.address,
-        { signer: activeSigner },
-        ({ status, events }) => {
-          if (status.isReady) toastInfo('Transaction was initiated');
-          else if (status.isInBlock) toastInfo(`In Block`);
-          else if (status.isFinalized) {
-            events.forEach(({ event: { method } }) => {
-              if (method === 'ExtrinsicSuccess') {
-                toastSuccess('Transaction successful');
-                fetchRegions();
-              } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to request region record`);
-              }
-            });
-          }
-        }
-      );
-    } catch (e) {
-      toastError(`Failed to interlace the region. ${e}`);
-    }
+    sendTx(request, activeAccount.address, activeSigner, {
+      ready: () => toastInfo('Transaction was initiated'),
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => {
+        /** */
+      },
+      success: () => {
+        toastSuccess('Transaction successful');
+        fetchRegions();
+      },
+      fail: () => {
+        toastError(`Failed to request region record`);
+      },
+      error: (e) => {
+        toastError(`Failed to request the region record. ${e}`);
+      },
+    });
   };
 
   return (
