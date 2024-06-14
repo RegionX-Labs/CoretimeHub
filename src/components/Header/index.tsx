@@ -80,6 +80,7 @@ export const Header = () => {
                     (account, index) =>
                       account.type == 'sr25519' && (
                         <ListItemButton
+                          data-cy={`account-${index}`}
                           key={index}
                           onClick={() => {
                             setActiveAccount(account);
