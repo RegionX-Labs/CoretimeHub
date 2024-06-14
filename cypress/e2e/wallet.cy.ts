@@ -1,7 +1,7 @@
 import '@chainsafe/cypress-polkadot-wallet';
 
-describe('E2E tests for the purchase page', () => {
-  it('Successfully loads the purchase page.', () => {
+describe('E2E tests for the wallet connection', () => {
+  it('Wallet connection works.', () => {
     cy.visit('/');
 
     cy.get('[data-cy="connect-wallet"]').should('exist');
@@ -25,7 +25,7 @@ describe('E2E tests for the purchase page', () => {
         },
       ],
       'Corehub',
-      'My-wallet-extension'
+      'polkadot-extension'
     );
 
     cy.get('[data-cy="connect-wallet"]').click();
@@ -49,5 +49,11 @@ describe('E2E tests for the purchase page', () => {
     // Remembers that we set the active account to Bob:
     cy.get('[data-cy="connect-wallet"]').click();
     cy.get('[data-cy="address"]').should('contain.text', '5FLiLd...eTmBXA');
+
+    cy.visit('/purchase');
+
+    // Fetching complete
+    cy.get('[data-cy="loading"]', { timeout: 60 * 1000 }).should('not.exist');
+    cy.get('[data-cy="btn-purchase-core"]').click();
   });
 });
