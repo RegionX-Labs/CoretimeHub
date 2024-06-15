@@ -24,7 +24,7 @@ import {
 } from '@/components';
 
 import { leases } from '@/chaindata';
-import { useCoretimeApi } from '@/contexts/apis';
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { useNetwork } from '@/contexts/network';
 import { useSettings } from '@/contexts/settings';
 import { LeaseState, ParachainInfo } from '@/models';
@@ -43,6 +43,9 @@ const ParachainManagement = () => {
     fetchParaStates,
   } = useParasInfo();
   const { parachains: renewableChains } = useRenewableParachains();
+  const {
+    state: { height: relayHeight },
+  } = useRelayApi();
   const { timeslicePeriod } = useCoretimeApi();
 
   const [watchAll, watchAllParas] = useState(true);
@@ -113,10 +116,18 @@ const ParachainManagement = () => {
   const getExpiry = (id: number): number | undefined => {
     const leaseExpiry = chainLeases.find((x) => x.paraId === id);
     const coretimeExpiry = renewableChains.find((x) => x.paraId === id);
-    if (coretimeExpiry !== undefined)
-      return coretimeExpiry.when * timeslicePeriod;
-    if (leaseExpiry !== undefined) return leaseExpiry.until;
-    return undefined;
+    let result = undefined;
+    if (coretimeExpiry !== undefined) {
+      const until = coretimeExpiry.when * timeslicePeriod;
+      if (relayHeight <= until) {
+        result = until;
+      }
+    }
+    if (result === undefined && leaseExpiry !== undefined) {
+      const { until } = leaseExpiry;
+      if (relayHeight <= until) result = until;
+    }
+    return result;
   };
 
   useEffect(() => {
@@ -127,18 +138,16 @@ const ParachainManagement = () => {
     };
 
     const compExpiry = (a: ParachainInfo, b: ParachainInfo) => {
-      let value1 = getExpiry(a.id);
-      let value2 = getExpiry(b.id);
+      const value1 = getExpiry(a.id);
+      const value2 = getExpiry(b.id);
 
-      if (value1 === undefined)
-        value1 = direction === 'asc' ? Infinity : -Infinity;
-      if (value2 === undefined)
-        value2 = direction === 'asc' ? Infinity : -Infinity;
+      if (value1 === undefined && value2 === undefined) return 0;
 
-      let result = value1 - value2;
+      if (value1 === undefined) return 1;
+      if (value2 === undefined) return -1;
 
-      if (direction === 'desc') result = -result;
-      return result;
+      if (direction === 'asc') return value1 - value2;
+      else return value2 - value1;
     };
     const parasWithWatchInfo = parachains.map((para) => ({
       ...para,

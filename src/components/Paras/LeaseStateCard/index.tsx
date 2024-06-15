@@ -11,7 +11,11 @@ interface LeaseStateProps {
 }
 
 export const LeaseStateCard = ({ paraId, height }: LeaseStateProps) => {
-  const formatDuration = humanizer({ units: ['w', 'd'], round: true });
+  const formatDuration = humanizer({
+    units: ['w', 'd', 'h'],
+    round: true,
+    largest: 2,
+  });
   const { network } = useNetwork();
 
   const chainData: LeaseState[] =
@@ -22,10 +26,7 @@ export const LeaseStateCard = ({ paraId, height }: LeaseStateProps) => {
 
   const { until } = chain;
 
-  if (height > until)
-    return (
-      <Typography>{`lease expiry height = ${height} until = ${until}`}</Typography>
-    );
+  if (height > until) return <></>;
 
   return (
     <Stack direction='column' gap='0.5rem' alignItems='start'>

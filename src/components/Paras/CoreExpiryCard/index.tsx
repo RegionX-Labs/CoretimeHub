@@ -26,10 +26,7 @@ export const CoreExpiryCard = ({ paraId, height }: CoreExpiryProps) => {
   const { when, core } = chain;
   const until = when * timeslicePeriod;
 
-  if (height > until)
-    return (
-      <Typography>{`core expiry height = ${height} until = ${until}`}</Typography>
-    );
+  if (height > until) return <></>;
 
   return (
     <Stack direction='column' gap='0.5rem' alignItems='start'>
