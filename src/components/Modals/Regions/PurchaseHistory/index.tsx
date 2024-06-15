@@ -39,7 +39,7 @@ export const PurchaseHistoryModal = ({
     network,
     regionBegin,
     0,
-    20
+    1000
   );
 
   return (
@@ -65,28 +65,22 @@ export const PurchaseHistoryModal = ({
             current bulk period.
           </Typography>
         </Box>
-        <Box>
-          {loading || isError ? (
-            <Stack
-              alignItems='center'
-              minHeight='10rem'
-              justifyContent='center'
-            >
-              {loading ? (
-                <CircularProgress />
-              ) : (
-                <Stack alignItems='center' direction='row' gap='1rem'>
-                  <Warning color='error' />
-                  <Typography>Failed to fetch purchase history</Typography>
-                </Stack>
-              )}
-            </Stack>
-          ) : (
-            <Box className={styles.tableContainer}>
-              <PurchaseHistoryTable data={data} />
-            </Box>
-          )}
-        </Box>
+        {loading || isError ? (
+          <Stack alignItems='center' minHeight='10rem' justifyContent='center'>
+            {loading ? (
+              <CircularProgress />
+            ) : (
+              <Stack alignItems='center' direction='row' gap='1rem'>
+                <Warning color='error' />
+                <Typography>Failed to fetch purchase history</Typography>
+              </Stack>
+            )}
+          </Stack>
+        ) : (
+          <Box className={styles.tableContainer}>
+            <PurchaseHistoryTable data={data} />
+          </Box>
+        )}
       </DialogContent>
       <DialogActions>
         <Box>

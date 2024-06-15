@@ -32,6 +32,7 @@ import { StyledTableCell, StyledTableRow } from '../common';
 import { CoreExpiryCard } from '../../Paras/CoreExpiryCard';
 import { LeaseStateCard } from '../../Paras/LeaseStateCard';
 import { ParaStateCard } from '../../Paras/ParaStateCard';
+import Unknown from '../../../assets/unknown.svg';
 
 export type Order = 'asc' | 'desc';
 
@@ -164,18 +165,14 @@ export const ParachainTable = ({
               </StyledTableCell>
               <StyledTableCell style={{ width: '25%' }}>
                 <Stack direction='row' alignItems='center' gap='1rem'>
-                  {logo === undefined ? (
-                    <></>
-                  ) : (
-                    <Image
-                      src={logo}
-                      alt=''
-                      width={32}
-                      height={32}
-                      style={{ borderRadius: '100%' }}
-                    />
-                  )}
-                  {name}
+                  <Image
+                    src={logo || Unknown}
+                    alt=''
+                    width={32}
+                    height={32}
+                    style={{ borderRadius: '100%' }}
+                  />
+                  {name || 'Unknown'}
                   {homepage === undefined ? (
                     <></>
                   ) : (
