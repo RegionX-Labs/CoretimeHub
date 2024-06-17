@@ -78,7 +78,7 @@ export const useRenewableParachains = () => {
     };
 
     asyncFetchParaIds();
-  }, [api, apiState]);
+  }, [api, apiState, network]);
 
   return { status, parachains };
 };
