@@ -94,9 +94,9 @@ const AccountProvider = ({ children }: Props) => {
   };
 
   const connectWallet = () => {
-    dispatch({ type: 'LOAD_KEYRING' });
     const asyncLoadAccounts = async () => {
       try {
+        dispatch({ type: 'LOAD_KEYRING' });
         const extensionDapp = await import('@polkadot/extension-dapp');
         const { web3Accounts } = extensionDapp;
         const accounts: InjectedAccountWithMeta[] = await web3Accounts();
@@ -131,10 +131,13 @@ const AccountProvider = ({ children }: Props) => {
       const activeAccount = state.activeAccount;
       if (!activeAccount) return;
 
-      const { web3FromSource } = await import('@polkadot/extension-dapp');
-
-      const injector = await web3FromSource(activeAccount.meta.source);
-      dispatch({ type: 'SET_ACTIVE_SIGNER', payload: injector.signer });
+      try {
+        const { web3FromSource } = await import('@polkadot/extension-dapp');
+        const injector = await web3FromSource(activeAccount.meta.source);
+        dispatch({ type: 'SET_ACTIVE_SIGNER', payload: injector.signer });
+      } catch (e) {
+        /** */
+      }
     };
     getInjector();
   }, [state.activeAccount]);
