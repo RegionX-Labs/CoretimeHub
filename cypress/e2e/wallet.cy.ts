@@ -1,5 +1,4 @@
 import '@chainsafe/cypress-polkadot-wallet';
-import 'cypress-wait-until';
 import { connectWallet } from 'cypress/common';
 
 describe('E2E tests for the wallet connection', () => {

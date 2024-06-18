@@ -61,6 +61,7 @@ describe('E2E tests for the purchase page', () => {
     cy.get('[data-cy="btn-close-purchase-history-modal"]').click();
     cy.get('[data-cy="purchase-history-modal"]').should('not.exist');
   });
+
   it('Successfully purchases a core', () => {
     cy.get('[data-cy="btn-purchase-core"]').click();
     waitForAuthRequest();
