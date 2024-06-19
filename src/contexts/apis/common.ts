@@ -118,6 +118,8 @@ export const connect = (
   });
   _api.on('ready', async () => {
     try {
+      dispatch({ type: 'CONNECT_SUCCESS' });
+
       const chainInfo = _api.registry.getChainProperties();
       if (chainInfo) {
         const { tokenDecimals, tokenSymbol } = chainInfo.toHuman() as any;
@@ -149,7 +151,6 @@ export const connect = (
           payload: moment.toJSON() as number,
         })
       );
-      dispatch({ type: 'CONNECT_SUCCESS' });
     } catch {
       /** empty error handler */
     }
