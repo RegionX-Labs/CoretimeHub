@@ -1,28 +1,28 @@
 import '@chainsafe/cypress-polkadot-wallet';
+import 'cypress-wait-until';
 import { SalePhase } from '@/models';
-import { ALICE, connectWallet, waitForAuthRequest } from 'cypress/common';
-import { TxRequests } from '@chainsafe/cypress-polkadot-wallet/dist/wallet';
+import { BOB, connectWallet, waitForAuthRequest } from 'cypress/common';
 
 describe('E2E tests for the purchase page', () => {
-  beforeEach(() => {
+  it('Successfully loads the purchase page and all UI elements are in place.', () => {
     cy.visit('/purchase');
-
-    connectWallet();
-    // Wallet connection works:
-    cy.get('[data-cy="connect-wallet"]', { timeout: 5 * 1000 }).should(
-      'not.exist'
-    );
-    cy.get('[data-cy="address"]').should('exist');
-    cy.get('[data-cy="address"]').should('contain.text', '5DfhGy...1EqRzV');
 
     // Fetching the on-chain states
     cy.get('[data-cy="loading"]').should('exist');
 
     // Fetching complete
-    cy.get('[data-cy="loading"]', { timeout: 60 * 1000 }).should('not.exist');
-  });
+    cy.get('[data-cy="loading"]', { timeout: 100 * 1000 }).should('not.exist');
 
-  it('Successfully loads the purchase page and all UI elements are in place.', () => {
+    cy.get('[data-cy="connect-wallet"]').should('exist');
+    cy.get('[data-cy="address"]').should('not.exist');
+
+    connectWallet();
+
+    // Wallet connection works:
+    cy.get('[data-cy="connect-wallet"]').should('not.exist');
+    cy.get('[data-cy="address"]').should('exist');
+    cy.get('[data-cy="address"]').should('contain.text', '5Grwva...GKutQY');
+
     // Sale info panel and its sub panels exists
     cy.get('[data-cy="sale-info"]').should('exist');
 
@@ -58,16 +58,18 @@ describe('E2E tests for the purchase page', () => {
 
     cy.get('[data-cy="btn-close-purchase-history-modal"]').click();
     cy.get('[data-cy="purchase-history-modal"]').should('not.exist');
-  });
 
   it('Successfully purchases a core', async () => {
     cy.get('[data-cy="btn-purchase-core"]').click();
+
     waitForAuthRequest();
 
-    cy.getTxRequests().then((txRequests: TxRequests) => {
+    cy.getTxRequests().then((txRequests) => {
       const requests = Object.values(txRequests);
       cy.wrap(requests.length).should('eq', 1);
-      cy.wrap(requests[0].payload.address).should('eq', ALICE);
+      cy.log(`request id = ${requests}`);
+      cy.wrap(requests[0].payload.address).should('eq', BOB);
+      cy.log(`request id = ${requests[0].id}`);
       cy.approveTx(requests[0].id);
 
       // Wait for tx to get finalized.

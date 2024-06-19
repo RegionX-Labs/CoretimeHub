@@ -1,10 +1,9 @@
 import '@chainsafe/cypress-polkadot-wallet';
 import 'cypress-wait-until';
+import { APP_NAME } from '@/consts';
 
 export const ALICE = '5DfhGyQdFobKM8NsWvEeAKk5EQQgYe9AydgJ7rMB6E1EqRzV';
 export const BOB = '5FLiLdaQQiW7qm7tdZjdonfSV8HAcjLxFVcqv9WDbceTmBXA';
-
-export const APP_NAME_FOR_TEST = 'Corehub';
 
 export const waitForAuthRequest = (timeout = 10000) =>
   cy.waitUntil(
@@ -35,8 +34,7 @@ export const connectWallet = () => {
           'sample split bamboo west visual approve brain fox arch impact relief smile',
       },
     ],
-    APP_NAME_FOR_TEST,
-    'polkadot-extension'
+    APP_NAME
   );
 
   cy.get('[data-cy="connect-wallet"]').click();
