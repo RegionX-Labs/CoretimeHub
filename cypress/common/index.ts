@@ -1,7 +1,7 @@
 import '@chainsafe/cypress-polkadot-wallet';
 import 'cypress-wait-until';
 
-export const ALICE = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
+export const ALICE = '5DfhGyQdFobKM8NsWvEeAKk5EQQgYe9AydgJ7rMB6E1EqRzV';
 export const BOB = '5FLiLdaQQiW7qm7tdZjdonfSV8HAcjLxFVcqv9WDbceTmBXA';
 
 export const APP_NAME_FOR_TEST = 'Corehub';
@@ -36,7 +36,7 @@ export const connectWallet = () => {
       },
     ],
     APP_NAME_FOR_TEST,
-    'polkadot.js-extension'
+    'polkadot-extension'
   );
 
   cy.get('[data-cy="connect-wallet"]').click();

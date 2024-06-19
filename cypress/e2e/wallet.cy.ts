@@ -13,7 +13,7 @@ describe('E2E tests for the wallet connection', () => {
     // Wallet connection works:
     cy.get('[data-cy="connect-wallet"]').should('not.exist');
     cy.get('[data-cy="address"]').should('exist');
-    cy.get('[data-cy="address"]').should('contain.text', '5Grwva...GKutQY');
+    cy.get('[data-cy="address"]').should('contain.text', '5DfhGy...1EqRzV');
 
     // Account selection works:
     cy.get('[data-cy="accounts-open"]').click();

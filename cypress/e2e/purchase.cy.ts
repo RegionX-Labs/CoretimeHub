@@ -5,7 +5,7 @@ import { TxRequests } from '@chainsafe/cypress-polkadot-wallet/dist/wallet';
 
 describe('E2E tests for the purchase page', () => {
   beforeEach(() => {
-    cy.visit('/');
+    cy.visit('/purchase');
 
     connectWallet();
     // Wallet connection works:
@@ -13,9 +13,7 @@ describe('E2E tests for the purchase page', () => {
       'not.exist'
     );
     cy.get('[data-cy="address"]').should('exist');
-    cy.get('[data-cy="address"]').should('contain.text', '5Grwva...GKutQY');
-
-    cy.visit('/purchase');
+    cy.get('[data-cy="address"]').should('contain.text', '5DfhGy...1EqRzV');
 
     // Fetching the on-chain states
     cy.get('[data-cy="loading"]').should('exist');
@@ -62,7 +60,7 @@ describe('E2E tests for the purchase page', () => {
     cy.get('[data-cy="purchase-history-modal"]').should('not.exist');
   });
 
-  it('Successfully purchases a core', () => {
+  it('Successfully purchases a core', async () => {
     cy.get('[data-cy="btn-purchase-core"]').click();
     waitForAuthRequest();
 
@@ -71,6 +69,11 @@ describe('E2E tests for the purchase page', () => {
       cy.wrap(requests.length).should('eq', 1);
       cy.wrap(requests[0].payload.address).should('eq', ALICE);
       cy.approveTx(requests[0].id);
+
+      // Wait for tx to get finalized.
+      cy.wait(10000);
+
+      // TODO: check /regions page to make sure the region was indeed successfully purchased.
     });
   });
 });
