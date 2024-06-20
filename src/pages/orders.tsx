@@ -45,7 +45,7 @@ const OrderDashboard = () => {
             coreOccupancy: 43200, // 75%
           },
           contribution: 100000,
-        } as Order)
+        }) as Order
     );
     setOrdersToShow([...orders, ...mock]);
   }, [orders]);
@@ -96,7 +96,7 @@ const OrderDashboard = () => {
           />
         </Box>
       </Box>
-      {status !== ContextStatus.LOADED ? (
+      {status === ContextStatus.LOADED ? (
         <Backdrop open>
           <CircularProgress />
         </Backdrop>

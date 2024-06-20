@@ -118,14 +118,6 @@ export const Sidebar = () => {
         icon: <BuildRoundedIcon />,
       },
     ],
-    orders: [
-      {
-        label: 'Explorer Orders',
-        route: '/orders',
-        enabled: true,
-        icon: <ListOutlinedIcon />,
-      },
-    ],
     'primary market': [
       {
         label: 'Purchase a core',
@@ -140,6 +132,12 @@ export const Sidebar = () => {
         route: '/marketplace',
         enabled: EXPERIMENTAL,
         icon: <ExploreIcon />,
+      },
+      {
+        label: 'Orders',
+        route: '/orders',
+        enabled: true,
+        icon: <ListOutlinedIcon />,
       },
     ],
   };
