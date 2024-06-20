@@ -62,7 +62,7 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <StyledTableCell>Extrinsic Idx</StyledTableCell>
+              <StyledTableCell>Extrinsic Id</StyledTableCell>
               <StyledTableCell>Account</StyledTableCell>
               <StyledTableCell>Core</StyledTableCell>
               <StyledTableCell>{`Price (${symbol})`}</StyledTableCell>
