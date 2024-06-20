@@ -33,9 +33,9 @@ import {
 } from '@/components';
 import AssetSelector from '@/components/Elements/Selectors/AssetSelector';
 
+import { EXPERIMENTAL } from '@/consts';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
-import { EXPERIMENTAL } from '@/contexts/apis/consts';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { ApiState } from '@/contexts/apis/types';
 import { useBalances } from '@/contexts/balance';

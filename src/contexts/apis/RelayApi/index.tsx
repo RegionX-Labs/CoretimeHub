@@ -2,13 +2,13 @@ import React, { useContext, useEffect, useReducer, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
 
+import { WS_KUSAMA_RELAY_CHAIN, WS_ROCOCO_RELAY_CHAIN } from '@/consts';
 import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
 import { NetworkType, ParaId } from '@/models';
 
 import { connect, disconnect, initialState, reducer } from '../common';
-import { WS_KUSAMA_RELAY_CHAIN, WS_ROCOCO_RELAY_CHAIN } from '../consts';
 
 const defaultValue = {
   state: initialState,

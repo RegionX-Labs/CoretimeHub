@@ -42,4 +42,6 @@ export enum ContextStatus {
   LOADING,
   // eslint-disable-next-line no-unused-vars
   LOADED,
+  // eslint-disable-next-line no-unused-vars
+  ERROR,
 }
