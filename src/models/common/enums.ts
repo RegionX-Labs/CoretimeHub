@@ -37,11 +37,11 @@ export enum FinalityType {
 // eslint-disable-next-line no-unused-vars
 export enum ContextStatus {
   // eslint-disable-next-line no-unused-vars
-  UNINITIALIZED,
+  UNINITIALIZED = 'uninitialized',
   // eslint-disable-next-line no-unused-vars
-  LOADING,
+  LOADING = 'loading',
   // eslint-disable-next-line no-unused-vars
-  LOADED,
+  LOADED = 'loaded',
   // eslint-disable-next-line no-unused-vars
-  ERROR,
+  ERROR = 'error',
 }

@@ -8,11 +8,18 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { ProgressButton } from '@/components/Elements';
+import { sendTx } from '@/utils/functions';
+
+import { AmountInput, ProgressButton } from '@/components/Elements';
 import { OrderCard } from '@/components/Orders';
 
+import { useAccounts } from '@/contexts/account';
+import { useRegionXApi, useRelayApi } from '@/contexts/apis';
+import { ApiState } from '@/contexts/apis/types';
+import { useOrders } from '@/contexts/orders';
+import { useToast } from '@/contexts/toast';
 import { Order } from '@/models';
 
 import styles from './index.module.scss';
@@ -30,12 +37,70 @@ export const ContributionModal = ({
 }: ContributionModalProps) => {
   const theme = useTheme();
 
+  const {
+    state: { activeAccount, activeSigner },
+  } = useAccounts();
+  const { fetchOrders } = useOrders();
+  const {
+    state: { symbol: relaySymbol, decimals: relayDecimals },
+  } = useRelayApi();
+  const {
+    state: { api, apiState },
+  } = useRegionXApi();
+  const { toastInfo, toastError, toastWarning, toastSuccess } = useToast();
+
   const [working, setWorking] = useState(false);
+  const [amount, setAmount] = useState(0);
 
   const onContribute = () => {
+    if (!api || apiState !== ApiState.READY) {
+      toastWarning('Please check the API connection');
+      return;
+    }
+
+    if (!activeAccount || !activeSigner) {
+      toastWarning('Please connect your wallet');
+      return;
+    }
+
+    if (!amount) {
+      toastWarning('Please input contribution amount');
+      return;
+    }
+
+    try {
+      setWorking(true);
+      const tx = api.tx.orders.contribute(
+        order.orderId,
+        Math.floor(amount * Math.pow(10, relayDecimals))
+      );
+      sendTx(tx, activeAccount.address, activeSigner, {
+        ready: () => toastInfo('Transaction was initiated'),
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully contributed to the order');
+          onClose();
+          fetchOrders();
+        },
+        error: () => {
+          toastError('Failed to contribute to an order');
+        },
+      });
+    } catch (e: any) {
+      setWorking(false);
+      toastError(`Failed to contribute to the order. ${e.toString()}`);
+    }
+
     setWorking(true);
-    setWorking(false);
   };
+
+  useEffect(() => {
+    if (open) return;
+
+    setWorking(false);
+    setAmount(0);
+  }, [open]);
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -54,8 +119,14 @@ export const ContributionModal = ({
             Here you can contribute or cancel your contribution
           </Typography>
         </Box>
+        <OrderCard order={order} direction='horizontal' />
         <Stack direction='column' gap='1rem'>
-          <OrderCard order={order} alignHeader='left' />
+          <AmountInput
+            amount={amount}
+            currency={relaySymbol}
+            caption='Contribution amount'
+            setAmount={(value: number) => setAmount(value)}
+          />
         </Stack>
       </DialogContent>
       <DialogActions>

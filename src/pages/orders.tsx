@@ -33,21 +33,8 @@ const OrderDashboard = () => {
   const [contributionModal, openContributionModal] = useState(false);
 
   useEffect(() => {
-    const mock = [0, 1, 2, 3].map(
-      (id) =>
-        ({
-          orderId: id,
-          creator: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
-          paraId: 2000,
-          requirements: {
-            begin: 100,
-            end: 150,
-            coreOccupancy: 43200, // 75%
-          },
-          contribution: 100000,
-        }) as Order
-    );
-    setOrdersToShow([...orders, ...mock]);
+    // TODO: expiry
+    setOrdersToShow(orders);
   }, [orders]);
 
   return (
@@ -96,7 +83,7 @@ const OrderDashboard = () => {
           />
         </Box>
       </Box>
-      {status === ContextStatus.LOADED ? (
+      {status !== ContextStatus.LOADED ? (
         <Backdrop open>
           <CircularProgress />
         </Backdrop>

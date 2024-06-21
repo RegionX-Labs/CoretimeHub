@@ -18,5 +18,6 @@ export type OnChainOrder = {
 
 export type Order = OnChainOrder & {
   orderId: number;
+  totalContribution: number;
   contribution: number;
 };

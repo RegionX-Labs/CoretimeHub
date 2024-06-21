@@ -8,6 +8,7 @@ import {
 
 import { ContextStatus, OnChainOrder, Order } from '@/models';
 
+import { useAccounts } from '../account';
 import { useRegionXApi } from '../apis';
 import { ApiState } from '../apis/types';
 
@@ -36,6 +37,9 @@ const OrderProvider = ({ children }: Props) => {
   const [orders, setOrders] = useState<Order[]>([]);
 
   const {
+    state: { activeAccount },
+  } = useAccounts();
+  const {
     state: { api, apiState },
   } = useRegionXApi();
 
@@ -50,12 +54,23 @@ const OrderProvider = ({ children }: Props) => {
       const orderEntries = await api.query.orders.orders.entries();
       const records: Order[] = [];
 
-      // TODO: fetch contribution data
-
-      for (const [key, value] of orderEntries) {
+      for await (const [key, value] of orderEntries) {
         const [orderId] = key.toHuman() as [number];
         const obj = value.toJSON() as OnChainOrder;
-        orders.push({ ...obj, orderId } as Order);
+
+        const totalContribution = (
+          await api.query.orders.totalContributions(orderId)
+        ).toJSON() as number;
+        const contribution = (
+          await api.query.orders.contributions(orderId, activeAccount?.address)
+        ).toJSON() as number;
+
+        records.push({
+          ...obj,
+          orderId,
+          contribution,
+          totalContribution,
+        } as Order);
       }
       setOrders(records);
 
@@ -65,11 +80,11 @@ const OrderProvider = ({ children }: Props) => {
       setOrders([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, apiState]);
+  }, [api, apiState, activeAccount]);
 
   useEffect(() => {
     fetchOrders();
-  }, [api, apiState, fetchOrders]);
+  }, [api, apiState, activeAccount, fetchOrders]);
 
   return (
     <OrderDataContext.Provider value={{ status, orders, fetchOrders }}>
