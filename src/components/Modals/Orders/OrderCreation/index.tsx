@@ -11,6 +11,8 @@ import {
   Slider,
   Stack,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -27,6 +29,7 @@ import { useRegionXApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { useOrders } from '@/contexts/orders';
+import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
 
 import styles from './index.module.scss';
@@ -34,6 +37,14 @@ import styles from './index.module.scss';
 interface OrderCreationModalProps {
   open: boolean;
   onClose: () => void;
+}
+
+// eslint-disable-next-line no-unused-vars
+enum DurationType {
+  // eslint-disable-next-line no-unused-vars
+  BULK = 0,
+  // eslint-disable-next-line no-unused-vars
+  CUSTOM = 1,
 }
 
 export const OrderCreationModal = ({
@@ -48,6 +59,7 @@ export const OrderCreationModal = ({
   const {
     state: { api, apiState },
   } = useRegionXApi();
+  const { saleInfo } = useSaleInfo();
 
   const { network } = useNetwork();
   const { fetchOrders } = useOrders();
@@ -58,6 +70,9 @@ export const OrderCreationModal = ({
   const [regionEnd, setRegionEnd] = useState<number | undefined>();
   const [coreOccupancy, setCoreOccupancy] = useState(57600);
   const [working, setWorking] = useState(false);
+  const [durationType, setDurationType] = useState<DurationType>(
+    DurationType.BULK
+  );
 
   const onCreate = async () => {
     if (!api || apiState !== ApiState.READY) {
@@ -121,11 +136,22 @@ export const OrderCreationModal = ({
   useEffect(() => {
     if (open) return;
     setParaId(undefined);
+    setDurationType(DurationType.BULK);
     setRegionBegin(undefined);
     setRegionEnd(undefined);
     setCoreOccupancy(57600);
     setWorking(false);
   }, [open]);
+
+  useEffect(() => {
+    if (durationType === DurationType.BULK) {
+      setRegionBegin(saleInfo.regionBegin);
+      setRegionEnd(saleInfo.regionEnd);
+    } else {
+      setRegionBegin(undefined);
+      setRegionEnd(undefined);
+    }
+  }, [durationType, saleInfo]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
@@ -164,25 +190,67 @@ export const OrderCreationModal = ({
             </Select>
           </FormControl>
         </Stack>
-        <Stack direction='column' gap='0.5rem'>
-          <Typography>Regin begin:</Typography>
-          <TextField
-            value={regionBegin?.toString() || ''}
-            type='number'
-            onChange={(e) => setRegionBegin(parseInt(e.target.value))}
-            InputProps={{ style: { borderRadius: '1rem' } }}
-            disabled={working}
-          />
-        </Stack>
-        <Stack direction='column' gap='0.5rem'>
-          <Typography>Regin end:</Typography>
-          <TextField
-            value={regionEnd?.toString() || ''}
-            type='number'
-            onChange={(e) => setRegionEnd(parseInt(e.target.value))}
-            InputProps={{ style: { borderRadius: '1rem' } }}
-            disabled={working}
-          />
+        <Typography>Region duration:</Typography>
+        <Stack sx={{ padding: '1rem', bgcolor: '#EFF0F3' }} gap='1rem'>
+          <FormControl>
+            <ToggleButtonGroup
+              value={durationType}
+              exclusive
+              onChange={(e: any) =>
+                setDurationType(parseInt(e.target.value) as DurationType)
+              }
+              className={styles.durationTypes}
+            >
+              <ToggleButton
+                className={
+                  durationType === DurationType.BULK
+                    ? styles.activeOption
+                    : styles.option
+                }
+                value={DurationType.BULK}
+              >
+                Entire bulk period
+              </ToggleButton>
+              <ToggleButton
+                className={
+                  durationType === DurationType.CUSTOM
+                    ? styles.activeOption
+                    : styles.option
+                }
+                value={DurationType.CUSTOM}
+              >
+                Custom period
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </FormControl>
+          {durationType === DurationType.CUSTOM && (
+            <Stack direction='row' gap='1rem'>
+              <Stack direction='column' gap='0.5rem'>
+                <Typography sx={{ color: theme.palette.common.black }}>
+                  Begin:
+                </Typography>
+                <TextField
+                  value={regionBegin?.toString() || ''}
+                  type='number'
+                  onChange={(e) => setRegionBegin(parseInt(e.target.value))}
+                  InputProps={{ style: { borderRadius: '1rem' } }}
+                  disabled={working}
+                />
+              </Stack>
+              <Stack direction='column' gap='0.5rem'>
+                <Typography sx={{ color: theme.palette.common.black }}>
+                  End:
+                </Typography>
+                <TextField
+                  value={regionEnd?.toString() || ''}
+                  type='number'
+                  onChange={(e) => setRegionEnd(parseInt(e.target.value))}
+                  InputProps={{ style: { borderRadius: '1rem' } }}
+                  disabled={working}
+                />
+              </Stack>
+            </Stack>
+          )}
         </Stack>
         <Stack direction='column' gap='0.5rem'>
           <Typography>Core Occupancy:</Typography>

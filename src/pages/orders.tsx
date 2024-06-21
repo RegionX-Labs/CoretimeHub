@@ -87,8 +87,6 @@ const OrderDashboard = () => {
         <Backdrop open>
           <CircularProgress />
         </Backdrop>
-      ) : ordersToShow.length === 0 ? (
-        <Typography>No orders found.</Typography>
       ) : (
         <Box
           mt='2rem'
