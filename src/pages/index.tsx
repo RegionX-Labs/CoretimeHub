@@ -70,36 +70,36 @@ const Home = () => {
       top: [
         {
           label: 'Upcoming Burn',
-          value: '600 KSM',
+          value: '600 KSM', // We can obtain this by summing the amount spent in the current sale(we are already reading this data from Subscan for the Purchase History).
           icon: <WhatshotIcon />,
         },
         {
           label: 'Previous Burn',
-          value: '500 KSM',
+          value: '500 KSM', // Same way as for 'Upcoming Burn', but we read the data from the previous sale.
           icon: <WhatshotIcon />,
         },
       ],
       bottom: {
         label: 'Total Burn',
-        value: '12, 000 KSM',
+        value: '??? KSM', // Would it be reasonably efficient to add up the sum of tokens spent in each sale?
       },
     },
     {
       top: [
         {
           label: 'Cores Sold',
-          value: '10',
+          value: '10', // TODO: Fetch data from chain (Can be done the same way as on the purchase page)
           icon: <ShoppingCartIcon />,
         },
         {
           label: 'Cores On Sale',
-          value: '15',
+          value: '15', // TODO: Fetch data from chain (Can be done the same way as on the purchase page)
           icon: <ShoppingCartIcon />,
         },
       ],
       bottom: {
-        label: 'Average Price',
-        value: '20.5 KSM',
+        label: 'Current Price',
+        value: '20.5 KSM', // TODO: Fetch current price.
       },
     },
     {
@@ -141,7 +141,7 @@ const Home = () => {
               fontWeight: 600,
             }}
           >
-            Features
+            RegionX | CoreHub
           </Typography>
           <Typography>
             Explore all the possibilities RegionX Corehub offers
