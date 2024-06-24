@@ -14,16 +14,17 @@ import theme from '@/utils/muiTheme';
 
 import { Layout } from '@/components';
 
+import { EXPERIMENTAL } from '@/consts';
 import { AccountProvider } from '@/contexts/account';
 import {
   CoretimeApiContextProvider,
   RelayApiContextProvider,
 } from '@/contexts/apis';
-import { EXPERIMENTAL } from '@/contexts/apis/consts';
 import { RegionXApiContextProvider } from '@/contexts/apis/RegionXApi';
 import { BalanceProvider } from '@/contexts/balance';
 import { MarketProvider } from '@/contexts/market';
 import { NetworkProvider } from '@/contexts/network';
+import { OrderProvider } from '@/contexts/orders';
 import { RegionDataProvider } from '@/contexts/regions';
 import { SaleInfoProvider } from '@/contexts/sales';
 import { SettingsProvider } from '@/contexts/settings';
@@ -78,7 +79,7 @@ export default function MyApp(props: MyAppProps) {
               <CoretimeApiContextProvider>
                 {EXPERIMENTAL ? (
                   <RegionXApiContextProvider>
-                    {Content}
+                    <OrderProvider>{Content}</OrderProvider>
                   </RegionXApiContextProvider>
                 ) : (
                   <>{Content}</>

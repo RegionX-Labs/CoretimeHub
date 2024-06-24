@@ -1,13 +1,25 @@
-import { Box, Tooltip, Typography, useTheme } from '@mui/material';
+import {
+  Box,
+  CircularProgress,
+  Tooltip,
+  Typography,
+  useTheme,
+} from '@mui/material';
 
 import { SalePhase } from '@/models';
 
 interface SalePhaseProps {
+  loading: boolean;
   label: string;
   value: SalePhase;
   cyLabel?: string;
 }
-export const SalePhaseCard = ({ label, value, cyLabel }: SalePhaseProps) => {
+export const SalePhaseCard = ({
+  label,
+  loading,
+  value,
+  cyLabel,
+}: SalePhaseProps) => {
   const theme = useTheme();
 
   const tooltip = {
@@ -25,17 +37,21 @@ export const SalePhaseCard = ({ label, value, cyLabel }: SalePhaseProps) => {
         {label}
       </Typography>
       <Tooltip title={tooltip[value]} arrow sx={{ fontSize: '1rem' }}>
-        <Typography
-          sx={{
-            fontWeight: 700,
-            marginRight: '0.2em',
-            color: 'inherit',
-            cursor: 'default',
-          }}
-          data-cy={cyLabel}
-        >
-          &#9432; {value}
-        </Typography>
+        {loading ? (
+          <CircularProgress size={16} />
+        ) : (
+          <Typography
+            sx={{
+              fontWeight: 700,
+              marginRight: '0.2em',
+              color: 'inherit',
+              cursor: 'default',
+            }}
+            data-cy={cyLabel}
+          >
+            &#9432; {value}
+          </Typography>
+        )}
       </Tooltip>
     </Box>
   );

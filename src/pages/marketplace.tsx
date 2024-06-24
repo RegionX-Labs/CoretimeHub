@@ -17,8 +17,8 @@ import { useEffect, useState } from 'react';
 
 import { MarketFilter, MarketRegion, PurchaseModal } from '@/components';
 
+import { EXPERIMENTAL } from '@/consts';
 import { useAccounts } from '@/contexts/account';
-import { EXPERIMENTAL } from '@/contexts/apis/consts';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { ApiState } from '@/contexts/apis/types';
 import { useMarket } from '@/contexts/market';

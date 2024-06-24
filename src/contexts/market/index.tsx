@@ -126,7 +126,7 @@ const MarketProvider = ({ children }: Props) => {
 
       setStatus(ContextStatus.LOADED);
     } catch {
-      setStatus(ContextStatus.LOADED);
+      setStatus(ContextStatus.ERROR);
       setListedRegions([]);
     }
   }, [regionXApi, regionXApiState, relayApi, relayApiState]);

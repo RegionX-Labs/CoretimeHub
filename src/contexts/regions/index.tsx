@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react';
 
+import { EXPERIMENTAL } from '@/consts';
 import {
   ContextStatus,
   ISMPRecordStatus,
@@ -20,7 +21,6 @@ import * as NativeRegions from './native';
 import * as RegionXRegions from './regionx';
 import { useAccounts } from '../account';
 import { useCoretimeApi, useRelayApi } from '../apis';
-import { EXPERIMENTAL } from '../apis/consts';
 import { useRegionXApi } from '../apis/RegionXApi';
 import { ApiState } from '../apis/types';
 import { useNetwork } from '../network';

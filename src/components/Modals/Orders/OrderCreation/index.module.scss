@@ -1,0 +1,33 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 30rem;
+}
+
+.durationTypes {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.option,
+.activeOption {
+  border-radius: 0.5rem !important;
+  text-transform: capitalize;
+  flex: 1 0 auto;
+}
+
+.activeOption {
+  border: 1px solid #e84d68;
+  background: linear-gradient(180deg, #e84d68 0%, #ad2b49 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.option {
+  border: 1px solid #cccccc !important;
+  background-color: white;
+  color: black;
+}
