@@ -52,6 +52,15 @@ const Home = () => {
     1000
   );
 
+  const renewals = purchaseHistoryData.filter(
+    (item) => item.type === 'renewed'
+  );
+  const numRenewals = renewals.length;
+  const renewalCost =
+    numRenewals === 0
+      ? 0
+      : renewals.reduce((sum, item) => sum + item.price, 0) / numRenewals;
+
   const {
     currentBurn,
     prevBurn,
@@ -127,12 +136,12 @@ const Home = () => {
       top: [
         {
           label: 'Renewals',
-          value: '10',
+          value: numRenewals,
           icon: <Sync />,
         },
         {
           label: 'Renewal Cost',
-          value: '10 KSM',
+          value: formatBalance(renewalCost),
           icon: <MonetizationOnIcon />,
         },
       ],
