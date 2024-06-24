@@ -77,7 +77,7 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
                 index
               ) => (
                 <StyledTableRow key={index}>
-                  <StyledTableCell>
+                  <StyledTableCell align='center'>
                     <Link
                       href={`${SUBSCAN_URL[network]}/extrinsic/${extrinsic_index}`}
                       target='_blank'
@@ -85,7 +85,7 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
                       {extrinsic_index}
                     </Link>
                   </StyledTableCell>
-                  <StyledTableCell>
+                  <StyledTableCell align='center'>
                     <Link
                       href={`${SUBSCAN_URL[network]}/account/${address}`}
                       target='_blank'
@@ -98,12 +98,12 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
                       />
                     </Link>
                   </StyledTableCell>
-                  <StyledTableCell align='right'>{core}</StyledTableCell>
-                  <StyledTableCell align='right'>
+                  <StyledTableCell align='center'>{core}</StyledTableCell>
+                  <StyledTableCell align='center'>
                     {planckBnToUnit(price.toString(), decimals)}
                   </StyledTableCell>
-                  <StyledTableCell>{type}</StyledTableCell>
-                  <StyledTableCell>
+                  <StyledTableCell align='center'>{type}</StyledTableCell>
+                  <StyledTableCell align='center'>
                     {timeAgo.format(timestamp * 1000, 'round-minute')}
                   </StyledTableCell>
                 </StyledTableRow>
@@ -113,27 +113,37 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
         </Table>
       </TableContainer>
       <Stack alignItems='center'>
-        <TableFooter sx={{ alignItems: 'center' }}>
-          <TableRow>
-            <TablePagination
-              rowsPerPageOptions={[10, 25, { label: 'All', value: -1 }]}
-              colSpan={3}
-              count={data.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              slotProps={{
-                select: {
-                  inputProps: {
-                    'aria-label': 'rows per page',
+        <Table>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[10, 25, { label: 'All', value: -1 }]}
+                colSpan={3}
+                count={data.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                slotProps={{
+                  select: {
+                    inputProps: {
+                      'aria-label': 'rows per page',
+                    },
+                    native: true,
                   },
-                  native: true,
-                },
-              }}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </TableRow>
-        </TableFooter>
+                }}
+                sx={{
+                  '.MuiTablePagination-spacer': {
+                    flex: '0 0 0',
+                  },
+                  '.MuiTablePagination-toolbar': {
+                    justifyContent: 'center',
+                  },
+                }}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </TableRow>
+          </TableFooter>
+        </Table>
       </Stack>
     </Stack>
   );
