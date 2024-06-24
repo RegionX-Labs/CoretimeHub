@@ -93,7 +93,7 @@ export type PurchaseHistoryResponseItem = {
   event_index: string;
   extrinsic_index: string;
   mask: string;
-  price: number;
+  price: string;
   purchased_type: string;
 };
 
@@ -110,3 +110,16 @@ export type PurchaseHistoryItem = {
   price: number;
   type: string;
 };
+
+export type SaleHistoryResponseItem = {
+  sales_cycle: number;
+  region_begin: number;
+  region_end: number;
+};
+
+export type SaleHistoryResponse = {
+  count: number;
+  list: SaleHistoryResponseItem[];
+};
+
+export type SaleHistoryItem = SaleHistoryResponseItem;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { SUBSCAN_CORETIME_API } from '@/consts';
+import { fetchPurchaseHistoryData } from '@/apis';
 import {
   NetworkType,
   PurchaseHistoryItem,
@@ -20,34 +20,26 @@ export const usePurchaseHistory = (
   useEffect(() => {
     const asyncFetchData = async () => {
       setLoading(true);
+      setData([]);
+      setError(false);
       try {
-        const res = await fetch(
-          `${SUBSCAN_CORETIME_API[network]}/api/scan/broker/purchased`,
-          {
-            method: 'POST',
-            body: JSON.stringify({
-              region_begin: regionBegin,
-              row,
-              page,
-            }),
-          }
+        const res = await fetchPurchaseHistoryData(
+          network,
+          regionBegin,
+          page,
+          row
         );
         if (res.status !== 200) {
           setError(true);
         } else {
-          const jsonData = await res.json();
-          if (jsonData.message !== 'Success') {
+          const { message, data } = await res.json();
+          if (message !== 'Success') {
             setError(true);
-            setData([]);
           } else {
-            if (jsonData.data.count == 0) {
-              setData([]);
-              setLoading(false);
-              return;
-            }
-            const data = jsonData.data as PurchaseHistoryResponse;
+            const { list } = data as PurchaseHistoryResponse;
+
             setData(
-              data.list.map(
+              list.map(
                 ({
                   account: { address },
                   core,
@@ -61,9 +53,9 @@ export const usePurchaseHistory = (
                     core,
                     extrinsic_index,
                     timestamp: block_timestamp,
-                    price,
+                    price: parseInt(price),
                     type: purchased_type,
-                  }) as PurchaseHistoryItem
+                  } as PurchaseHistoryItem)
               )
             );
           }

@@ -3,9 +3,11 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 import {
+  Backdrop,
   Box,
   Button,
   Card,
+  CircularProgress,
   Paper,
   Stack,
   Typography,
@@ -14,7 +16,8 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
-import { usePurchaseHistory } from '@/hooks';
+import { useBurnInfo, usePurchaseHistory } from '@/hooks';
+import { getBalanceString } from '@/utils/functions';
 
 import { PurchaseHistoryTable } from '@/components';
 
@@ -22,17 +25,24 @@ import Chart from '@/assets/chart.png';
 import Config from '@/assets/config.png';
 import Manage from '@/assets/manage.png';
 import Trade from '@/assets/trade.png';
+import { useCoretimeApi } from '@/contexts/apis';
+import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { useSaleInfo } from '@/contexts/sales';
 import { ContextStatus } from '@/models';
 
 const Home = () => {
   const theme = useTheme();
-  const { network } = useNetwork();
   const { push, query } = useRouter();
+
+  const { network } = useNetwork();
+  const {
+    state: { decimals, symbol, apiState },
+  } = useCoretimeApi();
   const {
     status,
-    saleInfo: { regionBegin },
+    saleInfo: { regionBegin, coresSold, coresOffered },
+    phase: { currentPrice },
   } = useSaleInfo();
 
   const { data: purchaseHistoryData } = usePurchaseHistory(
@@ -41,6 +51,17 @@ const Home = () => {
     0,
     1000
   );
+
+  const {
+    currentBurn,
+    prevBurn,
+    totalBurn,
+    loading: loadingBurnInfo,
+  } = useBurnInfo(network);
+
+  const formatBalance = (value: number): string => {
+    return getBalanceString(value.toString(), decimals, symbol);
+  };
 
   const buttons = [
     {
@@ -70,36 +91,36 @@ const Home = () => {
       top: [
         {
           label: 'Upcoming Burn',
-          value: '600 KSM', // We can obtain this by summing the amount spent in the current sale(we are already reading this data from Subscan for the Purchase History).
+          value: formatBalance(currentBurn),
           icon: <WhatshotIcon />,
         },
         {
           label: 'Previous Burn',
-          value: '500 KSM', // Same way as for 'Upcoming Burn', but we read the data from the previous sale.
+          value: formatBalance(prevBurn),
           icon: <WhatshotIcon />,
         },
       ],
       bottom: {
         label: 'Total Burn',
-        value: '??? KSM', // Would it be reasonably efficient to add up the sum of tokens spent in each sale?
+        value: formatBalance(totalBurn),
       },
     },
     {
       top: [
         {
           label: 'Cores Sold',
-          value: '10', // TODO: Fetch data from chain (Can be done the same way as on the purchase page)
+          value: coresSold,
           icon: <ShoppingCartIcon />,
         },
         {
           label: 'Cores On Sale',
-          value: '15', // TODO: Fetch data from chain (Can be done the same way as on the purchase page)
+          value: coresOffered,
           icon: <ShoppingCartIcon />,
         },
       ],
       bottom: {
         label: 'Current Price',
-        value: '20.5 KSM', // TODO: Fetch current price.
+        value: formatBalance(currentPrice),
       },
     },
     {
@@ -122,7 +143,13 @@ const Home = () => {
     },
   ];
 
-  return (
+  return status !== ContextStatus.LOADED ||
+    apiState !== ApiState.READY ||
+    loadingBurnInfo ? (
+    <Backdrop open>
+      <CircularProgress />
+    </Backdrop>
+  ) : (
     <Stack direction='column' gap='1.5rem'>
       <Card
         sx={{
@@ -229,7 +256,7 @@ const Home = () => {
               py: '1.25rem',
               flex: '1 0 0',
             }}
-            variant='text'
+            variant='outlined'
             onClick={() => push({ pathname: url, query })}
           >
             <Image src={image} width={32} height={32} alt='' />
