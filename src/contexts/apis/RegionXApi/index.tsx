@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useReducer } from 'react';
 
+import { EXPERIMENTAL, WS_REGIONX_CHAIN } from '@/consts';
 import { useToast } from '@/contexts/toast';
 
 import { connect, disconnect, initialState, reducer } from '../common';
-import { EXPERIMENTAL, WS_REGIONX_CHAIN } from '../consts';
 import { ApiState } from '../types';
 
 const types = {
