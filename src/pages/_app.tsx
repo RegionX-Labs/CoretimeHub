@@ -14,7 +14,6 @@ import theme from '@/utils/muiTheme';
 
 import { Layout } from '@/components';
 
-import { EXPERIMENTAL } from '@/consts';
 import { AccountProvider } from '@/contexts/account';
 import {
   CoretimeApiContextProvider,
@@ -77,13 +76,9 @@ export default function MyApp(props: MyAppProps) {
           <NetworkProvider>
             <AccountProvider>
               <CoretimeApiContextProvider>
-                {EXPERIMENTAL ? (
-                  <RegionXApiContextProvider>
-                    <OrderProvider>{Content}</OrderProvider>
-                  </RegionXApiContextProvider>
-                ) : (
-                  <>{Content}</>
-                )}
+                <RegionXApiContextProvider>
+                  <OrderProvider>{Content}</OrderProvider>
+                </RegionXApiContextProvider>
               </CoretimeApiContextProvider>
             </AccountProvider>
           </NetworkProvider>

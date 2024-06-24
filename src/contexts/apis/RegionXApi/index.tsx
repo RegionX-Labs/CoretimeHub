@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useReducer } from 'react';
 
 import { EXPERIMENTAL, WS_REGIONX_CHAIN } from '@/consts';
+import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
+import { NetworkType } from '@/models';
 
 import { connect, disconnect, initialState, reducer } from '../common';
 import { ApiState } from '../types';
@@ -88,6 +90,7 @@ const RegionXApiContext = React.createContext(defaultValue);
 const RegionXApiContextProvider = (props: any) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { toastError } = useToast();
+  const { network } = useNetwork();
 
   useEffect(() => {
     state.apiState === ApiState.ERROR &&
@@ -97,13 +100,19 @@ const RegionXApiContextProvider = (props: any) => {
   const disconnectRegionX = () => disconnect(state);
 
   useEffect(() => {
-    if (!EXPERIMENTAL) return;
+    if (network !== NetworkType.ROCOCO && !EXPERIMENTAL) {
+      return;
+    }
     // TODO: currently we use the RegionX chain only when the experimental flag is on.
     //
     // For this reason we don't have different urls based on the network. However, this
     // should be updated once this is in production.
     connect(state, WS_REGIONX_CHAIN, dispatch, false, types, customRpc);
   }, [state]);
+
+  useEffect(() => {
+    dispatch({ type: 'DISCONNECTED' });
+  }, [network]);
 
   return (
     <RegionXApiContext.Provider value={{ state, disconnectRegionX }}>
