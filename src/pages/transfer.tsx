@@ -88,6 +88,8 @@ const TransferPage = () => {
   const [asset, setAsset] = useState<AssetType>(AssetType.TOKEN);
   const [transferAmount, setTransferAmount] = useState<number | undefined>();
 
+  const enableRegionX = network === NetworkType.ROCOCO || EXPERIMENTAL;
+
   const { balance } = useBalances();
 
   const defaultHandler = {
@@ -273,7 +275,7 @@ const TransferPage = () => {
       originChain === ChainType.REGIONX &&
       destinationChain === ChainType.CORETIME
     ) {
-      if (!regionxApi || regionxApiState !== ApiState.READY) {
+      if (!enableRegionX || !regionxApi || regionxApiState !== ApiState.READY) {
         toastWarning('Currently not supported');
         return;
       }

@@ -142,7 +142,7 @@ export const Sidebar = () => {
       {
         label: 'Orders',
         route: '/orders',
-        enabled: true,
+        enabled: enableRegionX,
         icon: <ListOutlinedIcon />,
       },
     ],
