@@ -1,28 +1,27 @@
 import '@chainsafe/cypress-polkadot-wallet';
-import 'cypress-wait-until';
 import { SalePhase } from '@/models';
-import { BOB, connectWallet, waitForAuthRequest } from 'cypress/common';
+import { ALICE, connectWallet, waitForAuthRequest } from 'cypress/common';
+import { TxRequests } from '@chainsafe/cypress-polkadot-wallet/dist/wallet';
 
 describe('E2E tests for the purchase page', () => {
-  it('Successfully loads the purchase page and all UI elements are in place.', () => {
+  beforeEach(() => {
     cy.visit('/purchase');
 
-    // Fetching the on-chain states
-    cy.get('[data-cy="loading"]').should('exist');
+    connectWallet();
+    // Wallet connection works:
+    cy.get('[data-cy="connect-wallet"]', { timeout: 5 * 1000 }).should(
+      'not.exist'
+    );
+    cy.get('[data-cy="address"]').should('exist');
+    cy.get('[data-cy="address"]').should('contain.text', '5DfhGy...1EqRzV');
 
     // Fetching complete
-    cy.get('[data-cy="loading"]', { timeout: 100 * 1000 }).should('not.exist');
+    cy.get('[data-cy="loading-current-price"]', { timeout: 60 * 1000 }).should(
+      'not.exist'
+    );
+  });
 
-    cy.get('[data-cy="connect-wallet"]').should('exist');
-    cy.get('[data-cy="address"]').should('not.exist');
-
-    connectWallet();
-
-    // Wallet connection works:
-    cy.get('[data-cy="connect-wallet"]').should('not.exist');
-    cy.get('[data-cy="address"]').should('exist');
-    cy.get('[data-cy="address"]').should('contain.text', '5Grwva...GKutQY');
-
+  it('Successfully loads the purchase page and all UI elements are in place.', () => {
     // Sale info panel and its sub panels exists
     cy.get('[data-cy="sale-info"]').should('exist');
 
@@ -58,24 +57,30 @@ describe('E2E tests for the purchase page', () => {
 
     cy.get('[data-cy="btn-close-purchase-history-modal"]').click();
     cy.get('[data-cy="purchase-history-modal"]').should('not.exist');
+  });
 
   it('Successfully purchases a core', async () => {
+    // First check how many cores does the user own.
     cy.get('[data-cy="btn-purchase-core"]').click();
-
     waitForAuthRequest();
 
-    cy.getTxRequests().then((txRequests) => {
+    const coresSold = cy.get('[data-cy="cores-sold"]').its('val') as any;
+    console.log(coresSold);
+
+    cy.get('[data-cy="purchase-history-modal"]').should('not.exist');
+    cy.getTxRequests().then((txRequests: TxRequests) => {
       const requests = Object.values(txRequests);
       cy.wrap(requests.length).should('eq', 1);
-      cy.log(`request id = ${requests}`);
-      cy.wrap(requests[0].payload.address).should('eq', BOB);
-      cy.log(`request id = ${requests[0].id}`);
+      cy.wrap(requests[0].payload.address).should('eq', ALICE);
       cy.approveTx(requests[0].id);
 
       // Wait for tx to get finalized.
-      cy.wait(10000);
-
-      // TODO: check /regions page to make sure the region was indeed successfully purchased.
+      // TODO: check if toast success is displayed(Indicating that the tx was finalized).
+      const currentCoresSold = cy
+        .get('[data-cy="cores-sold"]')
+        .its('val') as any;
+      console.log(currentCoresSold);
+      cy.wrap(coresSold + 1).eq(currentCoresSold);
     });
   });
 });
