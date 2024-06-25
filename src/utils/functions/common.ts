@@ -29,3 +29,7 @@ export const truncateAddres = (address: string) => {
 export const writeToClipboard = async (value: string) => {
   await navigator.clipboard.writeText(value);
 };
+
+export const sleep = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
