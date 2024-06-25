@@ -46,6 +46,7 @@ import {
   AssetType,
   ChainType,
   CORETIME_DECIMALS,
+  NetworkType,
   RegionLocation,
   RegionMetadata,
 } from '@/models';
@@ -86,6 +87,8 @@ const TransferPage = () => {
 
   const [asset, setAsset] = useState<AssetType>(AssetType.TOKEN);
   const [transferAmount, setTransferAmount] = useState<number | undefined>();
+
+  const enableRegionX = network === NetworkType.ROCOCO || EXPERIMENTAL;
 
   const { balance } = useBalances();
 
@@ -247,7 +250,8 @@ const TransferPage = () => {
       originChain === ChainType.CORETIME &&
       destinationChain === ChainType.REGIONX
     ) {
-      if (!EXPERIMENTAL) toastWarning('Currently not supported');
+      if (!EXPERIMENTAL && network !== NetworkType.ROCOCO)
+        toastWarning('Currently not supported');
       else {
         const receiverKeypair = new Keyring();
         receiverKeypair.addFromAddress(
@@ -271,7 +275,7 @@ const TransferPage = () => {
       originChain === ChainType.REGIONX &&
       destinationChain === ChainType.CORETIME
     ) {
-      if (!EXPERIMENTAL || !regionxApi || regionxApiState !== ApiState.READY) {
+      if (!enableRegionX || !regionxApi || regionxApiState !== ApiState.READY) {
         toastWarning('Currently not supported');
         return;
       }

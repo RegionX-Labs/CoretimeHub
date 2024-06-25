@@ -154,9 +154,10 @@ const RegionDataProvider = ({ children }: Props) => {
       _regions.push(regionMetadata);
     }
 
-    const regionxRegions = EXPERIMENTAL
-      ? await RegionXRegions.fetchRegions(regionxApi)
-      : [];
+    const regionxRegions =
+      network === NetworkType.ROCOCO || EXPERIMENTAL
+        ? await RegionXRegions.fetchRegions(regionxApi)
+        : [];
     for await (const [region, status, commitment] of regionxRegions) {
       if (status === ISMPRecordStatus.AVAILABLE) {
         const regionMetadata = await constructRegionMetadata(
