@@ -1,5 +1,5 @@
-import '@chainsafe/cypress-polkadot-wallet';
 import { encodeAddress } from '@polkadot/util-crypto';
+import '@chainsafe/cypress-polkadot-wallet';
 import 'cypress-wait-until';
 
 const ALICE = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';

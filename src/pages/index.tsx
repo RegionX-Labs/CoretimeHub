@@ -45,12 +45,8 @@ const Home = () => {
     phase: { currentPrice },
   } = useSaleInfo();
 
-  const { data: purchaseHistoryData } = usePurchaseHistory(
-    network,
-    regionBegin,
-    0,
-    1000
-  );
+  const { data: purchaseHistoryData, loading: loadingPurchaseHistory } =
+    usePurchaseHistory(network, regionBegin, 0, 1000);
 
   const renewals = purchaseHistoryData.filter(
     (item) => item.type === 'renewed'
@@ -169,7 +165,8 @@ const Home = () => {
 
   return status !== ContextStatus.LOADED ||
     apiState !== ApiState.READY ||
-    loadingBurnInfo ? (
+    loadingBurnInfo ||
+    loadingPurchaseHistory ? (
     <Backdrop open>
       <CircularProgress data-cy='loading' />
     </Backdrop>

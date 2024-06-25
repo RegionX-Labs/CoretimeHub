@@ -19,10 +19,14 @@ export const usePurchaseHistory = (
 
   useEffect(() => {
     const asyncFetchData = async () => {
-      setLoading(true);
       setData([]);
       setError(false);
+      setLoading(false);
+
+      if (regionBegin === 0) return;
+
       try {
+        setLoading(true);
         const res = await fetchPurchaseHistoryData(
           network,
           regionBegin,
@@ -55,15 +59,16 @@ export const usePurchaseHistory = (
                     timestamp: block_timestamp,
                     price: parseInt(price),
                     type: purchased_type,
-                  }) as PurchaseHistoryItem
+                  } as PurchaseHistoryItem)
               )
             );
           }
         }
       } catch {
         setError(true);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     asyncFetchData();
   }, [network, regionBegin, page, row]);
