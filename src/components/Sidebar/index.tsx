@@ -14,7 +14,9 @@ import React from 'react';
 import Logo from '@/assets/logo.png';
 import { EXPERIMENTAL } from '@/consts';
 import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
+import { useNetwork } from '@/contexts/network';
 import { RenewIcon } from '@/icons';
+import { NetworkType } from '@/models';
 
 import styles from './index.module.scss';
 import { StatusIndicator } from '../Elements';
@@ -73,6 +75,8 @@ const MenuItem = ({ label, enabled, route, icon }: MenuItemProps) => {
 
 export const Sidebar = () => {
   const theme = useTheme();
+
+  const { network } = useNetwork();
   const {
     state: { apiState: relayApiState },
   } = useRelayApi();
@@ -82,6 +86,8 @@ export const Sidebar = () => {
   const {
     state: { apiState: regionxApiState },
   } = useRegionXApi();
+
+  const enableRegionX = network === NetworkType.ROCOCO || EXPERIMENTAL;
 
   const menu = {
     general: [
@@ -130,13 +136,13 @@ export const Sidebar = () => {
       {
         label: 'Explore the Market',
         route: '/marketplace',
-        enabled: EXPERIMENTAL,
+        enabled: enableRegionX,
         icon: <ExploreIcon />,
       },
       {
         label: 'Orders',
         route: '/orders',
-        enabled: true,
+        enabled: enableRegionX,
         icon: <ListOutlinedIcon />,
       },
     ],
@@ -192,7 +198,7 @@ export const Sidebar = () => {
         <div className={styles.statusContainer}>
           <StatusIndicator state={relayApiState} label='Relay chain' />
           <StatusIndicator state={coretimeApiState} label='Coretime chain' />
-          {EXPERIMENTAL && (
+          {enableRegionX && (
             <StatusIndicator state={regionxApiState} label='RegionX chain' />
           )}
         </div>
