@@ -148,7 +148,7 @@ export const Sidebar = () => {
         sx={{
           display: 'flex',
           borderBottom: `1px solid ${theme.palette.divider}`,
-          padding: '1rem 0 1rem 1.5rem',
+          padding: '1rem 0',
         }}
       >
         <Link href='/' className={styles.logo}>
