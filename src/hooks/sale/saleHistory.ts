@@ -43,7 +43,7 @@ export const useSaleHistory = (
 
             setData(
               list.map(
-                (x: SaleHistoryResponseItem) => ({ ...x } as SaleHistoryItem)
+                (x: SaleHistoryResponseItem) => ({ ...x }) as SaleHistoryItem
               )
             );
           }

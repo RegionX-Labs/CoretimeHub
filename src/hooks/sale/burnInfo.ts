@@ -46,7 +46,10 @@ export const useBurnInfo = (network: NetworkType) => {
           0,
           1000
         );
-        if (res.status !== 200) continue;
+        if (res.status !== 200) {
+          idx--;
+          continue;
+        }
 
         const { message, data } = await res.json();
         if (message !== 'Success') continue;
@@ -60,7 +63,7 @@ export const useBurnInfo = (network: NetworkType) => {
         if (idx === 0) setCurrentBurn(burn);
         else if (idx === 1) setPrevBurn(burn);
 
-        await sleep(300);
+        await sleep(500);
       }
       setTotalBurn(total);
       setLoading(false);

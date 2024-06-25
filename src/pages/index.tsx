@@ -119,7 +119,7 @@ const Home = () => {
       ],
       bottom: {
         label: 'Total Burn',
-        value: formatBalance(totalBurn),
+        value: totalBurn ? formatBalance(totalBurn) : '...',
         dataCy: 'total-burn',
       },
     },
@@ -147,21 +147,21 @@ const Home = () => {
     {
       top: [
         {
-          label: 'Renewals',
+          label: 'Current Sale Renewals',
           value: numRenewals,
           icon: <Sync />,
           dataCy: 'renewals',
         },
         {
-          label: 'Renewal Cost',
+          label: 'Average Renewal Cost',
           value: formatBalance(renewalCost),
           icon: <MonetizationOnIcon />,
           dataCy: 'renewal-cost',
         },
       ],
       bottom: {
-        label: 'Price Increase',
-        value: '2%',
+        label: 'Spent on Renewals',
+        value: formatBalance(renewalCost * numRenewals),
         dataCy: 'price-increase',
       },
     },
