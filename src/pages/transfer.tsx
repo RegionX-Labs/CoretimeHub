@@ -15,7 +15,9 @@ import {
   coretimeFromRegionXTransfer,
   coretimeToRegionXTransfer,
   transferTokensFromCoretimeToRelay,
+  transferTokensFromRegionXToRelay,
   transferTokensFromRelayToCoretime,
+  transferTokensFromRelayToRegionX,
 } from '@/utils/transfers/crossChain';
 import {
   transferNativeToken,
@@ -63,7 +65,7 @@ const TransferPage = () => {
     state: { api: coretimeApi, apiState: coretimeApiState, symbol },
   } = useCoretimeApi();
   const {
-    state: { api: regionxApi, apiState: regionxApiState },
+    state: { api: regionXApi, apiState: regionxApiState },
   } = useRegionXApi();
   const {
     state: { api: relayApi, apiState: relayApiState },
@@ -109,7 +111,7 @@ const TransferPage = () => {
     if (
       !coretimeApi ||
       coretimeApiState != ApiState.READY ||
-      !regionxApi ||
+      !regionXApi ||
       regionxApiState != ApiState.READY ||
       !activeAccount ||
       !selectedRegion
@@ -118,13 +120,13 @@ const TransferPage = () => {
 
     try {
       const commitment = (await waitForRegionRecordRequestEvent(
-        regionxApi,
+        regionXApi,
         selectedRegion.region.getRegionId()
       )) as string;
 
-      const request = await queryRequest(regionxApi, commitment);
+      const request = await queryRequest(regionXApi, commitment);
       await makeResponse(
-        regionxApi,
+        regionXApi,
         coretimeApi,
         request,
         activeAccount.address,
@@ -179,31 +181,52 @@ const TransferPage = () => {
   };
 
   const handleTokenTransfer = async () => {
-    if (!activeAccount || !activeSigner) return;
+    if (!activeAccount || !activeSigner) {
+      toastError('Please connect your wallet and try again');
+      return;
+    }
     if (!originChain || !destinationChain) return;
 
-    if (!coretimeApi || coretimeApiState !== ApiState.READY) {
-      toastError('Not connected to the Coretime chain');
-      return;
+    let api = null;
+
+    if (originChain === ChainType.CORETIME) {
+      if (!coretimeApi || coretimeApiState !== ApiState.READY) {
+        toastError('Not connected to the coretime chain');
+        return;
+      }
+      api = coretimeApi;
+    } else if (originChain === ChainType.RELAY) {
+      if (!relayApi || relayApiState !== ApiState.READY) {
+        toastError('Not connected to the relay chain');
+        return;
+      }
+      api = relayApi;
+    } else {
+      // RegionX
+      if (!enableRegionX) {
+        toastWarning('Currently not supported');
+        return;
+      }
+      if (!regionXApi || regionxApiState !== ApiState.READY) {
+        toastError('Not connected to the RegionX chain');
+        return;
+      }
+      api = regionXApi;
     }
-    if (!relayApi || relayApiState !== ApiState.READY) {
-      toastError('Not connected to the relay chain');
-      return;
-    }
+    if (!api) return;
 
     if (transferAmount === undefined) {
       toastWarning('Please input the amount');
       return;
     }
-
+    if (!newOwner) {
+      toastError('Recipient must be selected');
+      return;
+    }
     const amount = transferAmount * Math.pow(10, CORETIME_DECIMALS);
     if (originChain === destinationChain) {
-      if (!newOwner) {
-        toastError('Recipient must be selected');
-        return;
-      }
       transferNativeToken(
-        originChain === ChainType.CORETIME ? coretimeApi : relayApi,
+        api,
         activeSigner,
         activeAccount.address,
         newOwner,
@@ -216,12 +239,26 @@ const TransferPage = () => {
         newOwner ? newOwner : activeAccount.address
       );
 
+      if (
+        (originChain === ChainType.CORETIME &&
+          destinationChain === ChainType.REGIONX) ||
+        (originChain === ChainType.REGIONX &&
+          destinationChain === ChainType.CORETIME)
+      ) {
+        toastWarning('Not supported');
+        return;
+      }
+
       (originChain === ChainType.CORETIME
         ? transferTokensFromCoretimeToRelay
-        : transferTokensFromRelayToCoretime
+        : originChain === ChainType.REGIONX
+        ? transferTokensFromRegionXToRelay
+        : destinationChain === ChainType.CORETIME
+        ? transferTokensFromRelayToCoretime
+        : transferTokensFromRelayToRegionX
       ).call(
         this,
-        originChain === ChainType.CORETIME ? coretimeApi : relayApi,
+        api,
         { address: activeAccount.address, signer: activeSigner },
         amount.toString(),
         receiverKeypair.pairs[0].publicKey,
@@ -250,8 +287,7 @@ const TransferPage = () => {
       originChain === ChainType.CORETIME &&
       destinationChain === ChainType.REGIONX
     ) {
-      if (!EXPERIMENTAL && network !== NetworkType.ROCOCO)
-        toastWarning('Currently not supported');
+      if (!enableRegionX) toastWarning('Currently not supported');
       else {
         const receiverKeypair = new Keyring();
         receiverKeypair.addFromAddress(
@@ -275,7 +311,7 @@ const TransferPage = () => {
       originChain === ChainType.REGIONX &&
       destinationChain === ChainType.CORETIME
     ) {
-      if (!enableRegionX || !regionxApi || regionxApiState !== ApiState.READY) {
+      if (!enableRegionX || !regionXApi || regionxApiState !== ApiState.READY) {
         toastWarning('Currently not supported');
         return;
       }
@@ -285,7 +321,7 @@ const TransferPage = () => {
         newOwner ? newOwner : activeAccount.address
       );
       coretimeFromRegionXTransfer(
-        regionxApi,
+        regionXApi,
         { address: activeAccount.address, signer: activeSigner },
         selectedRegion.rawId,
         receiverKeypair.pairs[0].publicKey,
