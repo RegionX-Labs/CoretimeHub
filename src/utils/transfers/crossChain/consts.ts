@@ -18,6 +18,15 @@ export const CoretimeChainFromRelayPerspective = {
   },
 };
 
+export const RegionXChainFromRelayPerspective = {
+  parents: 0,
+  interior: {
+    X1: {
+      Parachain: REGIONX_PARA_ID,
+    },
+  },
+};
+
 export const RegionXChain = {
   parents: 1,
   interior: {
