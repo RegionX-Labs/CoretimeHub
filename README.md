@@ -3,6 +3,7 @@
 A central hub where users can perform operations on their Coretime and easily access the marketplace.
 
 The currently supported operations via the UI are:
+
 - Region partitioning
 - Region interlacing
 - Region transferring
@@ -21,7 +22,7 @@ Before running locally the environment variables must be specified properly.
 1.  Install [NodeJs](https://nodejs.org/en/download)
 2.  `npm i`
 3.  `npm run build`
-4. `npm start`
+4.  `npm start`
 5.  Go to `http://localhost:3000` to interact with the webapp
 
 ### Run with docker
@@ -39,12 +40,14 @@ The environment variables are automatically set in the Dockerfile; however, if y
 2. Follow the [Getting started with zombienet](https://github.com/RegionX-Labs/Coretime-Mock?tab=readme-ov-file#getting-started-with-zombienet) steps and run `npm run zombienet`
 3. Set up the environment by running the [initialization script](https://github.com/RegionX-Labs/Coretime-Mock?tab=readme-ov-file#example-setting-up-the-full-environment) after the parachains started producing blocks.
 4. Set the environment variables to the following:
+
 ```.env
 WS_KUSAMA_RELAY_CHAIN="ws://127.0.0.1:9900"
 WS_KUSAMA_CORETIME_CHAIN="ws://127.0.0.1:9910"
 WS_REGIONX_CHAIN="ws://127.0.0.1:9920"
 EXPERIMENTAL=true
 ```
+
 5. Run `npm run dev`
 6. Purchase a core from the bulk market
 7. Cross chain transfer the core from the Coretime chain to the RegionX parachain.

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useReducer } from 'react';
 
-import { EXPERIMENTAL, WS_REGIONX_CHAIN } from '@/consts';
+import { EXPERIMENTAL, WS_REGIONX_COCOS_CHAIN } from '@/consts';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
 import { NetworkType } from '@/models';
@@ -107,8 +107,8 @@ const RegionXApiContextProvider = (props: any) => {
     //
     // For this reason we don't have different urls based on the network. However, this
     // should be updated once this is in production.
-    connect(state, WS_REGIONX_CHAIN, dispatch, false, types, customRpc);
-  }, [state]);
+    connect(state, WS_REGIONX_COCOS_CHAIN, dispatch, false, types, customRpc);
+  }, [network, state]);
 
   useEffect(() => {
     dispatch({ type: 'DISCONNECTED' });
