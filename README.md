@@ -44,7 +44,7 @@ The environment variables are automatically set in the Dockerfile; however, if y
 ```.env
 WS_KUSAMA_RELAY_CHAIN="ws://127.0.0.1:9900"
 WS_KUSAMA_CORETIME_CHAIN="ws://127.0.0.1:9910"
-WS_REGIONX_CHAIN="ws://127.0.0.1:9920"
+WS_REGIONX_COCOS_CHAIN="ws://127.0.0.1:9920"
 EXPERIMENTAL=true
 ```
 
