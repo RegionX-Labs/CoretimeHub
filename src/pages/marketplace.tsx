@@ -15,7 +15,12 @@ import { useConfirm } from 'material-ui-confirm';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 
-import { MarketFilter, MarketRegion, PurchaseModal } from '@/components';
+import {
+  Balance,
+  MarketFilter,
+  MarketRegion,
+  PurchaseModal,
+} from '@/components';
 
 import { useAccounts } from '@/contexts/account';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
@@ -197,6 +202,9 @@ const Marketplace = () => {
           <CircularProgress />
         </Backdrop>
       )}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: '1rem' }}>
+        <Balance rxRcCurrencyBalance />
+      </Box>
       <Box
         sx={{
           display: 'flex',

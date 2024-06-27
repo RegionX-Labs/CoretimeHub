@@ -26,7 +26,6 @@ import {
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
-import { useBalances } from '@/contexts/balance';
 import { useNetwork } from '@/contexts/network';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
@@ -57,8 +56,6 @@ const Purchase = () => {
   const { network } = useNetwork();
 
   const { fetchRegions } = useRegions();
-
-  const { balance } = useBalances();
 
   const purchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
@@ -129,10 +126,7 @@ const Purchase = () => {
             Buy a core straight from the Coretime chain
           </Typography>
         </Box>
-        <Balance
-          coretimeBalance={balance.coretime}
-          relayBalance={balance.relay}
-        />
+        <Balance ctBalance />
       </Box>
       <Box mt={'.5rem'}>
         <Banner
