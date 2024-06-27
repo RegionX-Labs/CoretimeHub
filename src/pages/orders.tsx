@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 
 import {
   ActionButton,
+  Balance,
   ContributionModal,
   OrderCard,
   OrderCreationModal,
@@ -39,6 +40,9 @@ const OrderDashboard = () => {
 
   return (
     <>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: '1rem' }}>
+        <Balance />
+      </Box>
       <Box
         sx={{
           display: 'flex',

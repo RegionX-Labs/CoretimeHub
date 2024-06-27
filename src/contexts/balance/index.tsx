@@ -1,8 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
+import { EXPERIMENTAL } from '@/consts';
+import { NetworkType } from '@/models';
+
 import { useAccounts } from '../account';
-import { useCoretimeApi, useRelayApi } from '../apis';
+import { useCoretimeApi, useRegionXApi, useRelayApi } from '../apis';
 import { ApiState } from '../apis/types';
+import { useNetwork } from '../network';
 
 interface Props {
   children: React.ReactNode;
@@ -12,6 +16,7 @@ interface BalanceData {
   balance: {
     coretime: number;
     relay: number;
+    regionx: number;
   };
 }
 
@@ -19,25 +24,41 @@ const defaultBalanceData: BalanceData = {
   balance: {
     coretime: 0,
     relay: 0,
+    regionx: 0,
   },
 };
 
 const BalanceContext = createContext<BalanceData>(defaultBalanceData);
 
 const BalanceProvider = ({ children }: Props) => {
+  const { network } = useNetwork();
   const {
     state: { activeAccount },
   } = useAccounts();
-  const { state: coretimeState } = useCoretimeApi();
-  const { state: relayState } = useRelayApi();
-  const { api: coretimeApi, apiState: coretimeApiState } = coretimeState;
-  const { api: relayApi, apiState: relayApiState } = relayState;
+  const {
+    state: { api: coretimeApi, apiState: coretimeApiState },
+  } = useCoretimeApi();
+  const {
+    state: { api: relayApi, apiState: relayApiState },
+  } = useRelayApi();
+  const {
+    state: { api: regionxApi, apiState: regionxApiState },
+  } = useRegionXApi();
+
+  const enableRegionx = network === NetworkType.ROCOCO || EXPERIMENTAL;
 
   const [coretimeBalance, setCoretimeBalance] = useState(0);
   const [relayBalance, setRelayBalance] = useState(0);
+  const [regionxBalance, setRegionxBalance] = useState(0);
 
   useEffect(() => {
     const subscribeBalances = async () => {
+      if (!activeAccount) {
+        setCoretimeBalance(0);
+        setRelayBalance(0);
+        setRegionxBalance(0);
+        return;
+      }
       if (
         coretimeApiState !== ApiState.READY ||
         relayApiState !== ApiState.READY ||
@@ -45,12 +66,6 @@ const BalanceProvider = ({ children }: Props) => {
         !relayApi
       )
         return;
-
-      if (!activeAccount) {
-        setCoretimeBalance(0);
-        setRelayBalance(0);
-        return;
-      }
 
       const { address } = activeAccount;
       const unsubscribeCoretime = await coretimeApi.queryMulti(
@@ -74,13 +89,35 @@ const BalanceProvider = ({ children }: Props) => {
           setRelayBalance(free as number);
         }
       );
+      let unsubscribeRegionx = null;
+
+      if (enableRegionx) {
+        if (!regionxApi || regionxApiState !== ApiState.READY) return;
+        unsubscribeRegionx = await regionxApi.queryMulti(
+          [[regionxApi.query.tokens.accounts, [address, 1]]], // RELAY_ASSET_ID
+          ([{ free }]: [any]) => {
+            setRegionxBalance(free.toJSON() as number);
+          }
+        );
+      }
+
       return () => {
         unsubscribeCoretime();
         unsubscribeRelay();
+        if (unsubscribeRegionx) unsubscribeRegionx();
       };
     };
     subscribeBalances();
-  }, [activeAccount, coretimeApi, coretimeApiState, relayApi, relayApiState]);
+  }, [
+    activeAccount,
+    coretimeApi,
+    coretimeApiState,
+    relayApi,
+    relayApiState,
+    regionxApi,
+    regionxApiState,
+    enableRegionx,
+  ]);
 
   return (
     <BalanceContext.Provider
@@ -88,6 +125,7 @@ const BalanceProvider = ({ children }: Props) => {
         balance: {
           coretime: coretimeBalance,
           relay: relayBalance,
+          regionx: regionxBalance,
         },
       }}
     >

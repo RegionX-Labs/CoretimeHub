@@ -2,49 +2,51 @@ import { Box, Typography, useTheme } from '@mui/material';
 
 import { getBalanceString } from '@/utils/functions';
 
+import { EXPERIMENTAL } from '@/consts';
 import { useAccounts } from '@/contexts/account';
-import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
+import { useBalances } from '@/contexts/balance';
+import { useNetwork } from '@/contexts/network';
+import { NetworkType } from '@/models';
 
 import styles from './index.module.scss';
 
-interface BalanceProps {
-  coretimeBalance: number;
-  relayBalance: number;
-}
-
-export const Balance = ({ relayBalance, coretimeBalance }: BalanceProps) => {
+export const Balance = () => {
+  const { balance } = useBalances();
   const theme = useTheme();
   const {
     state: { activeAccount },
   } = useAccounts();
-  const {
-    state: {
-      decimals: relayDecimals,
-      symbol: relaySymbol,
-      name: relayChainName,
-    },
-  } = useRelayApi();
-  const {
-    state: {
-      decimals: coretimeDecimals,
-      symbol: coretimeSymbol,
-      name: coretimeChainName,
-    },
-  } = useCoretimeApi();
+  const { network } = useNetwork();
+  const { state: relayState } = useRelayApi();
+  const { state: coretimeState } = useCoretimeApi();
+  const { state: regionxState } = useRegionXApi();
+
+  const enableRegionx = network === NetworkType.ROCOCO || EXPERIMENTAL;
 
   const items = [
     {
-      label: relayChainName,
-      value: relayBalance,
-      symbol: relaySymbol,
-      decimals: relayDecimals,
+      label: relayState.name,
+      value: balance.relay,
+      symbol: relayState.symbol,
+      decimals: relayState.decimals,
     },
     {
-      label: coretimeChainName,
-      value: coretimeBalance,
-      symbol: coretimeSymbol,
-      decimals: coretimeDecimals,
+      label: coretimeState.name,
+      value: balance.coretime,
+      symbol: coretimeState.symbol,
+      decimals: coretimeState.decimals,
     },
+    ...(enableRegionx
+      ? [
+          {
+            label: regionxState.name,
+            value: balance.regionx,
+            symbol: regionxState.symbol,
+            decimals: regionxState.decimals,
+          },
+        ]
+      : []),
   ];
 
   return activeAccount ? (
