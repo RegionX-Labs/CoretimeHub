@@ -72,7 +72,11 @@ const MarketProvider = ({ children }: Props) => {
 
         if (!record.available) continue;
         const region = new Region(
-          { begin: parseHNString(begin), core: parseHNString(core), mask } as RegionId,
+          {
+            begin: parseHNString(begin),
+            core: parseHNString(core),
+            mask,
+          } as RegionId,
           {
             ...record.available,
             owner,
