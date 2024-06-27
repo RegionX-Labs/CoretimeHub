@@ -28,7 +28,6 @@ export const Header = () => {
 
   const onDisconnect = () => {
     openAccounts(false);
-    setActiveAccount(null);
     disconnectWallet();
   };
 
@@ -53,6 +52,7 @@ export const Header = () => {
             <List component='div' className={styles.listWrapper}>
               {!accountsOpen && (
                 <ListItemButton
+                  data-cy='accounts-open'
                   onClick={() => openAccounts(true)}
                   sx={{
                     justifyContent: 'space-between',
@@ -79,6 +79,7 @@ export const Header = () => {
                     (account, index) =>
                       account.type == 'sr25519' && (
                         <ListItemButton
+                          data-cy={`account-${index}`}
                           key={index}
                           onClick={() => {
                             setActiveAccount(account);
@@ -96,6 +97,7 @@ export const Header = () => {
                 </List>
                 <Divider sx={{ borderColor: theme.palette.common.white }} />
                 <ListItemButton
+                  data-cy='disconnect-wallet'
                   onClick={onDisconnect}
                   sx={{
                     borderRadius: '0.5rem',
@@ -108,6 +110,7 @@ export const Header = () => {
             </List>
           ) : (
             <ProgressButton
+              data-cy='connect-wallet'
               onClick={() => connectWallet()}
               label='Connect Wallet'
               loading={status === KeyringState.LOADING}

@@ -15,6 +15,7 @@ import { ContextStatus, Listing, ListingRecord } from '@/models';
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { useRegionXApi } from '../apis/RegionXApi';
 import { ApiState } from '../apis/types';
+import { useNetwork } from '../network';
 
 interface MarketData {
   status: ContextStatus;
@@ -44,6 +45,7 @@ const MarketProvider = ({ children }: Props) => {
   const {
     state: { api: relayApi, apiState: relayApiState, height: relayBlockNumber },
   } = useRelayApi();
+  const { network } = useNetwork();
 
   const [status, setStatus] = useState(ContextStatus.UNINITIALIZED);
   const [listedRegions, setListedRegions] = useState<Array<Listing>>([]);
@@ -126,22 +128,27 @@ const MarketProvider = ({ children }: Props) => {
 
       setStatus(ContextStatus.LOADED);
     } catch {
-      setStatus(ContextStatus.LOADED);
+      setStatus(ContextStatus.ERROR);
       setListedRegions([]);
     }
-  }, [
-    regionXApi,
-    regionXApiState,
-    relayApi,
-    relayApiState,
-    relayBlockNumber,
-    timeslicePeriod,
-  ]);
+  }, [regionXApi, regionXApiState, relayApi, relayApiState, relayBlockNumber]);
 
   useEffect(() => {
     if (relayBlockNumber > 0 && status === ContextStatus.UNINITIALIZED)
       fetchMarket();
-  }, [fetchMarket, regionXApi, regionXApiState, relayBlockNumber, status]);
+  }, [
+    regionXApi,
+    regionXApiState,
+    relayApiState,
+    relayApi,
+    relayBlockNumber,
+    status,
+    fetchMarket,
+  ]);
+
+  useEffect(() => {
+    setStatus(ContextStatus.UNINITIALIZED);
+  }, [network]);
 
   return (
     <MarketDataContext.Provider value={{ status, listedRegions, fetchMarket }}>

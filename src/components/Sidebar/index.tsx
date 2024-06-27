@@ -2,19 +2,21 @@ import BuildRoundedIcon from '@mui/icons-material/BuildRounded';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ExploreIcon from '@mui/icons-material/Explore';
 import HomeIcon from '@mui/icons-material/Home';
+import ListOutlinedIcon from '@mui/icons-material/ListOutlined';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
 import Logo from '@/assets/logo.png';
-import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
-import { EXPERIMENTAL } from '@/contexts/apis/consts';
-import { useRegionXApi } from '@/contexts/apis/RegionXApi';
+import { EXPERIMENTAL } from '@/consts';
+import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
+import { useNetwork } from '@/contexts/network';
 import { RenewIcon } from '@/icons';
+import { NetworkType } from '@/models';
 
 import styles from './index.module.scss';
 import { StatusIndicator } from '../Elements';
@@ -73,6 +75,8 @@ const MenuItem = ({ label, enabled, route, icon }: MenuItemProps) => {
 
 export const Sidebar = () => {
   const theme = useTheme();
+
+  const { network } = useNetwork();
   const {
     state: { apiState: relayApiState },
   } = useRelayApi();
@@ -82,6 +86,8 @@ export const Sidebar = () => {
   const {
     state: { apiState: regionxApiState },
   } = useRegionXApi();
+
+  const enableRegionX = network === NetworkType.ROCOCO || EXPERIMENTAL;
 
   const menu = {
     general: [
@@ -130,8 +136,14 @@ export const Sidebar = () => {
       {
         label: 'Explore the Market',
         route: '/marketplace',
-        enabled: EXPERIMENTAL,
+        enabled: enableRegionX,
         icon: <ExploreIcon />,
+      },
+      {
+        label: 'Orders',
+        route: '/orders',
+        enabled: enableRegionX,
+        icon: <ListOutlinedIcon />,
       },
     ],
   };
@@ -142,7 +154,7 @@ export const Sidebar = () => {
         sx={{
           display: 'flex',
           borderBottom: `1px solid ${theme.palette.divider}`,
-          padding: '1rem 0 1rem 1.5rem',
+          padding: '1rem 0',
         }}
       >
         <Link href='/' className={styles.logo}>
@@ -158,14 +170,13 @@ export const Sidebar = () => {
           padding: '2rem 1.5rem',
         }}
       >
-        <div className={styles.menuContainer}>
+        <Stack direction='column' gap='1rem' flexGrow={1}>
           {Object.entries(menu).map(([label, submenu], index) => (
             <Box
               key={index}
               sx={{
                 color: theme.palette.text.secondary,
                 textTransform: 'capitalize',
-                marginBottom: '2rem',
               }}
             >
               <Typography
@@ -173,7 +184,7 @@ export const Sidebar = () => {
                   fontSize: '0.75em',
                   textTransform: 'uppercase',
                   color: theme.palette.text.primary,
-                  marginBottom: '1rem',
+                  mb: '0.5rem',
                 }}
               >
                 {label}
@@ -183,11 +194,11 @@ export const Sidebar = () => {
               ))}
             </Box>
           ))}
-        </div>
+        </Stack>
         <div className={styles.statusContainer}>
           <StatusIndicator state={relayApiState} label='Relay chain' />
           <StatusIndicator state={coretimeApiState} label='Coretime chain' />
-          {EXPERIMENTAL && (
+          {enableRegionX && (
             <StatusIndicator state={regionxApiState} label='RegionX chain' />
           )}
         </div>

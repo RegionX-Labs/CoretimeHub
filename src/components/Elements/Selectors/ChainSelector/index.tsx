@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import Image from 'next/image';
 
-import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
 import { ChainType, NetworkType } from '@/models';
 
 import styles from './index.module.scss';
@@ -26,6 +26,7 @@ import {
   Rococo,
   RococoCoretime,
 } from '@/assets/networks';
+import { EXPERIMENTAL } from '@/consts';
 import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 
@@ -50,6 +51,11 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
     state: { name: relayChain, apiState: relayState },
   } = useRelayApi();
 
+  const enableRegionX = network === NetworkType.ROCOCO || EXPERIMENTAL;
+  const {
+    state: { name: regionXChain, apiState: regionXState },
+  } = useRegionXApi();
+
   const menuItems = [
     {
       icon: relayIcons[network],
@@ -63,12 +69,16 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
       value: ChainType.CORETIME,
       loading: relayState !== ApiState.READY,
     },
-
-    {
-      icon: RegionX,
-      label: 'RegionX Chain',
-      value: ChainType.REGIONX,
-    },
+    ...(enableRegionX
+      ? [
+          {
+            icon: RegionX,
+            label: regionXChain,
+            value: ChainType.REGIONX,
+            loading: regionXState !== ApiState.READY,
+          },
+        ]
+      : []),
   ];
   return (
     <FormControl fullWidth>

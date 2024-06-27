@@ -31,11 +31,11 @@ export const Address = ({
   };
 
   return (
-    <Stack direction='row' gap='0.5rem' alignItems='center'>
+    <Stack direction='row' gap='0.5rem' alignItems='center' width='fit-content'>
       <IconButton onClick={onCopy}>
         <Identicon value={value} theme='polkadot' size={size} />
       </IconButton>
-      <p>{isShort ? truncateAddres(value) : value}</p>
+      <p data-cy='address'>{isShort ? truncateAddres(value) : value}</p>
     </Stack>
   );
 };

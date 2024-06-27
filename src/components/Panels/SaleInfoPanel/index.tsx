@@ -74,11 +74,13 @@ export const SaleInfoPanel = () => {
             label='Current phase'
             value={currentPhase}
             cyLabel='txt-current-phase'
+            loading={currentPrice === 0}
           />
           <SalePhaseCard
             label='Upcoming phase'
             value={nextPhase(currentPhase)}
             cyLabel='txt-upcoming-phase'
+            loading={currentPrice === 0}
           />
         </DetailCard>
         <DetailCard
@@ -93,7 +95,7 @@ export const SaleInfoPanel = () => {
               value: currentPrice ? (
                 formatBalance(currentPrice)
               ) : (
-                <CircularProgress size={16} />
+                <CircularProgress data-cy='loading' size={16} />
               ),
             },
             right: {

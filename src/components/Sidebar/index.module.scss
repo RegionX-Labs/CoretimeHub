@@ -15,19 +15,20 @@
 .logo {
   width: 10rem;
   height: 3rem;
+  margin: 0 auto;
 }
 
-.logo>img {
+.logo > img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
-
 .menuContainer {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  gap: 1rem;
 }
 
 .statusContainer {
@@ -38,6 +39,7 @@
 
 .menuIcon {
   width: 1.5rem;
+  height: 1.5rem;
 }
 
 .menuItem {

@@ -11,7 +11,11 @@ interface LeaseStateProps {
 }
 
 export const LeaseStateCard = ({ paraId, height }: LeaseStateProps) => {
-  const formatDuration = humanizer({ units: ['w', 'd'], round: true });
+  const formatDuration = humanizer({
+    units: ['w', 'd', 'h'],
+    round: true,
+    largest: 2,
+  });
   const { network } = useNetwork();
 
   const chainData: LeaseState[] =

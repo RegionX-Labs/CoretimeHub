@@ -119,7 +119,7 @@ const AccountProvider = ({ children }: Props) => {
       const account: InjectedAccountWithMeta = activeAccount
         ? accounts.find((acc: any) => acc.address == activeAccount) ??
           accounts[0]
-        : null;
+        : accounts[0];
 
       setActiveAccount(account);
       localStorage.setItem(LOCAL_STORAGE_ACCOUNTS, JSON.stringify(accounts));
