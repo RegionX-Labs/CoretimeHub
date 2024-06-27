@@ -123,8 +123,12 @@ export const OrderCreationModal = ({
           onClose();
           fetchOrders();
         },
-        error: () => {
+        fail: () => {
           toastError('Failed to create a new order');
+        },
+        error: (e) => {
+          toastError(`Failed to create a new order ${e}`);
+          setWorking(false);
         },
       });
     } catch (e: any) {

@@ -83,16 +83,18 @@ export const ContributionModal = ({
           onClose();
           fetchOrders();
         },
-        error: () => {
-          toastError('Failed to contribute to an order');
+        fail: () => {
+          toastError('Failed to contribute to the order');
+        },
+        error: (e) => {
+          toastError(`Failed to contribute to an order ${e}`);
+          setWorking(false);
         },
       });
     } catch (e: any) {
       setWorking(false);
       toastError(`Failed to contribute to the order. ${e.toString()}`);
     }
-
-    setWorking(true);
   };
 
   useEffect(() => {
