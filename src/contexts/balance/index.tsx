@@ -16,7 +16,7 @@ interface BalanceData {
   balance: {
     coretime: number;
     relay: number;
-    regionx: number;
+    regionxRcCurrencyBalance: number;
   };
 }
 
@@ -24,7 +24,7 @@ const defaultBalanceData: BalanceData = {
   balance: {
     coretime: 0,
     relay: 0,
-    regionx: 0,
+    regionxRcCurrencyBalance: 0,
   },
 };
 
@@ -125,7 +125,7 @@ const BalanceProvider = ({ children }: Props) => {
         balance: {
           coretime: coretimeBalance,
           relay: relayBalance,
-          regionx: regionxBalance,
+          regionxRcCurrencyBalance: regionxBalance,
         },
       }}
     >

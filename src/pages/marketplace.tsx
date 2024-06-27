@@ -203,7 +203,7 @@ const Marketplace = () => {
         </Backdrop>
       )}
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: '1rem' }}>
-        <Balance />
+        <Balance rxRcCurrencyBalance />
       </Box>
       <Box
         sx={{

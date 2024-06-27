@@ -28,7 +28,6 @@ import { Balance, ParaDisplay, ProgressButton } from '@/components';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
-import { useBalances } from '@/contexts/balance';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
 import { BrokerStatus, ContextStatus } from '@/models';
@@ -40,7 +39,6 @@ const Renewal = () => {
   const {
     state: { activeAccount, activeSigner },
   } = useAccounts();
-  const { balance } = useBalances();
   const { status, parachains } = useRenewableParachains();
 
   const {
@@ -171,10 +169,7 @@ const Renewal = () => {
             Renew a parachain
           </Typography>
         </Box>
-        <Balance
-          coretimeBalance={balance.coretime}
-          relayBalance={balance.relay}
-        />
+        <Balance ctBalance />
       </Box>
 
       <Box sx={{ width: '60%', margin: '0 auto' }}>

@@ -126,7 +126,7 @@ const Purchase = () => {
             Buy a core straight from the Coretime chain
           </Typography>
         </Box>
-        <Balance />
+        <Balance ctBalance />
       </Box>
       <Box mt={'.5rem'}>
         <Banner

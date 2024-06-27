@@ -11,7 +11,19 @@ import { NetworkType } from '@/models';
 
 import styles from './index.module.scss';
 
-export const Balance = () => {
+interface BalanceProps {
+  rcBalance?: boolean;
+  ctBalance?: boolean;
+  rxNativeBalance?: boolean;
+  rxRcCurrencyBalance?: boolean;
+}
+
+export const Balance = ({
+  rcBalance,
+  ctBalance,
+  rxNativeBalance,
+  rxRcCurrencyBalance,
+}: BalanceProps) => {
   const { balance } = useBalances();
   const theme = useTheme();
   const {
@@ -25,26 +37,50 @@ export const Balance = () => {
   const enableRegionx = network === NetworkType.ROCOCO || EXPERIMENTAL;
 
   const items = [
-    {
-      label: relayState.name,
-      value: balance.relay,
-      symbol: relayState.symbol,
-      decimals: relayState.decimals,
-    },
-    {
-      label: coretimeState.name,
-      value: balance.coretime,
-      symbol: coretimeState.symbol,
-      decimals: coretimeState.decimals,
-    },
-    ...(enableRegionx
+    ...(rcBalance
       ? [
           {
-            label: regionxState.name,
-            value: balance.regionx,
-            symbol: regionxState.symbol,
-            decimals: regionxState.decimals,
+            label: relayState.name,
+            value: balance.relay,
+            symbol: relayState.symbol,
+            decimals: relayState.decimals,
           },
+        ]
+      : []),
+    ...(ctBalance
+      ? [
+          {
+            label: coretimeState.name,
+            value: balance.coretime,
+            symbol: coretimeState.symbol,
+            decimals: coretimeState.decimals,
+          },
+        ]
+      : []),
+    ...(enableRegionx
+      ? [
+          // Relay asset:
+          ...(rxRcCurrencyBalance
+            ? [
+                {
+                  label: regionxState.name,
+                  value: balance.regionxRcCurrencyBalance,
+                  symbol: relayState.symbol,
+                  decimals: relayState.decimals,
+                },
+              ]
+            : []),
+          // RegionX native asset:
+          ...(rxNativeBalance
+            ? [
+                {
+                  label: regionxState.name,
+                  value: 0, // TODO: once we add utility
+                  symbol: regionxState.symbol,
+                  decimals: regionxState.decimals,
+                },
+              ]
+            : []),
         ]
       : []),
   ];
