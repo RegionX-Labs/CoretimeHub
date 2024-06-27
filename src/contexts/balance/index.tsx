@@ -89,7 +89,7 @@ const BalanceProvider = ({ children }: Props) => {
           setRelayBalance(free as number);
         }
       );
-      let unsubscribeRegionx = null;
+      let unsubscribeRegionx: any = null;
 
       if (enableRegionx) {
         if (!regionxApi || regionxApiState !== ApiState.READY) return;
