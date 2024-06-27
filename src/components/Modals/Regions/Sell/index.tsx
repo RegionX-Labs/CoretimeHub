@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
-import { sendTx } from '@/utils/functions';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
 import { AddressInput, AmountInput } from '@/components/Elements';
 import { RegionMetaCard } from '@/components/Regions';
@@ -39,15 +39,16 @@ export const SellModal = ({
     state: { activeAccount, activeSigner },
   } = useAccounts();
   const {
-    state: { symbol },
+    state: { symbol: coretimeSymbol },
   } = useCoretimeApi();
   const {
-    state: { api: regionXApi, apiState: regionXApiState, decimals },
+    state: { api: regionXApi, apiState: regionXApiState, symbol, decimals },
   } = useRegionXApi();
 
   const { fetchRegions } = useRegions();
   const { fetchMarket } = useMarket();
   const { toastError, toastInfo, toastSuccess, toastWarning } = useToast();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const [price, setPrice] = useState<number | undefined>();
   const [saleRecipient, setSaleRecipient] = useState<string>('');
@@ -76,8 +77,6 @@ export const SellModal = ({
       return;
     }
 
-    setWorking(true);
-
     const regionId = regionMetadata.region.getOnChainRegionId();
     const end = regionMetadata.region.getEnd();
     const durationInTimeslices = end - regionId.begin;
@@ -88,30 +87,40 @@ export const SellModal = ({
       saleRecipient
     );
 
-    sendTx(txListOnMarket, activeAccount.address, activeSigner, {
-      ready: () => toastInfo('Transaction was initiated'),
-      inBlock: () => toastInfo('In Block'),
-      finalized: () => setWorking(false),
-      success: () => {
-        toastSuccess('Successfully listed the region for sale');
-        onClose();
-        fetchRegions();
-        fetchMarket();
-      },
-      fail: () => {
-        toastError(`Failed to list the region`);
-      },
-      error: (e) => {
-        toastError(
-          `Failed to list the region. Error: ${
-            e.errorMessage === 'Error'
-              ? 'Please check your balance'
-              : e.errorMessage
-          }`
-        );
-        setWorking(false);
-      },
-    });
+    submitExtrinsicWithFeeInfo(
+      symbol,
+      decimals,
+      txListOnMarket,
+      activeAccount.address,
+      activeSigner,
+      {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully listed the region for sale');
+          onClose();
+          fetchRegions();
+          fetchMarket();
+        },
+        fail: () => {
+          toastError(`Failed to list the region`);
+        },
+        error: (e) => {
+          toastError(
+            `Failed to list the region. Error: ${
+              e.errorMessage === 'Error'
+                ? 'Please check your balance'
+                : e.errorMessage
+            }`
+          );
+          setWorking(false);
+        },
+      }
+    );
   };
 
   return (
@@ -127,7 +136,7 @@ export const SellModal = ({
             <AmountInput
               amount={price}
               caption='Total price of the region'
-              currency={symbol}
+              currency={coretimeSymbol}
               setAmount={setPrice}
             />
           </Stack>

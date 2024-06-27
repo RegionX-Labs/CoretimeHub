@@ -11,7 +11,8 @@ import {
 import { useState } from 'react';
 
 import { useParasInfo } from '@/hooks';
-import { getBalanceString, sendTx } from '@/utils/functions';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
+import { getBalanceString } from '@/utils/functions';
 
 import { ProgressButton } from '@/components/Elements';
 
@@ -44,6 +45,7 @@ export const ReserveModal = ({
   } = useRelayApi();
   const { fetchParaStates } = useParasInfo();
   const { toastError, toastInfo, toastSuccess } = useToast();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const [working, setWorking] = useState(false);
 
@@ -57,24 +59,34 @@ export const ReserveModal = ({
       return;
     }
     const txReserve = api.tx.registrar.reserve();
-    setWorking(true);
-    sendTx(txReserve, activeAccount.address, activeSigner, {
-      ready: () => toastInfo('Transaction was initiated'),
-      inBlock: () => toastInfo('In Block'),
-      finalized: () => setWorking(false),
-      success: () => {
-        toastSuccess('Reservation success');
-        fetchParaStates();
-        onClose();
-      },
-      fail: () => {
-        toastError('Failed to reserve a parathread');
-      },
-      error: (e) => {
-        toastError(`Failed to reserve a parathread ${e}`);
-        setWorking(false);
-      },
-    });
+
+    submitExtrinsicWithFeeInfo(
+      symbol,
+      decimals,
+      txReserve,
+      activeAccount.address,
+      activeSigner,
+      {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Reservation success');
+          fetchParaStates();
+          onClose();
+        },
+        fail: () => {
+          toastError('Failed to reserve a parathread');
+        },
+        error: (e) => {
+          toastError(`Failed to reserve a parathread ${e}`);
+          setWorking(false);
+        },
+      }
+    );
   };
 
   const items = [

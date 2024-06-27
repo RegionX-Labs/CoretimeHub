@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import { sendTx } from '@/utils/functions';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
 import { ProgressButton } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
@@ -66,13 +66,14 @@ export const PartitionModal = ({
   const theme = useTheme();
 
   const {
-    state: { api: coretimeApi },
+    state: { api: coretimeApi, symbol, decimals },
   } = useCoretimeApi();
 
   const { fetchRegions } = useRegions();
   const { timeslicePeriod } = useCoretimeApi();
 
   const { toastError, toastSuccess, toastInfo } = useToast();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const [unitIdx, setUnitIdx] = useState(0);
   const [pivot, setPivot] = useState(1);
@@ -102,24 +103,33 @@ export const PartitionModal = ({
       pivotInTimeslice
     );
 
-    setWorking(true);
-    sendTx(txPartition, activeAccount.address, activeSigner, {
-      ready: () => toastInfo('Transaction was initiated'),
-      inBlock: () => toastInfo('In Block'),
-      finalized: () => setWorking(false),
-      success: () => {
-        toastSuccess('Successfully partitioned the region');
-        onClose();
-        fetchRegions();
-      },
-      fail: () => {
-        toastError('Failed to partition the region');
-      },
-      error: (e) => {
-        toastError(`Failed to partition the region ${e}`);
-        setWorking(false);
-      },
-    });
+    submitExtrinsicWithFeeInfo(
+      symbol,
+      decimals,
+      txPartition,
+      activeAccount.address,
+      activeSigner,
+      {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully partitioned the region');
+          onClose();
+          fetchRegions();
+        },
+        fail: () => {
+          toastError('Failed to partition the region');
+        },
+        error: (e) => {
+          toastError(`Failed to partition the region ${e}`);
+          setWorking(false);
+        },
+      }
+    );
   };
 
   return (

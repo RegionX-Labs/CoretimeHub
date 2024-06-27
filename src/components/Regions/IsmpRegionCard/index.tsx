@@ -13,7 +13,8 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import { useEffect, useState } from 'react';
 
-import { sendTx, timesliceToTimestamp } from '@/utils/functions';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
+import { timesliceToTimestamp } from '@/utils/functions';
 import { makeResponse, makeTimeout, queryRequest } from '@/utils/ismp';
 
 import { useAccounts } from '@/contexts/account';
@@ -40,9 +41,15 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
   } = useRelayApi();
   const {
     state: { api: coretimeApi, apiState: coretimeApiState },
+    timeslicePeriod,
   } = useCoretimeApi();
   const {
-    state: { api: regionxApi, apiState: regionxApiState },
+    state: {
+      api: regionxApi,
+      apiState: regionxApiState,
+      symbol: regionxSymbol,
+      decimals: regionxDecimals,
+    },
   } = useRegionXApi();
   const {
     state: { activeAccount, activeSigner },
@@ -55,8 +62,8 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
   const [beginTimestamp, setBeginTimestamp] = useState(0);
 
   const { region, coreOccupancy, status } = regionMetadata;
-  const { timeslicePeriod } = useCoretimeApi();
   const { toastWarning, toastSuccess, toastInfo, toastError } = useToast();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   useEffect(() => {
     if (!relayApi || relayApiState !== ApiState.READY) {
@@ -170,23 +177,30 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
     const request = regionxApi.tx.regions.requestRegionRecord(
       region.getRegionId()
     );
-    sendTx(request, activeAccount.address, activeSigner, {
-      ready: () => toastInfo('Transaction was initiated'),
-      inBlock: () => toastInfo('In Block'),
-      finalized: () => {
-        /** */
-      },
-      success: () => {
-        toastSuccess('Transaction successful');
-        fetchRegions();
-      },
-      fail: () => {
-        toastError(`Failed to request region record`);
-      },
-      error: (e) => {
-        toastError(`Failed to request the region record. ${e}`);
-      },
-    });
+    submitExtrinsicWithFeeInfo(
+      regionxSymbol,
+      regionxDecimals,
+      request,
+      activeAccount.address,
+      activeSigner,
+      {
+        ready: () => toastInfo('Transaction was initiated'),
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => {
+          /** */
+        },
+        success: () => {
+          toastSuccess('Transaction successful');
+          fetchRegions();
+        },
+        fail: () => {
+          toastError(`Failed to request region record`);
+        },
+        error: (e) => {
+          toastError(`Failed to request the region record. ${e}`);
+        },
+      }
+    );
   };
 
   return (

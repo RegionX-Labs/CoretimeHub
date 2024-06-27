@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import { sendTx } from '@/utils/functions';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
 import { AmountInput, ProgressButton } from '@/components/Elements';
 import { OrderCard } from '@/components/Orders';
@@ -45,9 +45,10 @@ export const ContributionModal = ({
     state: { symbol: relaySymbol, decimals: relayDecimals },
   } = useRelayApi();
   const {
-    state: { api, apiState },
+    state: { api, apiState, symbol, decimals },
   } = useRegionXApi();
   const { toastInfo, toastError, toastWarning, toastSuccess } = useToast();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const [working, setWorking] = useState(false);
   const [amount, setAmount] = useState(0);
@@ -69,28 +70,37 @@ export const ContributionModal = ({
     }
 
     try {
-      setWorking(true);
       const tx = api.tx.orders.contribute(
         order.orderId,
         Math.floor(amount * Math.pow(10, relayDecimals))
       );
-      sendTx(tx, activeAccount.address, activeSigner, {
-        ready: () => toastInfo('Transaction was initiated'),
-        inBlock: () => toastInfo('In Block'),
-        finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess('Successfully contributed to the order');
-          onClose();
-          fetchOrders();
-        },
-        fail: () => {
-          toastError('Failed to contribute to the order');
-        },
-        error: (e) => {
-          toastError(`Failed to contribute to an order ${e}`);
-          setWorking(false);
-        },
-      });
+      submitExtrinsicWithFeeInfo(
+        symbol,
+        decimals,
+        tx,
+        activeAccount.address,
+        activeSigner,
+        {
+          ready: () => {
+            setWorking(true);
+            toastInfo('Transaction was initiated');
+          },
+          inBlock: () => toastInfo('In Block'),
+          finalized: () => setWorking(false),
+          success: () => {
+            toastSuccess('Successfully contributed to the order');
+            onClose();
+            fetchOrders();
+          },
+          fail: () => {
+            toastError('Failed to contribute to the order');
+          },
+          error: (e) => {
+            toastError(`Failed to contribute to an order ${e}`);
+            setWorking(false);
+          },
+        }
+      );
     } catch (e: any) {
       setWorking(false);
       toastError(`Failed to contribute to the order. ${e.toString()}`);

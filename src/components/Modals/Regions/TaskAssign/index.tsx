@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import { sendTx } from '@/utils/functions';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
 import { FinalitySelector, ProgressButton } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
@@ -47,11 +47,12 @@ export const TaskAssignModal = ({
   } = useAccounts();
 
   const {
-    state: { api: coretimeApi },
+    state: { api: coretimeApi, symbol, decimals },
   } = useCoretimeApi();
   const { fetchRegions } = useRegions();
   const { tasks } = useTasks();
   const { toastError, toastInfo, toastSuccess } = useToast();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const [working, setWorking] = useState(false);
   const [taskSelected, selectTask] = useState<number>();
@@ -73,24 +74,33 @@ export const TaskAssignModal = ({
       finality
     );
 
-    setWorking(true);
-    sendTx(txAssign, activeAccount.address, activeSigner, {
-      ready: () => toastInfo('Transaction was initiated'),
-      inBlock: () => toastInfo('In Block'),
-      finalized: () => setWorking(false),
-      success: () => {
-        toastSuccess('Successfully assigned a task');
-        onClose();
-        fetchRegions();
-      },
-      fail: () => {
-        toastError('Failed to assign a task');
-      },
-      error: (e) => {
-        toastError(`Failed to assign a task. ${e}`);
-        setWorking(false);
-      },
-    });
+    submitExtrinsicWithFeeInfo(
+      symbol,
+      decimals,
+      txAssign,
+      activeAccount.address,
+      activeSigner,
+      {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully assigned a task');
+          onClose();
+          fetchRegions();
+        },
+        fail: () => {
+          toastError('Failed to assign a task');
+        },
+        error: (e) => {
+          toastError(`Failed to assign a task. ${e}`);
+          setWorking(false);
+        },
+      }
+    );
   };
 
   useEffect(() => {

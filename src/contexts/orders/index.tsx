@@ -75,7 +75,7 @@ const OrderProvider = ({ children }: Props) => {
       setOrders(records);
 
       setStatus(ContextStatus.LOADED);
-    } catch {
+    } catch (e) {
       setStatus(ContextStatus.ERROR);
       setOrders([]);
     }

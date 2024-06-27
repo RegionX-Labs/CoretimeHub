@@ -15,7 +15,7 @@ import { useConfirm } from 'material-ui-confirm';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 
-import { sendTx } from '@/utils/functions';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
 import {
   Balance,
@@ -70,9 +70,10 @@ const Marketplace = () => {
   const { fetchMarket, listedRegions, status } = useMarket();
 
   const {
-    state: { api: regionXApi, apiState: regionXApiState },
+    state: { api: regionXApi, apiState: regionXApiState, decimals, symbol },
   } = useRegionXApi();
   const { toastError, toastSuccess, toastWarning, toastInfo } = useToast();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const [purchaseModalOpen, openPurhcaseModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
@@ -96,32 +97,41 @@ const Marketplace = () => {
       toastWarning('Please connect your wallet');
       return;
     }
-    setWorking(true);
 
     const txUnlist = regionXApi.tx.market.unlistRegion(regionId);
 
-    sendTx(txUnlist, activeAccount.address, activeSigner, {
-      ready: () => toastInfo('Transaction was initiated'),
-      inBlock: () => toastInfo('In Block'),
-      finalized: () => setWorking(false),
-      success: () => {
-        toastSuccess('Transaction successful');
-        fetchMarket();
-      },
-      fail: () => {
-        toastError(`Failed to unlist the region`);
-      },
-      error: (e) => {
-        toastError(
-          `Failed to unlist the region. Error: ${
-            e.errorMessage === 'Error'
-              ? 'Please check your balance.'
-              : e.errorMessage
-          }`
-        );
-        setWorking(false);
-      },
-    });
+    submitExtrinsicWithFeeInfo(
+      symbol,
+      decimals,
+      txUnlist,
+      activeAccount.address,
+      activeSigner,
+      {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Transaction successful');
+          fetchMarket();
+        },
+        fail: () => {
+          toastError(`Failed to unlist the region`);
+        },
+        error: (e) => {
+          toastError(
+            `Failed to unlist the region. Error: ${
+              e.errorMessage === 'Error'
+                ? 'Please check your balance.'
+                : e.errorMessage
+            }`
+          );
+          setWorking(false);
+        },
+      }
+    );
   };
 
   const onUnlist = (region: Region) => {

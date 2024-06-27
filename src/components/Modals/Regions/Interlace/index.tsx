@@ -13,7 +13,7 @@ import {
 import { maskFromBin, maskFromChunk, maskToBin } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
-import { sendTx } from '@/utils/functions';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
 import { ProgressButton } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
@@ -43,10 +43,11 @@ export const InterlaceModal = ({
   } = useAccounts();
 
   const {
-    state: { api },
+    state: { api, symbol, decimals },
   } = useCoretimeApi();
   const { toastError, toastSuccess, toastInfo } = useToast();
   const { fetchRegions } = useRegions();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const currentMask = maskToBin(regionMetadata.region.getMask());
   // Represents the first active bit in the bitmap.
@@ -68,28 +69,37 @@ export const InterlaceModal = ({
 
     const mask = maskFromBin(newMask);
 
-    setWorking(true);
     const txInterlace = api.tx.broker.interlace(
       regionMetadata.region.getOnChainRegionId(),
       mask
     );
-    sendTx(txInterlace, activeAccount.address, activeSigner, {
-      ready: () => toastInfo('Transaction was initiated'),
-      inBlock: () => toastInfo('In Block'),
-      finalized: () => setWorking(false),
-      success: () => {
-        toastSuccess('Successfully interlaced the region');
-        onClose();
-        fetchRegions();
-      },
-      fail: () => {
-        toastError('Failed to interlace the region');
-      },
-      error: (e) => {
-        toastError(`Failed to interlace the region ${e}`);
-        setWorking(false);
-      },
-    });
+    submitExtrinsicWithFeeInfo(
+      symbol,
+      decimals,
+      txInterlace,
+      activeAccount.address,
+      activeSigner,
+      {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully interlaced the region');
+          onClose();
+          fetchRegions();
+        },
+        fail: () => {
+          toastError('Failed to interlace the region');
+        },
+        error: (e) => {
+          toastError(`Failed to interlace the region ${e}`);
+          setWorking(false);
+        },
+      }
+    );
   };
 
   useEffect(() => {

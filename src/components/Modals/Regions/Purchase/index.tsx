@@ -3,7 +3,7 @@ import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
 import { BN } from '@polkadot/util';
 import { useState } from 'react';
 
-import { sendTx } from '@/utils/functions';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
 import { MarketRegion } from '@/components/Regions';
 
@@ -30,12 +30,13 @@ export const PurchaseModal = ({
     state: { activeAccount, activeSigner },
   } = useAccounts();
   const {
-    state: { api: regionXApi, apiState: regionXApiState },
+    state: { api: regionXApi, apiState: regionXApiState, symbol, decimals },
   } = useRegionXApi();
   const { fetchMarket } = useMarket();
   const { fetchRegions } = useRegions();
 
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const [working, setWorking] = useState(false);
 
@@ -61,32 +62,41 @@ export const PurchaseModal = ({
       listing.region.getOnChainRegionId(),
       maxPrice.toString()
     );
-    setWorking(true);
 
-    sendTx(txPurchase, activeAccount.address, activeSigner, {
-      ready: () => toastInfo('Transaction was initiated'),
-      inBlock: () => toastInfo('In Block'),
-      finalized: () => setWorking(false),
-      success: () => {
-        toastSuccess('Successfully purchased the region');
-        fetchMarket();
-        fetchRegions();
-        onClose();
-      },
-      fail: () => {
-        toastError('Failed to purchase the region');
-      },
-      error: (e) => {
-        toastError(
-          `Failed to purchase the region. Error: ${
-            e.errorMessage === 'Error'
-              ? 'Please check your balance.'
-              : e.errorMessage
-          }`
-        );
-        setWorking(false);
-      },
-    });
+    submitExtrinsicWithFeeInfo(
+      symbol,
+      decimals,
+      txPurchase,
+      activeAccount.address,
+      activeSigner,
+      {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully purchased the region');
+          fetchMarket();
+          fetchRegions();
+          onClose();
+        },
+        fail: () => {
+          toastError('Failed to purchase the region');
+        },
+        error: (e) => {
+          toastError(
+            `Failed to purchase the region. Error: ${
+              e.errorMessage === 'Error'
+                ? 'Please check your balance.'
+                : e.errorMessage
+            }`
+          );
+          setWorking(false);
+        },
+      }
+    );
   };
 
   return (

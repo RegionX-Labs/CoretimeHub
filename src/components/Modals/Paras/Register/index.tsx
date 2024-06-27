@@ -13,7 +13,8 @@ import { compactAddLength } from '@polkadot/util';
 import { useEffect, useState } from 'react';
 
 import { useParasInfo } from '@/hooks';
-import { getBalanceString, sendTx } from '@/utils/functions';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
+import { getBalanceString } from '@/utils/functions';
 
 import { FileInput, ProgressButton } from '@/components/Elements';
 
@@ -50,6 +51,7 @@ export const RegisterModal = ({
   } = useAccounts();
   const { fetchParaStates } = useParasInfo();
   const { toastError, toastInfo, toastSuccess } = useToast();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const [working, setWorking] = useState(false);
   const [genesisHead, setGenesisHead] = useState<Uint8Array>();
@@ -80,24 +82,34 @@ export const RegisterModal = ({
       compactAddLength(genesisHead),
       compactAddLength(wasmCode)
     );
-    setWorking(true);
-    sendTx(txRegister, activeAccount.address, activeSigner, {
-      ready: () => toastInfo('Transaction was initiated'),
-      inBlock: () => toastInfo('In Block'),
-      finalized: () => setWorking(false),
-      success: () => {
-        toastSuccess('Registration success');
-        fetchParaStates();
-        onClose();
-      },
-      fail: () => {
-        toastError('Failed to register');
-      },
-      error: (e) => {
-        toastError(`Failed to register ${e}`);
-        setWorking(false);
-      },
-    });
+
+    submitExtrinsicWithFeeInfo(
+      symbol,
+      decimals,
+      txRegister,
+      activeAccount.address,
+      activeSigner,
+      {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Registration success');
+          fetchParaStates();
+          onClose();
+        },
+        fail: () => {
+          toastError('Failed to register');
+        },
+        error: (e) => {
+          toastError(`Failed to register ${e}`);
+          setWorking(false);
+        },
+      }
+    );
   };
 
   useEffect(() => {

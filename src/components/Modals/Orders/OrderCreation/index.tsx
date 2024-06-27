@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import { sendTx } from '@/utils/functions';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
 import { ProgressButton } from '@/components/Elements';
 import { ParaDisplay } from '@/components/Paras';
@@ -57,13 +57,14 @@ export const OrderCreationModal = ({
     state: { activeAccount, activeSigner },
   } = useAccounts();
   const {
-    state: { api, apiState },
+    state: { api, apiState, symbol, decimals },
   } = useRegionXApi();
   const { saleInfo } = useSaleInfo();
 
   const { network } = useNetwork();
   const { fetchOrders } = useOrders();
   const { toastInfo, toastError, toastWarning, toastSuccess } = useToast();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const [paraId, setParaId] = useState<number | undefined>();
   const [regionBegin, setRegionBegin] = useState<number | undefined>();
@@ -106,31 +107,39 @@ export const OrderCreationModal = ({
     }
 
     try {
-      setWorking(true);
-
       const tx = api.tx.orders.createOrder(paraId, {
         begin: regionBegin,
         end: regionEnd,
         coreOccupancy,
       });
 
-      sendTx(tx, activeAccount.address, activeSigner, {
-        ready: () => toastInfo('Transaction was initiated'),
-        inBlock: () => toastInfo('In Block'),
-        finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess('Successfully created a new order');
-          onClose();
-          fetchOrders();
-        },
-        fail: () => {
-          toastError('Failed to create a new order');
-        },
-        error: (e) => {
-          toastError(`Failed to create a new order ${e}`);
-          setWorking(false);
-        },
-      });
+      submitExtrinsicWithFeeInfo(
+        symbol,
+        decimals,
+        tx,
+        activeAccount.address,
+        activeSigner,
+        {
+          ready: () => {
+            setWorking(true);
+            toastInfo('Transaction was initiated');
+          },
+          inBlock: () => toastInfo('In Block'),
+          finalized: () => setWorking(false),
+          success: () => {
+            toastSuccess('Successfully created a new order');
+            onClose();
+            fetchOrders();
+          },
+          fail: () => {
+            toastError('Failed to create a new order');
+          },
+          error: (e) => {
+            toastError(`Failed to create a new order ${e}`);
+            setWorking(false);
+          },
+        }
+      );
     } catch (e: any) {
       toastError(`Failed to create a new order. ${e.toString()}`);
       setWorking(false);
