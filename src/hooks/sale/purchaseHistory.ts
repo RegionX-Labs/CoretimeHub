@@ -59,7 +59,7 @@ export const usePurchaseHistory = (
                     timestamp: block_timestamp,
                     price: parseInt(price),
                     type: purchased_type,
-                  } as PurchaseHistoryItem)
+                  }) as PurchaseHistoryItem
               )
             );
           }

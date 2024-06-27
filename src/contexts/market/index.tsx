@@ -8,7 +8,7 @@ import React, {
   useState,
 } from 'react';
 
-import { timesliceToTimestamp } from '@/utils/functions';
+import { parseHNString, timesliceToTimestamp } from '@/utils/functions';
 
 import { ContextStatus, Listing, ListingRecord } from '@/models';
 
@@ -72,7 +72,11 @@ const MarketProvider = ({ children }: Props) => {
 
         if (!record.available) continue;
         const region = new Region(
-          { begin: parseInt(begin), core: parseInt(core), mask } as RegionId,
+          {
+            begin: parseHNString(begin),
+            core: parseHNString(core),
+            mask,
+          } as RegionId,
           {
             ...record.available,
             owner,
@@ -91,8 +95,8 @@ const MarketProvider = ({ children }: Props) => {
           value.toJSON() as ListingRecord;
 
         const regionId = {
-          begin: parseInt(begin),
-          core: parseInt(core),
+          begin: parseHNString(begin),
+          core: parseHNString(core),
           mask,
         } as RegionId;
 

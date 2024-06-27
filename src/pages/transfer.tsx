@@ -40,7 +40,6 @@ import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { ApiState } from '@/contexts/apis/types';
-import { useBalances } from '@/contexts/balance';
 import { useNetwork } from '@/contexts/network';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
@@ -91,8 +90,6 @@ const TransferPage = () => {
   const [transferAmount, setTransferAmount] = useState<number | undefined>();
 
   const enableRegionX = network === NetworkType.ROCOCO || EXPERIMENTAL;
-
-  const { balance } = useBalances();
 
   const defaultHandler = {
     ready: () => toastInfo('Transaction was initiated'),
@@ -258,10 +255,10 @@ const TransferPage = () => {
       (originChain === ChainType.CORETIME
         ? transferTokensFromCoretimeToRelay
         : originChain === ChainType.REGIONX
-        ? transferTokensFromRegionXToRelay
-        : destinationChain === ChainType.CORETIME
-        ? transferTokensFromRelayToCoretime
-        : transferTokensFromRelayToRegionX
+          ? transferTokensFromRegionXToRelay
+          : destinationChain === ChainType.CORETIME
+            ? transferTokensFromRelayToCoretime
+            : transferTokensFromRelayToRegionX
       ).call(
         this,
         api,
@@ -384,10 +381,7 @@ const TransferPage = () => {
             Cross-chain transfer regions
           </Typography>
         </Box>
-        <Balance
-          coretimeBalance={balance.coretime}
-          relayBalance={balance.relay}
-        />
+        <Balance rcBalance ctBalance rxRcCurrencyBalance />
       </Box>
       <Box
         width='60%'

@@ -2,49 +2,87 @@ import { Box, Typography, useTheme } from '@mui/material';
 
 import { getBalanceString } from '@/utils/functions';
 
+import { EXPERIMENTAL } from '@/consts';
 import { useAccounts } from '@/contexts/account';
-import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
+import { useBalances } from '@/contexts/balance';
+import { useNetwork } from '@/contexts/network';
+import { NetworkType } from '@/models';
 
 import styles from './index.module.scss';
 
 interface BalanceProps {
-  coretimeBalance: number;
-  relayBalance: number;
+  rcBalance?: boolean;
+  ctBalance?: boolean;
+  rxNativeBalance?: boolean;
+  rxRcCurrencyBalance?: boolean;
 }
 
-export const Balance = ({ relayBalance, coretimeBalance }: BalanceProps) => {
+export const Balance = ({
+  rcBalance,
+  ctBalance,
+  rxNativeBalance,
+  rxRcCurrencyBalance,
+}: BalanceProps) => {
+  const { balance } = useBalances();
   const theme = useTheme();
   const {
     state: { activeAccount },
   } = useAccounts();
-  const {
-    state: {
-      decimals: relayDecimals,
-      symbol: relaySymbol,
-      name: relayChainName,
-    },
-  } = useRelayApi();
-  const {
-    state: {
-      decimals: coretimeDecimals,
-      symbol: coretimeSymbol,
-      name: coretimeChainName,
-    },
-  } = useCoretimeApi();
+  const { network } = useNetwork();
+  const { state: relayState } = useRelayApi();
+  const { state: coretimeState } = useCoretimeApi();
+  const { state: regionxState } = useRegionXApi();
+
+  const enableRegionx = network === NetworkType.ROCOCO || EXPERIMENTAL;
 
   const items = [
-    {
-      label: relayChainName,
-      value: relayBalance,
-      symbol: relaySymbol,
-      decimals: relayDecimals,
-    },
-    {
-      label: coretimeChainName,
-      value: coretimeBalance,
-      symbol: coretimeSymbol,
-      decimals: coretimeDecimals,
-    },
+    ...(rcBalance
+      ? [
+          {
+            label: relayState.name,
+            value: balance.relay,
+            symbol: relayState.symbol,
+            decimals: relayState.decimals,
+          },
+        ]
+      : []),
+    ...(ctBalance
+      ? [
+          {
+            label: coretimeState.name,
+            value: balance.coretime,
+            symbol: coretimeState.symbol,
+            decimals: coretimeState.decimals,
+          },
+        ]
+      : []),
+    ...(enableRegionx
+      ? [
+          // Relay asset:
+          ...(rxRcCurrencyBalance
+            ? [
+                {
+                  label: regionxState.name,
+                  value: balance.regionxRcCurrencyBalance,
+                  symbol: relayState.symbol,
+                  decimals: relayState.decimals,
+                },
+              ]
+            : []),
+          // RegionX native asset:
+          ...(rxNativeBalance
+            ? [
+                {
+                  label: regionxState.name,
+                  value: 0, // TODO: once we add utility
+                  symbol: regionxState.symbol,
+                  decimals: regionxState.decimals,
+                },
+              ]
+            : []),
+        ]
+      : []),
   ];
 
   return activeAccount ? (
