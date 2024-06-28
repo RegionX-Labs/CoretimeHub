@@ -26,6 +26,11 @@ export const formatNumber = (num: number): number => {
   }
 };
 
+const toFixedWithoutRounding = (value: number, decimalDigits: number) => {
+  const factor = Math.pow(10, decimalDigits);
+  return Math.floor(value * factor) / factor;
+};
+
 export const getBalanceString = (
   balance: string,
   decimals: number,
@@ -33,6 +38,10 @@ export const getBalanceString = (
 ): string => {
   if (balance == '0') return `0 ${symbol} `;
   const balanceNumber = Number(balance) / 10 ** decimals;
+  if (balanceNumber > 1) {
+    return `${toFixedWithoutRounding(balanceNumber, 2)} ${symbol}`;
+  }
+
   let balanceString = balanceNumber.toFixed(decimals);
 
   // Find the position of the first non-zero digit
