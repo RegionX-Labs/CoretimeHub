@@ -1,6 +1,6 @@
 export const planckBnToUnit = (value: string, units: number): number => {
   const balanceNumber = Number(value) / 10 ** units;
-  let balanceString = balanceNumber.toFixed(units);
+  const balanceString = balanceNumber.toFixed(units);
 
   return Number(balanceString);
 };

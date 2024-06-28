@@ -13,6 +13,8 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import { useState } from 'react';
 
+import { getBalanceString } from '@/utils/functions';
+
 import { Address, Link } from '@/components/Elements';
 
 import { SUBSCAN_URL } from '@/consts';
@@ -21,7 +23,6 @@ import { useNetwork } from '@/contexts/network';
 import { PurchaseHistoryItem } from '@/models';
 
 import { StyledTableCell, StyledTableRow } from '../common';
-import { getBalanceString } from '@/utils/functions';
 
 interface PurchaseHistoryTableProps {
   data: PurchaseHistoryItem[];
