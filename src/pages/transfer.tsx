@@ -92,14 +92,17 @@ const TransferPage = () => {
   const enableRegionX = network === NetworkType.ROCOCO || EXPERIMENTAL;
 
   const defaultHandler = {
-    ready: () => toastInfo('Transaction was initiated.'),
-    inBlock: () => toastInfo(`In Block`),
+    ready: () => toastInfo('Transaction was initiated'),
+    inBlock: () => toastInfo('In Block'),
     finalized: () => setWorking(false),
     success: () => {
-      toastSuccess('Successfully transferred.');
+      toastSuccess('Successfully transferred');
     },
-    error: () => {
-      toastError(`Failed to transfer.`);
+    fail: () => {
+      toastError('Failed to transfer');
+    },
+    error: (e: any) => {
+      toastError(`Failed to transfer ${e}`);
       setWorking(false);
     },
   };
@@ -129,7 +132,7 @@ const TransferPage = () => {
         activeAccount.address,
         {
           ready: () => toastInfo('Fetching region record.'),
-          inBlock: () => toastInfo(`In Block`),
+          inBlock: () => toastInfo('In Block'),
           finalized: () => {
             /* */
           },
@@ -137,8 +140,11 @@ const TransferPage = () => {
             toastSuccess('Region record fetched.');
             fetchRegions();
           },
-          error: () => {
+          fail: () => {
             toastError(`Failed to fetch region record.`);
+          },
+          error: (e) => {
+            toastError(`Failed to fetch region record. ${e}`);
           },
         }
       );

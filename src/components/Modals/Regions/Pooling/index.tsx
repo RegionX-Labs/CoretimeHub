@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 import { isValidAddress } from '@/utils/functions';
 
 import { FinalitySelector, ProgressButton } from '@/components/Elements';
@@ -43,10 +44,11 @@ export const PoolingModal = ({
   } = useAccounts();
 
   const {
-    state: { api: coretimeApi },
+    state: { api, symbol, decimals },
   } = useCoretimeApi();
   const { fetchRegions } = useRegions();
   const { toastError, toastInfo, toastSuccess } = useToast();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const [finality, setFinality] = useState<FinalityType>(FinalityType.FINAL);
   const [payee, setPayee] = useState<string>('');
@@ -54,44 +56,43 @@ export const PoolingModal = ({
   const [working, setWorking] = useState(false);
 
   const onPool = async () => {
-    if (!coretimeApi || !activeAccount || !activeSigner) return;
+    if (!api || !activeAccount || !activeSigner) return;
 
-    const txPooling = coretimeApi.tx.broker.pool(
+    const txPooling = api.tx.broker.pool(
       regionMetadata.region.getOnChainRegionId(), // region id
       activeAccount.address, // payee
       finality
     );
 
-    try {
-      setWorking(true);
-      await txPooling.signAndSend(
-        activeAccount.address,
-        { signer: activeSigner },
-        ({ status, events }) => {
-          if (status.isReady) toastInfo('Transaction was initiated');
-          else if (status.isInBlock) toastInfo(`In Block`);
-          else if (status.isFinalized) {
-            setWorking(false);
-            events.forEach(({ event: { method } }) => {
-              if (method === 'ExtrinsicSuccess') {
-                toastSuccess(
-                  'Successfully contributed to the instantaneous region pool'
-                );
-                onClose();
-                fetchRegions();
-              } else if (method === 'ExtrinsicFailed') {
-                toastError(
-                  `Failed to contribute to the instantaneous region pool`
-                );
-              }
-            });
-          }
-        }
-      );
-    } catch (e) {
-      toastError(`Failed to contribute to the instantaneous region pool ${e}`);
-      setWorking(false);
-    }
+    submitExtrinsicWithFeeInfo(
+      symbol,
+      decimals,
+      txPooling,
+      activeAccount.address,
+      activeSigner,
+      {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess(
+            'Successfully contributed to the instantaneous region pool'
+          );
+          onClose();
+          fetchRegions();
+        },
+        fail: () => {
+          toastError('Failed to contribute to the instantaneous region pool');
+        },
+        error: () => {
+          toastError('Failed to contribute to the instantaneous region pool');
+          setWorking(false);
+        },
+      }
+    );
   };
 
   useEffect(() => {

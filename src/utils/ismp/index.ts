@@ -102,7 +102,7 @@ export const makeResponse = async (
           if (method === 'ExtrinsicSuccess') {
             txHandlers.success();
           } else if (method === 'ExtrinsicFailed') {
-            txHandlers.error();
+            txHandlers.fail();
           }
         });
       }
@@ -138,7 +138,7 @@ export const makeTimeout = async (
           if (method === 'ExtrinsicSuccess') {
             txHandlers.success();
           } else if (method === 'ExtrinsicFailed') {
-            txHandlers.error();
+            txHandlers.fail();
           }
         });
       }

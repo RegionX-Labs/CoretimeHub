@@ -40,7 +40,6 @@ const ParachainManagement = () => {
     loading,
     parachains,
     config: { nextParaId, reservationCost, dataDepositPerByte, maxCodeSize },
-    fetchParaStates,
   } = useParasInfo();
   const { parachains: renewableChains } = useRenewableParachains();
   const {
@@ -95,16 +94,6 @@ const ParachainManagement = () => {
       pathname: 'purchase',
       query: { network },
     });
-  };
-
-  const onReserved = () => {
-    openReserveModal(false);
-    fetchParaStates();
-  };
-
-  const onRegistered = () => {
-    openRegisterModal(false);
-    fetchParaStates();
   };
 
   const onWatch = (id: number, watching: boolean) => {
@@ -246,13 +235,13 @@ const ParachainManagement = () => {
           />
           <ReserveModal
             open={reserveModalOpen}
-            onClose={onReserved}
+            onClose={() => openReserveModal(false)}
             paraId={nextParaId}
             reservationCost={reservationCost}
           />
           <RegisterModal
             open={registerModalOpen}
-            onClose={onRegistered}
+            onClose={() => openRegisterModal(false)}
             paraId={paraId2Reg}
             dataDepositPerByte={dataDepositPerByte}
             maxCodeSize={maxCodeSize}

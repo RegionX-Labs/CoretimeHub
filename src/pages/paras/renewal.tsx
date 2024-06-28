@@ -17,11 +17,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { useRenewableParachains } from '@/hooks/renewableParas';
-import {
-  getBalanceString,
-  sendTx,
-  timesliceToTimestamp,
-} from '@/utils/functions';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
+import { getBalanceString, timesliceToTimestamp } from '@/utils/functions';
 
 import { Balance, ParaDisplay, ProgressButton } from '@/components';
 
@@ -51,26 +48,14 @@ const Renewal = () => {
 
   const { toastError, toastInfo, toastSuccess } = useToast();
   const { network } = useNetwork();
-  const [loading, setLoading] = useState(false);
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
+  const [loading, setLoading] = useState(false);
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [working, setWorking] = useState(false);
   const [expiryTimestamp, setExpiryTimestamp] = useState(0);
 
   const formatDuration = humanizer({ units: ['w', 'd'], round: true });
-
-  const defaultHandler = {
-    ready: () => toastInfo('Transaction was initiated.'),
-    inBlock: () => toastInfo(`In Block`),
-    finalized: () => setWorking(false),
-    success: () => {
-      toastSuccess('Successfully renewed the selected parachain.');
-    },
-    error: () => {
-      toastError(`Failed to renew the selected parachain.`);
-      setWorking(false);
-    },
-  };
 
   const handleRenew = () => {
     if (!activeAccount || !coretimeApi || !coretimeApiState || !activeSigner)
@@ -79,7 +64,31 @@ const Renewal = () => {
     const { core } = parachains[activeIdx];
 
     const txRenewal = coretimeApi.tx.broker.renew(core);
-    sendTx(txRenewal, activeAccount.address, activeSigner, defaultHandler);
+    submitExtrinsicWithFeeInfo(
+      symbol,
+      decimals,
+      txRenewal,
+      activeAccount.address,
+      activeSigner,
+      {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully renewed the selected parachain');
+        },
+        fail: () => {
+          toastError(`Failed to renew the selected parachain`);
+        },
+        error: (e) => {
+          toastError(`Failed to renew the selected parachain ${e}`);
+          setWorking(false);
+        },
+      }
+    );
   };
 
   useEffect(() => {

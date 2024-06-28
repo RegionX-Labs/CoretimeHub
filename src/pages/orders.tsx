@@ -87,7 +87,11 @@ const OrderDashboard = () => {
           />
         </Box>
       </Box>
-      {status !== ContextStatus.LOADED ? (
+      {status === ContextStatus.ERROR ? (
+        <Box mt='1rem'>
+          <Typography>An error occured while fetching the orders.</Typography>
+        </Box>
+      ) : status !== ContextStatus.LOADED ? (
         <Backdrop open>
           <CircularProgress />
         </Backdrop>

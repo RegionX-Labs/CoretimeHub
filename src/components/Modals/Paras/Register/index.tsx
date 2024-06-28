@@ -12,6 +12,8 @@ import {
 import { compactAddLength } from '@polkadot/util';
 import { useEffect, useState } from 'react';
 
+import { useParasInfo } from '@/hooks';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 import { getBalanceString } from '@/utils/functions';
 
 import { FileInput, ProgressButton } from '@/components/Elements';
@@ -47,7 +49,9 @@ export const RegisterModal = ({
   const {
     state: { activeAccount, activeSigner },
   } = useAccounts();
+  const { fetchParaStates } = useParasInfo();
   const { toastError, toastInfo, toastSuccess } = useToast();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const [working, setWorking] = useState(false);
   const [genesisHead, setGenesisHead] = useState<Uint8Array>();
@@ -73,36 +77,39 @@ export const RegisterModal = ({
       toastError('Please connect your wallet');
       return;
     }
-    const tx = api.tx.registrar.register(
+    const txRegister = api.tx.registrar.register(
       paraId,
       compactAddLength(genesisHead),
       compactAddLength(wasmCode)
     );
-    try {
-      setWorking(true);
-      await tx.signAndSend(
-        activeAccount.address,
-        { signer: activeSigner },
-        ({ status, events }) => {
-          if (status.isReady) toastInfo('Transaction was initiated');
-          else if (status.isInBlock) toastInfo(`In Block`);
-          else if (status.isFinalized) {
-            setWorking(false);
-            events.forEach(({ event: { method } }) => {
-              if (method === 'ExtrinsicSuccess') {
-                toastSuccess('Registration success');
-                onClose();
-              } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to register`);
-              }
-            });
-          }
-        }
-      );
-    } catch (e) {
-      toastError(`Failed to register.Error: ${e}`);
-      setWorking(false);
-    }
+
+    submitExtrinsicWithFeeInfo(
+      symbol,
+      decimals,
+      txRegister,
+      activeAccount.address,
+      activeSigner,
+      {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Registration success');
+          fetchParaStates();
+          onClose();
+        },
+        fail: () => {
+          toastError('Failed to register');
+        },
+        error: (e) => {
+          toastError(`Failed to register ${e}`);
+          setWorking(false);
+        },
+      }
+    );
   };
 
   useEffect(() => {

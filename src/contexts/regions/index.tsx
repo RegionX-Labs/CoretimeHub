@@ -199,12 +199,6 @@ const RegionDataProvider = ({ children }: Props) => {
     if (!relayApi || relayApiState !== ApiState.READY) return;
     if (relayBlockNumber === 0) return;
 
-    if (!activeAccount) {
-      setStatus(ContextStatus.LOADED);
-      setRegions([]);
-      return;
-    }
-
     if (status === ContextStatus.LOADED) {
       const found =
         regions.findIndex(
@@ -228,6 +222,15 @@ const RegionDataProvider = ({ children }: Props) => {
     relayBlockNumber,
     status,
   ]);
+
+  useEffect(() => {
+    if (!activeAccount) {
+      setStatus(ContextStatus.LOADED);
+      setRegions([]);
+      return;
+    }
+    fetchRegions();
+  }, [activeAccount]);
 
   const updateRegionName = (index: number, name: string) => {
     const _regions = [...regions];

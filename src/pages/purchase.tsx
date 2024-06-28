@@ -11,7 +11,7 @@ import en from 'javascript-time-ago/locale/en.json';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import { sendTx } from '@/utils/functions';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 import { isNewPricing } from '@/utils/sale';
 
 import {
@@ -50,14 +50,15 @@ const Purchase = () => {
     phase: { currentPhase, currentPrice },
   } = useSaleInfo();
   const {
-    state: { api, apiState, height },
+    state: { api, apiState, height, symbol, decimals },
   } = useCoretimeApi();
   const router = useRouter();
   const { network } = useNetwork();
 
   const { fetchRegions } = useRegions();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
-  const purchase = async () => {
+  const onPurchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
       return;
 
@@ -73,27 +74,34 @@ const Purchase = () => {
       return;
     }
 
-    try {
-      const txPurchase = api.tx.broker.purchase(currentPrice);
+    const txPurchase = api.tx.broker.purchase(currentPrice);
 
-      setWorking(true);
-      sendTx(txPurchase, activeAccount.address, activeSigner, {
-        ready: () => toastInfo('Transaction was initiated'),
-        inBlock: () => toastInfo(`In Block`),
+    submitExtrinsicWithFeeInfo(
+      symbol,
+      decimals,
+      txPurchase,
+      activeAccount.address,
+      activeSigner,
+      {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
         finalized: () => setWorking(false),
         success: () => {
           toastSuccess('Transaction successful');
           fetchRegions();
         },
-        error: () => {
-          toastError(`Failed to purchase a core`);
+        fail: () => {
+          toastError('Failed to purchase a core');
+        },
+        error: (e) => {
+          toastError(`Failed to purchase a core. ${e}`);
           setWorking(false);
         },
-      });
-    } catch (e) {
-      setWorking(false);
-      toastError(`Failed to purchase a core`);
-    }
+      }
+    );
   };
 
   const onManage = () => {
@@ -181,7 +189,7 @@ const Purchase = () => {
                 Manage your regions
               </Button>
               <ProgressButton
-                onClick={purchase}
+                onClick={onPurchase}
                 loading={working}
                 label='Purchase Core'
                 data-cy='btn-purchase-core'

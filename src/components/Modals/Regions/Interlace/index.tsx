@@ -13,6 +13,8 @@ import {
 import { maskFromBin, maskFromChunk, maskToBin } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
+
 import { ProgressButton } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
 
@@ -41,10 +43,11 @@ export const InterlaceModal = ({
   } = useAccounts();
 
   const {
-    state: { api },
+    state: { api, symbol, decimals },
   } = useCoretimeApi();
   const { toastError, toastSuccess, toastInfo } = useToast();
   const { fetchRegions } = useRegions();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const currentMask = maskToBin(regionMetadata.region.getMask());
   // Represents the first active bit in the bitmap.
@@ -70,32 +73,33 @@ export const InterlaceModal = ({
       regionMetadata.region.getOnChainRegionId(),
       mask
     );
-    try {
-      setWorking(true);
-      await txInterlace.signAndSend(
-        activeAccount.address,
-        { signer: activeSigner },
-        ({ status, events }) => {
-          if (status.isReady) toastInfo('Transaction was initiated');
-          else if (status.isInBlock) toastInfo(`In Block`);
-          else if (status.isFinalized) {
-            setWorking(false);
-            events.forEach(({ event: { method } }) => {
-              if (method === 'ExtrinsicSuccess') {
-                toastSuccess('Transaction successful');
-                onClose();
-                fetchRegions();
-              } else if (method === 'ExtrinsicFailed') {
-                toastError(`Failed to interlace the region`);
-              }
-            });
-          }
-        }
-      );
-    } catch (e) {
-      toastError(`Failed to interlace the region. ${e}`);
-      setWorking(false);
-    }
+    submitExtrinsicWithFeeInfo(
+      symbol,
+      decimals,
+      txInterlace,
+      activeAccount.address,
+      activeSigner,
+      {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully interlaced the region');
+          onClose();
+          fetchRegions();
+        },
+        fail: () => {
+          toastError('Failed to interlace the region');
+        },
+        error: (e) => {
+          toastError(`Failed to interlace the region ${e}`);
+          setWorking(false);
+        },
+      }
+    );
   };
 
   useEffect(() => {
