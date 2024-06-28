@@ -30,6 +30,6 @@ export const writeToClipboard = async (value: string) => {
   await navigator.clipboard.writeText(value);
 };
 
-export const sleep = (ms: number) => {
+export const sleep = async (ms: number): Promise<void> => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
