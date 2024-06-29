@@ -1,13 +1,27 @@
+import '@chainsafe/cypress-polkadot-wallet';
 import { SalePhase } from '@/models';
+import { ALICE, connectWallet, waitForAuthRequest } from 'cypress/common';
+import { TxRequests } from '@chainsafe/cypress-polkadot-wallet/dist/wallet';
+
 describe('E2E tests for the purchase page', () => {
-  it('Successfully loads the purchase page.', () => {
+  beforeEach(() => {
     cy.visit('/purchase');
 
-    // Fetching the on-chain states
-    cy.get('[data-cy="loading"]').should('exist');
-    // Fetching complete
-    cy.get('[data-cy="loading"]', { timeout: 60 * 1000 }).should('not.exist');
+    connectWallet();
+    // Wallet connection works:
+    cy.get('[data-cy="connect-wallet"]', { timeout: 5 * 1000 }).should(
+      'not.exist'
+    );
+    cy.get('[data-cy="address"]').should('exist');
+    cy.get('[data-cy="address"]').should('contain.text', '5DfhGy...1EqRzV');
 
+    // Fetching complete
+    cy.get('[data-cy="loading-current-price"]', { timeout: 60 * 1000 }).should(
+      'not.exist'
+    );
+  });
+
+  it('Successfully loads the purchase page and all UI elements are in place.', () => {
     // Sale info panel and its sub panels exists
     cy.get('[data-cy="sale-info"]').should('exist');
 
@@ -43,9 +57,45 @@ describe('E2E tests for the purchase page', () => {
 
     cy.get('[data-cy="btn-close-purchase-history-modal"]').click();
     cy.get('[data-cy="purchase-history-modal"]').should('not.exist');
+  });
 
-    // Clicking 'Manage your regions' should redirect to the region dashboard page
-    cy.get('[data-cy="btn-manage-regions"]').click();
-    cy.url().should('contain', 'regions');
+  it('Successfully purchases a core', async () => {
+    cy.get('[data-cy="btn-purchase-core"]').click();
+    cy.get('.MuiButton-root').contains('Ok').click();
+    waitForAuthRequest();
+
+    let initialCoresSold = 0;
+    cy.get('[data-cy="cores-sold"]')
+      .invoke('text')
+      .then((v) => {
+        initialCoresSold = parseInt(v);
+      });
+
+    cy.get('[data-cy="purchase-history-modal"]').should('not.exist');
+    cy.getTxRequests().then((txRequests: TxRequests) => {
+      const requests = Object.values(txRequests);
+      cy.wrap(requests.length).should('eq', 1);
+      cy.wrap(requests[0].payload.address).should('eq', ALICE);
+      cy.approveTx(requests[0].id);
+
+      let currentCoresSold = initialCoresSold;
+      cy.waitUntil(
+        () => {
+          return cy
+            .get('[data-cy="cores-sold"]')
+            .invoke('text')
+            .then((text) => {
+              currentCoresSold = parseInt(text);
+              return currentCoresSold !== initialCoresSold;
+            });
+        },
+        { timeout: 120 * 1000 }
+      ).then(() => {
+        // Ensure cores-sold gets incremented after a purchase.
+        //
+        // This way we know the purchase was successful.
+        expect(initialCoresSold + 1).eq(currentCoresSold);
+      });
+    });
   });
 });

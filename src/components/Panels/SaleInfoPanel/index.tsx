@@ -95,7 +95,7 @@ export const SaleInfoPanel = () => {
               value: currentPrice ? (
                 formatBalance(currentPrice)
               ) : (
-                <CircularProgress data-cy='loading' size={16} />
+                <CircularProgress data-cy='loading-current-price' size={16} />
               ),
             },
             right: {

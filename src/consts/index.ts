@@ -1,5 +1,7 @@
 import { NetworkType } from '@/models';
 
+export const APP_NAME = 'Corehub';
+
 export const SUBSCAN_CORETIME_API = {
   [NetworkType.ROCOCO]: process.env.SUBSCAN_CORETIME_ROCOCO_API ?? '',
   [NetworkType.KUSAMA]: process.env.SUBSCAN_CORETIME_KUSAMA_API ?? '',
