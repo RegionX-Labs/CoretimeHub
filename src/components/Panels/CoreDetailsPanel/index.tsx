@@ -10,9 +10,10 @@ interface DetailItemProps {
   label: string;
   description: string;
   value: number;
+  dataCy?: string;
 }
 
-const DetailItem = ({ label, description, value }: DetailItemProps) => {
+const DetailItem = ({ label, description, value, dataCy }: DetailItemProps) => {
   const theme = useTheme();
   return (
     <Paper className={styles.detailWrapper}>
@@ -44,6 +45,7 @@ const DetailItem = ({ label, description, value }: DetailItemProps) => {
             fontWeight: 700,
             lineHeight: 1,
           }}
+          data-cy={dataCy}
         >
           {value}
         </Typography>
@@ -78,11 +80,12 @@ export const CoreDetailsPanel = ({ saleInfo }: CoreDetailsPanelProps) => {
           description='Numbers of cores which are offered for sale'
           value={saleInfo.coresOffered}
         />
-        <div data-cy='cores-sold'>
+        <div>
           <DetailItem
             label='Cores sold'
             description='Numbers of cores which have been sold'
             value={saleInfo.coresSold}
+            dataCy='cores-sold'
           />
         </div>
         <DetailItem

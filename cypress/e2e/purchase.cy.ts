@@ -60,13 +60,16 @@ describe('E2E tests for the purchase page', () => {
   });
 
   it('Successfully purchases a core', async () => {
-    // First check how many cores does the user own.
     cy.get('[data-cy="btn-purchase-core"]').click();
     cy.get('.MuiButton-root').contains('Ok').click();
     waitForAuthRequest();
 
-    const coresSold = cy.get('[data-cy="cores-sold"]').its('val') as any;
-    console.log(coresSold);
+    let initialCoresSold = 0;
+    cy.get('[data-cy="cores-sold"]')
+      .invoke('text')
+      .then((v) => {
+        initialCoresSold = parseInt(v);
+      });
 
     cy.get('[data-cy="purchase-history-modal"]').should('not.exist');
     cy.getTxRequests().then((txRequests: TxRequests) => {
@@ -75,13 +78,24 @@ describe('E2E tests for the purchase page', () => {
       cy.wrap(requests[0].payload.address).should('eq', ALICE);
       cy.approveTx(requests[0].id);
 
-      // Wait for tx to get finalized.
-      // TODO: check if toast success is displayed(Indicating that the tx was finalized).
-      const currentCoresSold = cy
-        .get('[data-cy="cores-sold"]')
-        .its('val') as any;
-      console.log(currentCoresSold);
-      cy.wrap(coresSold + 1).eq(currentCoresSold);
+      let currentCoresSold = initialCoresSold;
+      cy.waitUntil(
+        () => {
+          return cy
+            .get('[data-cy="cores-sold"]')
+            .invoke('text')
+            .then((text) => {
+              currentCoresSold = parseInt(text);
+              return currentCoresSold !== initialCoresSold;
+            });
+        },
+        { timeout: 120 * 1000 }
+      ).then(() => {
+        // Ensure cores-sold gets incremented after a purchase.
+        //
+        // This way we know the purchase was successful.
+        expect(initialCoresSold + 1).eq(currentCoresSold);
+      });
     });
   });
 });
