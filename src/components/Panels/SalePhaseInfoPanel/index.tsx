@@ -12,7 +12,7 @@ export const SalePhaseInfoPanel = () => {
   const theme = useTheme();
 
   const {
-    phase: { currentPhase, endpoints },
+    phase: { currentPhase, currentPrice, endpoints },
   } = useSaleInfo();
 
   const [remainingTime, setRemainingTime] = useState(0);
@@ -69,7 +69,11 @@ export const SalePhaseInfoPanel = () => {
         </Box>
         <Box className={styles.timerWrapper}>
           <Box className={styles.currentPhase}>
-            <SalePhaseCard label='' value={currentPhase} />
+            <SalePhaseCard
+              loading={currentPrice === 0}
+              label=''
+              value={currentPhase}
+            />
           </Box>
           <Typography>Ends in:</Typography>
           <CountDown remainingTime={remainingTime} />

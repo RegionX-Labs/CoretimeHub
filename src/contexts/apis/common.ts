@@ -64,6 +64,7 @@ export const reducer = (state: any, action: any) => {
     case 'DISCONNECTED':
       return {
         ...state,
+        api: null,
         apiState: ApiState.DISCONNECTED,
         symbol: '',
         name: '',

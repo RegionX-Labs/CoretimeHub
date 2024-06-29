@@ -11,6 +11,7 @@ import {
   RcTokenFromParachainPerspective,
   RcTokenFromRelayPerspective,
   RegionXChain,
+  RegionXChainFromRelayPerspective,
   RelayChainFromParachainPerspective,
 } from './consts';
 import { fungibleAsset, nonFungibleAsset, versionWrap } from './utils';
@@ -156,6 +157,77 @@ export function transferTokensFromRelayToCoretime(
 
   const teleportTransfer = coretimeApi.tx.xcmPallet.limitedTeleportAssets(
     versionWrap(CoretimeChainFromRelayPerspective),
+    versionWrap(beneficiary),
+    versionWrap([fungibleAsset(RcTokenFromRelayPerspective, amount)]),
+    feeAssetItem,
+    weightLimit
+  );
+
+  const { address, signer } = sender;
+
+  sendTx(teleportTransfer, address, signer, handlers);
+}
+
+export function transferTokensFromRegionXToRelay(
+  regionXApi: ApiPromise,
+  sender: Sender,
+  amount: string,
+  receiver: Uint8Array,
+  handlers: TxStatusHandlers
+) {
+  const beneficiary = {
+    parents: 0,
+    interior: {
+      X1: {
+        AccountId32: {
+          chain: 'Any',
+          id: receiver,
+        },
+      },
+    },
+  };
+
+  const feeAssetItem = 0;
+  const weightLimit = 'Unlimited';
+
+  const teleportTransfer =
+    regionXApi.tx.polkadotXcm.limitedReserveTransferAssets(
+      versionWrap(RelayChainFromParachainPerspective),
+      versionWrap(beneficiary),
+      versionWrap([fungibleAsset(RcTokenFromParachainPerspective, amount)]),
+      feeAssetItem,
+      weightLimit
+    );
+
+  const { address, signer } = sender;
+
+  sendTx(teleportTransfer, address, signer, handlers);
+}
+
+export function transferTokensFromRelayToRegionX(
+  regionXApi: ApiPromise,
+  sender: Sender,
+  amount: string,
+  receiver: Uint8Array,
+  handlers: TxStatusHandlers
+) {
+  const beneficiary = {
+    parents: 0,
+    interior: {
+      X1: {
+        AccountId32: {
+          chain: 'Any',
+          id: receiver,
+        },
+      },
+    },
+  };
+
+  const feeAssetItem = 0;
+  const weightLimit = 'Unlimited';
+
+  const teleportTransfer = regionXApi.tx.xcmPallet.limitedReserveTransferAssets(
+    versionWrap(RegionXChainFromRelayPerspective),
     versionWrap(beneficiary),
     versionWrap([fungibleAsset(RcTokenFromRelayPerspective, amount)]),
     feeAssetItem,

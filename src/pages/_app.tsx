@@ -19,11 +19,11 @@ import {
   CoretimeApiContextProvider,
   RelayApiContextProvider,
 } from '@/contexts/apis';
-import { EXPERIMENTAL } from '@/contexts/apis/consts';
 import { RegionXApiContextProvider } from '@/contexts/apis/RegionXApi';
 import { BalanceProvider } from '@/contexts/balance';
 import { MarketProvider } from '@/contexts/market';
 import { NetworkProvider } from '@/contexts/network';
+import { OrderProvider } from '@/contexts/orders';
 import { RegionDataProvider } from '@/contexts/regions';
 import { SaleInfoProvider } from '@/contexts/sales';
 import { SettingsProvider } from '@/contexts/settings';
@@ -76,13 +76,9 @@ export default function MyApp(props: MyAppProps) {
           <NetworkProvider>
             <AccountProvider>
               <CoretimeApiContextProvider>
-                {EXPERIMENTAL ? (
-                  <RegionXApiContextProvider>
-                    {Content}
-                  </RegionXApiContextProvider>
-                ) : (
-                  <>{Content}</>
-                )}
+                <RegionXApiContextProvider>
+                  <OrderProvider>{Content}</OrderProvider>
+                </RegionXApiContextProvider>
               </CoretimeApiContextProvider>
             </AccountProvider>
           </NetworkProvider>

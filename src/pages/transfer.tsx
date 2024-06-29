@@ -15,7 +15,9 @@ import {
   coretimeFromRegionXTransfer,
   coretimeToRegionXTransfer,
   transferTokensFromCoretimeToRelay,
+  transferTokensFromRegionXToRelay,
   transferTokensFromRelayToCoretime,
+  transferTokensFromRelayToRegionX,
 } from '@/utils/transfers/crossChain';
 import {
   transferNativeToken,
@@ -33,12 +35,11 @@ import {
 } from '@/components';
 import AssetSelector from '@/components/Elements/Selectors/AssetSelector';
 
+import { EXPERIMENTAL } from '@/consts';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
-import { EXPERIMENTAL } from '@/contexts/apis/consts';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { ApiState } from '@/contexts/apis/types';
-import { useBalances } from '@/contexts/balance';
 import { useNetwork } from '@/contexts/network';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
@@ -46,6 +47,7 @@ import {
   AssetType,
   ChainType,
   CORETIME_DECIMALS,
+  NetworkType,
   RegionLocation,
   RegionMetadata,
 } from '@/models';
@@ -62,7 +64,7 @@ const TransferPage = () => {
     state: { api: coretimeApi, apiState: coretimeApiState, symbol },
   } = useCoretimeApi();
   const {
-    state: { api: regionxApi, apiState: regionxApiState },
+    state: { api: regionXApi, apiState: regionxApiState },
   } = useRegionXApi();
   const {
     state: { api: relayApi, apiState: relayApiState },
@@ -87,17 +89,20 @@ const TransferPage = () => {
   const [asset, setAsset] = useState<AssetType>(AssetType.TOKEN);
   const [transferAmount, setTransferAmount] = useState<number | undefined>();
 
-  const { balance } = useBalances();
+  const enableRegionX = network === NetworkType.ROCOCO || EXPERIMENTAL;
 
   const defaultHandler = {
-    ready: () => toastInfo('Transaction was initiated.'),
-    inBlock: () => toastInfo(`In Block`),
+    ready: () => toastInfo('Transaction was initiated'),
+    inBlock: () => toastInfo('In Block'),
     finalized: () => setWorking(false),
     success: () => {
-      toastSuccess('Successfully transferred.');
+      toastSuccess('Successfully transferred');
     },
-    error: () => {
-      toastError(`Failed to transfer.`);
+    fail: () => {
+      toastError('Failed to transfer');
+    },
+    error: (e: any) => {
+      toastError(`Failed to transfer ${e}`);
       setWorking(false);
     },
   };
@@ -106,7 +111,7 @@ const TransferPage = () => {
     if (
       !coretimeApi ||
       coretimeApiState != ApiState.READY ||
-      !regionxApi ||
+      !regionXApi ||
       regionxApiState != ApiState.READY ||
       !activeAccount ||
       !selectedRegion
@@ -115,19 +120,19 @@ const TransferPage = () => {
 
     try {
       const commitment = (await waitForRegionRecordRequestEvent(
-        regionxApi,
+        regionXApi,
         selectedRegion.region.getRegionId()
       )) as string;
 
-      const request = await queryRequest(regionxApi, commitment);
+      const request = await queryRequest(regionXApi, commitment);
       await makeResponse(
-        regionxApi,
+        regionXApi,
         coretimeApi,
         request,
         activeAccount.address,
         {
           ready: () => toastInfo('Fetching region record.'),
-          inBlock: () => toastInfo(`In Block`),
+          inBlock: () => toastInfo('In Block'),
           finalized: () => {
             /* */
           },
@@ -135,8 +140,11 @@ const TransferPage = () => {
             toastSuccess('Region record fetched.');
             fetchRegions();
           },
-          error: () => {
+          fail: () => {
             toastError(`Failed to fetch region record.`);
+          },
+          error: (e) => {
+            toastError(`Failed to fetch region record. ${e}`);
           },
         }
       );
@@ -176,31 +184,52 @@ const TransferPage = () => {
   };
 
   const handleTokenTransfer = async () => {
-    if (!activeAccount || !activeSigner) return;
+    if (!activeAccount || !activeSigner) {
+      toastError('Please connect your wallet and try again');
+      return;
+    }
     if (!originChain || !destinationChain) return;
 
-    if (!coretimeApi || coretimeApiState !== ApiState.READY) {
-      toastError('Not connected to the Coretime chain');
-      return;
+    let api = null;
+
+    if (originChain === ChainType.CORETIME) {
+      if (!coretimeApi || coretimeApiState !== ApiState.READY) {
+        toastError('Not connected to the coretime chain');
+        return;
+      }
+      api = coretimeApi;
+    } else if (originChain === ChainType.RELAY) {
+      if (!relayApi || relayApiState !== ApiState.READY) {
+        toastError('Not connected to the relay chain');
+        return;
+      }
+      api = relayApi;
+    } else {
+      // RegionX
+      if (!enableRegionX) {
+        toastWarning('Currently not supported');
+        return;
+      }
+      if (!regionXApi || regionxApiState !== ApiState.READY) {
+        toastError('Not connected to the RegionX chain');
+        return;
+      }
+      api = regionXApi;
     }
-    if (!relayApi || relayApiState !== ApiState.READY) {
-      toastError('Not connected to the relay chain');
-      return;
-    }
+    if (!api) return;
 
     if (transferAmount === undefined) {
       toastWarning('Please input the amount');
       return;
     }
-
+    if (!newOwner) {
+      toastError('Recipient must be selected');
+      return;
+    }
     const amount = transferAmount * Math.pow(10, CORETIME_DECIMALS);
     if (originChain === destinationChain) {
-      if (!newOwner) {
-        toastError('Recipient must be selected');
-        return;
-      }
       transferNativeToken(
-        originChain === ChainType.CORETIME ? coretimeApi : relayApi,
+        api,
         activeSigner,
         activeAccount.address,
         newOwner,
@@ -213,12 +242,26 @@ const TransferPage = () => {
         newOwner ? newOwner : activeAccount.address
       );
 
+      if (
+        (originChain === ChainType.CORETIME &&
+          destinationChain === ChainType.REGIONX) ||
+        (originChain === ChainType.REGIONX &&
+          destinationChain === ChainType.CORETIME)
+      ) {
+        toastWarning('Not supported');
+        return;
+      }
+
       (originChain === ChainType.CORETIME
         ? transferTokensFromCoretimeToRelay
-        : transferTokensFromRelayToCoretime
+        : originChain === ChainType.REGIONX
+          ? transferTokensFromRegionXToRelay
+          : destinationChain === ChainType.CORETIME
+            ? transferTokensFromRelayToCoretime
+            : transferTokensFromRelayToRegionX
       ).call(
         this,
-        originChain === ChainType.CORETIME ? coretimeApi : relayApi,
+        api,
         { address: activeAccount.address, signer: activeSigner },
         amount.toString(),
         receiverKeypair.pairs[0].publicKey,
@@ -247,7 +290,7 @@ const TransferPage = () => {
       originChain === ChainType.CORETIME &&
       destinationChain === ChainType.REGIONX
     ) {
-      if (!EXPERIMENTAL) toastWarning('Currently not supported');
+      if (!enableRegionX) toastWarning('Currently not supported');
       else {
         const receiverKeypair = new Keyring();
         receiverKeypair.addFromAddress(
@@ -271,7 +314,7 @@ const TransferPage = () => {
       originChain === ChainType.REGIONX &&
       destinationChain === ChainType.CORETIME
     ) {
-      if (!EXPERIMENTAL || !regionxApi || regionxApiState !== ApiState.READY) {
+      if (!enableRegionX || !regionXApi || regionxApiState !== ApiState.READY) {
         toastWarning('Currently not supported');
         return;
       }
@@ -281,7 +324,7 @@ const TransferPage = () => {
         newOwner ? newOwner : activeAccount.address
       );
       coretimeFromRegionXTransfer(
-        regionxApi,
+        regionXApi,
         { address: activeAccount.address, signer: activeSigner },
         selectedRegion.rawId,
         receiverKeypair.pairs[0].publicKey,
@@ -338,10 +381,7 @@ const TransferPage = () => {
             Cross-chain transfer regions
           </Typography>
         </Box>
-        <Balance
-          coretimeBalance={balance.coretime}
-          relayBalance={balance.relay}
-        />
+        <Balance rcBalance ctBalance rxRcCurrencyBalance />
       </Box>
       <Box
         width='60%'

@@ -11,7 +11,7 @@ import en from 'javascript-time-ago/locale/en.json';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import { sendTx } from '@/utils/functions';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 import { isNewPricing } from '@/utils/sale';
 
 import {
@@ -26,7 +26,6 @@ import {
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
-import { useBalances } from '@/contexts/balance';
 import { useNetwork } from '@/contexts/network';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
@@ -51,14 +50,13 @@ const Purchase = () => {
     phase: { currentPhase, currentPrice },
   } = useSaleInfo();
   const {
-    state: { api, apiState, height },
+    state: { api, apiState, height, symbol, decimals },
   } = useCoretimeApi();
   const router = useRouter();
   const { network } = useNetwork();
 
   const { fetchRegions } = useRegions();
-
-  const { balance } = useBalances();
+  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const onPurchase = async () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
@@ -76,27 +74,34 @@ const Purchase = () => {
       return;
     }
 
-    try {
-      const txPurchase = api.tx.broker.purchase(currentPrice);
+    const txPurchase = api.tx.broker.purchase(currentPrice);
 
-      setWorking(true);
-      sendTx(txPurchase, activeAccount.address, activeSigner, {
-        ready: () => toastInfo('Transaction was initiated'),
-        inBlock: () => toastInfo(`In Block`),
+    submitExtrinsicWithFeeInfo(
+      symbol,
+      decimals,
+      txPurchase,
+      activeAccount.address,
+      activeSigner,
+      {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
         finalized: () => setWorking(false),
         success: () => {
           toastSuccess('Transaction successful');
           fetchRegions();
         },
-        error: () => {
-          toastError(`Failed to purchase a core`);
+        fail: () => {
+          toastError('Failed to purchase a core');
+        },
+        error: (e) => {
+          toastError(`Failed to purchase a core. ${e}`);
           setWorking(false);
         },
-      });
-    } catch (e) {
-      setWorking(false);
-      toastError(`Failed to purchase a core`);
-    }
+      }
+    );
   };
 
   const onManage = () => {
@@ -129,10 +134,7 @@ const Purchase = () => {
             Buy a core straight from the Coretime chain
           </Typography>
         </Box>
-        <Balance
-          coretimeBalance={balance.coretime}
-          relayBalance={balance.relay}
-        />
+        <Balance ctBalance />
       </Box>
       <Box mt={'.5rem'}>
         <Banner
