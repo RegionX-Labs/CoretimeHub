@@ -62,6 +62,7 @@ describe('E2E tests for the purchase page', () => {
   it('Successfully purchases a core', async () => {
     // First check how many cores does the user own.
     cy.get('[data-cy="btn-purchase-core"]').click();
+    cy.get('.MuiButton-root').contains('Ok').click();
     waitForAuthRequest();
 
     const coresSold = cy.get('[data-cy="cores-sold"]').its('val') as any;

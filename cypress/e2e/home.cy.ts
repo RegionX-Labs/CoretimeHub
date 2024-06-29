@@ -1,5 +1,3 @@
-import 'cypress';
-
 describe('E2E tests for the index page', () => {
   beforeEach(() => {
     cy.visit('/');

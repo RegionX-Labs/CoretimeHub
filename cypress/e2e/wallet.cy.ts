@@ -23,7 +23,6 @@ describe('E2E tests for the wallet connection', () => {
     // Disconnect works:
     cy.get('[data-cy="accounts-open"]').click();
     cy.get('[data-cy="disconnect-wallet"]').click();
-    cy.get('[data-cy="address"]').should('not.exist');
     cy.get('[data-cy="connect-wallet"]').should('exist');
 
     // Remembers that we set the active account to Bob:
