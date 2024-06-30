@@ -438,7 +438,7 @@ const TransferPage = () => {
                   regions={filteredRegions}
                   selectedRegion={selectedRegion}
                   handleRegionChange={(indx) =>
-                    setSelectedRegion(regions[indx])
+                    setSelectedRegion(filteredRegions[indx])
                   }
                 />
               </Stack>
