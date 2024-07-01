@@ -17,7 +17,7 @@ import {
   RegionMetadata,
 } from '@/models';
 
-import * as NativeRegions from './native';
+import * as CoretimeRegions from './coretime';
 import * as RegionXRegions from './regionx';
 import { useAccounts } from '../account';
 import { useCoretimeApi, useRelayApi } from '../apis';
@@ -55,7 +55,7 @@ const RegionDataProvider = ({ children }: Props) => {
     timeslicePeriod,
   } = useCoretimeApi();
   const {
-    state: { api: regionxApi },
+    state: { api: regionxApi, apiState: regionxApiState },
   } = useRegionXApi();
   const {
     state: { api: relayApi, apiState: relayApiState, height: relayBlockNumber },
@@ -72,122 +72,6 @@ const RegionDataProvider = ({ children }: Props) => {
     ContextStatus.UNINITIALIZED
   );
 
-  const _getTaskFromWorkloadId = useCallback(
-    async (core: CoreIndex, mask: string): Promise<number | null> => {
-      const task = await fetchRegionWorkload(core, mask);
-      return task;
-    },
-    [fetchRegionWorkload]
-  );
-
-  const fetchRegions = async (): Promise<void> => {
-    if (!activeAccount) {
-      setRegions([]);
-      return;
-    }
-    const constructRegionMetadata = async (
-      region: Region,
-      location: RegionLocation,
-      owner: string,
-      tasks: Tasks,
-      index: number,
-      recordStatus: ISMPRecordStatus = ISMPRecordStatus.AVAILABLE,
-      commitment?: string
-    ): Promise<RegionMetadata | null> => {
-      // Only user owned non-expired regions.
-      if (
-        encodeAddress(region.getOwner(), 42) !== encodeAddress(owner, 42) ||
-        region.consumed({ timeslicePeriod, relayBlockNumber }) > 1
-      )
-        return null;
-
-      const rawId = getEncodedRegionId(
-        region.getRegionId(),
-        location === RegionLocation.CORETIME_CHAIN ? coretimeApi : regionxApi
-      ).toString();
-
-      const name =
-        localStorage.getItem(`region-${rawId}`) ?? `Region #${index + 1}`;
-
-      let task = tasks[rawId.toString()] ?? null;
-
-      // If the region isn't still active it cannot be in the workload.
-      if (region.consumed({ timeslicePeriod, relayBlockNumber }) != 0) {
-        if (!task) {
-          task = await _getTaskFromWorkloadId(
-            region.getCore(),
-            region.getMask()
-          );
-        }
-      }
-
-      return RegionMetadata.construct(
-        { timeslicePeriod, relayBlockNumber },
-        getEncodedRegionId(region.getRegionId(), coretimeApi),
-        region,
-        name,
-        location,
-        task,
-        recordStatus,
-        commitment
-      );
-    };
-
-    setStatus(ContextStatus.LOADING);
-
-    const tasks = await fetchWorkplan();
-
-    const _regions: Array<RegionMetadata> = [];
-
-    const brokerRegions = await NativeRegions.fetchRegions(coretimeApi);
-    for await (const region of brokerRegions) {
-      const regionMetadata = await constructRegionMetadata(
-        region,
-        RegionLocation.CORETIME_CHAIN,
-        activeAccount.address,
-        tasks,
-        _regions.length
-      );
-      if (!regionMetadata) {
-        continue;
-      }
-      _regions.push(regionMetadata);
-    }
-
-    const regionxRegions =
-      network === NetworkType.ROCOCO || EXPERIMENTAL
-        ? await RegionXRegions.fetchRegions(regionxApi)
-        : [];
-    for await (const [region, status, commitment] of regionxRegions) {
-      if (status === ISMPRecordStatus.AVAILABLE) {
-        const regionMetadata = await constructRegionMetadata(
-          region,
-          RegionLocation.REGIONX_CHAIN,
-          activeAccount.address,
-          tasks,
-          _regions.length
-        );
-        if (!regionMetadata) continue;
-        _regions.push(regionMetadata);
-      } else {
-        const regionMetadata = await constructRegionMetadata(
-          region,
-          RegionLocation.REGIONX_CHAIN,
-          activeAccount.address,
-          tasks,
-          _regions.length,
-          status,
-          commitment
-        );
-        if (!regionMetadata) continue;
-        _regions.push(regionMetadata);
-      }
-    }
-
-    setRegions(_regions);
-    setStatus(ContextStatus.LOADED);
-  };
-
   useEffect(() => {
     setStatus(ContextStatus.UNINITIALIZED);
     setRegions([]);
@@ -199,27 +83,18 @@ const RegionDataProvider = ({ children }: Props) => {
     if (!relayApi || relayApiState !== ApiState.READY) return;
     if (relayBlockNumber === 0) return;
 
-    if (status === ContextStatus.LOADED) {
-      const found =
-        regions.findIndex(
-          ({ region }) =>
-            region.getBegin() * timeslicePeriod + 1 === relayBlockNumber ||
-            region.getEnd() * timeslicePeriod + 1 === relayBlockNumber
-        ) !== -1;
-      if (!found) return;
-    } else if (status === ContextStatus.LOADING) {
+    if (status === ContextStatus.LOADED || status === ContextStatus.LOADING)
       return;
-    }
+
     fetchRegions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    network,
     activeAccount,
     coretimeApi,
     coretimeApiState,
     relayApi,
     relayApiState,
-    relayBlockNumber,
+    regionxApi,
+    regionxApiState,
     status,
   ]);
 
@@ -231,6 +106,111 @@ const RegionDataProvider = ({ children }: Props) => {
     }
     fetchRegions();
   }, [activeAccount]);
+
+  const fetchRegions = async () => {
+    setStatus(ContextStatus.LOADING);
+
+    const tasks = await fetchWorkplan();
+
+    const ctRegions = await collectCoretimeRegions(tasks);
+    const rxRegions =
+      EXPERIMENTAL || network === NetworkType.ROCOCO
+        ? await collectRegionXRegions(tasks)
+        : [];
+
+    setRegions(ctRegions.concat(rxRegions));
+    setStatus(ContextStatus.LOADED);
+  };
+
+  const collectCoretimeRegions = async (
+    tasks: Tasks
+  ): Promise<Array<RegionMetadata>> => {
+    const region_metadata: Array<RegionMetadata> = [];
+    const regions = await CoretimeRegions.fetchRegions(coretimeApi);
+
+    for await (const region of regions) {
+      const metadata = await constructMetadata(
+        region,
+        tasks,
+        RegionLocation.CORETIME_CHAIN
+      );
+      metadata && region_metadata.push(metadata);
+    }
+
+    return region_metadata;
+  };
+
+  const collectRegionXRegions = async (
+    tasks: Tasks
+  ): Promise<Array<RegionMetadata>> => {
+    const region_metadata: Array<RegionMetadata> = [];
+    const regions = await RegionXRegions.fetchRegions(regionxApi);
+
+    for await (const [region, status, commitment] of regions) {
+      const metadata = await constructMetadata(
+        region,
+        tasks,
+        RegionLocation.REGIONX_CHAIN,
+        status,
+        status === ISMPRecordStatus.PENDING ? commitment : undefined
+      );
+      metadata && region_metadata.push(metadata);
+    }
+
+    return region_metadata;
+  };
+
+  const constructMetadata = async (
+    region: Region,
+    tasks: Tasks,
+    location: RegionLocation,
+    recordStatus: ISMPRecordStatus = ISMPRecordStatus.AVAILABLE,
+    commitment?: string
+  ): Promise<RegionMetadata | null> => {
+    if (!activeAccount) return null;
+    // Only user owned non-expired regions.
+    if (
+      encodeAddress(region.getOwner(), 42) !==
+      encodeAddress(activeAccount.address, 42) ||
+      region.consumed({ timeslicePeriod, relayBlockNumber }) > 1
+    )
+      return null;
+
+    const rawId = getEncodedRegionId(
+      region.getRegionId(),
+      location === RegionLocation.CORETIME_CHAIN ? coretimeApi : regionxApi
+    ).toString();
+
+    const name =
+      localStorage.getItem(`region-${rawId}`) ?? `Region #${region.getCore()}`; // RegionId is the first three digits.
+
+    let task = tasks[rawId.toString()] ?? null;
+    // If the region isn't still active it cannot be in the workload.
+    if (region.consumed({ timeslicePeriod, relayBlockNumber }) != 0) {
+      if (!task) {
+        task = await _getTaskFromWorkloadId(region.getCore(), region.getMask());
+      }
+    }
+
+    return RegionMetadata.construct(
+      { timeslicePeriod, relayBlockNumber },
+      getEncodedRegionId(region.getRegionId(), coretimeApi),
+      region,
+      name,
+      location,
+      task,
+      recordStatus,
+      commitment
+    );
+  };
+
+  const _getTaskFromWorkloadId = useCallback(
+    async (core: CoreIndex, mask: string): Promise<number | null> => {
+      const task = await fetchRegionWorkload(core, mask);
+      return task;
+    },
+    [fetchRegionWorkload]
+  );
 
   const updateRegionName = (index: number, name: string) => {
     const _regions = [...regions];

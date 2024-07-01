@@ -27,8 +27,6 @@ export enum RegionLocation {
   CORETIME_CHAIN,
   // eslint-disable-next-line no-unused-vars
   REGIONX_CHAIN,
-  // eslint-disable-next-line no-unused-vars
-  MARKET,
 }
 
 export class RegionMetadata {

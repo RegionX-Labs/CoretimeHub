@@ -161,8 +161,6 @@ const RegionCardInner = ({
   const locationToLabel = (location: RegionLocation): string => {
     if (location === RegionLocation.REGIONX_CHAIN) {
       return 'RegionX Chain';
-    } else if (location === RegionLocation.MARKET) {
-      return 'Listed on Market';
     } else {
       return 'Coretime Chain';
     }
