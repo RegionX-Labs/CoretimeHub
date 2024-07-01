@@ -67,6 +67,7 @@ const RegionDataProvider = ({ children }: Props) => {
 
   const { fetchWorkplan, fetchRegionWorkload } = useTasks();
 
+  const [currentAddress, setCurrentAddress] = useState<string | null>(null);
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
   const [status, setStatus] = useState<ContextStatus>(
     ContextStatus.UNINITIALIZED
@@ -83,7 +84,16 @@ const RegionDataProvider = ({ children }: Props) => {
     if (!relayApi || relayApiState !== ApiState.READY) return;
     if (relayBlockNumber === 0) return;
 
-    if (status === ContextStatus.LOADED || status === ContextStatus.LOADING)
+    if (!activeAccount) {
+      setStatus(ContextStatus.LOADED);
+      setRegions([]);
+      return;
+    }
+
+    if (
+      activeAccount.address == currentAddress &&
+      (status === ContextStatus.LOADED || status === ContextStatus.LOADING)
+    )
       return;
 
     fetchRegions();
@@ -95,19 +105,17 @@ const RegionDataProvider = ({ children }: Props) => {
     relayApiState,
     regionxApi,
     regionxApiState,
+    relayBlockNumber,
+    timeslicePeriod,
     status,
   ]);
 
   useEffect(() => {
-    if (!activeAccount) {
-      setStatus(ContextStatus.LOADED);
-      setRegions([]);
-      return;
-    }
     fetchRegions();
   }, [activeAccount]);
 
   const fetchRegions = async () => {
+    setCurrentAddress(activeAccount ? activeAccount.address : null);
     setStatus(ContextStatus.LOADING);
 
     const tasks = await fetchWorkplan();
