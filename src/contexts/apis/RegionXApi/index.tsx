@@ -99,15 +99,32 @@ const RegionXApiContextProvider = (props: any) => {
 
   const disconnectRegionX = () => disconnect(state);
 
+  const getUrl = (network: any): string | null => {
+    if (network === NetworkType.ROCOCO) {
+      return WS_REGIONX_COCOS_CHAIN;
+    } else {
+      // We only support Rococo as of now.
+      return null;
+    }
+  };
+
   useEffect(() => {
     if (network !== NetworkType.ROCOCO && !EXPERIMENTAL) {
       return;
     }
-    // TODO: currently we use the RegionX chain only when the experimental flag is on.
-    //
-    // For this reason we don't have different urls based on the network. However, this
-    // should be updated once this is in production.
+    const url = getUrl(network);
+    if (state.socket === url) return;
+    if (!url) return;
+
     connect(state, WS_REGIONX_COCOS_CHAIN, dispatch, false, types, customRpc);
+    if (state.socket !== url) {
+      try {
+        disconnect(state);
+      } catch {
+        /** empty error handler */
+      }
+      connect(state, url, dispatch, true, types);
+    }
   }, [network, state]);
 
   useEffect(() => {
