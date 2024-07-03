@@ -1,5 +1,4 @@
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import BackspaceIcon from '@mui/icons-material/Backspace';
 import SellIcon from '@mui/icons-material/Sell';
 import {
   Backdrop,
@@ -22,7 +21,6 @@ import {
   SellModal,
   TaskAssignModal,
   TransferModal,
-  UnlistModal,
 } from '@/components';
 
 import { useAccounts } from '@/contexts/account';
@@ -58,7 +56,6 @@ const Dashboard = () => {
   const [assignModalOpen, openAssignModal] = useState(false);
   const [poolingModalOpen, openPoolingModal] = useState(false);
   const [sellModalOpen, openSellModal] = useState(false);
-  const [unlistModalOpen, openUnlistModal] = useState(false);
   const [transferModalOpen, openTransferModal] = useState(false);
   const { toastInfo } = useToast();
 
@@ -106,11 +103,6 @@ const Dashboard = () => {
       label: 'sell',
       icon: SellIcon,
       onClick: () => manage(openSellModal),
-    },
-    {
-      label: 'unlist',
-      icon: BackspaceIcon,
-      onClick: () => manage(openUnlistModal),
     },
   ];
 
@@ -284,11 +276,6 @@ const Dashboard = () => {
             <SellModal
               open={sellModalOpen}
               onClose={() => openSellModal(false)}
-              regionMetadata={selectedRegion}
-            />
-            <UnlistModal
-              open={unlistModalOpen}
-              onClose={() => openUnlistModal(false)}
               regionMetadata={selectedRegion}
             />
             <PoolingModal

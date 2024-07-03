@@ -48,6 +48,7 @@ export const useBurnInfo = (network: NetworkType) => {
         );
         if (res.status !== 200) {
           idx--;
+          await sleep(1000);
           continue;
         }
 

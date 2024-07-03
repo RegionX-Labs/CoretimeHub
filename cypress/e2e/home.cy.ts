@@ -1,4 +1,4 @@
-import 'cypress';
+import '@chainsafe/cypress-polkadot-wallet';
 
 describe('E2E tests for the index page', () => {
   beforeEach(() => {

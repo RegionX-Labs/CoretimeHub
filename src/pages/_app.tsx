@@ -40,29 +40,50 @@ interface MyAppProps extends AppProps {
   Component: NextPageWithLayout;
 }
 
+const ApiProviders = ({ children }: any) => {
+  return (
+    <RelayApiContextProvider>
+      <CoretimeApiContextProvider>
+        <RegionXApiContextProvider>{children}</RegionXApiContextProvider>
+      </CoretimeApiContextProvider>
+    </RelayApiContextProvider>
+  );
+};
+
+const UtilProviders = ({ children }: any) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <ToastProvider>
+        <ConfirmProvider>
+          <SettingsProvider>{children}</SettingsProvider>
+        </ConfirmProvider>
+      </ToastProvider>
+    </ThemeProvider>
+  );
+};
+
+const CoretimeChainProviders = ({ children }: any) => {
+  return (
+    <RegionDataProvider>
+      <SaleInfoProvider>
+        <TaskDataProvider>{children}</TaskDataProvider>
+      </SaleInfoProvider>
+    </RegionDataProvider>
+  );
+};
+
+const RegionXDataProivders = ({ children }: any) => {
+  return (
+    <MarketProvider>
+      <OrderProvider>{children}</OrderProvider>
+    </MarketProvider>
+  );
+};
+
 export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>);
-
-  const Content = (
-    <RelayApiContextProvider>
-      <BalanceProvider>
-        <TaskDataProvider>
-          <RegionDataProvider>
-            <MarketProvider>
-              <SaleInfoProvider>
-                <SettingsProvider>
-                  <ConfirmProvider>
-                    {getLayout(<Component {...pageProps} />)}
-                  </ConfirmProvider>
-                </SettingsProvider>
-              </SaleInfoProvider>
-            </MarketProvider>
-          </RegionDataProvider>
-        </TaskDataProvider>
-      </BalanceProvider>
-    </RelayApiContextProvider>
-  );
 
   return (
     <CacheProvider value={emotionCache}>
@@ -70,20 +91,21 @@ export default function MyApp(props: MyAppProps) {
         <meta name='viewport' content='initial-scale=1, width=device-width' />
         <title>CoreHub</title>
       </Head>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <ToastProvider>
-          <NetworkProvider>
-            <AccountProvider>
-              <CoretimeApiContextProvider>
-                <RegionXApiContextProvider>
-                  <OrderProvider>{Content}</OrderProvider>
-                </RegionXApiContextProvider>
-              </CoretimeApiContextProvider>
-            </AccountProvider>
-          </NetworkProvider>
-        </ToastProvider>
-      </ThemeProvider>
+      <UtilProviders>
+        <NetworkProvider>
+          <AccountProvider>
+            <ApiProviders>
+              <BalanceProvider>
+                <CoretimeChainProviders>
+                  <RegionXDataProivders>
+                    {getLayout(<Component {...pageProps} />)}
+                  </RegionXDataProivders>
+                </CoretimeChainProviders>
+              </BalanceProvider>
+            </ApiProviders>
+          </AccountProvider>
+        </NetworkProvider>
+      </UtilProviders>
       <Analytics />
     </CacheProvider>
   );

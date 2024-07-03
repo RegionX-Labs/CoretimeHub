@@ -48,6 +48,7 @@ const Purchase = () => {
     saleInfo,
     status,
     phase: { currentPhase, currentPrice },
+    fetchSaleInfo,
   } = useSaleInfo();
   const {
     state: { api, apiState, height, symbol, decimals },
@@ -91,6 +92,7 @@ const Purchase = () => {
         finalized: () => setWorking(false),
         success: () => {
           toastSuccess('Transaction successful');
+          fetchSaleInfo();
           fetchRegions();
         },
         fail: () => {
