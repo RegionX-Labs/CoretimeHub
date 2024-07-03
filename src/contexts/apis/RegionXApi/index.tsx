@@ -123,7 +123,7 @@ const RegionXApiContextProvider = (props: any) => {
       } catch {
         /** empty error handler */
       }
-      connect(state, url, dispatch, true, types);
+      connect(state, url, dispatch, true, types, customRpc);
     }
   }, [network, state]);
 
