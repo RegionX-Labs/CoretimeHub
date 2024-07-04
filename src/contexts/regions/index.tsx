@@ -110,10 +110,6 @@ const RegionDataProvider = ({ children }: Props) => {
     status,
   ]);
 
-  useEffect(() => {
-    fetchRegions();
-  }, [activeAccount]);
-
   const fetchRegions = async () => {
     setCurrentAddress(activeAccount ? activeAccount.address : null);
     setStatus(ContextStatus.LOADING);
@@ -179,7 +175,7 @@ const RegionDataProvider = ({ children }: Props) => {
     // Only user owned non-expired regions.
     if (
       encodeAddress(region.getOwner(), 42) !==
-        encodeAddress(activeAccount.address, 42) ||
+      encodeAddress(activeAccount.address, 42) ||
       region.consumed({ timeslicePeriod, relayBlockNumber }) > 1
     )
       return null;
