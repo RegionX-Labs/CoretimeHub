@@ -175,7 +175,7 @@ const RegionDataProvider = ({ children }: Props) => {
     // Only user owned non-expired regions.
     if (
       encodeAddress(region.getOwner(), 42) !==
-      encodeAddress(activeAccount.address, 42) ||
+        encodeAddress(activeAccount.address, 42) ||
       region.consumed({ timeslicePeriod, relayBlockNumber }) > 1
     )
       return null;

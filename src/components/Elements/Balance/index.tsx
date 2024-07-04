@@ -64,7 +64,7 @@ export const Balance = ({
             ? [
                 {
                   label: regionxState.name,
-                  value: balance.regionxRcCurrencyBalance,
+                  value: balance.rxRcCurrencyBalance,
                   symbol: relayState.symbol,
                   decimals: relayState.decimals,
                 },
@@ -75,7 +75,7 @@ export const Balance = ({
             ? [
                 {
                   label: regionxState.name,
-                  value: 0, // TODO: once we add utility
+                  value: balance.rxNativeBalance,
                   symbol: regionxState.symbol,
                   decimals: regionxState.decimals,
                 },

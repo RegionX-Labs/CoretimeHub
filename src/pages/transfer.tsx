@@ -381,7 +381,7 @@ const TransferPage = () => {
             Cross-chain transfer regions
           </Typography>
         </Box>
-        <Balance rcBalance ctBalance rxRcCurrencyBalance />
+        <Balance rcBalance ctBalance rxNativeBalance />
       </Box>
       <Box
         width='60%'
