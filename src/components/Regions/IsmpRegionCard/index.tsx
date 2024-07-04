@@ -270,11 +270,11 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
             <Stack direction='row' gap='0.5rem'>
               <WarningAmberOutlinedIcon color='error' />
               <Typography sx={{ color: theme.palette.error.main }}>
-                Failed to fetch region record
+                Region record unavailable
               </Typography>
             </Stack>
             <Button variant='outlined' onClick={requestRegionRecord}>
-              Request again
+              Request Record
             </Button>
           </>
         ) : (
