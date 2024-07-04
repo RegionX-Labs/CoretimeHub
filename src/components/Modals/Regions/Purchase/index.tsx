@@ -86,12 +86,10 @@ export const PurchaseModal = ({
           toastError('Failed to purchase the region');
         },
         error: (e) => {
-          console.log(e);
           toastError(
-            `Failed to purchase the region. Error: ${
-              e.errorMessage === 'Error'
-                ? 'Please check your balance.'
-                : e.errorMessage
+            `Failed to purchase the region. Error: ${e.errorMessage === 'Error'
+              ? 'Please check your balance.'
+              : e.errorMessage
             }`
           );
           setWorking(false);
