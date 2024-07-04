@@ -108,7 +108,6 @@ const BalanceProvider = ({ children }: Props) => {
             },
             { free: freeRelayCurrency },
           ]: any) => {
-            console.log(freeRelayCurrency.toJSON() as number);
             setRxNativeBalance(freeNative.toJSON() as number);
             setRxCurrencyBalance(freeRelayCurrency.toJSON() as number);
           }
