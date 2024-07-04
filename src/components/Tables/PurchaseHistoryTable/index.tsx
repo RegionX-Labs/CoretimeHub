@@ -17,7 +17,7 @@ import { getBalanceString } from '@/utils/functions';
 
 import { Address, Link } from '@/components/Elements';
 
-import { SUBSCAN_URL } from '@/consts';
+import { SUSBCAN_CORETIME_URL } from '@/consts';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useNetwork } from '@/contexts/network';
 import { PurchaseHistoryItem } from '@/models';
@@ -79,7 +79,7 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
                 <StyledTableRow key={index}>
                   <StyledTableCell align='center'>
                     <Link
-                      href={`${SUBSCAN_URL[network]}/extrinsic/${extrinsic_index}`}
+                      href={`${SUSBCAN_CORETIME_URL[network]}/extrinsic/${extrinsic_index}`}
                       target='_blank'
                     >
                       {extrinsic_index}
@@ -87,7 +87,7 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
                   </StyledTableCell>
                   <StyledTableCell align='center'>
                     <Link
-                      href={`${SUBSCAN_URL[network]}/account/${address}`}
+                      href={`${SUSBCAN_CORETIME_URL[network]}/account/${address}`}
                       target='_blank'
                     >
                       <Address

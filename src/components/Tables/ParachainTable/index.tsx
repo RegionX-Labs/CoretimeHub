@@ -23,7 +23,7 @@ import React, { useEffect, useState } from 'react';
 
 import { Link } from '@/components/Elements';
 
-import { SUBSCAN_URL } from '@/consts';
+import { SUSBCAN_RELAY_URL } from '@/consts';
 import { useRelayApi } from '@/contexts/apis';
 import { useNetwork } from '@/contexts/network';
 import { ParachainInfo, ParaState } from '@/models';
@@ -159,7 +159,7 @@ export const ParachainTable = ({
           ).map(({ id, name, state, watching, logo, homepage }, index) => (
             <StyledTableRow key={index}>
               <StyledTableCell style={{ width: '10%' }}>
-                <Link href={`${SUBSCAN_URL[network]}/parachain/${id}`}>
+                <Link href={`${SUSBCAN_RELAY_URL[network]}/parachain/${id}`}>
                   {id}
                 </Link>
               </StyledTableCell>
