@@ -110,10 +110,6 @@ const RegionDataProvider = ({ children }: Props) => {
     status,
   ]);
 
-  useEffect(() => {
-    fetchRegions();
-  }, [activeAccount]);
-
   const fetchRegions = async () => {
     setCurrentAddress(activeAccount ? activeAccount.address : null);
     setStatus(ContextStatus.LOADING);

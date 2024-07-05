@@ -41,7 +41,7 @@ const OrderDashboard = () => {
   return (
     <>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: '1rem' }}>
-        <Balance rxRcCurrencyBalance />
+        <Balance rxNativeBalance rxRcCurrencyBalance />
       </Box>
       <Box
         sx={{

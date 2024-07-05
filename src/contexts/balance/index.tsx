@@ -16,7 +16,8 @@ interface BalanceData {
   balance: {
     coretime: number;
     relay: number;
-    regionxRcCurrencyBalance: number;
+    rxNativeBalance: number;
+    rxRcCurrencyBalance: number;
   };
 }
 
@@ -24,7 +25,8 @@ const defaultBalanceData: BalanceData = {
   balance: {
     coretime: 0,
     relay: 0,
-    regionxRcCurrencyBalance: 0,
+    rxNativeBalance: 0,
+    rxRcCurrencyBalance: 0,
   },
 };
 
@@ -49,14 +51,16 @@ const BalanceProvider = ({ children }: Props) => {
 
   const [coretimeBalance, setCoretimeBalance] = useState(0);
   const [relayBalance, setRelayBalance] = useState(0);
-  const [regionxBalance, setRegionxBalance] = useState(0);
+  const [rxNativeBalance, setRxNativeBalance] = useState(0);
+  const [rxRcCurrencyBalance, setRxCurrencyBalance] = useState(0);
 
   useEffect(() => {
     const subscribeBalances = async () => {
       if (!activeAccount) {
         setCoretimeBalance(0);
         setRelayBalance(0);
-        setRegionxBalance(0);
+        setRxNativeBalance(0);
+        setRxCurrencyBalance(0);
         return;
       }
       if (
@@ -94,9 +98,18 @@ const BalanceProvider = ({ children }: Props) => {
       if (enableRegionx) {
         if (!regionxApi || regionxApiState !== ApiState.READY) return;
         unsubscribeRegionx = await regionxApi.queryMulti(
-          [[regionxApi.query.tokens.accounts, [address, 1]]], // RELAY_ASSET_ID
-          ([{ free }]: [any]) => {
-            setRegionxBalance(free.toJSON() as number);
+          [
+            [regionxApi.query.system.account, address],
+            [regionxApi.query.tokens.accounts, [address, 1]], // RELAY_ASSET_ID
+          ],
+          ([
+            {
+              data: { free: freeNative },
+            },
+            { free: freeRelayCurrency },
+          ]: any) => {
+            setRxNativeBalance(freeNative.toJSON() as number);
+            setRxCurrencyBalance(freeRelayCurrency.toJSON() as number);
           }
         );
       }
@@ -125,7 +138,8 @@ const BalanceProvider = ({ children }: Props) => {
         balance: {
           coretime: coretimeBalance,
           relay: relayBalance,
-          regionxRcCurrencyBalance: regionxBalance,
+          rxRcCurrencyBalance,
+          rxNativeBalance,
         },
       }}
     >

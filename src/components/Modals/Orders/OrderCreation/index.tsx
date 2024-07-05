@@ -150,8 +150,8 @@ export const OrderCreationModal = ({
     if (open) return;
     setParaId(undefined);
     setDurationType(DurationType.BULK);
-    setRegionBegin(undefined);
-    setRegionEnd(undefined);
+    setRegionBegin(saleInfo.regionBegin);
+    setRegionEnd(saleInfo.regionEnd);
     setCoreOccupancy(57600);
     setWorking(false);
   }, [open]);

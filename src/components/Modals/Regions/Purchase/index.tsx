@@ -113,6 +113,9 @@ export const PurchaseModal = ({
           pb: '1rem',
         }}
       >
+        <Button onClick={onClose} variant='outlined'>
+          Cancel
+        </Button>
         <LoadingButton
           onClick={() => purchaseRegion()}
           variant='contained'
@@ -120,9 +123,6 @@ export const PurchaseModal = ({
         >
           Purchase
         </LoadingButton>
-        <Button onClick={onClose} variant='outlined'>
-          Cancel
-        </Button>
       </DialogActions>
     </Dialog>
   );
