@@ -1,10 +1,12 @@
 import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
 import { LoadingButton } from '@mui/lab';
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
+  Paper,
   Stack,
   Typography,
 } from '@mui/material';
@@ -12,8 +14,8 @@ import { useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
-import { AddressInput, AmountInput } from '@/components/Elements';
-import { RegionMetaCard } from '@/components/Regions';
+import { AddressInput, AmountInput, ProgressButton } from '@/components/Elements';
+import { RegionOverview } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
@@ -23,6 +25,9 @@ import { useMarket } from '@/contexts/market';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { RegionMetadata } from '@/models';
+
+import styles from './index.module.scss';
+import theme from '@/utils/muiTheme';
 
 interface SellModalProps {
   open: boolean;
@@ -124,37 +129,47 @@ export const SellModal = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
-      <DialogContent>
+      <DialogContent className={styles.container}>
+        <Typography
+          variant='subtitle1'
+          sx={{ color: theme.palette.common.black }}
+        >
+          List on Market
+        </Typography>
+        <Typography
+          variant='subtitle2'
+          sx={{
+            color: theme.palette.text.primary,
+            textWrap: 'wrap',
+            maxWidth: '35rem',
+          }}
+        >
+          Sell your region on the RegionX community market.
+        </Typography>
         <Stack direction='column' gap={3}>
-          <RegionMetaCard regionMetadata={regionMetadata} bordered={false} />
-          <Stack direction='column' gap={1} alignItems='center'>
-            <Typography>List on market</Typography>
-            <ArrowDownwardOutlinedIcon />
-          </Stack>
-          <Stack direction='column' gap={2}>
-            <AmountInput
-              amount={price}
-              caption='Total price of the region'
-              currency={coretimeSymbol}
-              setAmount={setPrice}
-            />
-          </Stack>
-          <Stack direction='column' gap={2}>
-            <AddressInput onChange={setSaleRecipient} address={saleRecipient} />
-          </Stack>
+          <Box className={styles.content}>
+            <RegionOverview regionMetadata={regionMetadata} />
+          </Box>
+          <Paper className={styles.wrapper}>
+            <Stack direction='column' gap={2}>
+              <AmountInput
+                amount={price}
+                caption='Total price of the region'
+                currency={coretimeSymbol}
+                setAmount={setPrice}
+              />
+            </Stack>
+            <Stack direction='column' gap={2}>
+              <AddressInput onChange={setSaleRecipient} address={saleRecipient} />
+            </Stack>
+          </Paper>
         </Stack>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} variant='outlined'>
           Cancel
         </Button>
-        <LoadingButton
-          onClick={listOnSale}
-          variant='contained'
-          loading={working}
-        >
-          List on sale
-        </LoadingButton>
+        <ProgressButton onClick={listOnSale} label='List on sale' loading={working} />
       </DialogActions>
     </Dialog>
   );
