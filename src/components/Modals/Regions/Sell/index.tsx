@@ -1,5 +1,3 @@
-import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
-import { LoadingButton } from '@mui/lab';
 import {
   Box,
   Button,
@@ -13,8 +11,13 @@ import {
 import { useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
+import theme from '@/utils/muiTheme';
 
-import { AddressInput, AmountInput, ProgressButton } from '@/components/Elements';
+import {
+  AddressInput,
+  AmountInput,
+  ProgressButton,
+} from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
@@ -27,7 +30,6 @@ import { useToast } from '@/contexts/toast';
 import { RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
-import theme from '@/utils/muiTheme';
 
 interface SellModalProps {
   open: boolean;
@@ -116,9 +118,10 @@ export const SellModal = ({
         },
         error: (e) => {
           toastError(
-            `Failed to list the region. Error: ${e.errorMessage === 'Error'
-              ? 'Please check your balance'
-              : e.errorMessage
+            `Failed to list the region. Error: ${
+              e.errorMessage === 'Error'
+                ? 'Please check your balance'
+                : e.errorMessage
             }`
           );
           setWorking(false);
@@ -160,7 +163,10 @@ export const SellModal = ({
               />
             </Stack>
             <Stack direction='column' gap={2}>
-              <AddressInput onChange={setSaleRecipient} address={saleRecipient} />
+              <AddressInput
+                onChange={setSaleRecipient}
+                address={saleRecipient}
+              />
             </Stack>
           </Paper>
         </Stack>
@@ -169,7 +175,11 @@ export const SellModal = ({
         <Button onClick={onClose} variant='outlined'>
           Cancel
         </Button>
-        <ProgressButton onClick={listOnSale} label='List on sale' loading={working} />
+        <ProgressButton
+          onClick={listOnSale}
+          label='List on sale'
+          loading={working}
+        />
       </DialogActions>
     </Dialog>
   );

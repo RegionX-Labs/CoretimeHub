@@ -60,7 +60,9 @@ const Dashboard = () => {
   const { toastInfo } = useToast();
 
   const selectedRegion =
-    currentRegionIndex === undefined ? undefined : regionsToShow[currentRegionIndex];
+    currentRegionIndex === undefined
+      ? undefined
+      : regionsToShow[currentRegionIndex];
   const regionSelected = selectedRegion !== undefined;
 
   const manage = (openModal: (_v: boolean) => void) => {

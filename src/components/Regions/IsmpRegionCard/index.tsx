@@ -1,7 +1,7 @@
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
+import { LoadingButton } from '@mui/lab';
 import {
   Box,
-  Button,
   CircularProgress,
   LinearProgress,
   Paper,
@@ -26,14 +26,16 @@ import { useToast } from '@/contexts/toast';
 import { ISMPRecordStatus, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
-import { LoadingButton } from '@mui/lab';
 
 interface IsmpRegionProps {
   regionMetadata: RegionMetadata;
   requestAction?: boolean;
 }
 
-export const IsmpRegionCard = ({ regionMetadata, requestAction }: IsmpRegionProps) => {
+export const IsmpRegionCard = ({
+  regionMetadata,
+  requestAction,
+}: IsmpRegionProps) => {
   TimeAgo.addLocale(en);
   // Create formatter (English).
   const timeAgo = new TimeAgo('en-US');
@@ -213,7 +215,8 @@ export const IsmpRegionCard = ({ regionMetadata, requestAction }: IsmpRegionProp
       <Box
         className={styles.infoContainer}
         sx={{
-          opacity: status !== ISMPRecordStatus.AVAILABLE && requestAction ? 0.3 : 1,
+          opacity:
+            status !== ISMPRecordStatus.AVAILABLE && requestAction ? 0.3 : 1,
         }}
       >
         <Box className={styles.regionInfo}>
@@ -235,7 +238,7 @@ export const IsmpRegionCard = ({ regionMetadata, requestAction }: IsmpRegionProp
               {timeAgo.format(beginTimestamp)}
             </Typography>
           </Stack>
-          <Stack direction='column' gap='0.2rem' mx='1.5rem' >
+          <Stack direction='column' gap='0.2rem' mx='1.5rem'>
             <Typography>Core Occupancy</Typography>
             <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
               <LinearProgress
@@ -272,7 +275,7 @@ export const IsmpRegionCard = ({ regionMetadata, requestAction }: IsmpRegionProp
           </>
         ) : status === ISMPRecordStatus.UNAVAILABLE ? (
           <>
-            {requestAction &&
+            {requestAction && (
               <>
                 <Stack direction='row' gap='0.5rem'>
                   <WarningAmberOutlinedIcon color='error' />
@@ -280,11 +283,15 @@ export const IsmpRegionCard = ({ regionMetadata, requestAction }: IsmpRegionProp
                     Region record unavailable
                   </Typography>
                 </Stack>
-                <LoadingButton loading={working} variant='outlined' onClick={requestRegionRecord}>
+                <LoadingButton
+                  loading={working}
+                  variant='outlined'
+                  onClick={requestRegionRecord}
+                >
                   Request Record
                 </LoadingButton>
               </>
-            }
+            )}
           </>
         ) : (
           <></>
