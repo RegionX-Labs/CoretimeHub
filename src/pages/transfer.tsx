@@ -5,11 +5,6 @@ import { Region } from 'coretime-utils';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import {
-  makeResponse,
-  queryRequest,
-  waitForRegionRecordRequestEvent,
-} from '@/utils/ismp';
 import theme from '@/utils/muiTheme';
 import {
   coretimeFromRegionXTransfer,
@@ -29,6 +24,7 @@ import {
   AmountInput,
   Balance,
   ChainSelector,
+  IsmpRegionCard,
   ProgressButton,
   RegionMetaCard,
   RegionSelector,
@@ -47,6 +43,7 @@ import {
   AssetType,
   ChainType,
   CORETIME_DECIMALS,
+  ISMPRecordStatus,
   NetworkType,
   RegionLocation,
   RegionMetadata,
@@ -105,54 +102,6 @@ const TransferPage = () => {
       toastError(`Failed to transfer ${e}`);
       setWorking(false);
     },
-  };
-
-  const ismpWaitAndRespond = async () => {
-    if (
-      !coretimeApi ||
-      coretimeApiState != ApiState.READY ||
-      !regionXApi ||
-      regionxApiState != ApiState.READY ||
-      !activeAccount ||
-      !selectedRegion
-    )
-      return;
-
-    try {
-      const commitment = (await waitForRegionRecordRequestEvent(
-        regionXApi,
-        selectedRegion.region.getRegionId()
-      )) as string;
-
-      const request = await queryRequest(regionXApi, commitment);
-      await makeResponse(
-        regionXApi,
-        coretimeApi,
-        request,
-        activeAccount.address,
-        {
-          ready: () => toastInfo('Fetching region record.'),
-          inBlock: () => toastInfo('In Block'),
-          finalized: () => {
-            /* */
-          },
-          success: () => {
-            toastSuccess('Region record fetched.');
-            fetchRegions();
-          },
-          fail: () => {
-            toastError(`Failed to fetch region record.`);
-          },
-          error: (e) => {
-            toastError(`Failed to fetch region record. ${e}`);
-          },
-        }
-      );
-    } catch {
-      toastWarning(
-        `Failed to fulfill ISMP request. Wait 5 minutes to re-request`
-      );
-    }
   };
 
   const handleOriginChange = (newOrigin: ChainType) => {
@@ -305,7 +254,7 @@ const TransferPage = () => {
             ...defaultHandler,
             success: () => {
               toastSuccess('Successfully transferred.');
-              ismpWaitAndRespond();
+              fetchRegions();
             },
           }
         );
@@ -328,7 +277,13 @@ const TransferPage = () => {
         { address: activeAccount.address, signer: activeSigner },
         selectedRegion.rawId,
         receiverKeypair.pairs[0].publicKey,
-        defaultHandler
+        {
+          ...defaultHandler,
+          success: () => {
+            toastSuccess('Successfully transferred.');
+            fetchRegions();
+          },
+        }
       );
     } else {
       toastWarning('Currently not supported');
@@ -381,7 +336,7 @@ const TransferPage = () => {
             Cross-chain transfer regions
           </Typography>
         </Box>
-        <Balance rcBalance ctBalance rxNativeBalance />
+        <Balance rcBalance ctBalance rxRcCurrencyBalance />
       </Box>
       <Box
         width='60%'
@@ -454,7 +409,11 @@ const TransferPage = () => {
               justifyContent: 'center',
             }}
           >
-            <RegionMetaCard regionMetadata={selectedRegion} />
+            {selectedRegion.status === ISMPRecordStatus.AVAILABLE ? (
+              <RegionMetaCard regionMetadata={selectedRegion} />
+            ) : (
+              <IsmpRegionCard regionMetadata={selectedRegion} />
+            )}
           </Box>
         )}
         <Stack

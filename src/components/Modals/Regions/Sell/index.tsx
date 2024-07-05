@@ -111,10 +111,9 @@ export const SellModal = ({
         },
         error: (e) => {
           toastError(
-            `Failed to list the region. Error: ${
-              e.errorMessage === 'Error'
-                ? 'Please check your balance'
-                : e.errorMessage
+            `Failed to list the region. Error: ${e.errorMessage === 'Error'
+              ? 'Please check your balance'
+              : e.errorMessage
             }`
           );
           setWorking(false);
@@ -146,6 +145,9 @@ export const SellModal = ({
         </Stack>
       </DialogContent>
       <DialogActions>
+        <Button onClick={onClose} variant='outlined'>
+          Cancel
+        </Button>
         <LoadingButton
           onClick={listOnSale}
           variant='contained'
@@ -153,9 +155,6 @@ export const SellModal = ({
         >
           List on sale
         </LoadingButton>
-        <Button onClick={onClose} variant='outlined'>
-          Cancel
-        </Button>
       </DialogActions>
     </Dialog>
   );

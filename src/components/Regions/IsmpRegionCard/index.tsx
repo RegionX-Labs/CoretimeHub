@@ -26,12 +26,14 @@ import { useToast } from '@/contexts/toast';
 import { ISMPRecordStatus, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
+import { LoadingButton } from '@mui/lab';
 
 interface IsmpRegionProps {
   regionMetadata: RegionMetadata;
+  requestAction?: boolean;
 }
 
-export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
+export const IsmpRegionCard = ({ regionMetadata, requestAction }: IsmpRegionProps) => {
   TimeAgo.addLocale(en);
   // Create formatter (English).
   const timeAgo = new TimeAgo('en-US');
@@ -64,6 +66,7 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
   const { region, coreOccupancy, status } = regionMetadata;
   const { toastWarning, toastSuccess, toastInfo, toastError } = useToast();
   const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
+  const [working, setWorking] = useState(false);
 
   useEffect(() => {
     if (!relayApi || relayApiState !== ApiState.READY) {
@@ -177,6 +180,7 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
     const request = regionxApi.tx.regions.requestRegionRecord(
       region.getRegionId()
     );
+    setWorking(true);
     submitExtrinsicWithFeeInfo(
       regionxSymbol,
       regionxDecimals,
@@ -191,6 +195,7 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
         },
         success: () => {
           toastSuccess('Transaction successful');
+          setWorking(false);
           fetchRegions();
         },
         fail: () => {
@@ -208,7 +213,7 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
       <Box
         className={styles.infoContainer}
         sx={{
-          opacity: status !== ISMPRecordStatus.AVAILABLE ? 0.3 : 1,
+          opacity: status !== ISMPRecordStatus.AVAILABLE && requestAction ? 0.3 : 1,
         }}
       >
         <Box className={styles.regionInfo}>
@@ -230,7 +235,7 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
               {timeAgo.format(beginTimestamp)}
             </Typography>
           </Stack>
-          <Stack direction='column' gap='0.2rem'>
+          <Stack direction='column' gap='0.2rem' mx='1.5rem' >
             <Typography>Core Occupancy</Typography>
             <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
               <LinearProgress
@@ -267,15 +272,19 @@ export const IsmpRegionCard = ({ regionMetadata }: IsmpRegionProps) => {
           </>
         ) : status === ISMPRecordStatus.UNAVAILABLE ? (
           <>
-            <Stack direction='row' gap='0.5rem'>
-              <WarningAmberOutlinedIcon color='error' />
-              <Typography sx={{ color: theme.palette.error.main }}>
-                Region record unavailable
-              </Typography>
-            </Stack>
-            <Button variant='outlined' onClick={requestRegionRecord}>
-              Request Record
-            </Button>
+            {requestAction &&
+              <>
+                <Stack direction='row' gap='0.5rem'>
+                  <WarningAmberOutlinedIcon color='error' />
+                  <Typography sx={{ color: theme.palette.error.main }}>
+                    Region record unavailable
+                  </Typography>
+                </Stack>
+                <LoadingButton loading={working} variant='outlined' onClick={requestRegionRecord}>
+                  Request Record
+                </LoadingButton>
+              </>
+            }
           </>
         ) : (
           <></>
