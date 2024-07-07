@@ -4,12 +4,38 @@ A central hub where users can perform operations on their Coretime and easily ac
 
 The currently supported operations via the UI are:
 
+### `/regions`
 - Region partitioning
 - Region interlacing
 - Region transferring
 - Naming Regions
 - Region task assignment
-- Cross-Chain(xcRegion) transfers
+- Listing regions on sale
+
+### `/transfer`
+- Cross-Chain Region transfers (RegionX parachain <-> Coretime chain)
+- Cross-Chain token transfers
+
+### `/purchase`
+- Bulk sale dashboard
+- Core procurement
+
+### `/paras`
+- Parachain dashboard
+- Parachain Id reservation
+- Parachain code registration
+
+### `/renew`
+- Core renewal
+
+### `/marketplace`
+- Browsing regions listed on sale
+- Purchasing regions from the market
+- Unlisting regions from the market
+
+### `/orders`
+- Coretime order creation
+- Coretime order contribution
 
 ## Set up development environment
 
