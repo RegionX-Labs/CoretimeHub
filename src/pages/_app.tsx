@@ -65,11 +65,11 @@ const UtilProviders = ({ children }: any) => {
 
 const CoretimeChainProviders = ({ children }: any) => {
   return (
-    <RegionDataProvider>
-      <SaleInfoProvider>
-        <TaskDataProvider>{children}</TaskDataProvider>
-      </SaleInfoProvider>
-    </RegionDataProvider>
+    <SaleInfoProvider>
+      <TaskDataProvider>
+        <RegionDataProvider>{children}</RegionDataProvider>
+      </TaskDataProvider>
+    </SaleInfoProvider>
   );
 };
 
