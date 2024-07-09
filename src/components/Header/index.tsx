@@ -1,10 +1,13 @@
 import { ExpandMore } from '@mui/icons-material';
+import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
 import {
   Box,
   Collapse,
   Divider,
+  IconButton,
   List,
   ListItemButton,
+  Stack,
   useTheme,
 } from '@mui/material';
 import React, { useState } from 'react';
@@ -14,6 +17,7 @@ import { KeyringState, useAccounts } from '@/contexts/account';
 import styles from './index.module.scss';
 import { Address, ProgressButton } from '../Elements';
 import NetworkSelector from '../Elements/Selectors/NetworkSelector';
+import { TxHistoryModal } from '../Modals/Accounts';
 
 export const Header = () => {
   const theme = useTheme();
@@ -25,6 +29,7 @@ export const Header = () => {
   } = useAccounts();
 
   const [accountsOpen, openAccounts] = useState(false);
+  const [txHistoryModalOpen, openTxHistoryModal] = useState(false);
 
   const onDisconnect = () => {
     openAccounts(false);
@@ -43,7 +48,12 @@ export const Header = () => {
       >
         <Box className={styles.menu}>
           {activeAccount && (
-            <Address value={activeAccount.address} isCopy isShort />
+            <Stack direction='row' gap='0.25rem' alignItems='center'>
+              <Address value={activeAccount.address} isCopy isShort />
+              <IconButton onClick={() => openTxHistoryModal(true)}>
+                <ManageSearchOutlinedIcon />
+              </IconButton>
+            </Stack>
           )}
           <div>
             <NetworkSelector />
@@ -118,6 +128,15 @@ export const Header = () => {
           )}
         </Box>
       </Box>
+      {activeAccount?.address ? (
+        <TxHistoryModal
+          open={txHistoryModalOpen}
+          onClose={() => openTxHistoryModal(false)}
+          account={activeAccount.address}
+        />
+      ) : (
+        <></>
+      )}
     </>
   );
 };
