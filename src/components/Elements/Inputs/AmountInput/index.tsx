@@ -19,7 +19,7 @@ export const AmountInput = ({
 }: AmountInputProps) => {
   return (
     <>
-      <Stack alignItems='baseline' direction='row' gap={1}>
+      <Stack alignItems='baseline' direction='row' gap={1} mb='0.5rem'>
         {title && (
           <Typography variant='h6' lineHeight={1}>
             {title}
