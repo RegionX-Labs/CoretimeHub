@@ -50,7 +50,7 @@ export const useAccountExtrinsics = (
                         call: item.call_module_function,
                         timestamp: item.block_timestamp,
                         success: item.success,
-                      } as AccountTxHistoryItem)
+                      }) as AccountTxHistoryItem
                   )
                 );
               }
