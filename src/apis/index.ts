@@ -33,7 +33,7 @@ export const fetchAccountExtrinsics = async (
       method: 'POST',
       body: JSON.stringify({
         address,
-        row: 100,
+        row,
         page,
       }),
     }
