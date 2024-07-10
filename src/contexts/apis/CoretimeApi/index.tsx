@@ -1,6 +1,10 @@
 import React, { useContext, useEffect, useReducer } from 'react';
 
-import { WS_KUSAMA_CORETIME_CHAIN, WS_ROCOCO_CORETIME_CHAIN } from '@/consts';
+import {
+  WS_KUSAMA_CORETIME_CHAIN,
+  WS_ROCOCO_CORETIME_CHAIN,
+  WS_WESTEND_CORETIME_CHAIN,
+} from '@/consts';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
 import { NetworkType } from '@/models';
@@ -47,6 +51,8 @@ const CoretimeApiContextProvider = (props: any) => {
       return WS_ROCOCO_CORETIME_CHAIN;
     } else if (network === NetworkType.KUSAMA) {
       return WS_KUSAMA_CORETIME_CHAIN;
+    } else if (network === NetworkType.WESTEND) {
+      return WS_WESTEND_CORETIME_CHAIN;
     } else {
       return null;
     }

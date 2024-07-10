@@ -42,26 +42,29 @@ export const usePurchaseHistory = (
           } else {
             const { list } = data as PurchaseHistoryResponse;
 
-            setData(
-              list.map(
-                ({
-                  account: { address },
-                  core,
-                  extrinsic_index,
-                  block_timestamp,
-                  price,
-                  purchased_type,
-                }) =>
+            if (!list) setData([]);
+            else {
+              setData(
+                list.map(
                   ({
-                    address,
+                    account: { address },
                     core,
                     extrinsic_index,
-                    timestamp: block_timestamp,
-                    price: parseInt(price),
-                    type: purchased_type,
-                  }) as PurchaseHistoryItem
-              )
-            );
+                    block_timestamp,
+                    price,
+                    purchased_type,
+                  }) =>
+                    ({
+                      address,
+                      core,
+                      extrinsic_index,
+                      timestamp: block_timestamp,
+                      price: parseInt(price),
+                      type: purchased_type,
+                    } as PurchaseHistoryItem)
+                )
+              );
+            }
           }
         }
       } catch {
