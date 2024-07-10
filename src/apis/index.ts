@@ -31,6 +31,10 @@ export const fetchAccountExtrinsics = async (
     `${SUBSCAN_CORETIME_API[network]}/api/v2/scan/extrinsics`,
     {
       method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         address,
         row,
