@@ -1,3 +1,4 @@
+import { Check, Close } from '@mui/icons-material';
 import {
   Paper,
   Stack,
@@ -80,7 +81,13 @@ export const TxHistoryTable = ({ data }: TxHistoryTableProps) => {
                   </StyledTableCell>
                   <StyledTableCell align='center'>{module}</StyledTableCell>
                   <StyledTableCell align='center'>{call}</StyledTableCell>
-                  <StyledTableCell align='center'>{success}</StyledTableCell>
+                  <StyledTableCell align='center'>
+                    {success ? (
+                      <Check color='success' />
+                    ) : (
+                      <Close color='error' />
+                    )}
+                  </StyledTableCell>
                   <StyledTableCell align='center'>
                     {timeAgo.format(timestamp * 1000, 'round-minute')}
                   </StyledTableCell>
