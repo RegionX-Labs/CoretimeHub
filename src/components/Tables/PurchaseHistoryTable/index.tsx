@@ -71,7 +71,10 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map(
+            {(rowsPerPage > 0
+              ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              : data
+            ).map(
               (
                 { address, core, extrinsic_index, timestamp, price, type },
                 index

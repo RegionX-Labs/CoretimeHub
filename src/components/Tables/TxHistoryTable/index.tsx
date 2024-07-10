@@ -11,8 +11,9 @@ import {
 } from '@mui/material';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
-import Link from 'next/link';
 import { useState } from 'react';
+
+import { Link } from '@/components/Elements';
 
 import { SUSBCAN_CORETIME_URL } from '@/consts';
 import { useNetwork } from '@/contexts/network';
@@ -63,7 +64,10 @@ export const TxHistoryTable = ({ data }: TxHistoryTableProps) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map(
+            {(rowsPerPage > 0
+              ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              : data
+            ).map(
               ({ module, call, extrinsicId, success, timestamp }, index) => (
                 <StyledTableRow key={index}>
                   <StyledTableCell align='center'>
