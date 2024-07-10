@@ -161,7 +161,7 @@ const testParasWestend: ChainDetails[] = [
     text: 'Collectives',
     ui: {
       color: '#e6777a',
-      logo: 'fa;people-group',
+      // logo: 'fa;people-group',
     },
   },
   {
