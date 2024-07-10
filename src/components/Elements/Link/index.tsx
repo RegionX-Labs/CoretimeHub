@@ -18,7 +18,6 @@ export const Link = ({ href, target = '_blank', children }: LinkProps) => {
     <Box
       onClick={onClick}
       sx={{
-        width: 'fit-content',
         cursor: 'pointer',
         color: theme.palette.primary.main,
       }}
