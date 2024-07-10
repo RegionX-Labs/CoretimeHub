@@ -25,6 +25,8 @@ import {
   RegionX,
   Rococo,
   RococoCoretime,
+  Westend,
+  WestendCoretime,
 } from '@/assets/networks';
 import { EXPERIMENTAL } from '@/consts';
 import { ApiState } from '@/contexts/apis/types';
@@ -33,12 +35,14 @@ import { useNetwork } from '@/contexts/network';
 const coretimeIcons = {
   [NetworkType.KUSAMA]: KusamaCoretime,
   [NetworkType.ROCOCO]: RococoCoretime,
+  [NetworkType.WESTEND]: WestendCoretime,
   [NetworkType.NONE]: '',
 };
 
 const relayIcons = {
   [NetworkType.KUSAMA]: Kusama,
   [NetworkType.ROCOCO]: Rococo,
+  [NetworkType.WESTEND]: Westend,
   [NetworkType.NONE]: '',
 };
 
