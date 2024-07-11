@@ -70,7 +70,7 @@ export const SalePhaseInfoPanel = () => {
         <Box className={styles.timerWrapper}>
           <Box className={styles.currentPhase}>
             <SalePhaseCard
-              loading={currentPrice === 0}
+              loading={currentPrice === undefined}
               label=''
               value={currentPhase}
             />

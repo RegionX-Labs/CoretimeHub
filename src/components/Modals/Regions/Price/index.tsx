@@ -19,10 +19,6 @@ import styles from './index.module.scss';
 interface PriceModalProps {
   open: boolean;
   onClose: () => void;
-  saleInfo: {
-    currentPhase: SalePhase;
-    currentPrice: number;
-  };
 }
 
 export const PriceModal = ({ open, onClose }: PriceModalProps) => {

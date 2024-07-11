@@ -70,7 +70,7 @@ const Purchase = () => {
       return;
     }
 
-    if (currentPrice === 0) {
+    if (currentPrice === undefined) {
       toastWarning('Wait for the price to be fetched');
       return;
     }

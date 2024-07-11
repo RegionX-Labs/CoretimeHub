@@ -31,6 +31,7 @@ export const getCorePriceAt = (
   }
 
   const { saleStart, leadinLength, price: endPrice } = saleInfo;
+  
   const num = Math.min(now - saleStart, leadinLength);
   const through = num / leadinLength;
 
