@@ -74,13 +74,13 @@ export const SaleInfoPanel = () => {
             label='Current phase'
             value={currentPhase}
             cyLabel='txt-current-phase'
-            loading={currentPrice === 0}
+            loading={currentPrice === undefined}
           />
           <SalePhaseCard
             label='Upcoming phase'
             value={nextPhase(currentPhase)}
             cyLabel='txt-upcoming-phase'
-            loading={currentPrice === 0}
+            loading={currentPrice === undefined}
           />
         </DetailCard>
         <DetailCard
@@ -92,14 +92,11 @@ export const SaleInfoPanel = () => {
                 currentPhase === SalePhase.Interlude
                   ? 'Start price'
                   : 'Current price',
-              value:
-                currentPrice === undefined ? (
-                  '---'
-                ) : currentPrice ? (
-                  formatBalance(currentPrice)
-                ) : (
-                  <CircularProgress data-cy='loading-current-price' size={16} />
-                ),
+              value: currentPrice !== undefined ? (
+                formatBalance(currentPrice)
+              ) : (
+                <CircularProgress data-cy='loading-current-price' size={16} />
+              ),
             },
             right: {
               label: 'Floor price',
@@ -126,7 +123,6 @@ export const SaleInfoPanel = () => {
       <PriceModal
         open={priceModalOpen}
         onClose={() => openPriceModal(false)}
-        saleInfo={{ currentPrice, currentPhase }}
         data-cy='price-modal'
       />
     </>
