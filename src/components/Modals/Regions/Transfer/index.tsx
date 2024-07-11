@@ -5,20 +5,18 @@ import {
   DialogActions,
   DialogContent,
   Paper,
-  TextField,
   Typography,
   useTheme,
 } from '@mui/material';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
-import { isValidAddress } from '@/utils/functions';
 import {
   transferRegionOnCoretimeChain,
   transferRegionOnRegionXChain,
 } from '@/utils/transfers/native';
 
-import { ProgressButton } from '@/components/Elements';
+import { AddressInput, ProgressButton } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
@@ -163,13 +161,12 @@ export const TransferModal = ({
             sx={{ color: theme.palette.common.black }}
           >
             <Typography sx={{ fontWeight: 500 }}>Transfer to</Typography>
-            <Typography>New owner:</Typography>
-            <TextField
-              value={newOwner}
-              onChange={(e) => setNewOwner(e.target.value)}
-              fullWidth
-              placeholder='Address of the new owner'
-              error={newOwner.length > 0 && !isValidAddress(newOwner)}
+            <Typography></Typography>
+
+            <AddressInput
+              label='New owner:'
+              address={newOwner}
+              onChange={(e) => setNewOwner(e)}
             />
           </Paper>
         </Box>

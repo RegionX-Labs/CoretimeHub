@@ -204,10 +204,10 @@ const TransferPage = () => {
       (originChain === ChainType.CORETIME
         ? transferTokensFromCoretimeToRelay
         : originChain === ChainType.REGIONX
-          ? transferTokensFromRegionXToRelay
-          : destinationChain === ChainType.CORETIME
-            ? transferTokensFromRelayToCoretime
-            : transferTokensFromRelayToRegionX
+        ? transferTokensFromRegionXToRelay
+        : destinationChain === ChainType.CORETIME
+        ? transferTokensFromRelayToCoretime
+        : transferTokensFromRelayToRegionX
       ).call(
         this,
         api,
@@ -434,12 +434,11 @@ const TransferPage = () => {
           }}
         >
           <Stack direction='column' gap={1}>
-            <Typography
-              sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
-            >
-              Transfer to:
-            </Typography>
-            <AddressInput address={newOwner} onChange={setNewOwner} />
+            <AddressInput
+              address={newOwner}
+              onChange={setNewOwner}
+              label='Transfer to'
+            />
           </Stack>
           {asset === AssetType.TOKEN &&
             originChain !== ChainType.NONE &&

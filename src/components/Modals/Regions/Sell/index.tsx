@@ -164,6 +164,7 @@ export const SellModal = ({
             </Stack>
             <Stack direction='column' gap={2}>
               <AddressInput
+                label='Recipient'
                 onChange={setSaleRecipient}
                 address={saleRecipient}
               />

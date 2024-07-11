@@ -136,7 +136,7 @@ const Home = () => {
       ],
       bottom: {
         label: 'Current Price',
-        value: formatBalance(currentPrice),
+        value: currentPrice === undefined ? '---': formatBalance(currentPrice),
         dataCy: 'current-price',
       },
     },

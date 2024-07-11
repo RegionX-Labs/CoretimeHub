@@ -16,9 +16,14 @@ import { useToast } from '@/contexts/toast';
 export interface AddressInputProps {
   onChange: (_: string) => void;
   address: string;
+  label: string;
 }
 
-export const AddressInput = ({ onChange, address }: AddressInputProps) => {
+export const AddressInput = ({
+  onChange,
+  address,
+  label,
+}: AddressInputProps) => {
   const {
     state: { activeAccount },
   } = useAccounts();
@@ -36,7 +41,7 @@ export const AddressInput = ({ onChange, address }: AddressInputProps) => {
 
   return (
     <Box>
-      <Typography>Recipient</Typography>
+      <Typography>{label}</Typography>
       <Input
         value={address}
         onChange={(e) => onChange(e.target.value)}
