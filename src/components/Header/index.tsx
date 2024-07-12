@@ -1,5 +1,5 @@
 import { ExpandMore } from '@mui/icons-material';
-import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
+import HistoryIcon from '@mui/icons-material/History';
 import {
   Box,
   Collapse,
@@ -55,7 +55,7 @@ export const Header = () => {
               <Stack direction='row' gap='0.25rem' alignItems='center'>
                 <Address value={activeAccount.address} isCopy isShort />
                 <IconButton onClick={() => openTxHistoryModal(true)}>
-                  <ManageSearchOutlinedIcon />
+                  <HistoryIcon />
                 </IconButton>
               </Stack>
               <List component='div' className={styles.listWrapper}>

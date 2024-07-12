@@ -204,10 +204,10 @@ const TransferPage = () => {
       (originChain === ChainType.CORETIME
         ? transferTokensFromCoretimeToRelay
         : originChain === ChainType.REGIONX
-        ? transferTokensFromRegionXToRelay
-        : destinationChain === ChainType.CORETIME
-        ? transferTokensFromRelayToCoretime
-        : transferTokensFromRelayToRegionX
+          ? transferTokensFromRegionXToRelay
+          : destinationChain === ChainType.CORETIME
+            ? transferTokensFromRelayToCoretime
+            : transferTokensFromRelayToRegionX
       ).call(
         this,
         api,

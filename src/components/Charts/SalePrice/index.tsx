@@ -27,11 +27,17 @@ export const SalePriceChart = () => {
   const { saleStart } = saleInfo;
   const { network } = useNetwork();
 
-  const startPrice = saleInfo.leadinLength === 0 ? 0: planckBnToUnit(
-    getCorePriceAt(saleStart, saleInfo, network).toString(),
-    decimals
-  );
-  const curPrice = currentPrice === undefined ? 0: planckBnToUnit(currentPrice.toString(), decimals);
+  const startPrice =
+    saleInfo.leadinLength === 0
+      ? 0
+      : planckBnToUnit(
+          getCorePriceAt(saleStart, saleInfo, network).toString(),
+          decimals
+        );
+  const curPrice =
+    currentPrice === undefined
+      ? 0
+      : planckBnToUnit(currentPrice.toString(), decimals);
   const floorPrice = planckBnToUnit(saleInfo.price.toString(), decimals);
 
   const data = [
