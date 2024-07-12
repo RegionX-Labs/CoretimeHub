@@ -1,3 +1,4 @@
+import { Check, Close } from '@mui/icons-material';
 import {
   Paper,
   Stack,
@@ -13,30 +14,24 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import { useState } from 'react';
 
-import { getBalanceString } from '@/utils/functions';
-
-import { Address, Link } from '@/components/Elements';
+import { Link } from '@/components/Elements';
 
 import { SUSBCAN_CORETIME_URL } from '@/consts';
-import { useCoretimeApi } from '@/contexts/apis';
 import { useNetwork } from '@/contexts/network';
-import { PurchaseHistoryItem } from '@/models';
+import { AccountTxHistoryItem } from '@/models';
 
 import { StyledTableCell, StyledTableRow } from '../common';
 
-interface PurchaseHistoryTableProps {
-  data: PurchaseHistoryItem[];
+interface TxHistoryTableProps {
+  data: AccountTxHistoryItem[];
 }
 
-export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
+export const TxHistoryTable = ({ data }: TxHistoryTableProps) => {
   TimeAgo.addLocale(en);
   // Create formatter (English).
   const timeAgo = new TimeAgo('en-US');
 
   const { network } = useNetwork();
-  const {
-    state: { symbol, decimals },
-  } = useCoretimeApi();
 
   // table pagination
   const [page, setPage] = useState(0);
@@ -63,10 +58,9 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
           <TableHead>
             <TableRow>
               <StyledTableCell>Extrinsic Id</StyledTableCell>
-              <StyledTableCell>Account</StyledTableCell>
-              <StyledTableCell>Core</StyledTableCell>
-              <StyledTableCell>{`Price (${symbol})`}</StyledTableCell>
-              <StyledTableCell>Sales Type</StyledTableCell>
+              <StyledTableCell>Module</StyledTableCell>
+              <StyledTableCell>Method</StyledTableCell>
+              <StyledTableCell>Success</StyledTableCell>
               <StyledTableCell>Timestamp</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -75,37 +69,25 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
               ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : data
             ).map(
-              (
-                { address, core, extrinsic_index, timestamp, price, type },
-                index
-              ) => (
+              ({ module, call, extrinsicId, success, timestamp }, index) => (
                 <StyledTableRow key={index}>
                   <StyledTableCell align='center'>
                     <Link
-                      href={`${SUSBCAN_CORETIME_URL[network]}/extrinsic/${extrinsic_index}`}
+                      href={`${SUSBCAN_CORETIME_URL[network]}/extrinsic/${extrinsicId}`}
                       target='_blank'
                     >
-                      {extrinsic_index}
+                      {extrinsicId}
                     </Link>
                   </StyledTableCell>
+                  <StyledTableCell align='center'>{module}</StyledTableCell>
+                  <StyledTableCell align='center'>{call}</StyledTableCell>
                   <StyledTableCell align='center'>
-                    <Link
-                      href={`${SUSBCAN_CORETIME_URL[network]}/account/${address}`}
-                      target='_blank'
-                    >
-                      <Address
-                        value={address}
-                        isCopy={true}
-                        isShort={true}
-                        size={24}
-                      />
-                    </Link>
+                    {success ? (
+                      <Check color='success' />
+                    ) : (
+                      <Close color='error' />
+                    )}
                   </StyledTableCell>
-                  <StyledTableCell align='center'>{core}</StyledTableCell>
-                  <StyledTableCell align='center'>
-                    {getBalanceString(price.toString(), decimals, '')}
-                  </StyledTableCell>
-                  <StyledTableCell align='center'>{type}</StyledTableCell>
                   <StyledTableCell align='center'>
                     {timeAgo.format(timestamp * 1000, 'round-minute')}
                   </StyledTableCell>

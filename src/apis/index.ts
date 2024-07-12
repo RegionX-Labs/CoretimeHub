@@ -1,5 +1,5 @@
 import { SUBSCAN_CORETIME_API } from '@/consts';
-import { NetworkType } from '@/models';
+import { Address, NetworkType } from '@/models';
 
 export const fetchPurchaseHistoryData = async (
   network: NetworkType,
@@ -13,6 +13,30 @@ export const fetchPurchaseHistoryData = async (
       method: 'POST',
       body: JSON.stringify({
         region_begin: regionBegin,
+        row,
+        page,
+      }),
+    }
+  );
+  return res;
+};
+
+export const fetchAccountExtrinsics = async (
+  network: NetworkType,
+  address: Address,
+  page: number,
+  row: number
+) => {
+  const res = await fetch(
+    `${SUBSCAN_CORETIME_API[network]}/api/v2/scan/extrinsics`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        address,
         row,
         page,
       }),

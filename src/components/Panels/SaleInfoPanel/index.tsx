@@ -92,11 +92,12 @@ export const SaleInfoPanel = () => {
                 currentPhase === SalePhase.Interlude
                   ? 'Start price'
                   : 'Current price',
-              value: currentPrice !== undefined ? (
-                formatBalance(currentPrice)
-              ) : (
-                <CircularProgress data-cy='loading-current-price' size={16} />
-              ),
+              value:
+                currentPrice !== undefined ? (
+                  formatBalance(currentPrice)
+                ) : (
+                  <CircularProgress data-cy='loading-current-price' size={16} />
+                ),
             },
             right: {
               label: 'Floor price',
