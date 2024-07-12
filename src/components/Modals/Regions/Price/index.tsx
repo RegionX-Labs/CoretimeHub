@@ -3,6 +3,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogProps,
   Stack,
   Typography,
   useTheme,
@@ -16,8 +17,7 @@ import { SalePhase } from '@/models';
 
 import styles from './index.module.scss';
 
-interface PriceModalProps {
-  open: boolean;
+interface PriceModalProps extends DialogProps {
   onClose: () => void;
 }
 

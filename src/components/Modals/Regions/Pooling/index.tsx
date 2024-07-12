@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogProps,
   Input,
   InputAdornment,
   Paper,
@@ -27,8 +28,7 @@ import { FinalityType, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 
-interface PoolingModalProps {
-  open: boolean;
+interface PoolingModalProps extends DialogProps {
   onClose: () => void;
   regionMetadata: RegionMetadata;
 }

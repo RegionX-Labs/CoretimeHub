@@ -6,6 +6,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogProps,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -25,8 +26,7 @@ import { useToast } from '@/contexts/toast';
 
 import styles from './index.module.scss';
 
-interface RegisterModalProps {
-  open: boolean;
+interface RegisterModalProps extends DialogProps {
   onClose: () => void;
 
   paraId: number;

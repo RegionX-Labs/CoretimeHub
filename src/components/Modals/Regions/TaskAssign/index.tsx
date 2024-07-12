@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogProps,
   MenuItem,
   Paper,
   Select,
@@ -29,8 +30,7 @@ import { FinalityType, RegionMetadata } from '@/models';
 import styles from './index.module.scss';
 import { AddTaskModal } from '../AddTask';
 
-interface TaskAssignModalProps {
-  open: boolean;
+interface TaskAssignModalProps extends DialogProps {
   onClose: () => void;
   regionMetadata: RegionMetadata;
 }

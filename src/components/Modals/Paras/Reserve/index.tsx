@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogProps,
   Paper,
   Typography,
   useTheme,
@@ -23,8 +24,7 @@ import { useToast } from '@/contexts/toast';
 
 import styles from './index.module.scss';
 
-interface ReserveModalProps {
-  open: boolean;
+interface ReserveModalProps extends DialogProps {
   onClose: () => void;
   paraId: number;
   reservationCost: string;
