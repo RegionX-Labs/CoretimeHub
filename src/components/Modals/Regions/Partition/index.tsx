@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogProps,
   Paper,
   Slider,
   Typography,
@@ -30,8 +31,7 @@ import {
 
 import styles from './index.module.scss';
 
-interface PartitionModalProps {
-  open: boolean;
+interface PartitionModalProps extends DialogProps {
   onClose: () => void;
   regionMetadata: RegionMetadata;
 }

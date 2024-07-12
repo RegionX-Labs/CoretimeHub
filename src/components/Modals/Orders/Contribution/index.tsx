@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogProps,
   Stack,
   Typography,
   useTheme,
@@ -24,8 +25,7 @@ import { Order } from '@/models';
 
 import styles from './index.module.scss';
 
-interface ContributionModalProps {
-  open: boolean;
+interface ContributionModalProps extends DialogProps {
   onClose: () => void;
   order: Order;
 }

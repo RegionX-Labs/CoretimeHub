@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogProps,
   FormControl,
   InputLabel,
   MenuItem,
@@ -34,8 +35,7 @@ import { useToast } from '@/contexts/toast';
 
 import styles from './index.module.scss';
 
-interface OrderCreationModalProps {
-  open: boolean;
+interface OrderCreationModalProps extends DialogProps {
   onClose: () => void;
 }
 

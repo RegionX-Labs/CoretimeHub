@@ -1,13 +1,12 @@
 import { Button } from '@mui/material';
+import { ButtonProps } from '@mui/material/Button';
 
 import styles from './index.module.scss';
 
-type ActionButtonProps = {
+type ActionButtonProps = ButtonProps & {
   label: string;
   onClick: () => void;
-  disabled?: boolean;
   [key: string]: any;
-  fullWidth?: boolean;
 };
 export const ActionButton = ({
   label,

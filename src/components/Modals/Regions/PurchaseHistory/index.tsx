@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogProps,
   Stack,
   Typography,
   useTheme,
@@ -21,8 +22,7 @@ import { useSaleInfo } from '@/contexts/sales';
 
 import styles from './index.module.scss';
 
-interface PurchaseHistoryModalProps {
-  open: boolean;
+interface PurchaseHistoryModalProps extends DialogProps {
   onClose: () => void;
 }
 

@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogProps,
   Paper,
   Stack,
   Typography,
@@ -31,8 +32,7 @@ import { RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 
-interface SellModalProps {
-  open: boolean;
+interface SellModalProps extends DialogProps {
   onClose: () => void;
   regionMetadata: RegionMetadata;
 }

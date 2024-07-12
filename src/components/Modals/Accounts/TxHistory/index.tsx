@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogProps,
   Stack,
   Typography,
   useTheme,
@@ -20,8 +21,7 @@ import { Address } from '@/models';
 
 import styles from './index.module.scss';
 
-interface TxHistoryModalProps {
-  open: boolean;
+interface TxHistoryModalProps extends DialogProps {
   onClose: () => void;
   account: Address;
 }

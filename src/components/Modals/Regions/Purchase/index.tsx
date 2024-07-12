@@ -1,5 +1,11 @@
 import { LoadingButton } from '@mui/lab';
-import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogProps,
+} from '@mui/material';
 import { BN } from '@polkadot/util';
 import { useState } from 'react';
 
@@ -15,8 +21,7 @@ import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { Listing } from '@/models';
 
-interface PurchaseModalProps {
-  open: boolean;
+interface PurchaseModalProps extends DialogProps {
   onClose: () => void;
   listing: Listing;
 }

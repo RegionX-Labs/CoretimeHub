@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogProps,
   Paper,
   Slider,
   Typography,
@@ -26,8 +27,7 @@ import { COREMASK_BIT_LEN, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 
-interface InterlaceModalProps {
-  open: boolean;
+interface InterlaceModalProps extends DialogProps {
   onClose: () => void;
   regionMetadata: RegionMetadata;
 }
