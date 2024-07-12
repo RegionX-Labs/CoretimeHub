@@ -33,6 +33,7 @@ const NetworkProvider = ({ children }: Props) => {
     if (!router.isReady) return;
     if (network === 'rococo') setActiveNetwork(NetworkType.ROCOCO);
     else if (network === 'kusama') setActiveNetwork(NetworkType.KUSAMA);
+    else if (network === 'westend') setActiveNetwork(NetworkType.WESTEND);
     else {
       // invalid network param. redirect to the default chain: kusama
       router.push(

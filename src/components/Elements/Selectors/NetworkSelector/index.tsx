@@ -2,8 +2,11 @@ import { Box, FormControl, MenuItem, Select, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
-import KusamaIcon from '@/assets/networks/relay/kusama.png';
-import RococoIcon from '@/assets/networks/relay/rococo.png';
+import {
+  Kusama as KusamaIcon,
+  Rococo as RococoIcon,
+  Westend as WestendIcon,
+} from '@/assets/networks/relay';
 import { useNetwork } from '@/contexts/network';
 import { NetworkType } from '@/models';
 
@@ -32,6 +35,11 @@ const RelaySelect = () => {
       value: NetworkType.KUSAMA,
       label: 'Kusama',
       icon: KusamaIcon,
+    },
+    {
+      value: NetworkType.WESTEND,
+      label: 'Westend',
+      icon: WestendIcon,
     },
   ];
 

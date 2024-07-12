@@ -100,7 +100,7 @@ export const SaleInfoPanel = () => {
             },
             right: {
               label: 'Floor price',
-              value: formatBalance(saleInfo.price),
+              value: saleInfo.price ? formatBalance(saleInfo.price) : '---',
             },
           }}
           button={
