@@ -1,6 +1,5 @@
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useState,
@@ -120,7 +119,7 @@ const SaleInfoProvider = ({ children }: Props) => {
     );
   }, [status, at, height, network, saleInfo]);
 
-  const fetchSaleInfo = useCallback(async () => {
+  const fetchSaleInfo = async () => {
     try {
       setStatus(ContextStatus.LOADING);
       if (
@@ -136,13 +135,7 @@ const SaleInfoProvider = ({ children }: Props) => {
 
       const saleInfoRaw = await coretimeApi.query.broker.saleInfo();
       const saleInfo = saleInfoRaw.toJSON() as SaleInfo;
-      saleInfo.price = (saleInfoRaw.toJSON() as any).endPrice as number;
-
-      if (!saleInfo) {
-        setStatus(ContextStatus.UNINITIALIZED);
-        return;
-      }
-
+      saleInfo.price = saleInfo.selloutPrice || 0;
       setSaleInfo(saleInfo);
 
       const configRaw = await coretimeApi.query.broker.configuration();
@@ -182,18 +175,18 @@ const SaleInfoProvider = ({ children }: Props) => {
     } catch (e) {
       /** empty error handler */
     }
-  }, [
-    network,
-    coretimeApi,
-    relayApi,
-    relayApiState,
-    coretimeApiState,
-    timeslicePeriod,
-  ]);
+  };
 
   useEffect(() => {
     fetchSaleInfo();
-  }, [fetchSaleInfo]);
+  }, [
+    network,
+    coretimeApi,
+    coretimeApiState,
+    relayApi,
+    relayApiState,
+    timeslicePeriod,
+  ]);
 
   useEffect(() => {
     if (height === 0) return;
