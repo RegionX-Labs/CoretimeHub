@@ -1,9 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { getBlockTime, getBlockTimestamp } from '@/utils/functions';
 import { getCorePriceAt, getCurrentPhase } from '@/utils/sale';

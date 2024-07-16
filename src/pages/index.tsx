@@ -56,8 +56,8 @@ const Home = () => {
     numRenewals === 0
       ? 0
       : Math.floor(
-        renewals.reduce((sum, item) => sum + item.price, 0) / numRenewals
-      );
+          renewals.reduce((sum, item) => sum + item.price, 0) / numRenewals
+        );
 
   const {
     currentBurn,
