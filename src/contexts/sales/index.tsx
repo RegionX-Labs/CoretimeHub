@@ -131,6 +131,7 @@ const SaleInfoProvider = ({ children }: Props) => {
       const saleInfoRaw = await coretimeApi.query.broker.saleInfo();
       const saleInfo = saleInfoRaw.toJSON() as SaleInfo;
       saleInfo.price = saleInfo.selloutPrice || 0;
+      saleInfo.coresOffered = saleInfo.coresOffered - saleInfo.firstCore;
       setSaleInfo(saleInfo);
 
       const configRaw = await coretimeApi.query.broker.configuration();
