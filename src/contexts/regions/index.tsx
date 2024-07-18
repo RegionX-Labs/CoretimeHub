@@ -171,11 +171,11 @@ const RegionDataProvider = ({ children }: Props) => {
     recordStatus: ISMPRecordStatus = ISMPRecordStatus.AVAILABLE,
     commitment?: string
   ): Promise<RegionMetadata | null> => {
-    if (!activeAccount) return null;
+    if (!activeAccount || !region.getOwner()) return null;
     // Only user owned non-expired regions.
     if (
       encodeAddress(region.getOwner(), 42) !==
-        encodeAddress(activeAccount.address, 42) ||
+      encodeAddress(activeAccount.address, 42) ||
       region.consumed({ timeslicePeriod, relayBlockNumber }) > 1
     )
       return null;
