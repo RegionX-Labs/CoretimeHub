@@ -39,9 +39,10 @@ export const AmountInput = ({
             textAlign: 'center',
           },
         }}
-        type='number'
+        type='text'
         onChange={(e) => {
-          setAmount(parseFloat(e.target.value));
+          if (Number.isNaN(e)) return;
+          setAmount(e.target.value as any);
         }}
         fullWidth
       />
