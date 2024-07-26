@@ -1,6 +1,6 @@
 import { NetworkType, SaleInfo, SalePhase } from '@/models';
 
-import { leadinFactorAt, leadinFactorAtLegacy } from '../coretime';
+import { leadinFactorAt } from '../coretime';
 
 export const getCurrentPhase = (
   saleInfo: SaleInfo,
@@ -16,19 +16,11 @@ export const getCurrentPhase = (
 };
 
 // The price of a core at a specific block number.
-export const getCorePriceAt = (
-  now: number,
-  saleInfo: SaleInfo,
-  network: NetworkType
-) => {
+export const getCorePriceAt = (now: number, saleInfo: SaleInfo) => {
   /* NOTE: the runtime api is not implemented for Kusama.
   const salePrice = await coretimeApi.rpc.state.call('BrokerApi_sale_price', '');
   const price = coretimeApi.createType('Option<u128>', salePrice);
   */
-
-  if (!isNewPricing(now, network)) {
-    return getCorePriceAtLegacy(now, saleInfo, network);
-  }
 
   const { saleStart, leadinLength, price: endPrice } = saleInfo;
 
@@ -37,19 +29,6 @@ export const getCorePriceAt = (
 
   const price = leadinFactorAt(through) * endPrice;
   return Number(price.toFixed());
-};
-
-// TODO: remove when transitioned to new pricing model
-export const getCorePriceAtLegacy = (
-  blockNumber: number,
-  saleInfo: SaleInfo,
-  network: NetworkType
-) => {
-  const { saleStart, leadinLength, price } = saleInfo;
-  const num = Math.min(blockNumber - saleStart, leadinLength);
-  const through = num / leadinLength;
-
-  return Number((leadinFactorAtLegacy(network, through) * price).toFixed());
 };
 
 export const isNewPricing = (now: number, network: NetworkType): boolean => {

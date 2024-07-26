@@ -31,7 +31,7 @@ export const SalePriceChart = () => {
     saleInfo.leadinLength === 0
       ? 0
       : planckBnToUnit(
-          getCorePriceAt(saleStart, saleInfo, network).toString(),
+          getCorePriceAt(saleStart, saleInfo).toString(),
           decimals
         );
   const curPrice =

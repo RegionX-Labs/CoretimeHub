@@ -110,7 +110,7 @@ const SaleInfoProvider = ({ children }: Props) => {
     setCurrentPrice(
       status !== ContextStatus.LOADED || height === 0
         ? undefined
-        : getCorePriceAt(at, saleInfo, network)
+        : getCorePriceAt(at, saleInfo)
     );
   }, [status, at, height, network, saleInfo]);
 
@@ -130,7 +130,8 @@ const SaleInfoProvider = ({ children }: Props) => {
 
       const saleInfoRaw = await coretimeApi.query.broker.saleInfo();
       const saleInfo = saleInfoRaw.toJSON() as SaleInfo;
-      saleInfo.price = saleInfo.selloutPrice || 0;
+      // On Rococo we have `endPrice` while on Kusama we still have `price`.
+      saleInfo.price = saleInfo.price || (saleInfo as any).endPrice;
       setSaleInfo(saleInfo);
 
       const configRaw = await coretimeApi.query.broker.configuration();
