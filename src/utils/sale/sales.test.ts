@@ -1,11 +1,6 @@
 import { expect } from '@jest/globals';
 
-import {
-  CORETIME_TOKEN_UNIT,
-  NetworkType,
-  SaleInfo,
-  SalePhase,
-} from '@/models';
+import { CORETIME_TOKEN_UNIT, SaleInfo, SalePhase } from '@/models';
 
 import { getCorePriceAt, getCurrentPhase } from '.';
 
@@ -68,19 +63,11 @@ describe('Purchase page', () => {
   });
 
   describe('getCorePriceAt', () => {
-    it('legacy getCorePriceAt works', () => {
-      const blockNumber = mockSaleInfo.saleStart;
-      // leading factor is equal to 2 at the start of the sale.
-      expect(
-        getCorePriceAt(blockNumber, mockSaleInfo, NetworkType.ROCOCO)
-      ).toBe(mockSaleInfo.price * 2);
-    });
-
     it('getCorePriceAt works', () => {
       const blockNumber = mockSaleInfo.saleStart;
-      expect(
-        getCorePriceAt(blockNumber, mockSaleInfo, NetworkType.KUSAMA)
-      ).toBe(mockSaleInfo.price * 100);
+      expect(getCorePriceAt(blockNumber, mockSaleInfo)).toBe(
+        mockSaleInfo.price * 100
+      );
     });
   });
 });
