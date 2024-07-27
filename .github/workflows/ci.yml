@@ -12,14 +12,21 @@ jobs:
 
     strategy:
       matrix:
-        node-version: ['18.17.0', '20.x']
+        node-version: ['18.x', '20.x']
 
     steps:
       - uses: actions/checkout@v2
 
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
       # Install dependencies
       - name: Install dependencies
-        run: npm i
+        run: |
+          npm install -g npm@latest
+          npm i
 
       # Run linter
       - name: Run Linter
