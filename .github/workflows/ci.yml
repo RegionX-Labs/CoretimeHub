@@ -19,7 +19,7 @@ jobs:
 
       # Install dependencies
       - name: Install dependencies
-        run: npm ci
+        run: npm i
 
       # Run linter
       - name: Run Linter
