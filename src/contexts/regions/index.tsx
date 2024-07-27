@@ -171,6 +171,7 @@ const RegionDataProvider = ({ children }: Props) => {
     recordStatus: ISMPRecordStatus = ISMPRecordStatus.AVAILABLE,
     commitment?: string
   ): Promise<RegionMetadata | null> => {
+    // owner can be `null` when the region is cross chain transferred and not yet deposited.
     if (!activeAccount || !region.getOwner()) return null;
     // Only user owned non-expired regions.
     if (
