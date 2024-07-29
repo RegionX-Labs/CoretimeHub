@@ -42,7 +42,7 @@ export const AmountInput = ({
         type='text'
         onChange={(e) => {
           if (Number.isNaN(e)) return;
-          setAmount(e.target.value as any);
+          setAmount(Number(e.target.value));
         }}
         fullWidth
       />
