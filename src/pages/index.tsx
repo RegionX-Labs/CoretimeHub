@@ -189,10 +189,10 @@ const Home = () => {
               fontWeight: 600,
             }}
           >
-            RegionX | CoreHub
+            RegionX | Coretime Hub
           </Typography>
           <Typography>
-            Explore all the possibilities RegionX Corehub offers
+            Explore all the possibilities RegionX Coretime Hub offers
           </Typography>
         </Box>
         <Stack direction='row' gap='1.25rem'>

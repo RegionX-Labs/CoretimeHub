@@ -4,7 +4,8 @@ import React, { createContext, useContext, useEffect, useReducer } from 'react';
 
 import { isValidAddress } from '@/utils/functions';
 
-const APP_NAME = 'Corehub';
+import { APP_NAME } from '@/consts';
+
 const LOCAL_STORAGE_ACCOUNTS = 'accounts';
 const LOCAL_STORAGE_ACTIVE_ACCOUNT = 'active-account';
 

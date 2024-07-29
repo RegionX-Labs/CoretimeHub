@@ -1,5 +1,5 @@
 {
-  "name": "corehub",
+  "name": "coretime-hub",
   "private": true,
   "scripts": {
     "dev": "next dev",
