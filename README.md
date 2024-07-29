@@ -56,8 +56,8 @@ Before running locally the environment variables must be specified properly.
 The environment variables are automatically set in the Dockerfile; however, if you modify anything, those will need to be updated accordingly.
 
 1. Make sure to have [Docker](https://docs.docker.com/get-docker/) installed
-2. To build an image run: `docker build -t corehub .`
-3. To run the app: `docker run -dp 3000:3000 corehub`
+2. To build an image run: `docker build -t coretime-hub .`
+3. To run the app: `docker run -dp 3000:3000 coretime-hub`
 4. Go to `http://localhost:3000/` to interact with the webapp
 
 ### Testing cross-chain region transfers

@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 FROM node:18-alpine
-WORKDIR /corehub
+WORKDIR /coretime-hub
 COPY . .
 
 # Set the necessary environment variables

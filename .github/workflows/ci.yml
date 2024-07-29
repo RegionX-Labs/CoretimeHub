@@ -1,4 +1,4 @@
-name: Corehub CI
+name: Coretime Hub CI
 
 on:
   push:

@@ -3,8 +3,8 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
 
 import { isValidAddress } from '@/utils/functions';
+import { APP_NAME } from '@/consts';
 
-const APP_NAME = 'Corehub';
 const LOCAL_STORAGE_ACCOUNTS = 'accounts';
 const LOCAL_STORAGE_ACTIVE_ACCOUNT = 'active-account';
 
