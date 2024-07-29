@@ -3,6 +3,7 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
 
 import { isValidAddress } from '@/utils/functions';
+
 import { APP_NAME } from '@/consts';
 
 const LOCAL_STORAGE_ACCOUNTS = 'accounts';
