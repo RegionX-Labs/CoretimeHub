@@ -6,12 +6,14 @@ import { fetchGraphql } from '../utils/fetchGraphql';
 export const fetchPurchaseHistoryData = async (
   network: NetworkType,
   regionBegin: number,
-  after: string | null
+  after: string | null,
+  orderBy: string = 'HEIGHT_DESC'
 ) => {
   const query = `{
       purchases(
         after: ${after}
         filter: {begin: {equalTo: ${regionBegin}}}
+        orderBy: ${orderBy}
       ) {
         nodes {
           account
@@ -35,12 +37,14 @@ export const fetchPurchaseHistoryData = async (
 export const fetchAccountExtrinsics = async (
   network: NetworkType,
   address: Address,
-  after: string | null
+  after: string | null,
+  orderBy: string = 'BLOCK_HEIGHT_DESC'
 ) => {
   const query = `{
       extrinsics(
         after: ${after}
         filter: {signer: {equalTo: "${address}"}}
+        orderBy: ${orderBy}
       ) {
         nodes {
           id
@@ -48,6 +52,7 @@ export const fetchAccountExtrinsics = async (
           call
           blockHeight
           success
+          timestamp
         }
         pageInfo {
           hasNextPage

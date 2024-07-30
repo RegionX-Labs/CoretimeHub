@@ -95,6 +95,11 @@ export type PurchaseHistoryResponse = {
   nodes: PurchaseHistoryResponseItem[];
 };
 
+export enum PurchaseType {
+  BULK = 'bulk',
+  RENEWAL = 'renewal',
+}
+
 export type PurchaseHistoryItem = {
   address: string;
   core: number;

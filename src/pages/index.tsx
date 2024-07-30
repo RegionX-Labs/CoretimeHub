@@ -29,7 +29,7 @@ import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { useSaleInfo } from '@/contexts/sales';
-import { ContextStatus } from '@/models';
+import { ContextStatus, PurchaseType } from '@/models';
 
 const Home = () => {
   const theme = useTheme();
@@ -49,15 +49,15 @@ const Home = () => {
     usePurchaseHistory(network, regionBegin);
 
   const renewals = purchaseHistoryData.filter(
-    (item) => item.type === 'renewed'
+    (item) => item.type === PurchaseType.RENEWAL,
   );
   const numRenewals = renewals.length;
   const renewalCost =
     numRenewals === 0
       ? 0
       : Math.floor(
-          renewals.reduce((sum, item) => sum + item.price, 0) / numRenewals
-        );
+        renewals.reduce((sum, item) => sum + item.price, 0) / numRenewals
+      );
 
   const {
     currentBurn,

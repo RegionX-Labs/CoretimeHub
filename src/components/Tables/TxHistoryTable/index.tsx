@@ -27,6 +27,7 @@ interface TxHistoryTableProps {
 }
 
 export const TxHistoryTable = ({ data }: TxHistoryTableProps) => {
+  console.log(data);
   TimeAgo.addLocale(en);
   // Create formatter (English).
   const timeAgo = new TimeAgo('en-US');
