@@ -28,7 +28,7 @@ export const AmountInput = ({
         {caption && <Typography lineHeight={1}>{caption}</Typography>}
       </Stack>
       <TextField
-        value={amount?.toString() || ''}
+        value={amount || '0'}
         placeholder={`Enter ${currency} amount`}
         InputProps={{
           endAdornment: (
@@ -39,10 +39,14 @@ export const AmountInput = ({
             textAlign: 'center',
           },
         }}
-        type='text'
+        type='number'
         onChange={(e) => {
-          if (Number.isNaN(e)) return;
-          setAmount(e.target.value as any);
+          if (e.target.value === '') {
+            setAmount(0);
+          } else {
+            const value = parseFloat(e.target.value);
+            setAmount(value);
+          }
         }}
         fullWidth
       />
