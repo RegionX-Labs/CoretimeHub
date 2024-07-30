@@ -36,35 +36,32 @@ export const usePurchaseHistory = (
         if (res.status !== 200) {
           setError(true);
         } else {
-          const { message, data } = await res.json();
-          if (message !== 'Success') {
-            setError(true);
-          } else {
-            const { list } = data as PurchaseHistoryResponse;
+          const { data } = await res.json();
+          const { nodes } = data.purchases as PurchaseHistoryResponse;
 
-            if (!list) setData([]);
-            else {
-              setData(
-                list.map(
+          if (!nodes) setData([]);
+          else {
+            setData(
+              nodes.map(
+                ({
+                  account,
+                  core,
+                  extrinsicId,
+                  height,
+                  price,
+                  purchaseType,
+                  timestamp,
+                }) =>
                   ({
-                    account: { address },
+                    address: account,
                     core,
-                    extrinsic_index,
-                    block_timestamp,
-                    price,
-                    purchased_type,
-                  }) =>
-                    ({
-                      address,
-                      core,
-                      extrinsic_index,
-                      timestamp: block_timestamp,
-                      price: parseInt(price),
-                      type: purchased_type,
-                    }) as PurchaseHistoryItem
-                )
-              );
-            }
+                    extrinsic_index: `${height}-${extrinsicId}`,
+                    timestamp,
+                    price: parseInt(price),
+                    type: purchaseType,
+                  } as PurchaseHistoryItem)
+              )
+            );
           }
         }
       } catch {

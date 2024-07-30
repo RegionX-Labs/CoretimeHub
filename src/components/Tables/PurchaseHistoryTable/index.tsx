@@ -107,7 +107,10 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
                   </StyledTableCell>
                   <StyledTableCell align='center'>{type}</StyledTableCell>
                   <StyledTableCell align='center'>
-                    {timeAgo.format(timestamp * 1000, 'round-minute')}
+                    {timeAgo.format(
+                      new Date(timestamp).getTime(),
+                      'round-minute'
+                    )}
                   </StyledTableCell>
                 </StyledTableRow>
               )

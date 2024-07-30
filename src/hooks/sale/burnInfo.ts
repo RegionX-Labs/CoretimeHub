@@ -31,11 +31,11 @@ export const useBurnInfo = (network: NetworkType) => {
       }
 
       const regionBegins = saleHistory.data
-        .map((item) => item.region_begin)
+        .map((item) => item.regionBegin)
         .sort((a, b) => b - a);
-
+      console.log(1);
       await sleep(1000); // 5 req/s limit in free plan
-
+      console.log(2);
       let total = 0;
       for (let idx = 0; idx < regionBegins.length; ++idx) {
         const regionBegin = regionBegins[idx];
@@ -48,23 +48,25 @@ export const useBurnInfo = (network: NetworkType) => {
         );
         if (res.status !== 200) {
           idx--;
+          console.log(3);
           await sleep(1000);
+          console.log(4);
           continue;
         }
 
-        const { message, data } = await res.json();
-        if (message !== 'Success') continue;
+        const { data } = await res.json();
 
-        const { list } = data as PurchaseHistoryResponse;
-        const burn = list
-          ? list.reduce((acc, { price }) => acc + parseInt(price), 0)
+        const { nodes } = data.purchases as PurchaseHistoryResponse;
+        const burn = nodes
+          ? nodes.reduce((acc, { price }) => acc + parseInt(price), 0)
           : 0;
         total += burn;
 
         if (idx === 0) setCurrentBurn(burn);
         else if (idx === 1) setPrevBurn(burn);
-
+        console.log(5);
         await sleep(500);
+        console.log(6);
       }
       setTotalBurn(total);
       setLoading(false);

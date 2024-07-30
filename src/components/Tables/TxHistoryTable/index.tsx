@@ -89,7 +89,10 @@ export const TxHistoryTable = ({ data }: TxHistoryTableProps) => {
                     )}
                   </StyledTableCell>
                   <StyledTableCell align='center'>
-                    {timeAgo.format(timestamp * 1000, 'round-minute')}
+                    {timeAgo.format(
+                      new Date(timestamp).getTime(),
+                      'round-minute'
+                    )}
                   </StyledTableCell>
                 </StyledTableRow>
               )

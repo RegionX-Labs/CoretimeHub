@@ -28,36 +28,32 @@ export const useAccountExtrinsics = (
         let page = 0;
         const txHistory: AccountTxHistoryItem[] = [];
 
-        for (;;) {
-          const res = await fetchAccountExtrinsics(network, account, page, 100);
-          if (res.status !== 200) {
+        const res = await fetchAccountExtrinsics(network, account, page, 100);
+        if (res.status !== 200) {
+          setError(true);
+        } else {
+          const { message, data } = await res.json();
+          if (message !== 'Success') {
             setError(true);
-            break;
           } else {
-            const { message, data } = await res.json();
-            if (message !== 'Success') {
-              setError(true);
-            } else {
-              const { count, extrinsics } = data as ExtrinsicsResponse;
+            const { nodes } = data.extrinsics as ExtrinsicsResponse;
 
-              if (extrinsics !== null) {
-                txHistory.push(
-                  ...extrinsics.map(
-                    (item) =>
-                      ({
-                        extrinsicId: item.extrinsic_index,
-                        module: item.call_module,
-                        call: item.call_module_function,
-                        timestamp: item.block_timestamp,
-                        success: item.success,
-                      }) as AccountTxHistoryItem
-                  )
-                );
-              }
-
-              ++page;
-              if (txHistory.length === count) break;
+            if (nodes !== null) {
+              txHistory.push(
+                ...nodes.map(
+                  (item) =>
+                    ({
+                      extrinsicId: item.id,
+                      module: item.module,
+                      call: item.call,
+                      timestamp: item.timestamp,
+                      success: item.success,
+                    } as AccountTxHistoryItem)
+                )
+              );
             }
+
+            ++page;
           }
         }
 

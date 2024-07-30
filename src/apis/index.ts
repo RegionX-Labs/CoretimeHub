@@ -1,46 +1,64 @@
-import { SUBSCAN_CORETIME_API } from '@/consts';
+import { SUBSCAN_CORETIME_DICT, SUBSCAN_CORETIME_INDEXER } from '@/consts';
 import { Address, NetworkType } from '@/models';
 
 export const fetchPurchaseHistoryData = async (
   network: NetworkType,
   regionBegin: number,
-  page: number,
-  row: number
+  _page: number,
+  _row: number
 ) => {
-  const res = await fetch(
-    `${SUBSCAN_CORETIME_API[network]}/api/scan/broker/purchased`,
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        region_begin: regionBegin,
-        row,
-        page,
-      }),
-    }
-  );
+  const res = await fetch(`${SUBSCAN_CORETIME_INDEXER[network]}`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: `{
+        purchases(filter: {begin: {equalTo: ${regionBegin}}}) {
+          nodes {
+            account
+            core
+            extrinsicId
+            height
+            price
+            purchaseType
+            timestamp
+          }
+          totalCount
+        }
+      }`,
+    }),
+  });
   return res;
 };
 
 export const fetchAccountExtrinsics = async (
   network: NetworkType,
   address: Address,
-  page: number,
-  row: number
+  _page: number,
+  _row: number
 ) => {
-  const res = await fetch(
-    `${SUBSCAN_CORETIME_API[network]}/api/v2/scan/extrinsics`,
-    {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        address,
-        row,
-        page,
-      }),
-    }
-  );
+  const res = await fetch(`${SUBSCAN_CORETIME_DICT[network]}`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: `{
+        extrinsics( filter: {signer: {equalTo: "${address}"}} ) {
+          nodes {
+            id
+            module
+            call
+            blockHeight
+            success
+          }
+          totalCount
+        }
+      }`,
+    }),
+  });
   return res;
 };

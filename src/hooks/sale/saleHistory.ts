@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { SUBSCAN_CORETIME_API } from '@/consts';
+import { SUBSCAN_CORETIME_INDEXER } from '@/consts';
 import {
   NetworkType,
   SaleHistoryItem,
@@ -24,13 +24,23 @@ export const useSaleHistory = (
       setError(false);
 
       try {
-        const res = await fetch(
-          `${SUBSCAN_CORETIME_API[network]}/api/scan/broker/sales`,
-          {
-            method: 'POST',
-            body: JSON.stringify({ row, page }),
-          }
-        );
+        const res = await fetch(`${SUBSCAN_CORETIME_INDEXER[network]}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query: `{
+              sales {
+                nodes {
+                  regionBegin
+                  regionEnd
+                }
+                totalCount
+              }
+            }`,
+          }),
+        });
         if (res.status !== 200) {
           setError(true);
         } else {
@@ -39,10 +49,10 @@ export const useSaleHistory = (
           if (message !== 'Success') {
             setError(true);
           } else {
-            const { list } = data as SaleHistoryResponse;
+            const { nodes } = data.sales as SaleHistoryResponse;
 
             setData(
-              list.map((x: SaleHistoryResponseItem) => x as SaleHistoryItem)
+              nodes.map((x: SaleHistoryResponseItem) => x as SaleHistoryItem)
             );
           }
         }
