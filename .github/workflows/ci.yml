@@ -10,18 +10,23 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: ['18.x', '20.x']
+
     steps:
       - uses: actions/checkout@v2
 
-      # Setup Node.js environment
-      - name: Use Node.js
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: ${{ matrix.node-version }}
 
       # Install dependencies
       - name: Install dependencies
-        run: npm i
+        run: |
+          npm install -g npm@latest
+          npm i
 
       # Run linter
       - name: Run Linter
@@ -36,5 +41,5 @@ jobs:
         run: npm run test
 
       # Run build
-      - name: Run Tests
+      - name: Build
         run: npm run build
