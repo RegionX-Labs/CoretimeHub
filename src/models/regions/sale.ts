@@ -96,7 +96,9 @@ export type PurchaseHistoryResponse = {
 };
 
 export enum PurchaseType {
+  // eslint-disable-next-line no-unused-vars
   BULK = 'bulk',
+  // eslint-disable-next-line no-unused-vars
   RENEWAL = 'renewal',
 }
 

@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import {
   Kusama as KusamaIcon,
   Rococo as RococoIcon,
-  Westend as WestendIcon,
 } from '@/assets/networks/relay';
 import { useNetwork } from '@/contexts/network';
 import { NetworkType } from '@/models';

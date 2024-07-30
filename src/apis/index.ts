@@ -7,7 +7,7 @@ export const fetchPurchaseHistoryData = async (
   network: NetworkType,
   regionBegin: number,
   after: string | null,
-  orderBy: string = 'HEIGHT_DESC'
+  orderBy = 'HEIGHT_DESC'
 ) => {
   const query = `{
       purchases(
@@ -38,7 +38,7 @@ export const fetchAccountExtrinsics = async (
   network: NetworkType,
   address: Address,
   after: string | null,
-  orderBy: string = 'BLOCK_HEIGHT_DESC'
+  orderBy = 'BLOCK_HEIGHT_DESC'
 ) => {
   const query = `{
       extrinsics(
