@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react';
 
 import { fetchAccountExtrinsics } from '@/apis';
-import { AccountTxHistoryItem, Address, NetworkType } from '@/models';
+import {
+  AccountTxHistoryItem,
+  Address,
+  ApiResponse,
+  NetworkType,
+} from '@/models';
 
 export const useAccountExtrinsics = (
   network: NetworkType,
@@ -27,10 +32,13 @@ export const useAccountExtrinsics = (
 
         const result = [];
         while (!finished) {
-          const res = await fetchAccountExtrinsics(network, account, after);
-          if (res.status !== 200) break;
-
-          const { data } = await res.json();
+          const res: ApiResponse = await fetchAccountExtrinsics(
+            network,
+            account,
+            after
+          );
+          const { status, data } = res;
+          if (status !== 200) break;
 
           if (data.extrinsics.nodes !== null)
             result.push(...data.extrinsics.nodes);

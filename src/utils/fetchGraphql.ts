@@ -1,4 +1,9 @@
-export async function fetchGraphql(url: string, query: string) {
+import { ApiResponse } from '@/models';
+
+export async function fetchGraphql(
+  url: string,
+  query: string
+): Promise<ApiResponse> {
   const res = await fetch(url, {
     method: 'POST',
     headers: {
@@ -9,5 +14,9 @@ export async function fetchGraphql(url: string, query: string) {
       query,
     }),
   });
-  return res;
+  const { data } = await res.json();
+  return {
+    status: res.status,
+    data,
+  };
 }

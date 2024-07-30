@@ -1,5 +1,5 @@
 import { SUBSCAN_CORETIME_DICT, SUBSCAN_CORETIME_INDEXER } from '@/consts';
-import { Address, NetworkType } from '@/models';
+import { Address, ApiResponse, NetworkType } from '@/models';
 
 import { fetchGraphql } from '../utils/fetchGraphql';
 
@@ -8,7 +8,7 @@ export const fetchPurchaseHistoryData = async (
   regionBegin: number,
   after: string | null,
   orderBy = 'HEIGHT_DESC'
-) => {
+): Promise<ApiResponse> => {
   const query = `{
       purchases(
         after: ${after}
@@ -39,7 +39,7 @@ export const fetchAccountExtrinsics = async (
   address: Address,
   after: string | null,
   orderBy = 'BLOCK_HEIGHT_DESC'
-) => {
+): Promise<ApiResponse> => {
   const query = `{
       extrinsics(
         after: ${after}

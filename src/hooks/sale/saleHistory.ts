@@ -37,9 +37,7 @@ export const useSaleHistory = (network: NetworkType) => {
         if (res.status !== 200) {
           setError(true);
         } else {
-          const { data } = await res.json();
-
-          const { nodes } = data.sales as SaleHistoryResponse;
+          const { nodes } = res.data.sales as SaleHistoryResponse;
           setData(
             nodes.map((x: SaleHistoryResponseItem) => x as SaleHistoryItem)
           );

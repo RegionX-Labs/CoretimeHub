@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { fetchPurchaseHistoryData } from '@/apis';
-import { NetworkType, PurchaseHistoryItem } from '@/models';
+import { ApiResponse, NetworkType, PurchaseHistoryItem } from '@/models';
 
 export const usePurchaseHistory = (
   network: NetworkType,
@@ -26,15 +26,14 @@ export const usePurchaseHistory = (
 
         const result = [];
         while (!finished) {
-          const res = await fetchPurchaseHistoryData(
+          const res: ApiResponse = await fetchPurchaseHistoryData(
             network,
             regionBegin,
             after
           );
 
-          if (res.status !== 200) break;
-
-          const { data } = await res.json();
+          const { status, data } = res;
+          if (status !== 200) break;
 
           if (data.purchases.nodes !== null)
             result.push(...data.purchases.nodes);
