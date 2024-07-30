@@ -99,8 +99,8 @@ const BalanceProvider = ({ children }: Props) => {
         if (!regionxApi || regionxApiState !== ApiState.READY) return;
         unsubscribeRegionx = await regionxApi.queryMulti(
           [
-            [regionxApi.query.system.account, address],
-            [regionxApi.query.tokens.accounts, [address, 1]], // RELAY_ASSET_ID
+            [regionxApi.query.system?.account, address],
+            [regionxApi.query.tokens?.accounts, [address, 1]], // RELAY_ASSET_ID
           ],
           ([
             {

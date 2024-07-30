@@ -76,7 +76,7 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
               : data
             ).map(
               (
-                { address, core, extrinsic_index, timestamp, price, type },
+                { address, core, extrinsicId: extrinsic_index, timestamp, price, type },
                 index
               ) => (
                 <StyledTableRow key={index}>

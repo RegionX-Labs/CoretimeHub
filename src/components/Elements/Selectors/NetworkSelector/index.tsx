@@ -36,11 +36,11 @@ const RelaySelect = () => {
       label: 'Kusama',
       icon: KusamaIcon,
     },
-    {
-      value: NetworkType.WESTEND,
-      label: 'Westend',
-      icon: WestendIcon,
-    },
+    // {
+    //   value: NetworkType.WESTEND,
+    //   label: 'Westend',
+    //   icon: WestendIcon,
+    // },
   ];
 
   return (

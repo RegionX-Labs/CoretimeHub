@@ -98,7 +98,7 @@ export type PurchaseHistoryResponse = {
 export type PurchaseHistoryItem = {
   address: string;
   core: number;
-  extrinsic_index: string;
+  extrinsicId: string;
   timestamp: string;
   price: number;
   type: string;

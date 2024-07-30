@@ -46,7 +46,7 @@ const Home = () => {
   } = useSaleInfo();
 
   const { data: purchaseHistoryData, loading: loadingPurchaseHistory } =
-    usePurchaseHistory(network, regionBegin, 0, 1000);
+    usePurchaseHistory(network, regionBegin);
 
   const renewals = purchaseHistoryData.filter(
     (item) => item.type === 'renewed'

@@ -35,12 +35,7 @@ export const PurchaseHistoryModal = ({
   const {
     saleInfo: { regionBegin },
   } = useSaleInfo();
-  const { loading, data, isError } = usePurchaseHistory(
-    network,
-    regionBegin,
-    0,
-    1000
-  );
+  const { loading, data, isError } = usePurchaseHistory(network, regionBegin);
 
   return (
     <Dialog
