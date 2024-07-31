@@ -4,7 +4,7 @@ import { fetchAccountExtrinsics } from '@/apis';
 import {
   AccountTxHistoryItem,
   Address,
-  ExtrinsicsResponse,
+  ApiResponse,
   NetworkType,
 } from '@/models';
 
@@ -25,40 +25,42 @@ export const useAccountExtrinsics = (
       try {
         setLoading(true);
 
-        let page = 0;
         const txHistory: AccountTxHistoryItem[] = [];
 
-        for (;;) {
-          const res = await fetchAccountExtrinsics(network, account, page, 100);
-          if (res.status !== 200) {
-            setError(true);
-            break;
-          } else {
-            const { message, data } = await res.json();
-            if (message !== 'Success') {
-              setError(true);
-            } else {
-              const { count, extrinsics } = data as ExtrinsicsResponse;
+        let finished = false;
+        let after: string | null = null;
 
-              if (extrinsics !== null) {
-                txHistory.push(
-                  ...extrinsics.map(
-                    (item) =>
-                      ({
-                        extrinsicId: item.extrinsic_index,
-                        module: item.call_module,
-                        call: item.call_module_function,
-                        timestamp: item.block_timestamp,
-                        success: item.success,
-                      }) as AccountTxHistoryItem
-                  )
-                );
-              }
+        const result = [];
+        while (!finished) {
+          const res: ApiResponse = await fetchAccountExtrinsics(
+            network,
+            account,
+            after
+          );
+          const { status, data } = res;
+          if (status !== 200) break;
 
-              ++page;
-              if (txHistory.length === count) break;
-            }
-          }
+          if (data.extrinsics.nodes !== null)
+            result.push(...data.extrinsics.nodes);
+
+          finished = !data.extrinsics.pageInfo.hasNextPage;
+          after = data.extrinsics.pageInfo.endCursor;
+        }
+        if (!finished) {
+          setError(true);
+        } else {
+          txHistory.push(
+            ...result.map(
+              (item) =>
+                ({
+                  extrinsicId: item.id,
+                  module: item.module,
+                  call: item.call,
+                  timestamp: item.timestamp,
+                  success: item.success,
+                } as AccountTxHistoryItem)
+            )
+          );
         }
 
         setData(txHistory);

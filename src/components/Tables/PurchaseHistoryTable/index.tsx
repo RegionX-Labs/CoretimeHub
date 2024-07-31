@@ -76,7 +76,7 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
               : data
             ).map(
               (
-                { address, core, extrinsic_index, timestamp, price, type },
+                { address, core, extrinsicId: extrinsic_index, timestamp, price, type },
                 index
               ) => (
                 <StyledTableRow key={index}>
@@ -107,7 +107,10 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
                   </StyledTableCell>
                   <StyledTableCell align='center'>{type}</StyledTableCell>
                   <StyledTableCell align='center'>
-                    {timeAgo.format(timestamp * 1000, 'round-minute')}
+                    {timeAgo.format(
+                      new Date(timestamp).getTime(),
+                      'round-minute'
+                    )}
                   </StyledTableCell>
                 </StyledTableRow>
               )

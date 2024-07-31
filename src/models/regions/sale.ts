@@ -81,45 +81,44 @@ export type SalePhaseInfo = {
 
 // Response type of the Subscan API
 export type PurchaseHistoryResponseItem = {
-  account: {
-    address: string;
-  };
-  begin: number;
-  block_num: number;
-  block_timestamp: number;
+  account: string;
   core: number;
-  core_index: string;
-  end: number;
-  event_index: string;
-  extrinsic_index: string;
-  mask: string;
+  extrinsicId: number;
+  height: number;
   price: string;
-  purchased_type: string;
+  purchaseType: string;
+  timestamp: string;
 };
 
 export type PurchaseHistoryResponse = {
-  count: number;
-  list: PurchaseHistoryResponseItem[];
+  totalCount: number;
+  nodes: PurchaseHistoryResponseItem[];
 };
+
+export enum PurchaseType {
+  // eslint-disable-next-line no-unused-vars
+  BULK = 'bulk',
+  // eslint-disable-next-line no-unused-vars
+  RENEWAL = 'renewal',
+}
 
 export type PurchaseHistoryItem = {
   address: string;
   core: number;
-  extrinsic_index: string;
-  timestamp: number;
+  extrinsicId: string;
+  timestamp: string;
   price: number;
   type: string;
 };
 
 export type SaleHistoryResponseItem = {
-  sales_cycle: number;
-  region_begin: number;
-  region_end: number;
+  regionBegin: number;
+  regionEnd: number;
 };
 
 export type SaleHistoryResponse = {
-  count: number;
-  list: SaleHistoryResponseItem[];
+  totalCount: number;
+  nodes: SaleHistoryResponseItem[];
 };
 
 export type SaleHistoryItem = SaleHistoryResponseItem;

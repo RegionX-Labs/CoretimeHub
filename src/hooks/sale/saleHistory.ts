@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { SUBSCAN_CORETIME_API } from '@/consts';
+import { API_CORETIME_INDEXER } from '@/consts';
 import {
   NetworkType,
   SaleHistoryItem,
@@ -8,11 +8,9 @@ import {
   SaleHistoryResponseItem,
 } from '@/models';
 
-export const useSaleHistory = (
-  network: NetworkType,
-  page: number,
-  row: number
-) => {
+import { fetchGraphql } from '../../utils/fetchGraphql';
+
+export const useSaleHistory = (network: NetworkType) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<SaleHistoryItem[]>([]);
   const [isError, setError] = useState(false);
@@ -24,27 +22,25 @@ export const useSaleHistory = (
       setError(false);
 
       try {
-        const res = await fetch(
-          `${SUBSCAN_CORETIME_API[network]}/api/scan/broker/sales`,
-          {
-            method: 'POST',
-            body: JSON.stringify({ row, page }),
-          }
+        const res = await fetchGraphql(
+          `${API_CORETIME_INDEXER[network]}`,
+          `{
+            sales {
+              nodes {
+                regionBegin
+                regionEnd
+              }
+              totalCount
+            }
+          }`
         );
         if (res.status !== 200) {
           setError(true);
         } else {
-          const { message, data } = await res.json();
-
-          if (message !== 'Success') {
-            setError(true);
-          } else {
-            const { list } = data as SaleHistoryResponse;
-
-            setData(
-              list.map((x: SaleHistoryResponseItem) => x as SaleHistoryItem)
-            );
-          }
+          const { nodes } = res.data.sales as SaleHistoryResponse;
+          setData(
+            nodes.map((x: SaleHistoryResponseItem) => x as SaleHistoryItem)
+          );
         }
       } catch {
         setError(true);
@@ -53,7 +49,7 @@ export const useSaleHistory = (
     };
 
     asyncFetchData();
-  }, [network, page, row]);
+  }, [network]);
 
   return { loading, data, isError };
 };

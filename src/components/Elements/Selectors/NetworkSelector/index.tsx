@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import {
   Kusama as KusamaIcon,
   Rococo as RococoIcon,
-  Westend as WestendIcon,
 } from '@/assets/networks/relay';
 import { useNetwork } from '@/contexts/network';
 import { NetworkType } from '@/models';
@@ -36,11 +35,11 @@ const RelaySelect = () => {
       label: 'Kusama',
       icon: KusamaIcon,
     },
-    {
-      value: NetworkType.WESTEND,
-      label: 'Westend',
-      icon: WestendIcon,
-    },
+    // {
+    //   value: NetworkType.WESTEND,
+    //   label: 'Westend',
+    //   icon: WestendIcon,
+    // },
   ];
 
   return (

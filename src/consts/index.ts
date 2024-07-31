@@ -2,10 +2,17 @@ import { NetworkType } from '@/models';
 
 export const APP_NAME = 'coretime-hub';
 
-export const SUBSCAN_CORETIME_API = {
-  [NetworkType.ROCOCO]: process.env.SUBSCAN_CORETIME_ROCOCO_API ?? '',
-  [NetworkType.KUSAMA]: process.env.SUBSCAN_CORETIME_KUSAMA_API ?? '',
-  [NetworkType.WESTEND]: process.env.SUBSCAN_CORETIME_WESTEND_API ?? '',
+export const API_CORETIME_INDEXER = {
+  [NetworkType.ROCOCO]: process.env.ROCOCO_CORETIME_INDEXER ?? '',
+  [NetworkType.KUSAMA]: process.env.KUSAMA_CORETIME_INDEXER ?? '',
+  [NetworkType.WESTEND]: process.env.SUBSCAN_CORETIME_WESTEND_INDEXER ?? '',
+  [NetworkType.NONE]: '',
+};
+
+export const API_CORETIME_DICT = {
+  [NetworkType.ROCOCO]: process.env.ROCOCO_CORETIME_DICT ?? '',
+  [NetworkType.KUSAMA]: process.env.KUSAMA_CORETIME_DICT ?? '',
+  [NetworkType.WESTEND]: process.env.SUBSCAN_CORETIME_WESTEND_DICT ?? '',
   [NetworkType.NONE]: '',
 };
 

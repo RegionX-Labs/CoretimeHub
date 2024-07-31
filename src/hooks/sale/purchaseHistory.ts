@@ -1,17 +1,11 @@
 import { useEffect, useState } from 'react';
 
 import { fetchPurchaseHistoryData } from '@/apis';
-import {
-  NetworkType,
-  PurchaseHistoryItem,
-  PurchaseHistoryResponse,
-} from '@/models';
+import { ApiResponse, NetworkType, PurchaseHistoryItem } from '@/models';
 
 export const usePurchaseHistory = (
   network: NetworkType,
-  regionBegin: number,
-  page: number,
-  row: number
+  regionBegin: number
 ) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<PurchaseHistoryItem[]>([]);
@@ -27,45 +21,50 @@ export const usePurchaseHistory = (
 
       try {
         setLoading(true);
-        const res = await fetchPurchaseHistoryData(
-          network,
-          regionBegin,
-          page,
-          row
-        );
-        if (res.status !== 200) {
+        let finished = false;
+        let after: string | null = null;
+
+        const result = [];
+        while (!finished) {
+          const res: ApiResponse = await fetchPurchaseHistoryData(
+            network,
+            regionBegin,
+            after
+          );
+
+          const { status, data } = res;
+          if (status !== 200) break;
+
+          if (data.purchases.nodes !== null)
+            result.push(...data.purchases.nodes);
+
+          finished = !data.purchases.pageInfo.hasNextPage;
+          after = data.purchases.pageInfo.endCursor;
+        }
+        if (!finished) {
           setError(true);
         } else {
-          const { message, data } = await res.json();
-          if (message !== 'Success') {
-            setError(true);
-          } else {
-            const { list } = data as PurchaseHistoryResponse;
-
-            if (!list) setData([]);
-            else {
-              setData(
-                list.map(
-                  ({
-                    account: { address },
-                    core,
-                    extrinsic_index,
-                    block_timestamp,
-                    price,
-                    purchased_type,
-                  }) =>
-                    ({
-                      address,
-                      core,
-                      extrinsic_index,
-                      timestamp: block_timestamp,
-                      price: parseInt(price),
-                      type: purchased_type,
-                    }) as PurchaseHistoryItem
-                )
-              );
-            }
-          }
+          setData(
+            result.map(
+              ({
+                account,
+                core,
+                extrinsicId,
+                height,
+                price,
+                purchaseType,
+                timestamp,
+              }) =>
+                ({
+                  address: account,
+                  core,
+                  extrinsicId: `${height}-${extrinsicId}`,
+                  timestamp,
+                  price: parseInt(price),
+                  type: purchaseType,
+                } as PurchaseHistoryItem)
+            )
+          );
         }
       } catch {
         setError(true);
@@ -74,7 +73,7 @@ export const usePurchaseHistory = (
       }
     };
     asyncFetchData();
-  }, [network, regionBegin, page, row]);
+  }, [network, regionBegin]);
 
   return {
     loading,

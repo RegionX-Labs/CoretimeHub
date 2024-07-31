@@ -5,3 +5,8 @@ export type ParaId = number;
 export type BlockNumber = number;
 
 export type Address = string;
+
+export type ApiResponse = {
+  status: number;
+  data: any;
+};
