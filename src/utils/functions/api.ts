@@ -1,18 +1,25 @@
 import { AddressOrPair, SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult, Signer } from '@polkadot/types/types';
 
-import { TxStatusHandlers } from '@/models';
+import { NATIVE_ASSET_ID, TxStatusHandlers } from '@/models';
+import { numberToHex, numberToU8a } from '@polkadot/util';
 
 export const sendTx = async (
   tx: SubmittableExtrinsic<'promise', ISubmittableResult>,
   account: AddressOrPair,
   signer: Signer,
-  handlers: TxStatusHandlers
+  handlers: TxStatusHandlers,
+  feePaymentAsset: number = NATIVE_ASSET_ID
 ) => {
+  const options =
+    feePaymentAsset == NATIVE_ASSET_ID
+      ? { signer }
+      : { signer, assetId: 1, withSignedTransaction: true };
+
   try {
     const unsub = await tx.signAndSend(
       account,
-      { signer },
+      options,
       ({ status, events }) => {
         if (status.isReady) handlers.ready();
         else if (status.isInBlock) handlers.inBlock();
@@ -30,6 +37,7 @@ export const sendTx = async (
       }
     );
   } catch (e) {
+    console.log(e);
     handlers.error(e);
   } finally {
     handlers.finally && handlers.finally();

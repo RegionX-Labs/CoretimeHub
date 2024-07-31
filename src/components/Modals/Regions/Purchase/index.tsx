@@ -19,7 +19,7 @@ import { ApiState } from '@/contexts/apis/types';
 import { useMarket } from '@/contexts/market';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import { Listing } from '@/models';
+import { Listing, RELAY_ASSET_ID } from '@/models';
 
 interface PurchaseModalProps extends DialogProps {
   onClose: () => void;
@@ -92,15 +92,15 @@ export const PurchaseModal = ({
         },
         error: (e) => {
           toastError(
-            `Failed to purchase the region. Error: ${
-              e.errorMessage === 'Error'
-                ? 'Please check your balance.'
-                : e.errorMessage
+            `Failed to purchase the region. Error: ${e.errorMessage === 'Error'
+              ? 'Please check your balance.'
+              : e.errorMessage
             }`
           );
           setWorking(false);
         },
-      }
+      },
+      RELAY_ASSET_ID
     );
   };
 

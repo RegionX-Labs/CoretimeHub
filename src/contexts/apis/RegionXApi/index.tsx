@@ -78,6 +78,16 @@ const customRpc = {
   },
 };
 
+const signedExtensions = {
+  ChargeAssetTxPayment: {
+    extrinsic: {
+      tip: 'Compact<Balance>',
+      assetId: 'Option<AssetId>',
+    },
+    payload: {},
+  },
+};
+
 const defaultValue = {
   state: { ...initialState },
   disconnectRegionX: (): void => {
@@ -123,7 +133,7 @@ const RegionXApiContextProvider = (props: any) => {
       } catch {
         /** empty error handler */
       }
-      connect(state, url, dispatch, true, types, customRpc);
+      connect(state, url, dispatch, true, types, customRpc, signedExtensions);
     }
   }, [network, state]);
 

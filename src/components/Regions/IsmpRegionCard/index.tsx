@@ -23,7 +23,7 @@ import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import { ISMPRecordStatus, RegionMetadata } from '@/models';
+import { ISMPRecordStatus, RELAY_ASSET_ID, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 
@@ -206,7 +206,8 @@ export const IsmpRegionCard = ({
         error: (e) => {
           toastError(`Failed to request the region record. ${e}`);
         },
-      }
+      },
+      RELAY_ASSET_ID
     );
   };
 
