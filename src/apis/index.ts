@@ -1,4 +1,4 @@
-import { SUBSCAN_CORETIME_DICT, SUBSCAN_CORETIME_INDEXER } from '@/consts';
+import { API_CORETIME_DICT, API_CORETIME_INDEXER } from '@/consts';
 import { Address, ApiResponse, NetworkType } from '@/models';
 
 import { fetchGraphql } from '../utils/fetchGraphql';
@@ -31,7 +31,7 @@ export const fetchPurchaseHistoryData = async (
         totalCount
       }
     }`;
-  return fetchGraphql(SUBSCAN_CORETIME_INDEXER[network], query);
+  return fetchGraphql(API_CORETIME_INDEXER[network], query);
 };
 
 export const fetchAccountExtrinsics = async (
@@ -61,5 +61,5 @@ export const fetchAccountExtrinsics = async (
         totalCount
       }
     }`;
-  return fetchGraphql(SUBSCAN_CORETIME_DICT[network], query);
+  return fetchGraphql(API_CORETIME_DICT[network], query);
 };

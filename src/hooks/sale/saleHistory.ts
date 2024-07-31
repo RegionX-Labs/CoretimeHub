@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { SUBSCAN_CORETIME_INDEXER } from '@/consts';
+import { API_CORETIME_INDEXER } from '@/consts';
 import {
   NetworkType,
   SaleHistoryItem,
@@ -23,7 +23,7 @@ export const useSaleHistory = (network: NetworkType) => {
 
       try {
         const res = await fetchGraphql(
-          `${SUBSCAN_CORETIME_INDEXER[network]}`,
+          `${API_CORETIME_INDEXER[network]}`,
           `{
             sales {
               nodes {
