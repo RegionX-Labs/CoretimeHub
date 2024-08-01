@@ -134,7 +134,6 @@ export const ContributionModal = ({
         <OrderCard order={order} direction='horizontal' />
         <Stack direction='column' gap='1rem'>
           <AmountInput
-            amount={amount}
             currency={relaySymbol}
             caption='Contribution amount'
             setAmount={(value: number) => setAmount(value)}

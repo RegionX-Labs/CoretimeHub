@@ -1,7 +1,6 @@
 import { InputAdornment, Stack, TextField, Typography } from '@mui/material';
 
 interface AmountInputProps {
-  amount?: number;
   currency: string;
   title?: string;
   caption?: string;
@@ -11,7 +10,6 @@ interface AmountInputProps {
 // TODO: Fetch dot price and show how much is the currency amount worth.
 
 export const AmountInput = ({
-  amount,
   currency,
   title,
   caption,
@@ -28,7 +26,6 @@ export const AmountInput = ({
         {caption && <Typography lineHeight={1}>{caption}</Typography>}
       </Stack>
       <TextField
-        value={amount || '0'}
         placeholder={`Enter ${currency} amount`}
         InputProps={{
           endAdornment: (
