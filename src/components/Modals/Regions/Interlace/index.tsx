@@ -65,11 +65,11 @@ export const InterlaceModal = ({
       : '';
 
   const onInterlace = async () => {
-    if (!api || !activeAccount || !activeSigner) return;
+    if (!activeAccount || !activeSigner) return;
 
     const mask = maskFromBin(newMask);
 
-    const txInterlace = api.tx.broker.interlace(
+    const txInterlace = api!.tx.broker.interlace(
       regionMetadata.region.getOnChainRegionId(),
       mask
     );

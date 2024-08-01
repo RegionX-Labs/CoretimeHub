@@ -100,7 +100,7 @@ export const TransferModal = ({
   };
 
   const transferOnCoretimeChain = async (region: Region) => {
-    if (!coretimeApi || !activeAccount || !activeSigner) return;
+    if (!activeAccount || !activeSigner) return;
     if (!newOwner) {
       toastError('Please input the new owner.');
       return;
@@ -108,7 +108,7 @@ export const TransferModal = ({
 
     setWorking(true);
     transferRegionOnCoretimeChain(
-      coretimeApi,
+      coretimeApi!,
       region,
       activeSigner,
       activeAccount.address,

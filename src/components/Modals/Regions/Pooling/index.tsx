@@ -56,9 +56,9 @@ export const PoolingModal = ({
   const [working, setWorking] = useState(false);
 
   const onPool = async () => {
-    if (!api || !activeAccount || !activeSigner) return;
+    if (!activeAccount || !activeSigner) return;
 
-    const txPooling = api.tx.broker.pool(
+    const txPooling = api!.tx.broker.pool(
       regionMetadata.region.getOnChainRegionId(), // region id
       activeAccount.address, // payee
       finality

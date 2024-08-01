@@ -25,7 +25,6 @@ import {
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
@@ -51,7 +50,7 @@ const Purchase = () => {
     fetchSaleInfo,
   } = useSaleInfo();
   const {
-    state: { api, apiState, height, symbol, decimals },
+    state: { api, height, symbol, decimals },
   } = useCoretimeApi();
   const router = useRouter();
   const { network } = useNetwork();
@@ -60,8 +59,7 @@ const Purchase = () => {
   const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const onPurchase = async () => {
-    if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
-      return;
+    if (!activeAccount || !activeSigner) return;
 
     if (currentPhase === SalePhase.Interlude) {
       toastWarning(
@@ -75,7 +73,7 @@ const Purchase = () => {
       return;
     }
 
-    const txPurchase = api.tx.broker.purchase(currentPrice);
+    const txPurchase = api!.tx.broker.purchase(currentPrice);
 
     submitExtrinsicWithFeeInfo(
       symbol,

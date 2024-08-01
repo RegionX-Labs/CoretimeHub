@@ -61,14 +61,14 @@ export const TaskAssignModal = ({
   const [finality, setFinality] = useState<FinalityType>(FinalityType.FINAL);
 
   const onAssign = async () => {
-    if (!coretimeApi || !activeAccount || !activeSigner) return;
+    if (!activeAccount || !activeSigner) return;
 
     if (taskSelected === undefined) {
       toastError('Please select a task');
       return;
     }
 
-    const txAssign = coretimeApi.tx.broker.assign(
+    const txAssign = coretimeApi!.tx.broker.assign(
       regionMetadata.region.getOnChainRegionId(),
       taskSelected,
       finality

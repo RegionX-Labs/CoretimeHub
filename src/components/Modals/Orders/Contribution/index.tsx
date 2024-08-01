@@ -18,7 +18,6 @@ import { OrderCard } from '@/components/Orders';
 
 import { useAccounts } from '@/contexts/account';
 import { useRegionXApi, useRelayApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { useOrders } from '@/contexts/orders';
 import { useToast } from '@/contexts/toast';
 import { Order } from '@/models';
@@ -45,7 +44,7 @@ export const ContributionModal = ({
     state: { symbol: relaySymbol, decimals: relayDecimals },
   } = useRelayApi();
   const {
-    state: { api, apiState, symbol, decimals },
+    state: { api, symbol, decimals },
   } = useRegionXApi();
   const { toastInfo, toastError, toastWarning, toastSuccess } = useToast();
   const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
@@ -54,11 +53,6 @@ export const ContributionModal = ({
   const [amount, setAmount] = useState(0);
 
   const onContribute = () => {
-    if (!api || apiState !== ApiState.READY) {
-      toastWarning('Please check the API connection');
-      return;
-    }
-
     if (!activeAccount || !activeSigner) {
       toastWarning('Please connect your wallet');
       return;
@@ -70,7 +64,7 @@ export const ContributionModal = ({
     }
 
     try {
-      const tx = api.tx.orders.contribute(
+      const tx = api!.tx.orders.contribute(
         order.orderId,
         Math.floor(amount * Math.pow(10, relayDecimals))
       );

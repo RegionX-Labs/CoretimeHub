@@ -19,7 +19,6 @@ import { ProgressButton } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useRelayApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
 
 import styles from './index.module.scss';
@@ -41,7 +40,7 @@ export const ReserveModal = ({
     state: { activeAccount, activeSigner },
   } = useAccounts();
   const {
-    state: { api, apiState, decimals, symbol },
+    state: { api, decimals, symbol },
   } = useRelayApi();
   const { fetchParaStates } = useParasInfo();
   const { toastError, toastInfo, toastSuccess } = useToast();
@@ -50,15 +49,12 @@ export const ReserveModal = ({
   const [working, setWorking] = useState(false);
 
   const onReserve = async () => {
-    if (!api || apiState !== ApiState.READY) {
-      toastError('Please check the connection to the relay chain');
-      return;
-    }
     if (!activeAccount || !activeSigner) {
       toastError('Please connect your wallet');
       return;
     }
-    const txReserve = api.tx.registrar.reserve();
+
+    const txReserve = api!.tx.registrar.reserve();
 
     submitExtrinsicWithFeeInfo(
       symbol,

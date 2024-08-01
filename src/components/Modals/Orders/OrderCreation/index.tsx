@@ -27,7 +27,6 @@ import { ParaDisplay } from '@/components/Paras';
 import { chainData } from '@/chaindata';
 import { useAccounts } from '@/contexts/account';
 import { useRegionXApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { useOrders } from '@/contexts/orders';
 import { useSaleInfo } from '@/contexts/sales';
@@ -57,7 +56,7 @@ export const OrderCreationModal = ({
     state: { activeAccount, activeSigner },
   } = useAccounts();
   const {
-    state: { api, apiState, symbol, decimals },
+    state: { api, symbol, decimals },
   } = useRegionXApi();
   const { saleInfo } = useSaleInfo();
 
@@ -76,11 +75,6 @@ export const OrderCreationModal = ({
   );
 
   const onCreate = async () => {
-    if (!api || apiState !== ApiState.READY) {
-      toastWarning('Please check the API connection');
-      return;
-    }
-
     if (!activeAccount || !activeSigner) {
       toastWarning('Please connect your wallet');
       return;
@@ -107,7 +101,7 @@ export const OrderCreationModal = ({
     }
 
     try {
-      const tx = api.tx.orders.createOrder(paraId, {
+      const tx = api!.tx.orders.createOrder(paraId, {
         begin: regionBegin,
         end: regionEnd,
         coreOccupancy,

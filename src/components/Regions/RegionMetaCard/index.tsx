@@ -22,7 +22,6 @@ import React, { useEffect, useState } from 'react';
 import { timesliceToTimestamp } from '@/utils/functions';
 
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { useTasks } from '@/contexts/tasks';
 import { POOLING_TASK_ID, RegionLocation, RegionMetadata } from '@/models';
 
@@ -102,18 +101,14 @@ const RegionCardInner = ({
   const { timeslicePeriod } = useCoretimeApi();
 
   useEffect(() => {
-    if (!api || apiState !== ApiState.READY || !api.isConnected) {
-      return;
-    }
-
     const fetchTimestamps = async () => {
       const begin = await timesliceToTimestamp(
-        api,
+        api!,
         region.getBegin(),
         timeslicePeriod
       );
       const end = await timesliceToTimestamp(
-        api,
+        api!,
         region.getEnd(),
         timeslicePeriod
       );

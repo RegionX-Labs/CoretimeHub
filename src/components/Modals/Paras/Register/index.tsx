@@ -21,7 +21,6 @@ import { FileInput, ProgressButton } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useRelayApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
 
 import styles from './index.module.scss';
@@ -44,7 +43,7 @@ export const RegisterModal = ({
   const theme = useTheme();
 
   const {
-    state: { api, apiState, decimals, symbol },
+    state: { api, decimals, symbol },
   } = useRelayApi();
   const {
     state: { activeAccount, activeSigner },
@@ -69,15 +68,12 @@ export const RegisterModal = ({
       toastError('Please upload validation code');
       return;
     }
-    if (!api || apiState !== ApiState.READY) {
-      toastError('Please check the connection to the relay chain');
-      return;
-    }
     if (!activeAccount || !activeSigner) {
       toastError('Please connect your wallet');
       return;
     }
-    const txRegister = api.tx.registrar.register(
+
+    const txRegister = api!.tx.registrar.register(
       paraId,
       compactAddLength(genesisHead),
       compactAddLength(wasmCode)

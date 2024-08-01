@@ -24,7 +24,6 @@ import { Balance, ParaDisplay, ProgressButton } from '@/components';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
 import { BrokerStatus, ContextStatus } from '@/models';
@@ -58,12 +57,11 @@ const Renewal = () => {
   const formatDuration = humanizer({ units: ['w', 'd'], round: true });
 
   const handleRenew = () => {
-    if (!activeAccount || !coretimeApi || !coretimeApiState || !activeSigner)
-      return;
+    if (!activeAccount || !activeSigner) return;
 
     const { core } = parachains[activeIdx];
 
-    const txRenewal = coretimeApi.tx.broker.renew(core);
+    const txRenewal = coretimeApi!.tx.broker.renew(core);
     submitExtrinsicWithFeeInfo(
       symbol,
       decimals,
@@ -94,25 +92,18 @@ const Renewal = () => {
   useEffect(() => {
     const getExpiry = async () => {
       setLoading(true);
-      if (
-        !coretimeApi ||
-        coretimeApiState !== ApiState.READY ||
-        !relayApi ||
-        relayApiState !== ApiState.READY ||
-        !parachains[activeIdx]
-      )
-        return;
+      if (!parachains[activeIdx]) return;
 
       const { lastCommittedTimeslice } = (
-        await coretimeApi.query.broker.status()
+        await coretimeApi!.query.broker.status()
       ).toJSON() as BrokerStatus;
       const now = await timesliceToTimestamp(
-        relayApi,
+        relayApi!,
         lastCommittedTimeslice,
         timeslicePeriod
       );
       const expiry = await timesliceToTimestamp(
-        relayApi,
+        relayApi!,
         parachains[activeIdx].when,
         timeslicePeriod
       );

@@ -94,11 +94,12 @@ export const PartitionModal = ({
   }, [unitIdx]);
 
   const onPartition = async () => {
-    if (!coretimeApi || !activeAccount || !activeSigner) return;
+    if (!activeAccount || !activeSigner) return;
     const pivotInTimeslice = Math.floor(
       Math.floor((pivot * unit) / RELAY_CHAIN_BLOCK_TIME) / timeslicePeriod
     );
-    const txPartition = coretimeApi.tx.broker.partition(
+
+    const txPartition = coretimeApi!.tx.broker.partition(
       regionMetadata.region.getOnChainRegionId(),
       pivotInTimeslice
     );
