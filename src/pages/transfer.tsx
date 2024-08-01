@@ -445,7 +445,6 @@ const TransferPage = () => {
             destinationChain !== ChainType.NONE && (
               <Stack margin='2em 0' direction='column' gap={1}>
                 <AmountInput
-                  amount={transferAmount}
                   setAmount={setTransferAmount}
                   currency={symbol}
                   caption='Transfer amount'

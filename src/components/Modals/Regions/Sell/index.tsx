@@ -156,7 +156,6 @@ export const SellModal = ({
           <Paper className={styles.wrapper}>
             <Stack direction='column' gap={2}>
               <AmountInput
-                amount={price}
                 caption='Total price of the region'
                 currency={coretimeSymbol}
                 setAmount={setPrice}
