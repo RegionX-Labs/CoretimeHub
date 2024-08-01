@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import { EXPERIMENTAL } from '@/consts';
-import { NetworkType } from '@/models';
+import { enableRegionX } from '@/utils/functions';
 
 import { useAccounts } from '../account';
 import { useCoretimeApi, useRegionXApi, useRelayApi } from '../apis';
@@ -46,8 +45,6 @@ const BalanceProvider = ({ children }: Props) => {
   const {
     state: { api: regionxApi, apiState: regionxApiState },
   } = useRegionXApi();
-
-  const enableRegionx = network === NetworkType.ROCOCO || EXPERIMENTAL;
 
   const [coretimeBalance, setCoretimeBalance] = useState(0);
   const [relayBalance, setRelayBalance] = useState(0);
@@ -95,7 +92,7 @@ const BalanceProvider = ({ children }: Props) => {
       );
       let unsubscribeRegionx: any = null;
 
-      if (enableRegionx) {
+      if (enableRegionX(network)) {
         if (!regionxApi || regionxApiState !== ApiState.READY) return;
         unsubscribeRegionx = await regionxApi.queryMulti(
           [
@@ -129,7 +126,7 @@ const BalanceProvider = ({ children }: Props) => {
     relayApiState,
     regionxApi,
     regionxApiState,
-    enableRegionx,
+    network,
   ]);
 
   return (

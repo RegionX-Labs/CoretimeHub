@@ -1,13 +1,11 @@
 import { Box, Typography, useTheme } from '@mui/material';
 
-import { getBalanceString } from '@/utils/functions';
+import { enableRegionX, getBalanceString } from '@/utils/functions';
 
-import { EXPERIMENTAL } from '@/consts';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
 import { useBalances } from '@/contexts/balance';
 import { useNetwork } from '@/contexts/network';
-import { NetworkType } from '@/models';
 
 import styles from './index.module.scss';
 
@@ -34,8 +32,6 @@ export const Balance = ({
   const { state: coretimeState } = useCoretimeApi();
   const { state: regionxState } = useRegionXApi();
 
-  const enableRegionx = network === NetworkType.ROCOCO || EXPERIMENTAL;
-
   const items = [
     ...(rcBalance
       ? [
@@ -57,7 +53,7 @@ export const Balance = ({
           },
         ]
       : []),
-    ...(enableRegionx
+    ...(enableRegionX(network)
       ? [
           // Relay asset:
           ...(rxRcCurrencyBalance

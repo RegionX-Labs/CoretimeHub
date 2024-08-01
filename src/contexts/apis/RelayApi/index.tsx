@@ -62,7 +62,7 @@ const RelayApiContextProvider = (props: any) => {
       }
       connect(state, url, dispatch, true);
     }
-  }, [network, state]);
+  }, [network, state.socket]);
 
   useEffect(() => {
     const { api, apiState } = state;

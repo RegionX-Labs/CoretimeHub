@@ -11,12 +11,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
+import { enableRegionX } from '@/utils/functions';
+
 import Logo from '@/assets/logo.png';
-import { EXPERIMENTAL } from '@/consts';
 import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
+import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { RenewIcon } from '@/icons';
-import { NetworkType } from '@/models';
 
 import styles from './index.module.scss';
 import { StatusIndicator } from '../Elements';
@@ -78,16 +79,14 @@ export const Sidebar = () => {
 
   const { network } = useNetwork();
   const {
-    state: { apiState: relayApiState },
+    state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
   const {
-    state: { apiState: coretimeApiState },
+    state: { api: coretimeApi, apiState: coretimeApiState },
   } = useCoretimeApi();
   const {
-    state: { apiState: regionxApiState },
+    state: { api: regionXApi, apiState: regionxApiState },
   } = useRegionXApi();
-
-  const enableRegionX = network === NetworkType.ROCOCO || EXPERIMENTAL;
 
   const menu = {
     general: [
@@ -136,16 +135,21 @@ export const Sidebar = () => {
       {
         label: 'Explore the Market',
         route: '/marketplace',
-        enabled: enableRegionX,
+        enabled: enableRegionX(network),
         icon: <ExploreIcon />,
       },
       {
         label: 'Orders',
         route: '/orders',
-        enabled: enableRegionX,
+        enabled: enableRegionX(network),
         icon: <ListOutlinedIcon />,
       },
     ],
+  };
+
+  const getApiState = (api: any, state: ApiState) => {
+    if (!api) return ApiState.DISCONNECTED;
+    return state;
   };
 
   return (
@@ -196,10 +200,19 @@ export const Sidebar = () => {
           ))}
         </Stack>
         <div className={styles.statusContainer}>
-          <StatusIndicator state={relayApiState} label='Relay chain' />
-          <StatusIndicator state={coretimeApiState} label='Coretime chain' />
-          {enableRegionX && (
-            <StatusIndicator state={regionxApiState} label='RegionX chain' />
+          <StatusIndicator
+            state={getApiState(relayApi, relayApiState)}
+            label='Relay chain'
+          />
+          <StatusIndicator
+            state={getApiState(coretimeApi, coretimeApiState)}
+            label='Coretime chain'
+          />
+          {enableRegionX(network) && (
+            <StatusIndicator
+              state={getApiState(regionXApi, regionxApiState)}
+              label='RegionX chain'
+            />
           )}
         </div>
       </Box>
