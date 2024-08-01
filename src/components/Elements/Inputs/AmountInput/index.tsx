@@ -28,7 +28,6 @@ export const AmountInput = ({
         {caption && <Typography lineHeight={1}>{caption}</Typography>}
       </Stack>
       <TextField
-        value={amount || '0'}
         placeholder={`Enter ${currency} amount`}
         InputProps={{
           endAdornment: (
