@@ -4,6 +4,12 @@ export async function fetchGraphql(
   url: string,
   query: string
 ): Promise<ApiResponse> {
+  if (!url) {
+    return {
+      status: 400,
+      data: null,
+    };
+  }
   const res = await fetch(url, {
     method: 'POST',
     headers: {

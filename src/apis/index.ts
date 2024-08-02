@@ -3,6 +3,29 @@ import { Address, ApiResponse, NetworkType } from '@/models';
 
 import { fetchGraphql } from '../utils/fetchGraphql';
 
+export const fetchBurnInfo = async (
+  network: NetworkType
+): Promise<ApiResponse> => {
+  const query = `{
+    stats {
+      nodes {
+        id
+        saleCycle
+        totalBurn
+      }
+    }
+    sales(
+      orderBy: HEIGHT_DESC,
+      first: 2
+    ) {
+      nodes {
+        burn
+      }
+    }
+  }`;
+  return fetchGraphql(API_CORETIME_INDEXER[network], query);
+};
+
 export const fetchPurchaseHistoryData = async (
   network: NetworkType,
   regionBegin: number,
