@@ -3,11 +3,7 @@ import { useEffect, useState } from 'react';
 import { fetchSaleDetailsData } from '@/apis';
 import { ApiResponse, NetworkType, PurchaseHistoryItem } from '@/models';
 
-export const useSaleDetails = (
-  network: NetworkType,
-  regionBegin: number,
-  regionEnd: number
-) => {
+export const useSaleDetails = (network: NetworkType, saleCycle: number) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<PurchaseHistoryItem[]>([]);
   const [isError, setError] = useState(false);
@@ -27,8 +23,7 @@ export const useSaleDetails = (
         while (!finished) {
           const res: ApiResponse = await fetchSaleDetailsData(
             network,
-            regionBegin,
-            regionEnd,
+            saleCycle,
             after
           );
 
@@ -73,7 +68,7 @@ export const useSaleDetails = (
       }
     };
     asyncFetchData();
-  }, [network, regionBegin, regionEnd]);
+  }, [network, saleCycle]);
 
   return {
     loading,

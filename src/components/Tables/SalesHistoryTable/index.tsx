@@ -26,8 +26,7 @@ export const SalesHistoryTable = ({ data }: SalesHistoryTableProps) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [saleDetailsModalOpen, openSaleDetailsModal] = useState(false);
-  const [regionBegin, setRegionBegin] = useState(0);
-  const [regionEnd, setRegionEnd] = useState(0);
+  const [saleCycle, setSaleCycle] = useState<number | null>(null);
 
   const handleChangePage = (
     _event: React.MouseEvent<HTMLButtonElement> | null,
@@ -58,17 +57,16 @@ export const SalesHistoryTable = ({ data }: SalesHistoryTableProps) => {
             {(rowsPerPage > 0
               ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : data
-            ).map(({ id, regionBegin, regionEnd }, index) => (
+            ).map(({ saleCycle, regionBegin, regionEnd }, index) => (
               <StyledTableRow key={index}>
                 <StyledTableCell align='center'>
                   <Button
                     onClick={() => {
                       openSaleDetailsModal(true);
-                      setRegionBegin(regionBegin);
-                      setRegionEnd(regionEnd);
+                      setSaleCycle(saleCycle);
                     }}
                   >
-                    {id}
+                    {saleCycle}
                   </Button>
                 </StyledTableCell>
                 <StyledTableCell align='center'>{regionBegin}</StyledTableCell>
@@ -111,12 +109,15 @@ export const SalesHistoryTable = ({ data }: SalesHistoryTableProps) => {
           </TableFooter>
         </Table>
       </Stack>
-      <SaleDetailsModal
-        open={saleDetailsModalOpen}
-        onClose={() => openSaleDetailsModal(false)}
-        regionBegin={regionBegin}
-        regionEnd={regionEnd}
-      />
+      {saleCycle !== null ? (
+        <SaleDetailsModal
+          open={saleDetailsModalOpen}
+          onClose={() => openSaleDetailsModal(false)}
+          saleCycle={saleCycle}
+        />
+      ) : (
+        <></>
+      )}
     </Stack>
   );
 };

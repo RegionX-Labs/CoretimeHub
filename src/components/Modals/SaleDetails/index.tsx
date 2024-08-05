@@ -23,23 +23,17 @@ import styles from './index.module.scss';
 
 interface SaleDetailsModalProps extends DialogProps {
   onClose: () => void;
-  regionBegin: number;
-  regionEnd: number;
+  saleCycle: number;
 }
 
 export const SaleDetailsModal = ({
   open,
   onClose,
-  regionBegin,
-  regionEnd,
+  saleCycle,
 }: SaleDetailsModalProps) => {
   const theme = useTheme();
   const { network } = useNetwork();
-  const { loading, data, isError } = useSaleDetails(
-    network,
-    regionBegin,
-    regionEnd
-  );
+  const { loading, data, isError } = useSaleDetails(network, saleCycle);
 
   return (
     <Dialog
