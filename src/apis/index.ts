@@ -57,6 +57,61 @@ export const fetchPurchaseHistoryData = async (
   return fetchGraphql(API_CORETIME_INDEXER[network], query);
 };
 
+export const fetchSaleDetailsData = async (
+  network: NetworkType,
+  regionBegin: number,
+  regionEnd: number,
+  after: string | null,
+  orderBy = 'HEIGHT_DESC'
+): Promise<ApiResponse> => {
+  const query = `{
+      purchases(
+        filter: {begin: {greaterThanOrEqualTo: ${regionBegin}, lessThan: ${regionEnd}}}
+        after: ${after ? `"${after}"` : null}
+        orderBy: ${orderBy}
+      ) {
+        nodes {
+          account
+          core
+          extrinsicId
+          height
+          price
+          purchaseType
+          timestamp
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        totalCount
+      }
+    }`;
+  return fetchGraphql(API_CORETIME_INDEXER[network], query);
+};
+
+export const fetchSalesHistoryData = async (
+  network: NetworkType,
+  after: string | null
+): Promise<ApiResponse> => {
+  const query = `{
+      sales(
+        after: ${after},
+        orderBy: REGION_BEGIN_DESC
+      ) {
+        nodes {
+          id
+          regionBegin
+          regionEnd
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }`;
+  return fetchGraphql(API_CORETIME_INDEXER[network], query);
+};
+
 export const fetchAccountExtrinsics = async (
   network: NetworkType,
   address: Address,

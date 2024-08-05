@@ -80,14 +80,12 @@ export const CoreDetailsPanel = ({ saleInfo }: CoreDetailsPanelProps) => {
           description='Numbers of cores which are offered for sale'
           value={saleInfo.coresOffered}
         />
-        <div>
-          <DetailItem
-            label='Cores sold'
-            description='Numbers of cores which have been sold'
-            value={saleInfo.coresSold}
-            dataCy='cores-sold'
-          />
-        </div>
+        <DetailItem
+          label='Cores sold'
+          description='Numbers of cores which have been sold'
+          value={saleInfo.coresSold}
+          dataCy='cores-sold'
+        />
         <DetailItem
           label='Ideal cores sold'
           description='Numbers of cores sold to not affect the price for next sale'
