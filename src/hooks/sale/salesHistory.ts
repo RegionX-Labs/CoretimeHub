@@ -36,9 +36,9 @@ export const useSalesHistory = (network: NetworkType) => {
         } else {
           setData(
             result.map(
-              ({ id, regionBegin, regionEnd }) =>
+              ({ saleCycle, regionBegin, regionEnd }) =>
                 ({
-                  id,
+                  saleCycle,
                   regionBegin,
                   regionEnd,
                 } as SalesHistoryItem)

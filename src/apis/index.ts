@@ -59,14 +59,13 @@ export const fetchPurchaseHistoryData = async (
 
 export const fetchSaleDetailsData = async (
   network: NetworkType,
-  regionBegin: number,
-  regionEnd: number,
+  saleCycle: number,
   after: string | null,
   orderBy = 'HEIGHT_DESC'
 ): Promise<ApiResponse> => {
   const query = `{
       purchases(
-        filter: {begin: {greaterThanOrEqualTo: ${regionBegin}, lessThan: ${regionEnd}}}
+        filter: {saleCycle: {equalTo: ${saleCycle}}}
         after: ${after ? `"${after}"` : null}
         orderBy: ${orderBy}
       ) {
@@ -99,7 +98,7 @@ export const fetchSalesHistoryData = async (
         orderBy: REGION_BEGIN_DESC
       ) {
         nodes {
-          id
+          saleCycle
           regionBegin
           regionEnd
         }

@@ -112,7 +112,7 @@ export type PurchaseHistoryItem = {
 };
 
 export type SalesHistoryItem = {
-  id: string;
+  saleCycle: number;
   regionBegin: number;
   regionEnd: number;
 };
