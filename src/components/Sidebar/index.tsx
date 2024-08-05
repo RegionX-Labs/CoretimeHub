@@ -1,6 +1,7 @@
 import BuildRoundedIcon from '@mui/icons-material/BuildRounded';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ExploreIcon from '@mui/icons-material/Explore';
+import HistoryIcon from '@mui/icons-material/History';
 import HomeIcon from '@mui/icons-material/Home';
 import ListOutlinedIcon from '@mui/icons-material/ListOutlined';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -130,6 +131,12 @@ export const Sidebar = () => {
         route: '/purchase',
         enabled: true,
         icon: <ShoppingCartIcon />,
+      },
+      {
+        label: 'Sale History',
+        route: '/sales',
+        enabled: true,
+        icon: <HistoryIcon />,
       },
     ],
     'secondary market': [

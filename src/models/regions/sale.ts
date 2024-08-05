@@ -111,6 +111,12 @@ export type PurchaseHistoryItem = {
   type: string;
 };
 
+export type SalesHistoryItem = {
+  id: string;
+  regionBegin: number;
+  regionEnd: number;
+};
+
 export type SaleHistoryResponseItem = {
   regionBegin: number;
   regionEnd: number;
