@@ -36,11 +36,27 @@ export const useSalesHistory = (network: NetworkType) => {
         } else {
           setData(
             result.map(
-              ({ saleCycle, regionBegin, regionEnd }) =>
+              ({
+                saleCycle,
+                regionBegin,
+                regionEnd,
+                height,
+                saleEnd,
+                timestamp,
+                tsSaleEnd,
+                startPrice,
+                endPrice,
+              }) =>
                 ({
                   saleCycle,
                   regionBegin,
                   regionEnd,
+                  startBlock: height,
+                  endBlock: saleEnd,
+                  startTimestamp: Date.parse(timestamp),
+                  endTimestamp: Date.parse(tsSaleEnd),
+                  startPrice,
+                  endPrice,
                 } as SalesHistoryItem)
             )
           );

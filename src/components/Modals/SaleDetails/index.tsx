@@ -1,4 +1,5 @@
 import { Warning } from '@mui/icons-material';
+import InfoIcon from '@mui/icons-material/Info';
 import {
   Box,
   CircularProgress,
@@ -6,33 +7,54 @@ import {
   DialogActions,
   DialogContent,
   DialogProps,
+  IconButton,
   Stack,
+  Tooltip,
   Typography,
   useTheme,
 } from '@mui/material';
+import moment from 'moment';
 import React from 'react';
 
 import { useSaleDetails } from '@/hooks';
+import { getBalanceString } from '@/utils/functions';
 
-import { ActionButton } from '@/components/Elements';
+import { ActionButton, InfoItem } from '@/components/Elements';
 import { PurchaseHistoryTable } from '@/components/Tables';
 
+import { useCoretimeApi } from '@/contexts/apis';
 import { useNetwork } from '@/contexts/network';
+import { SalesHistoryItem } from '@/models';
 
 import styles from './index.module.scss';
 
 interface SaleDetailsModalProps extends DialogProps {
   onClose: () => void;
-  saleCycle: number;
+  info: SalesHistoryItem;
 }
 
 export const SaleDetailsModal = ({
   open,
   onClose,
-  saleCycle,
+  info,
 }: SaleDetailsModalProps) => {
   const theme = useTheme();
   const { network } = useNetwork();
+  const {
+    state: { decimals },
+  } = useCoretimeApi();
+  const {
+    saleCycle,
+    regionBegin,
+    regionEnd,
+    startPrice,
+    endPrice,
+    startTimestamp,
+    endTimestamp,
+    startBlock,
+    endBlock,
+  } = info;
+
   const { loading, data, isError } = useSaleDetails(network, saleCycle);
 
   return (
@@ -48,7 +70,7 @@ export const SaleDetailsModal = ({
             variant='subtitle1'
             sx={{ color: theme.palette.common.black }}
           >
-            Sale Details
+            Coretime Sale#{saleCycle}
           </Typography>
         </Box>
         {loading || isError ? (
@@ -64,6 +86,57 @@ export const SaleDetailsModal = ({
           </Stack>
         ) : (
           <Box className={styles.tableContainer}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+              }}
+            >
+              <InfoItem
+                label='Region Begin'
+                value={regionBegin.toLocaleString()}
+              ></InfoItem>
+              <InfoItem
+                label='Length'
+                value={(regionEnd - regionBegin).toLocaleString()}
+              ></InfoItem>
+              <InfoItem
+                label='Start Price'
+                value={getBalanceString(startPrice.toString(), decimals, '')}
+              ></InfoItem>
+              <InfoItem
+                label='End Price'
+                value={getBalanceString(endPrice.toString(), decimals, '')}
+              ></InfoItem>
+            </Box>
+            <Stack direction='row' alignItems='center'>
+              <Typography sx={{ color: theme.palette.text.primary }}>
+                {endTimestamp ? 'Sale Ended' : 'Sale Started'}
+              </Typography>
+              <Typography
+                sx={{
+                  color: theme.palette.common.black,
+                  fontWeight: 700,
+                  ml: '1rem',
+                }}
+              >
+                {endTimestamp
+                  ? `${moment(startTimestamp).format('D MMM HH:mm')} ~ ${moment(
+                      endTimestamp
+                    ).format('D MMM HH:mm')}`
+                  : moment(startTimestamp).format('D MMM HH:mm')}
+              </Typography>
+              <Tooltip
+                title={`Start Block: ${startBlock.toLocaleString()}${
+                  endBlock ? ' End Block: ' + endBlock.toLocaleString() : ''
+                }`}
+                placement='right'
+              >
+                <IconButton>
+                  <InfoIcon />
+                </IconButton>
+              </Tooltip>
+            </Stack>
             <PurchaseHistoryTable data={data} />
           </Box>
         )}

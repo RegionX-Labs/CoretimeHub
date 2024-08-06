@@ -95,12 +95,18 @@ export const fetchSalesHistoryData = async (
   const query = `{
       sales(
         after: ${after},
-        orderBy: REGION_BEGIN_DESC
+        orderBy: SALE_CYCLE_DESC
       ) {
         nodes {
           saleCycle
           regionBegin
           regionEnd
+          height
+          saleEnd
+          timestamp
+          tsSaleEnd
+          startPrice
+          endPrice
         }
         pageInfo {
           hasNextPage

@@ -115,6 +115,12 @@ export type SalesHistoryItem = {
   saleCycle: number;
   regionBegin: number;
   regionEnd: number;
+  startBlock: number;
+  endBlock: number;
+  startTimestamp: number;
+  endTimestamp: number;
+  startPrice: string;
+  endPrice: string;
 };
 
 export type SaleHistoryResponseItem = {
