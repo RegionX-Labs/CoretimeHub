@@ -152,6 +152,12 @@ export const Sidebar = () => {
         enabled: enableRegionX,
         icon: <ListOutlinedIcon />,
       },
+      {
+        label: 'Order Processor',
+        route: '/processor',
+        enabled: enableRegionX,
+        icon: <HomeIcon />,
+      },
     ],
   };
 
