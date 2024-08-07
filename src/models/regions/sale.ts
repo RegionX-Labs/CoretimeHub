@@ -122,15 +122,3 @@ export type SalesHistoryItem = {
   startPrice: string;
   endPrice: string;
 };
-
-export type SaleHistoryResponseItem = {
-  regionBegin: number;
-  regionEnd: number;
-};
-
-export type SaleHistoryResponse = {
-  totalCount: number;
-  nodes: SaleHistoryResponseItem[];
-};
-
-export type SaleHistoryItem = SaleHistoryResponseItem;
