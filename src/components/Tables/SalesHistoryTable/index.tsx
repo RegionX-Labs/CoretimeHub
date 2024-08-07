@@ -12,6 +12,8 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
+import { getTimeStringLong } from '@/utils/functions';
+
 import { SalesHistoryItem } from '@/models';
 
 import { StyledTableCell, StyledTableRow } from '../common';
@@ -51,6 +53,8 @@ export const SalesHistoryTable = ({ data }: SalesHistoryTableProps) => {
               <StyledTableCell>Sale Id</StyledTableCell>
               <StyledTableCell>Region Begin</StyledTableCell>
               <StyledTableCell>Region End</StyledTableCell>
+              <StyledTableCell>Sale Start</StyledTableCell>
+              <StyledTableCell>Sale End</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -74,6 +78,14 @@ export const SalesHistoryTable = ({ data }: SalesHistoryTableProps) => {
                 </StyledTableCell>
                 <StyledTableCell align='center'>
                   {info.regionEnd}
+                </StyledTableCell>
+                <StyledTableCell align='center'>
+                  {getTimeStringLong(info.startTimestamp)}
+                </StyledTableCell>
+                <StyledTableCell align='center'>
+                  {info.endTimestamp
+                    ? getTimeStringLong(info.endTimestamp)
+                    : ''}
                 </StyledTableCell>
               </StyledTableRow>
             ))}
