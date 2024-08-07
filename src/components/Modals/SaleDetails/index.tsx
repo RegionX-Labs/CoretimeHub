@@ -13,11 +13,10 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import moment from 'moment';
 import React from 'react';
 
 import { useSaleDetails } from '@/hooks';
-import { getBalanceString } from '@/utils/functions';
+import { getBalanceString, getTimeStringShort } from '@/utils/functions';
 
 import { ActionButton, InfoItem } from '@/components/Elements';
 import { PurchaseHistoryTable } from '@/components/Tables';
@@ -41,7 +40,7 @@ export const SaleDetailsModal = ({
   const theme = useTheme();
   const { network } = useNetwork();
   const {
-    state: { decimals },
+    state: { decimals, symbol },
   } = useCoretimeApi();
   const {
     saleCycle,
@@ -86,29 +85,28 @@ export const SaleDetailsModal = ({
           </Stack>
         ) : (
           <Box className={styles.tableContainer}>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-              }}
-            >
+            <Stack direction='row' justifyContent='space-between'>
               <InfoItem
                 label='Region Begin'
                 value={regionBegin.toLocaleString()}
-              ></InfoItem>
+              />
               <InfoItem
                 label='Length'
                 value={(regionEnd - regionBegin).toLocaleString()}
-              ></InfoItem>
+              />
               <InfoItem
                 label='Start Price'
-                value={getBalanceString(startPrice.toString(), decimals, '')}
-              ></InfoItem>
+                value={getBalanceString(
+                  startPrice.toString(),
+                  decimals,
+                  symbol
+                )}
+              />
               <InfoItem
                 label='End Price'
-                value={getBalanceString(endPrice.toString(), decimals, '')}
-              ></InfoItem>
-            </Box>
+                value={getBalanceString(endPrice.toString(), decimals, symbol)}
+              />
+            </Stack>
             <Stack direction='row' alignItems='center'>
               <Typography sx={{ color: theme.palette.text.primary }}>
                 {endTimestamp ? 'Sale Ended' : 'Sale Started'}
@@ -121,10 +119,10 @@ export const SaleDetailsModal = ({
                 }}
               >
                 {endTimestamp
-                  ? `${moment(startTimestamp).format('D MMM HH:mm')} ~ ${moment(
-                      endTimestamp
-                    ).format('D MMM HH:mm')}`
-                  : moment(startTimestamp).format('D MMM HH:mm')}
+                  ? `${getTimeStringShort(
+                      startTimestamp
+                    )} ~ ${getTimeStringShort(endTimestamp)}`
+                  : getTimeStringShort(startTimestamp)}
               </Typography>
               <Tooltip
                 title={`Start Block: ${startBlock.toLocaleString()}${
