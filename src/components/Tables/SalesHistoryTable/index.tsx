@@ -85,7 +85,7 @@ export const SalesHistoryTable = ({ data }: SalesHistoryTableProps) => {
                 <StyledTableCell align='center'>
                   {info.endTimestamp
                     ? getTimeStringLong(info.endTimestamp)
-                    : ''}
+                    : 'Not yet ended'}
                 </StyledTableCell>
               </StyledTableRow>
             ))}
