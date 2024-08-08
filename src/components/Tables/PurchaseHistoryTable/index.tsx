@@ -58,7 +58,7 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
 
   return (
     <Stack direction='column' gap='1em'>
-      <TableContainer component={Paper} sx={{ height: '35rem' }}>
+      <TableContainer component={Paper} sx={{ height: '32rem' }}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>
@@ -76,7 +76,14 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
               : data
             ).map(
               (
-                { address, core, extrinsicId: extrinsic_index, timestamp, price, type },
+                {
+                  address,
+                  core,
+                  extrinsicId: extrinsic_index,
+                  timestamp,
+                  price,
+                  type,
+                },
                 index
               ) => (
                 <StyledTableRow key={index}>

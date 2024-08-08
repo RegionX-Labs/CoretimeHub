@@ -265,7 +265,7 @@ const Marketplace = () => {
         >
           {filteredListings.map((listing, index) => (
             <Paper key={index}>
-              <Stack direction='column' sx={{ pb: '1rem' }}>
+              <Stack direction='column' paddingBottom='1rem'>
                 <MarketRegion listing={listing} />
                 {activeAccount ? (
                   <Button

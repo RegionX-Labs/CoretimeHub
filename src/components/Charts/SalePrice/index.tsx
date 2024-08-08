@@ -1,10 +1,13 @@
 import { CircularProgress, Stack } from '@mui/material';
 import { ApexOptions } from 'apexcharts';
-import moment from 'moment';
 import dynamic from 'next/dynamic';
 import * as React from 'react';
 
-import { formatNumber, planckBnToUnit } from '@/utils/functions';
+import {
+  formatNumber,
+  getTimeStringShort,
+  planckBnToUnit,
+} from '@/utils/functions';
 import { getCorePriceAt, isNewPricing } from '@/utils/sale';
 
 import { useCoretimeApi } from '@/contexts/apis';
@@ -135,7 +138,7 @@ export const SalePriceChart = () => {
       shared: false,
       x: {
         formatter: (v: number) =>
-          v === currentTimestamp ? 'Now' : moment(v).format('D MMM HH:mm'),
+          v === currentTimestamp ? 'Now' : getTimeStringShort(v),
       },
     },
     grid: {
