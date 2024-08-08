@@ -20,15 +20,15 @@ import { Address, Link } from '@/components/Elements';
 import { SUSBCAN_CORETIME_URL } from '@/consts';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useNetwork } from '@/contexts/network';
-import { PurchaseHistoryItem } from '@/models';
+import { OrderItem } from '@/models';
 
 import { StyledTableCell, StyledTableRow } from '../common';
 
-interface PurchaseHistoryTableProps {
-  data: PurchaseHistoryItem[];
+interface OrderProcessorTableProps {
+  data: OrderItem[];
 }
 
-export const OrderProcessorTable = ({ data }: PurchaseHistoryTableProps) => {
+export const OrderProcessorTable = ({ data }: OrderProcessorTableProps) => {
   TimeAgo.addLocale(en);
   // Create formatter (English).
   const timeAgo = new TimeAgo('en-US');
@@ -74,27 +74,24 @@ export const OrderProcessorTable = ({ data }: PurchaseHistoryTableProps) => {
               ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : data
             ).map(
-              (
-                { address, extrinsicId: extrinsic_index, timestamp, price },
-                index
-              ) => (
+              ({ orderId, extrinsicId, account, reward, timestamp }, index) => (
                 <StyledTableRow key={index}>
-                  <StyledTableCell align='center'>{index + 1}</StyledTableCell>
+                  <StyledTableCell align='center'>{orderId}</StyledTableCell>
                   <StyledTableCell align='center'>
                     <Link
-                      href={`${SUSBCAN_CORETIME_URL[network]}/extrinsic/${extrinsic_index}`}
+                      href={`${SUSBCAN_CORETIME_URL[network]}/extrinsic/${extrinsicId}`}
                       target='_blank'
                     >
-                      {extrinsic_index}
+                      {extrinsicId}
                     </Link>
                   </StyledTableCell>
                   <StyledTableCell align='center'>
                     <Link
-                      href={`${SUSBCAN_CORETIME_URL[network]}/account/${address}`}
+                      href={`${SUSBCAN_CORETIME_URL[network]}/account/${account}`}
                       target='_blank'
                     >
                       <Address
-                        value={address}
+                        value={account}
                         isCopy={true}
                         isShort={true}
                         size={24}
@@ -103,7 +100,7 @@ export const OrderProcessorTable = ({ data }: PurchaseHistoryTableProps) => {
                     </Link>
                   </StyledTableCell>
                   <StyledTableCell align='center'>
-                    {getBalanceString(price.toString(), decimals, '')} DOT
+                    {getBalanceString(reward.toString(), decimals, '')} DOT
                   </StyledTableCell>
                   <StyledTableCell align='center'>
                     {timeAgo.format(
