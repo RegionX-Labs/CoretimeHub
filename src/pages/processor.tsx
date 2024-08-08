@@ -33,8 +33,7 @@ const OrderProcessor = () => {
 							variant='subtitle2'
 							sx={{ color: theme.palette.text.primary }}
 						>
-							Purpose: keep track of orders that got matched by whom, when and
-							at what price
+							See all the orders that were fulfilled
 						</Typography>
 					</Box>
 					<OrderProcessorTable data={mockupData} />
