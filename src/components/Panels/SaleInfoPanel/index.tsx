@@ -1,10 +1,9 @@
 import { Box, Button, CircularProgress, useTheme } from '@mui/material';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
-import moment from 'moment';
 import { useState } from 'react';
 
-import { getBalanceString } from '@/utils/functions';
+import { getBalanceString, getTimeStringShort } from '@/utils/functions';
 
 import { SalePhaseCard } from '@/components/Elements';
 import { PriceModal } from '@/components/Modals';
@@ -61,11 +60,11 @@ export const SaleInfoPanel = () => {
             left: {
               label:
                 saleStartTimestamp < Date.now() ? 'Started at' : 'Starts at:',
-              value: moment(saleStartTimestamp).format('D MMM HH:mm'),
+              value: getTimeStringShort(saleStartTimestamp),
             },
             right: {
               label: saleEndTimestamp > Date.now() ? 'Ends at' : 'Ended at:',
-              value: moment(saleEndTimestamp).format('D MMMM HH:mm'),
+              value: getTimeStringShort(saleEndTimestamp),
             },
           }}
         />

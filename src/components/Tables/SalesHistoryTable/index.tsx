@@ -12,6 +12,8 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
+import { getTimeStringLong } from '@/utils/functions';
+
 import { SalesHistoryItem } from '@/models';
 
 import { StyledTableCell, StyledTableRow } from '../common';
@@ -26,7 +28,7 @@ export const SalesHistoryTable = ({ data }: SalesHistoryTableProps) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [saleDetailsModalOpen, openSaleDetailsModal] = useState(false);
-  const [saleCycle, setSaleCycle] = useState<number | null>(null);
+  const [saleSelected, selectSale] = useState<SalesHistoryItem | null>(null);
 
   const handleChangePage = (
     _event: React.MouseEvent<HTMLButtonElement> | null,
@@ -51,26 +53,40 @@ export const SalesHistoryTable = ({ data }: SalesHistoryTableProps) => {
               <StyledTableCell>Sale Id</StyledTableCell>
               <StyledTableCell>Region Begin</StyledTableCell>
               <StyledTableCell>Region End</StyledTableCell>
+              <StyledTableCell>Sale Start</StyledTableCell>
+              <StyledTableCell>Sale End</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {(rowsPerPage > 0
               ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : data
-            ).map(({ saleCycle, regionBegin, regionEnd }, index) => (
+            ).map((info, index) => (
               <StyledTableRow key={index}>
                 <StyledTableCell align='center'>
                   <Button
                     onClick={() => {
                       openSaleDetailsModal(true);
-                      setSaleCycle(saleCycle);
+                      selectSale(info);
                     }}
                   >
-                    {saleCycle}
+                    {info.saleCycle}
                   </Button>
                 </StyledTableCell>
-                <StyledTableCell align='center'>{regionBegin}</StyledTableCell>
-                <StyledTableCell align='center'>{regionEnd}</StyledTableCell>
+                <StyledTableCell align='center'>
+                  {info.regionBegin}
+                </StyledTableCell>
+                <StyledTableCell align='center'>
+                  {info.regionEnd}
+                </StyledTableCell>
+                <StyledTableCell align='center'>
+                  {getTimeStringLong(info.startTimestamp)}
+                </StyledTableCell>
+                <StyledTableCell align='center'>
+                  {info.endTimestamp
+                    ? getTimeStringLong(info.endTimestamp)
+                    : 'Not yet ended'}
+                </StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
@@ -109,11 +125,11 @@ export const SalesHistoryTable = ({ data }: SalesHistoryTableProps) => {
           </TableFooter>
         </Table>
       </Stack>
-      {saleCycle !== null ? (
+      {saleSelected !== null ? (
         <SaleDetailsModal
           open={saleDetailsModalOpen}
           onClose={() => openSaleDetailsModal(false)}
-          saleCycle={saleCycle}
+          info={saleSelected}
         />
       ) : (
         <></>

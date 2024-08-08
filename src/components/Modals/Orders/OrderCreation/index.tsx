@@ -204,7 +204,7 @@ export const OrderCreationModal = ({
           </FormControl>
         </Stack>
         <Typography>Region duration:</Typography>
-        <Stack sx={{ padding: '1rem', bgcolor: '#EFF0F3' }} gap='1rem'>
+        <Stack padding='1rem' bgcolor='#EFF0F3' gap='1rem'>
           <FormControl>
             <ToggleButtonGroup
               value={durationType}

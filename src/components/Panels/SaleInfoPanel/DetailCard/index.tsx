@@ -2,12 +2,9 @@ import { Box, Paper, Typography, useTheme } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 
-import styles from './index.module.scss';
+import { InfoItem, ItemDetail } from '@/components/Elements';
 
-interface ItemDetail {
-  label: string;
-  value: string | React.ReactNode;
-}
+import styles from './index.module.scss';
 
 interface DetailCardProps {
   icon: any;
@@ -19,26 +16,6 @@ interface DetailCardProps {
   };
   children?: React.ReactNode;
 }
-
-const ItemContainer = ({ label, value }: ItemDetail) => {
-  const theme = useTheme();
-  return (
-    <Box className={styles.infoItem}>
-      <Typography sx={{ color: theme.palette.text.primary }}>
-        {label}
-      </Typography>
-      <Typography
-        sx={{
-          color: theme.palette.common.black,
-          fontWeight: 700,
-          marginRight: '0.2em',
-        }}
-      >
-        {value}
-      </Typography>
-    </Box>
-  );
-};
 
 export const DetailCard = ({
   icon,
@@ -68,8 +45,8 @@ export const DetailCard = ({
       >
         {items ? (
           <>
-            <ItemContainer {...items.left} />
-            <ItemContainer {...items.right} />
+            <InfoItem {...items.left} />
+            <InfoItem {...items.right} />
           </>
         ) : (
           children

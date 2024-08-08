@@ -8,10 +8,9 @@ import {
   useTheme,
 } from '@mui/material';
 import { humanizer } from 'humanize-duration';
-import moment from 'moment';
 import React from 'react';
 
-import { getBalanceString } from '@/utils/functions';
+import { getBalanceString, getTimeStringShort } from '@/utils/functions';
 
 import { useRelayApi } from '@/contexts/apis';
 import { Listing } from '@/models';
@@ -94,7 +93,7 @@ export const MarketRegion = ({ listing }: MarketRegionProps) => {
           <Typography
             sx={{ color: theme.palette.common.black, fontWeight: 500 }}
           >
-            {moment(beginTimestamp).format('D MMM HH:mm')}
+            {getTimeStringShort(beginTimestamp)}
           </Typography>
         </Box>
         <Box className={styles.timeItem}>
@@ -102,7 +101,7 @@ export const MarketRegion = ({ listing }: MarketRegionProps) => {
           <Typography
             sx={{ color: theme.palette.common.black, fontWeight: 500 }}
           >
-            {moment(endTimestamp).format('D MMM HH:mm')}
+            {getTimeStringShort(endTimestamp)}
           </Typography>
         </Box>
       </Box>
