@@ -66,6 +66,7 @@ export const reducer = (state: any, action: any) => {
         ...state,
         api: null,
         apiState: ApiState.DISCONNECTED,
+        socket: '',
         symbol: '',
         name: '',
         height: 0,
