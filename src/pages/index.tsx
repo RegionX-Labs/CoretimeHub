@@ -74,7 +74,7 @@ const Home = () => {
     {
       label: 'Purchase a Core',
       image: Trade,
-      url: `/purchase?network=${network}`,
+      url: `/purchase`,
       dataCy: 'btn-purchase-a-core',
     },
     {
