@@ -54,7 +54,7 @@ export const useSaleDetails = (network: NetworkType, saleCycle: number) => {
                   address: account,
                   core,
                   extrinsicId: `${height}-${extrinsicId}`,
-                  timestamp,
+                  timestamp: new Date(`${timestamp}Z`),
                   price: parseInt(price),
                   type: purchaseType,
                 } as PurchaseHistoryItem)
