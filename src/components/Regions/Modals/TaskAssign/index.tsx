@@ -1,3 +1,5 @@
+import { CheckOutlined, EditOutlined } from '@mui/icons-material';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import {
   Alert,
   Box,
@@ -6,10 +8,12 @@ import {
   DialogActions,
   DialogContent,
   DialogProps,
+  IconButton,
   MenuItem,
   Paper,
   Select,
   Stack,
+  TextField,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -35,6 +39,68 @@ interface TaskAssignModalProps extends DialogProps {
   regionMetadata: RegionMetadata;
 }
 
+type TaskItemProps = {
+  name: string;
+  id: number;
+  editable?: boolean;
+};
+
+const TaskItem = ({ name, id, editable = false }: TaskItemProps) => {
+  const { setTaskName } = useTasks();
+  const [editing, setEditing] = useState(false);
+  const [newName, setNewName] = useState<string>('');
+
+  const onEdit = (e: any) => {
+    setEditing(true);
+    setNewName(name);
+    e.stopPropagation();
+  };
+
+  const onApply = () => {
+    setTaskName(id, newName);
+    setEditing(false);
+  };
+
+  const onCancel = () => {
+    setEditing(false);
+  };
+
+  return (
+    <Stack
+      direction='row'
+      justifyContent='space-between'
+      alignItems='center'
+      width='100%'
+    >
+      {editing ? (
+        <TextField
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          fullWidth
+          onClick={(e) => e.stopPropagation()}
+        />
+      ) : (
+        name
+      )}
+      {editable &&
+        (editing ? (
+          <Stack direction='row' alignItems='center' ml='1rem'>
+            <IconButton onClick={onApply}>
+              <CheckOutlined />
+            </IconButton>
+            <IconButton>
+              <CloseOutlinedIcon onClick={onCancel} />
+            </IconButton>
+          </Stack>
+        ) : (
+          <IconButton onClick={onEdit}>
+            <EditOutlined />
+          </IconButton>
+        ))}
+    </Stack>
+  );
+};
+
 export const TaskAssignModal = ({
   open,
   onClose,
@@ -55,6 +121,7 @@ export const TaskAssignModal = ({
   const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const [working, setWorking] = useState(false);
+  const [taskListOpen, openTaskList] = useState(false);
   const [taskSelected, selectTask] = useState<number>();
   const [taskModalOpen, openTaskModal] = useState(false);
 
@@ -104,10 +171,12 @@ export const TaskAssignModal = ({
   };
 
   useEffect(() => {
-    selectTask(tasks[0]?.id);
-    setWorking(false);
-    setFinality(FinalityType.FINAL);
-    openTaskModal(false);
+    if (!open) {
+      selectTask(tasks[0]?.id);
+      setWorking(false);
+      setFinality(FinalityType.FINAL);
+      openTaskModal(false);
+    }
   }, [open, tasks]);
 
   return (
@@ -163,10 +232,16 @@ export const TaskAssignModal = ({
                 <Select
                   value={taskSelected || ''}
                   onChange={(e) => selectTask(Number(e.target.value))}
+                  onOpen={() => openTaskList(true)}
+                  onClose={() => openTaskList(false)}
                 >
                   {tasks.map(({ name, id }, index) => (
                     <MenuItem key={index} value={id}>
-                      {name}
+                      <TaskItem
+                        name={name ?? ''}
+                        id={id}
+                        editable={taskListOpen}
+                      />
                     </MenuItem>
                   ))}
                 </Select>
