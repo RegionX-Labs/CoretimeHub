@@ -115,8 +115,8 @@ const BalanceProvider = ({ children }: Props) => {
       }
 
       return () => {
-        unsubscribeCoretime();
-        unsubscribeRelay();
+        if (unsubscribeCoretime) unsubscribeCoretime();
+        if (unsubscribeRelay) unsubscribeRelay();
         if (unsubscribeRegionx) unsubscribeRegionx();
       };
     };
