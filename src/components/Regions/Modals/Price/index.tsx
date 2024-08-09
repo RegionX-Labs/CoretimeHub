@@ -9,8 +9,7 @@ import {
   useTheme,
 } from '@mui/material';
 
-import { SalePriceChart } from '@/components/Charts';
-import { ActionButton, CountDown } from '@/components/Elements';
+import { ActionButton, CountDown, SalePriceChart } from '@/components';
 
 import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
