@@ -21,7 +21,7 @@ import { useNetwork } from '@/contexts/network';
 import { RenewIcon } from '@/icons';
 
 import styles from './index.module.scss';
-import { StatusIndicator } from '../Elements';
+import { StatusIndicator } from '../../Elements';
 
 interface MenuItemProps {
   label: string;

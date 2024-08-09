@@ -5,8 +5,7 @@ import { useState } from 'react';
 
 import { getBalanceString, getTimeStringShort } from '@/utils/functions';
 
-import { SalePhaseCard } from '@/components/Elements';
-import { PriceModal } from '@/components/Modals';
+import { PriceModal, SalePhaseCard } from '@/components';
 
 import DollarIcon from '@/assets/dollar.png';
 import ListIcon from '@/assets/list.png';

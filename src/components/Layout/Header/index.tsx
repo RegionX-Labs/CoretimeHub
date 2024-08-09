@@ -12,12 +12,16 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 
+import {
+  Address,
+  NetworkSelector,
+  ProgressButton,
+  TxHistoryModal,
+} from '@/components';
+
 import { KeyringState, useAccounts } from '@/contexts/account';
 
 import styles from './index.module.scss';
-import { Address, ProgressButton } from '../Elements';
-import NetworkSelector from '../Elements/Selectors/NetworkSelector';
-import { TxHistoryModal } from '../Modals/Accounts';
 
 export const Header = () => {
   const theme = useTheme();
