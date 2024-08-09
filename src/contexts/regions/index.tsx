@@ -8,7 +8,8 @@ import React, {
   useState,
 } from 'react';
 
-import { EXPERIMENTAL } from '@/consts';
+import { enableRegionX } from '@/utils/functions';
+
 import {
   ContextStatus,
   ISMPRecordStatus,
@@ -118,7 +119,7 @@ const RegionDataProvider = ({ children }: Props) => {
 
     const ctRegions = await collectCoretimeRegions(tasks);
     const rxRegions =
-      EXPERIMENTAL || network === NetworkType.ROCOCO
+      enableRegionX(network)
         ? await collectRegionXRegions(tasks)
         : [];
 
@@ -176,7 +177,7 @@ const RegionDataProvider = ({ children }: Props) => {
     // Only user owned non-expired regions.
     if (
       encodeAddress(region.getOwner(), 42) !==
-        encodeAddress(activeAccount.address, 42) ||
+      encodeAddress(activeAccount.address, 42) ||
       region.consumed({ timeslicePeriod, relayBlockNumber }) > 1
     )
       return null;

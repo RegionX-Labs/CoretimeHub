@@ -5,6 +5,7 @@ import { Region } from 'coretime-utils';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
+import { enableRegionX } from '@/utils/functions';
 import theme from '@/utils/muiTheme';
 import {
   coretimeFromRegionXTransfer,
@@ -31,7 +32,6 @@ import {
 } from '@/components';
 import AssetSelector from '@/components/Elements/Selectors/AssetSelector';
 
-import { EXPERIMENTAL } from '@/consts';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
@@ -44,7 +44,6 @@ import {
   ChainType,
   CORETIME_DECIMALS,
   ISMPRecordStatus,
-  NetworkType,
   RegionLocation,
   RegionMetadata,
 } from '@/models';
@@ -85,8 +84,6 @@ const TransferPage = () => {
 
   const [asset, setAsset] = useState<AssetType>(AssetType.TOKEN);
   const [transferAmount, setTransferAmount] = useState<number | undefined>();
-
-  const enableRegionX = network === NetworkType.ROCOCO || EXPERIMENTAL;
 
   const defaultHandler = {
     ready: () => toastInfo('Transaction was initiated'),
@@ -155,7 +152,7 @@ const TransferPage = () => {
       api = relayApi;
     } else {
       // RegionX
-      if (!enableRegionX) {
+      if (!enableRegionX(network)) {
         toastWarning('Currently not supported');
         return;
       }
@@ -239,7 +236,7 @@ const TransferPage = () => {
       originChain === ChainType.CORETIME &&
       destinationChain === ChainType.REGIONX
     ) {
-      if (!enableRegionX) toastWarning('Currently not supported');
+      if (!enableRegionX(network)) toastWarning('Currently not supported');
       else {
         const receiverKeypair = new Keyring();
         receiverKeypair.addFromAddress(
@@ -263,7 +260,7 @@ const TransferPage = () => {
       originChain === ChainType.REGIONX &&
       destinationChain === ChainType.CORETIME
     ) {
-      if (!enableRegionX || !regionXApi || regionxApiState !== ApiState.READY) {
+      if (!enableRegionX(network) || !regionXApi || regionxApiState !== ApiState.READY) {
         toastWarning('Currently not supported');
         return;
       }

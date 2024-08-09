@@ -1,7 +1,8 @@
 import { AddressOrPair, SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult, Signer } from '@polkadot/types/types';
 
-import { TxStatusHandlers } from '@/models';
+import { EXPERIMENTAL } from '@/consts';
+import { NetworkType, TxStatusHandlers } from '@/models';
 
 export const sendTx = async (
   tx: SubmittableExtrinsic<'promise', ISubmittableResult>,
@@ -34,4 +35,8 @@ export const sendTx = async (
   } finally {
     handlers.finally && handlers.finally();
   }
+};
+
+export const enableRegionX = (network: NetworkType): boolean => {
+  return network === NetworkType.ROCOCO || EXPERIMENTAL;
 };
