@@ -110,7 +110,11 @@ const AccountProvider = ({ children }: Props) => {
     asyncLoadAccounts();
   };
 
-  const disconnectWallet = () => dispatch({ type: 'DISCONNECT' });
+  const disconnectWallet = () => {
+    localStorage.removeItem(LOCAL_STORAGE_ACCOUNTS);
+    localStorage.removeItem(LOCAL_STORAGE_ACTIVE_ACCOUNT);
+    dispatch({ type: 'DISCONNECT' });
+  };
 
   useEffect(() => {
     const accounts = state.accounts;
@@ -118,8 +122,8 @@ const AccountProvider = ({ children }: Props) => {
     if (accounts.length) {
       const activeAccount = localStorage.getItem(LOCAL_STORAGE_ACTIVE_ACCOUNT);
       const account: InjectedAccountWithMeta = activeAccount
-        ? (accounts.find((acc: any) => acc.address == activeAccount) ??
-          accounts[0])
+        ? accounts.find((acc: any) => acc.address == activeAccount) ??
+          accounts[0]
         : accounts[0];
 
       setActiveAccount(account);

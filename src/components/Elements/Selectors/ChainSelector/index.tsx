@@ -19,6 +19,8 @@ interface ChainSelectorProps {
   setChain: (_: ChainType) => void;
 }
 
+import { enableRegionX } from '@/utils/functions';
+
 import {
   Kusama,
   KusamaCoretime,
@@ -28,7 +30,6 @@ import {
   Westend,
   WestendCoretime,
 } from '@/assets/networks';
-import { EXPERIMENTAL } from '@/consts';
 import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 
@@ -55,7 +56,6 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
     state: { name: relayChain, apiState: relayState },
   } = useRelayApi();
 
-  const enableRegionX = network === NetworkType.ROCOCO || EXPERIMENTAL;
   const {
     state: { name: regionXChain, apiState: regionXState },
   } = useRegionXApi();
@@ -73,7 +73,7 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
       value: ChainType.CORETIME,
       loading: relayState !== ApiState.READY,
     },
-    ...(enableRegionX
+    ...(enableRegionX(network)
       ? [
           {
             icon: RegionX,
