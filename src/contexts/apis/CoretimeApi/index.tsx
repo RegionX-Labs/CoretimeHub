@@ -77,7 +77,7 @@ const CoretimeApiContextProvider = (props: any) => {
       }
       connect(state, url, dispatch, true, types);
     }
-  }, [network, state]);
+  }, [network, state.socket]);
 
   return (
     <CoretimeApiContext.Provider
