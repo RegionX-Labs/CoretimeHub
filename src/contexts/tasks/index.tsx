@@ -1,4 +1,4 @@
-import { CoreIndex, getEncodedRegionId } from 'coretime-utils';
+import { CoreIndex, getEncodedRegionId, TaskId } from 'coretime-utils';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
@@ -17,6 +17,7 @@ interface TasksData {
   fetchRegionWorkload: (_core: CoreIndex, _mask: string) => Promise<Task>;
   loadTasksFromLocalStorage: () => void;
   addTask: (_task: TaskMetadata) => void;
+  setTaskName: (_id: TaskId, _newName: string) => void;
 }
 
 const defaultTasksData: TasksData = {
@@ -34,6 +35,9 @@ const defaultTasksData: TasksData = {
     /** */
   },
   addTask: () => {
+    /** */
+  },
+  setTaskName: () => {
     /** */
   },
 };
@@ -144,6 +148,15 @@ const TaskDataProvider = ({ children }: Props) => {
     localStorage.setItem(STORAGE_ITEM_KEY, JSON.stringify(_tasks));
   };
 
+  const setTaskName = (id: TaskId, newName: string) => {
+    const _tasks = tasks.map((item) => ({
+      ...item,
+      name: item.id === id ? newName : item.name,
+    }));
+    setTasks(_tasks);
+    localStorage.setItem(STORAGE_ITEM_KEY, JSON.stringify(_tasks));
+  };
+
   useEffect(() => {
     loadTasksFromLocalStorage();
   }, []);
@@ -156,6 +169,7 @@ const TaskDataProvider = ({ children }: Props) => {
         fetchRegionWorkload,
         loadTasksFromLocalStorage,
         addTask,
+        setTaskName,
       }}
     >
       {children}
