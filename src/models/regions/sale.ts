@@ -106,7 +106,7 @@ export type PurchaseHistoryItem = {
   address: string;
   core: number;
   extrinsicId: string;
-  timestamp: string;
+  timestamp: Date;
   price: number;
   type: string;
 };

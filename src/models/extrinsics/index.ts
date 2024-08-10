@@ -15,6 +15,6 @@ export type AccountTxHistoryItem = {
   extrinsicId: string;
   module: string;
   call: string;
-  timestamp: string;
+  timestamp: Date;
   success: boolean;
 };

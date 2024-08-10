@@ -56,7 +56,7 @@ export const useAccountExtrinsics = (
                   extrinsicId: item.id,
                   module: item.module,
                   call: item.call,
-                  timestamp: item.timestamp,
+                  timestamp: new Date(`${item.timestamp}Z`),
                   success: item.success,
                 } as AccountTxHistoryItem)
             )
