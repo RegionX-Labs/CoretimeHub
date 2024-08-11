@@ -37,6 +37,33 @@ export const sendTx = async (
   }
 };
 
+export const sendUnsignedTx = async (
+  tx: SubmittableExtrinsic<'promise', ISubmittableResult>,
+  handlers: TxStatusHandlers
+) => {
+  try {
+    const unsub = await tx.send(({ status, events }) => {
+      if (status.isReady) handlers.ready();
+      else if (status.isInBlock) handlers.inBlock();
+      else if (status.isFinalized) {
+        handlers.finalized();
+        events.forEach(({ event: { method } }) => {
+          if (method === 'ExtrinsicSuccess') {
+            handlers.success();
+          } else if (method === 'ExtrinsicFailed') {
+            handlers.fail();
+          }
+        });
+        unsub();
+      }
+    });
+  } catch (e) {
+    handlers.error(e);
+  } finally {
+    handlers.finally && handlers.finally();
+  }
+};
+
 export const enableRegionX = (network: NetworkType): boolean => {
   return network === NetworkType.ROCOCO || EXPERIMENTAL;
 };
