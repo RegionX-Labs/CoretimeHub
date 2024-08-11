@@ -58,8 +58,6 @@ const defaultEndpoints = {
 const defaultSalePhase = {
   currentPhase: SalePhase.Interlude,
   currentPrice: undefined,
-  saleStartTimestamp: 0,
-  saleEndTimestamp: 0,
   endpoints: defaultEndpoints,
 };
 
@@ -99,8 +97,6 @@ const SaleInfoProvider = ({ children }: Props) => {
   );
   const [at, setAt] = useState(0);
   const [currentPrice, setCurrentPrice] = useState<number | undefined>();
-  const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
-  const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const [endpoints, setEndpoints] = useState<PhaseEndpoints>(defaultEndpoints);
 
   useEffect(() => {
@@ -155,9 +151,6 @@ const SaleInfoProvider = ({ children }: Props) => {
         config.interludeLength * blockTime +
         regionDuration * timeslicePeriod * RELAY_CHAIN_BLOCK_TIME;
 
-      setSaleStartTimestamp(saleStartTimestamp);
-      setSaleEndTimestamp(saleEndTimestamp);
-
       const _endpoints = {
         interlude: {
           start: saleStartTimestamp - config.interludeLength * blockTime,
@@ -204,8 +197,6 @@ const SaleInfoProvider = ({ children }: Props) => {
         phase: {
           currentPhase,
           currentPrice,
-          saleStartTimestamp,
-          saleEndTimestamp,
           endpoints,
         },
         fetchSaleInfo,

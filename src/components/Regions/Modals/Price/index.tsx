@@ -24,7 +24,7 @@ export const PriceModal = ({ open, onClose }: PriceModalProps) => {
   const theme = useTheme();
 
   const {
-    phase: { currentPhase, saleStartTimestamp },
+    phase: { currentPhase, endpoints: saleEndpoints },
   } = useSaleInfo();
 
   return (
@@ -49,7 +49,7 @@ export const PriceModal = ({ open, onClose }: PriceModalProps) => {
             >
               <Typography>Sale starts in:</Typography>
               <CountDown
-                remainingTime={(saleStartTimestamp - Date.now()) / 1000}
+                remainingTime={(saleEndpoints.fixed.end - Date.now()) / 1000}
               />
             </Stack>
           </Box>
