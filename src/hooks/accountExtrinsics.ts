@@ -58,7 +58,7 @@ export const useAccountExtrinsics = (
                   call: item.call,
                   timestamp: new Date(`${item.timestamp}Z`),
                   success: item.success,
-                } as AccountTxHistoryItem)
+                }) as AccountTxHistoryItem
             )
           );
         }

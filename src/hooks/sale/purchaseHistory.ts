@@ -62,7 +62,7 @@ export const usePurchaseHistory = (
                   timestamp: new Date(`${timestamp}Z`),
                   price: parseInt(price),
                   type: purchaseType,
-                } as PurchaseHistoryItem)
+                }) as PurchaseHistoryItem
             )
           );
         }

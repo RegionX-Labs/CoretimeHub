@@ -49,15 +49,15 @@ const Home = () => {
     usePurchaseHistory(network, regionBegin);
 
   const renewals = purchaseHistoryData.filter(
-    (item) => item.type === PurchaseType.RENEWAL,
+    (item) => item.type === PurchaseType.RENEWAL
   );
   const numRenewals = renewals.length;
   const renewalCost =
     numRenewals === 0
       ? 0
       : Math.floor(
-        renewals.reduce((sum, item) => sum + item.price, 0) / numRenewals
-      );
+          renewals.reduce((sum, item) => sum + item.price, 0) / numRenewals
+        );
 
   const {
     currentBurn,

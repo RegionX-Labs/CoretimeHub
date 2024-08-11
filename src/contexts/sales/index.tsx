@@ -6,6 +6,7 @@ import { getCorePriceAt, getCurrentPhase } from '@/utils/sale';
 import {
   ContextStatus,
   PhaseEndpoints,
+  RELAY_CHAIN_BLOCK_TIME,
   SaleConfig,
   SaleInfo,
   SalePhase,
@@ -139,18 +140,23 @@ const SaleInfoProvider = ({ children }: Props) => {
       setConfig(config);
 
       const saleStart = saleInfo.saleStart;
-      const saleEnd = saleInfo.regionBegin * timeslicePeriod;
+      // Sale start != bulk phase start. sale_start = bulk_phase_start + interlude_length.
       const saleStartTimestamp = await getBlockTimestamp(
         coretimeApi,
         saleStart,
         network
       );
-      const saleEndTimestamp = await getBlockTimestamp(relayApi, saleEnd);
+
+      const regionDuration = saleInfo.regionEnd - saleInfo.regionBegin;
+      const blockTime = getBlockTime(network); // Block time on the coretime chain
+
+      const saleEndTimestamp =
+        saleStartTimestamp -
+        config.interludeLength * blockTime +
+        regionDuration * timeslicePeriod * RELAY_CHAIN_BLOCK_TIME;
 
       setSaleStartTimestamp(saleStartTimestamp);
       setSaleEndTimestamp(saleEndTimestamp);
-
-      const blockTime = getBlockTime(network); // Block time on the coretime chain
 
       const _endpoints = {
         interlude: {

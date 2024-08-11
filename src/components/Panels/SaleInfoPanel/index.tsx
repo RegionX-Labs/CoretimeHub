@@ -57,12 +57,11 @@ export const SaleInfoPanel = () => {
           title='Sale details'
           items={{
             left: {
-              label:
-                saleStartTimestamp < Date.now() ? 'Started at' : 'Starts at:',
+              label: 'Leadin start',
               value: getTimeStringShort(saleStartTimestamp),
             },
             right: {
-              label: saleEndTimestamp > Date.now() ? 'Ends at' : 'Ended at:',
+              label: 'Sale end',
               value: getTimeStringShort(saleEndTimestamp),
             },
           }}
