@@ -13,7 +13,6 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import { useEffect, useState } from 'react';
 
-import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 import { sendUnsignedTx, timesliceToTimestamp } from '@/utils/functions';
 import { makeResponse, makeTimeout, queryRequest } from '@/utils/ismp';
 
@@ -48,12 +47,7 @@ export const IsmpRegionCard = ({
     timeslicePeriod,
   } = useCoretimeApi();
   const {
-    state: {
-      api: regionxApi,
-      apiState: regionxApiState,
-      symbol: regionxSymbol,
-      decimals: regionxDecimals,
-    },
+    state: { api: regionxApi, apiState: regionxApiState },
   } = useRegionXApi();
   const {
     state: { activeAccount, activeSigner },
@@ -67,7 +61,6 @@ export const IsmpRegionCard = ({
 
   const { region, coreOccupancy, status } = regionMetadata;
   const { toastWarning, toastSuccess, toastInfo, toastError } = useToast();
-  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
   const [working, setWorking] = useState(false);
 
   useEffect(() => {
