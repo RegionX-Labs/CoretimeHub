@@ -260,7 +260,11 @@ const TransferPage = () => {
       originChain === ChainType.REGIONX &&
       destinationChain === ChainType.CORETIME
     ) {
-      if (!enableRegionX(network) || !regionXApi || regionxApiState !== ApiState.READY) {
+      if (
+        !enableRegionX(network) ||
+        !regionXApi ||
+        regionxApiState !== ApiState.READY
+      ) {
         toastWarning('Currently not supported');
         return;
       }

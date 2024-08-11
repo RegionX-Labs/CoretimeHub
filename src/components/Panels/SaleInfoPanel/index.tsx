@@ -27,7 +27,7 @@ export const SaleInfoPanel = () => {
   } = useCoretimeApi();
 
   const {
-    phase: { currentPhase, currentPrice, saleStartTimestamp, saleEndTimestamp },
+    phase: { currentPhase, currentPrice, endpoints: saleEndpoints },
     saleInfo,
   } = useSaleInfo();
 
@@ -57,13 +57,12 @@ export const SaleInfoPanel = () => {
           title='Sale details'
           items={{
             left: {
-              label:
-                saleStartTimestamp < Date.now() ? 'Started at' : 'Starts at:',
-              value: getTimeStringShort(saleStartTimestamp),
+              label: 'Leadin start',
+              value: getTimeStringShort(saleEndpoints.leadin.start),
             },
             right: {
-              label: saleEndTimestamp > Date.now() ? 'Ends at' : 'Ended at:',
-              value: getTimeStringShort(saleEndTimestamp),
+              label: 'Sale end',
+              value: getTimeStringShort(saleEndpoints.fixed.end),
             },
           }}
         />
