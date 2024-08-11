@@ -13,8 +13,7 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import { useEffect, useState } from 'react';
 
-import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
-import { timesliceToTimestamp } from '@/utils/functions';
+import { sendUnsignedTx, timesliceToTimestamp } from '@/utils/functions';
 import { makeResponse, makeTimeout, queryRequest } from '@/utils/ismp';
 
 import { useAccounts } from '@/contexts/account';
@@ -48,12 +47,7 @@ export const IsmpRegionCard = ({
     timeslicePeriod,
   } = useCoretimeApi();
   const {
-    state: {
-      api: regionxApi,
-      apiState: regionxApiState,
-      symbol: regionxSymbol,
-      decimals: regionxDecimals,
-    },
+    state: { api: regionxApi, apiState: regionxApiState },
   } = useRegionXApi();
   const {
     state: { activeAccount, activeSigner },
@@ -67,7 +61,6 @@ export const IsmpRegionCard = ({
 
   const { region, coreOccupancy, status } = regionMetadata;
   const { toastWarning, toastSuccess, toastInfo, toastError } = useToast();
-  const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
   const [working, setWorking] = useState(false);
 
   useEffect(() => {
@@ -183,31 +176,24 @@ export const IsmpRegionCard = ({
       region.getRegionId()
     );
     setWorking(true);
-    submitExtrinsicWithFeeInfo(
-      regionxSymbol,
-      regionxDecimals,
-      request,
-      activeAccount.address,
-      activeSigner,
-      {
-        ready: () => toastInfo('Transaction was initiated'),
-        inBlock: () => toastInfo('In Block'),
-        finalized: () => {
-          /** */
-        },
-        success: () => {
-          toastSuccess('Transaction successful');
-          setWorking(false);
-          fetchRegions();
-        },
-        fail: () => {
-          toastError(`Failed to request region record`);
-        },
-        error: (e) => {
-          toastError(`Failed to request the region record. ${e}`);
-        },
-      }
-    );
+    sendUnsignedTx(request, {
+      ready: () => toastInfo('Transaction was initiated'),
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => {
+        /** */
+      },
+      success: () => {
+        toastSuccess('Transaction successful');
+        setWorking(false);
+        fetchRegions();
+      },
+      fail: () => {
+        toastError(`Failed to request region record`);
+      },
+      error: (e) => {
+        toastError(`Failed to request the region record. ${e}`);
+      },
+    });
   };
 
   return (
