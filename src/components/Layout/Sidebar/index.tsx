@@ -1,4 +1,4 @@
-import BuildRoundedIcon from '@mui/icons-material/BuildRounded';
+import GridViewIcon from '@mui/icons-material/GridView';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ExploreIcon from '@mui/icons-material/Explore';
 import HistoryIcon from '@mui/icons-material/History';
@@ -118,10 +118,10 @@ export const Sidebar = () => {
         icon: <RenewIcon color={theme.palette.text.primary} />,
       },
       {
-        label: 'Manage',
+        label: 'Dashboard',
         route: '/paras',
         enabled: true,
-        icon: <BuildRoundedIcon />,
+        icon: <GridViewIcon />,
       },
     ],
     'primary market': [
