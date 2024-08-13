@@ -6,6 +6,8 @@ export const HOUR = 60 * MINUTE;
 export const DAY = 24 * HOUR;
 export const RELAY_CHAIN_BLOCK_TIME = 6 * SECOND;
 
+export const RELAY_ASSET_ID = 1;
+
 export const CORETIME_DECIMALS = 12;
 export const REGIONX_DECIMALS = 12;
 

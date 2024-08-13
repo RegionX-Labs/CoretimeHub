@@ -6,7 +6,9 @@ import {
   useState,
 } from 'react';
 
-import { ContextStatus, OnChainOrder, Order } from '@/models';
+import { getOrderAccount } from '@/utils/order';
+
+import { ContextStatus, OnChainOrder, Order, RELAY_ASSET_ID } from '@/models';
 
 import { useAccounts } from '../account';
 import { useRegionXApi } from '../apis';
@@ -56,11 +58,18 @@ const OrderProvider = ({ children }: Props) => {
 
       for await (const [key, value] of orderEntries) {
         const [orderId] = key.toHuman() as [number];
+        const orderAccount = getOrderAccount(api, orderId);
+
         const obj = value.toJSON() as OnChainOrder;
 
         const totalContribution = (
-          await api.query.orders.totalContributions(orderId)
-        ).toJSON() as number;
+          (
+            await api.query.tokens.accounts(
+              orderAccount.toString(),
+              RELAY_ASSET_ID
+            )
+          ).toJSON() as any
+        ).free;
         const contribution = (
           await api.query.orders.contributions(orderId, activeAccount?.address)
         ).toJSON() as number;
