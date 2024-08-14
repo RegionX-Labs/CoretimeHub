@@ -102,7 +102,7 @@ export const useTransferHandlers = () => {
         defaultHandler
       );
     } else {
-      let transferFunction;
+      let transferFunction: any;
       if (
         originChain === ChainType.CORETIME &&
         destinationChain === ChainType.RELAY
