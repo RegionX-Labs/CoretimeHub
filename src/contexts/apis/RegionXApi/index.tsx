@@ -115,10 +115,8 @@ const RegionXApiContextProvider = (props: any) => {
       return;
     }
     const url = getUrl(network);
-    if (state.socket === url) return;
-    if (!url) return;
+    if (!url || state.socket === url) return;
 
-    connect(state, WS_REGIONX_COCOS_CHAIN, dispatch, false, types, customRpc);
     if (state.socket !== url) {
       try {
         disconnect(state);
