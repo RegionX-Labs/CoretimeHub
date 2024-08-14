@@ -16,6 +16,7 @@ import { AssetType, ChainType } from '@/models';
 import { assetType } from './common';
 import { useTransferState } from './contexts/transferState';
 import { useTransferHandlers } from './hooks/useTransferHandlers';
+import { useRelayApi } from '@/contexts/apis';
 
 const TransferActions = () => {
   const {
@@ -27,7 +28,11 @@ const TransferActions = () => {
     setTransferAmount,
   } = useTransferHandlers();
 
-  const { symbol, originChain, destinationChain, relayTokenDecimals } = useTransferState();
+  const {
+    state: { symbol, decimals: relayTokenDecimals },
+  } = useRelayApi();
+
+  const { originChain, destinationChain } = useTransferState();
   const { balance } = useBalances();
 
   const router = useRouter();

@@ -20,22 +20,26 @@ import { useToast } from '@/contexts/toast';
 import { AssetType, ChainType } from '@/models';
 
 import { useTransferState } from '../contexts/transferState';
+import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
 
 export const useTransferHandlers = () => {
   const { toastError, toastInfo, toastWarning, toastSuccess } = useToast();
+  const { originChain, destinationChain, selectedRegion, asset } =
+    useTransferState();
+
   const {
-    originChain,
-    destinationChain,
-    selectedRegion,
-    asset,
-    coretimeApi,
-    regionXApi,
-    relayApi,
-    coretimeApiState,
-    regionxApiState,
-    relayApiState,
-    relayTokenDecimals,
-  } = useTransferState();
+    state: { api: coretimeApi, apiState: coretimeApiState },
+  } = useCoretimeApi();
+  const {
+    state: { api: regionXApi, apiState: regionxApiState },
+  } = useRegionXApi();
+  const {
+    state: {
+      api: relayApi,
+      apiState: relayApiState,
+      decimals: relayTokenDecimals,
+    },
+  } = useRelayApi();
 
   const [working, setWorking] = useState(false);
   const [newOwner, setNewOwner] = useState('');

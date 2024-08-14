@@ -1,4 +1,3 @@
-import { ApiPromise } from '@polkadot/api';
 import {
   createContext,
   ReactNode,
@@ -7,8 +6,6 @@ import {
   useState,
 } from 'react';
 
-import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { AssetType, ChainType, RegionLocation, RegionMetadata } from '@/models';
 
@@ -22,15 +19,7 @@ interface TransferState {
   filteredRegions: RegionMetadata[];
   asset: AssetType;
   setAsset: (_asset: AssetType) => void;
-  symbol: string;
-  coretimeApi: ApiPromise | null;
-  coretimeApiState: ApiState;
-  regionXApi: ApiPromise | null;
-  regionxApiState: ApiState;
-  relayApi: ApiPromise | null;
-  relayApiState: ApiState;
   fetchRegions: () => void;
-  relayTokenDecimals: number;
 }
 
 const defaultTasksData: TransferState = {
@@ -51,17 +40,9 @@ const defaultTasksData: TransferState = {
   setAsset: () => {
     /** */
   },
-  symbol: '',
-  coretimeApi: null,
-  coretimeApiState: ApiState.DISCONNECTED,
-  regionXApi: null,
-  regionxApiState: ApiState.DISCONNECTED,
-  relayApi: null,
-  relayApiState: ApiState.DISCONNECTED,
   fetchRegions: () => {
     /** */
   },
-  relayTokenDecimals: 0,
 };
 
 const TransferStateContext = createContext<TransferState>(defaultTasksData);
@@ -72,16 +53,6 @@ export const TransferStateProvider = ({
   children: ReactNode;
 }) => {
   const { regions, fetchRegions } = useRegions();
-
-  const {
-    state: { api: coretimeApi, apiState: coretimeApiState, symbol },
-  } = useCoretimeApi();
-  const {
-    state: { api: regionXApi, apiState: regionxApiState },
-  } = useRegionXApi();
-  const {
-    state: { api: relayApi, apiState: relayApiState, decimals: relayTokenDecimals, },
-  } = useRelayApi();
 
   const [originChain, setOriginChain] = useState<ChainType>(ChainType.RELAY);
   const [destinationChain, setDestinationChain] = useState<ChainType>(
@@ -121,15 +92,7 @@ export const TransferStateProvider = ({
         filteredRegions,
         asset,
         setAsset,
-        symbol,
-        coretimeApi,
-        coretimeApiState,
-        regionXApi,
-        regionxApiState,
-        relayApi,
-        relayApiState,
         fetchRegions,
-        relayTokenDecimals,
       }}
     >
       {children}

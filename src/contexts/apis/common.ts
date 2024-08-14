@@ -129,7 +129,7 @@ export const connect = (
 
       const chainInfo = _api.registry.getChainProperties();
       if (chainInfo) {
-        const { tokenDecimals, tokenSymbol, } = chainInfo.toHuman() as any;
+        const { tokenDecimals, tokenSymbol } = chainInfo.toHuman() as any;
         const ed = _api.consts.balances.existentialDeposit.toJSON();
         dispatch({
           type: 'SET_SYMBOL',
