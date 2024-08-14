@@ -7,7 +7,7 @@ import {
 } from 'react';
 
 import { useRegions } from '@/contexts/regions';
-import { AssetType, ChainType, RegionLocation, RegionMetadata } from '@/models';
+import { ChainType, RegionLocation, RegionMetadata } from '@/models';
 
 interface TransferState {
   originChain: ChainType;
@@ -17,9 +17,6 @@ interface TransferState {
   selectedRegion: RegionMetadata | null;
   setSelectedRegion: (_region: RegionMetadata | null) => void;
   filteredRegions: RegionMetadata[];
-  asset: AssetType;
-  setAsset: (_asset: AssetType) => void;
-  fetchRegions: () => void;
 }
 
 const defaultTasksData: TransferState = {
@@ -36,13 +33,6 @@ const defaultTasksData: TransferState = {
     /** */
   },
   filteredRegions: [],
-  asset: AssetType.TOKEN,
-  setAsset: () => {
-    /** */
-  },
-  fetchRegions: () => {
-    /** */
-  },
 };
 
 const TransferStateContext = createContext<TransferState>(defaultTasksData);
@@ -52,7 +42,7 @@ export const TransferStateProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const { regions, fetchRegions } = useRegions();
+  const { regions } = useRegions();
 
   const [originChain, setOriginChain] = useState<ChainType>(ChainType.RELAY);
   const [destinationChain, setDestinationChain] = useState<ChainType>(
@@ -64,7 +54,6 @@ export const TransferStateProvider = ({
   const [filteredRegions, setFilteredRegions] = useState<Array<RegionMetadata>>(
     []
   );
-  const [asset, setAsset] = useState<AssetType>(AssetType.TOKEN);
 
   useEffect(() => {
     if (originChain === ChainType.CORETIME) {
@@ -90,9 +79,6 @@ export const TransferStateProvider = ({
         selectedRegion,
         setSelectedRegion,
         filteredRegions,
-        asset,
-        setAsset,
-        fetchRegions,
       }}
     >
       {children}

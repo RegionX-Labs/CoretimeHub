@@ -15,16 +15,17 @@ import {
 } from '@/utils/transfers/native';
 
 import { useAccounts } from '@/contexts/account';
+import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
 import { AssetType, ChainType } from '@/models';
 
+import { assetType } from '../common';
 import { useTransferState } from '../contexts/transferState';
-import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
 
 export const useTransferHandlers = () => {
   const { toastError, toastInfo, toastWarning, toastSuccess } = useToast();
-  const { originChain, destinationChain, selectedRegion, asset } =
+  const { originChain, destinationChain, selectedRegion } =
     useTransferState();
 
   const {
@@ -73,9 +74,9 @@ export const useTransferHandlers = () => {
     }
 
     setWorking(true);
-    if (asset === AssetType.REGION) {
+    if (assetType(originChain, destinationChain) === AssetType.REGION) {
       await handleRegionTransfer();
-    } else if (asset === AssetType.TOKEN) {
+    } else if (assetType(originChain, destinationChain) === AssetType.TOKEN) {
       await handleTokenTransfer();
     }
   };

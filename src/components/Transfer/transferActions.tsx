@@ -8,6 +8,7 @@ import { ProgressButton } from '@/components/Elements/Buttons/ProgressButton';
 import { AddressInput } from '@/components/Elements/Inputs/AddressInput';
 import { AmountInput } from '@/components/Elements/Inputs/AmountInput';
 
+import { useRelayApi } from '@/contexts/apis';
 import { useBalances } from '@/contexts/balance';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
@@ -16,7 +17,6 @@ import { AssetType, ChainType } from '@/models';
 import { assetType } from './common';
 import { useTransferState } from './contexts/transferState';
 import { useTransferHandlers } from './hooks/useTransferHandlers';
-import { useRelayApi } from '@/contexts/apis';
 
 const TransferActions = () => {
   const {
