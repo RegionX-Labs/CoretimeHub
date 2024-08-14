@@ -8,7 +8,7 @@ import { ProgressButton } from '@/components/Elements/Buttons/ProgressButton';
 import { AddressInput } from '@/components/Elements/Inputs/AddressInput';
 import { AmountInput } from '@/components/Elements/Inputs/AmountInput';
 
-import { useRelayApi } from '@/contexts/apis';
+import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
 import { useBalances } from '@/contexts/balance';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
@@ -29,7 +29,13 @@ const TransferActions = () => {
   } = useTransferHandlers();
 
   const {
-    state: { symbol, decimals: relayTokenDecimals },
+    state: { ed: coretimeChainED },
+  } = useCoretimeApi();
+  const {
+    state: { ed: _regionXChainED }, // This is for the native asset
+  } = useRegionXApi();
+  const {
+    state: { symbol, decimals: relayTokenDecimals, ed: relayChainED },
   } = useRelayApi();
 
   const { originChain, destinationChain } = useTransferState();
@@ -54,13 +60,15 @@ const TransferActions = () => {
     const _transferAmount = transferAmount * Math.pow(10, relayTokenDecimals);
 
     // Ensure the user has a sufficient balance:
-    // TODO: check for existential deposit
+
     if (
       (originChain === ChainType.CORETIME &&
-        balance.coretime < _transferAmount) ||
+        balance.coretime - coretimeChainED < _transferAmount) ||
       (originChain === ChainType.REGIONX &&
+        // TODO ed:
         balance.rxRcCurrencyBalance < _transferAmount) ||
-      (originChain === ChainType.RELAY && balance.relay < _transferAmount)
+      (originChain === ChainType.RELAY &&
+        balance.relay - relayChainED < _transferAmount)
     ) {
       toastWarning('Insufficient balance');
       return;

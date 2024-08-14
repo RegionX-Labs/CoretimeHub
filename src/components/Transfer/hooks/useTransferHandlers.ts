@@ -25,8 +25,7 @@ import { useTransferState } from '../contexts/transferState';
 
 export const useTransferHandlers = () => {
   const { toastError, toastInfo, toastWarning, toastSuccess } = useToast();
-  const { originChain, destinationChain, selectedRegion } =
-    useTransferState();
+  const { originChain, destinationChain, selectedRegion } = useTransferState();
 
   const {
     state: { api: coretimeApi, apiState: coretimeApiState },
