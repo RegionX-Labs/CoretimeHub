@@ -2,12 +2,12 @@ import { Box, Paper, Stack, Typography } from '@mui/material';
 
 import theme from '@/utils/muiTheme';
 
-import AssetSelector from '@/components/Elements/Selectors/AssetSelector';
 import { ChainSelector } from '@/components/Elements/Selectors/ChainSelector';
 import { RegionSelector } from '@/components/Elements/Selectors/RegionSelector';
 
 import { AssetType, ChainType } from '@/models';
 
+import { assetType } from './common';
 import { useTransferState } from './contexts/transferState';
 
 const TransferForm = () => {
@@ -19,9 +19,6 @@ const TransferForm = () => {
     filteredRegions,
     selectedRegion,
     setSelectedRegion,
-    asset,
-    setAsset,
-    symbol,
   } = useTransferState();
 
   return (
@@ -57,20 +54,8 @@ const TransferForm = () => {
           />
         </Stack>
 
-        {/* Asset Selector */}
-        {originChain !== ChainType.NONE &&
-          destinationChain !== ChainType.NONE && (
-            <Stack margin='1em 0' direction='column' gap={1}>
-              <AssetSelector
-                symbol={symbol}
-                asset={asset}
-                setAsset={setAsset}
-              />
-            </Stack>
-          )}
-
         {/* Region Selector */}
-        {asset === AssetType.REGION &&
+        {assetType(originChain, destinationChain) === AssetType.REGION &&
           originChain !== ChainType.NONE &&
           destinationChain !== ChainType.NONE && (
             <Stack margin='1em 0' direction='column' gap={1}>
