@@ -57,7 +57,7 @@ export const useSalesHistory = (network: NetworkType) => {
                   endTimestamp: Number(tsSaleEnd),
                   startPrice,
                   endPrice,
-                }) as SalesHistoryItem
+                } as SalesHistoryItem)
             )
           );
         }

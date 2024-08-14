@@ -1,10 +1,8 @@
 import { Box, Paper, Stack, Typography, useTheme } from '@mui/material';
 import { humanizer } from 'humanize-duration';
-import TimeAgo from 'javascript-time-ago';
-import en from 'javascript-time-ago/locale/en';
 import { useEffect, useState } from 'react';
 
-import { timesliceToTimestamp } from '@/utils/functions';
+import { getRelativeTimeString, timesliceToTimestamp } from '@/utils/functions';
 
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
@@ -17,10 +15,6 @@ interface RegionOverviewProps {
 }
 
 export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
-  TimeAgo.addLocale(en);
-  // Create formatter (English).
-  const timeAgo = new TimeAgo('en-US');
-
   const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
 
   const {
@@ -86,13 +80,13 @@ export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
         <Stack direction='column'>
           <Typography>Begin:</Typography>
           <Typography sx={{ color: theme.palette.common.black }}>
-            {timeAgo.format(beginTimestamp)}
+            {getRelativeTimeString(beginTimestamp)}
           </Typography>
         </Stack>
         <Stack direction='column'>
           <Typography>End:</Typography>
           <Typography sx={{ color: theme.palette.common.black }}>
-            {timeAgo.format(endTimestamp)}
+            {getRelativeTimeString(endTimestamp)}
           </Typography>
         </Stack>
       </Box>

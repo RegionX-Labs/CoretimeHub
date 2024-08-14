@@ -10,11 +10,13 @@ import {
   TableRow,
   Tooltip,
 } from '@mui/material';
-import TimeAgo from 'javascript-time-ago';
-import en from 'javascript-time-ago/locale/en';
 import { useState } from 'react';
 
-import { getBalanceString, getTimeStringLong } from '@/utils/functions';
+import {
+  getBalanceString,
+  getRelativeTimeString,
+  getTimeStringLong,
+} from '@/utils/functions';
 
 import { Address, Link } from '@/components/Elements';
 
@@ -30,10 +32,6 @@ interface PurchaseHistoryTableProps {
 }
 
 export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
-  TimeAgo.addLocale(en);
-  // Create formatter (English).
-  const timeAgo = new TimeAgo('en-US');
-
   const { network } = useNetwork();
   const {
     state: { symbol, decimals },
@@ -116,12 +114,7 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
                   <StyledTableCell align='center'>{type}</StyledTableCell>
                   <StyledTableCell align='center'>
                     <Tooltip title={getTimeStringLong(timestamp)}>
-                      <p>
-                        {timeAgo.format(timestamp, {
-                          steps: [{ formatAs: 'day' }],
-                          labels: 'long',
-                        })}
-                      </p>
+                      <p>{getRelativeTimeString(timestamp)}</p>
                     </Tooltip>
                   </StyledTableCell>
                 </StyledTableRow>

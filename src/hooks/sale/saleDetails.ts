@@ -57,7 +57,7 @@ export const useSaleDetails = (network: NetworkType, saleCycle: number) => {
                   timestamp: new Date(Number(timestamp)),
                   price: parseInt(price),
                   type: purchaseType,
-                }) as PurchaseHistoryItem
+                } as PurchaseHistoryItem)
             )
           );
         }

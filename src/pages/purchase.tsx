@@ -6,8 +6,6 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import TimeAgo from 'javascript-time-ago';
-import en from 'javascript-time-ago/locale/en.json';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -36,8 +34,6 @@ const Purchase = () => {
   const theme = useTheme();
 
   const [working, setWorking] = useState(false);
-  TimeAgo.addLocale(en);
-  // Create formatter (English).
 
   const {
     state: { activeSigner, activeAccount },

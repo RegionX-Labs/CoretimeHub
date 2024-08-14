@@ -9,11 +9,13 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import TimeAgo from 'javascript-time-ago';
-import en from 'javascript-time-ago/locale/en';
 import { useEffect, useState } from 'react';
 
-import { sendUnsignedTx, timesliceToTimestamp } from '@/utils/functions';
+import {
+  getRelativeTimeString,
+  sendUnsignedTx,
+  timesliceToTimestamp,
+} from '@/utils/functions';
 import { makeResponse, makeTimeout, queryRequest } from '@/utils/ismp';
 
 import { useAccounts } from '@/contexts/account';
@@ -35,10 +37,6 @@ export const IsmpRegionCard = ({
   regionMetadata,
   requestAction,
 }: IsmpRegionProps) => {
-  TimeAgo.addLocale(en);
-  // Create formatter (English).
-  const timeAgo = new TimeAgo('en-US');
-
   const {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
@@ -221,7 +219,7 @@ export const IsmpRegionCard = ({
           <Stack direction='column'>
             <Typography>Begin:</Typography>
             <Typography sx={{ color: theme.palette.common.black }}>
-              {timeAgo.format(beginTimestamp)}
+              {getRelativeTimeString(beginTimestamp)}
             </Typography>
           </Stack>
           <Stack direction='column' gap='0.2rem' mx='1.5rem'>
