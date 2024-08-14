@@ -8,12 +8,13 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Tooltip,
 } from '@mui/material';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import { useState } from 'react';
 
-import { getBalanceString } from '@/utils/functions';
+import { getBalanceString, getTimeStringLong } from '@/utils/functions';
 
 import { Address, Link } from '@/components/Elements';
 
@@ -114,7 +115,14 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
                   </StyledTableCell>
                   <StyledTableCell align='center'>{type}</StyledTableCell>
                   <StyledTableCell align='center'>
-                    {timeAgo.format(timestamp, 'round-minute')}
+                    <Tooltip title={getTimeStringLong(timestamp)}>
+                      <p>
+                        {timeAgo.format(timestamp, {
+                          steps: [{ formatAs: 'day' }],
+                          labels: 'long',
+                        })}
+                      </p>
+                    </Tooltip>
                   </StyledTableCell>
                 </StyledTableRow>
               )

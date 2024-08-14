@@ -53,11 +53,11 @@ export const useSalesHistory = (network: NetworkType) => {
                   regionEnd,
                   startBlock: height,
                   endBlock: saleEnd,
-                  startTimestamp: Date.parse(`${timestamp}Z`),
-                  endTimestamp: Date.parse(`${tsSaleEnd}Z`),
+                  startTimestamp: Number(timestamp),
+                  endTimestamp: Number(tsSaleEnd),
                   startPrice,
                   endPrice,
-                }) as SalesHistoryItem
+                } as SalesHistoryItem)
             )
           );
         }
