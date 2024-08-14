@@ -4,7 +4,7 @@ import { AddressInput } from '@/components/Elements/Inputs/AddressInput';
 import { AmountInput } from '@/components/Elements/Inputs/AmountInput';
 import { ProgressButton } from '@/components/Elements/Buttons/ProgressButton';
 import { useTransferHandlers } from './hooks/useTransferHandlers';
-import { useTransferState } from './hooks/useTransferState';
+import { useTransferState } from './contexts/transferState';
 import { useRouter } from 'next/router';
 import theme from '@/utils/muiTheme';
 import { AssetType, ChainType } from '@/models';
@@ -28,6 +28,7 @@ const TransferActions = () => {
 
   return (
     <Box width='60%' margin='0.5rem auto'>
+      <p>{originChain}</p>
       <Stack margin='0.5rem 0' direction='column' gap={0.5} alignItems='center'>
         <ArrowDownward />
       </Stack>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ApiPromise, Keyring } from '@polkadot/api';
 import { ChainType, AssetType, CORETIME_DECIMALS } from '@/models';
 import { useToast } from '@/contexts/toast';
-import { useTransferState } from './useTransferState';
+import { useTransferState } from '../contexts/transferState';
 import {
   coretimeFromRegionXTransfer,
   coretimeToRegionXTransfer,
@@ -31,9 +31,8 @@ export const useTransferHandlers = () => {
     coretimeApiState,
     regionxApiState,
     relayApiState,
-    setAsset,
-    setOriginChain,
   } = useTransferState();
+  console.log(originChain);
 
   const [working, setWorking] = useState(false);
   const [newOwner, setNewOwner] = useState('');
@@ -58,11 +57,6 @@ export const useTransferHandlers = () => {
       toastError(`Failed to transfer: ${e.message}`);
       setWorking(false);
     },
-  };
-
-  const handleOriginChange = (newOrigin: ChainType) => {
-    setOriginChain(newOrigin);
-    if (newOrigin === ChainType.RELAY) setAsset(AssetType.TOKEN);
   };
 
   const handleTransfer = async () => {
@@ -225,6 +219,5 @@ export const useTransferHandlers = () => {
     transferAmount,
     setTransferAmount,
     handleTransfer,
-    handleOriginChange,
   };
 };

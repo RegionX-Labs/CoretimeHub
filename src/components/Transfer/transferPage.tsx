@@ -2,13 +2,16 @@ import { Box } from '@mui/material';
 import TransferHeader from './transferHeader';
 import TransferForm from './transferForm';
 import TransferActions from './transferActions';
+import { TransferStateProvider } from './contexts/transferState';
 
 const TransferPage = () => {
   return (
     <Box sx={{ maxHeight: 'calc(100% - 2rem)' }}>
-      <TransferHeader />
-      <TransferForm />
-      <TransferActions />
+      <TransferStateProvider>
+        <TransferHeader />
+        <TransferForm />
+        <TransferActions />
+      </TransferStateProvider>
     </Box>
   );
 };
