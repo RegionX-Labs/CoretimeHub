@@ -16,7 +16,7 @@ import { useTransferHandlers } from './hooks/useTransferHandlers';
 import { assetType } from './common';
 
 const TransferActions = () => {
-  const { working, handleTransfer, newOwner, setNewOwner, setTransferAmount } =
+  const { handleTransfer, working, newOwner, setNewOwner, setTransferAmount } =
     useTransferHandlers();
 
   const { originChain, destinationChain, symbol } = useTransferState();
