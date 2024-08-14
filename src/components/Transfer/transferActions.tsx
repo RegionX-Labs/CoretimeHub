@@ -11,6 +11,7 @@ import { AmountInput } from '@/components/Elements/Inputs/AmountInput';
 import { useNetwork } from '@/contexts/network';
 import { AssetType, ChainType } from '@/models';
 
+import { assetType } from './common';
 import { useTransferState } from './contexts/transferState';
 import { useTransferHandlers } from './hooks/useTransferHandlers';
 
@@ -18,7 +19,7 @@ const TransferActions = () => {
   const { handleTransfer, working, newOwner, setNewOwner, setTransferAmount } =
     useTransferHandlers();
 
-  const { asset, originChain, destinationChain, symbol } = useTransferState();
+  const { originChain, destinationChain, symbol } = useTransferState();
 
   const router = useRouter();
   const { network } = useNetwork();
@@ -50,7 +51,7 @@ const TransferActions = () => {
             label='Transfer to'
           />
         </Stack>
-        {asset === AssetType.TOKEN &&
+        {assetType(originChain, destinationChain) === AssetType.TOKEN &&
           originChain !== ChainType.NONE &&
           destinationChain !== ChainType.NONE && (
             <Stack margin='2em 0' direction='column' gap={1}>
