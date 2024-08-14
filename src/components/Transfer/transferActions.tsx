@@ -28,7 +28,6 @@ const TransferActions = () => {
 
   return (
     <Box width='60%' margin='0.5rem auto'>
-      <p>{originChain}</p>
       <Stack margin='0.5rem 0' direction='column' gap={0.5} alignItems='center'>
         <ArrowDownward />
       </Stack>

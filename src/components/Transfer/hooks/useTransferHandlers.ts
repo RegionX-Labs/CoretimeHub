@@ -32,7 +32,6 @@ export const useTransferHandlers = () => {
     regionxApiState,
     relayApiState,
   } = useTransferState();
-  console.log(originChain);
 
   const [working, setWorking] = useState(false);
   const [newOwner, setNewOwner] = useState('');
