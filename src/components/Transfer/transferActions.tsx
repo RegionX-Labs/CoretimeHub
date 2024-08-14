@@ -11,9 +11,9 @@ import { AmountInput } from '@/components/Elements/Inputs/AmountInput';
 import { useNetwork } from '@/contexts/network';
 import { AssetType, ChainType } from '@/models';
 
+import { assetType } from './common';
 import { useTransferState } from './contexts/transferState';
 import { useTransferHandlers } from './hooks/useTransferHandlers';
-import { assetType } from './common';
 
 const TransferActions = () => {
   const { handleTransfer, working, newOwner, setNewOwner, setTransferAmount } =
