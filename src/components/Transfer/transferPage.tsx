@@ -1,8 +1,9 @@
 import { Box } from '@mui/material';
-import TransferHeader from './transferHeader';
-import TransferForm from './transferForm';
-import TransferActions from './transferActions';
+
 import { TransferStateProvider } from './contexts/transferState';
+import TransferActions from './transferActions';
+import TransferForm from './transferForm';
+import TransferHeader from './transferHeader';
 
 const TransferPage = () => {
   return (

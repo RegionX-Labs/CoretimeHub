@@ -1,14 +1,18 @@
-import { Box, Button, Stack, Paper } from '@mui/material';
 import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
+import { Box, Button, Paper, Stack } from '@mui/material';
+import { useRouter } from 'next/router';
+
+import theme from '@/utils/muiTheme';
+
+import { ProgressButton } from '@/components/Elements/Buttons/ProgressButton';
 import { AddressInput } from '@/components/Elements/Inputs/AddressInput';
 import { AmountInput } from '@/components/Elements/Inputs/AmountInput';
-import { ProgressButton } from '@/components/Elements/Buttons/ProgressButton';
-import { useTransferHandlers } from './hooks/useTransferHandlers';
-import { useTransferState } from './contexts/transferState';
-import { useRouter } from 'next/router';
-import theme from '@/utils/muiTheme';
-import { AssetType, ChainType } from '@/models';
+
 import { useNetwork } from '@/contexts/network';
+import { AssetType, ChainType } from '@/models';
+
+import { useTransferState } from './contexts/transferState';
+import { useTransferHandlers } from './hooks/useTransferHandlers';
 
 const TransferActions = () => {
   const { handleTransfer, working, newOwner, setNewOwner, setTransferAmount } =

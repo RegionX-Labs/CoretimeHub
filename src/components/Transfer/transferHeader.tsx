@@ -1,6 +1,8 @@
 import { Box, Typography } from '@mui/material';
-import { Balance } from '../Elements/Balance';
+
 import theme from '@/utils/muiTheme';
+
+import { Balance } from '../Elements/Balance';
 
 const TransferHeader = () => {
   return (

@@ -1,20 +1,27 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { ChainType, AssetType, RegionMetadata, RegionLocation } from '@/models';
-import { useRegions } from '@/contexts/regions';
-import { useCoretimeApi, useRelayApi, useRegionXApi } from '@/contexts/apis';
 import { ApiPromise } from '@polkadot/api';
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+
+import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
+import { useRegions } from '@/contexts/regions';
+import { AssetType, ChainType, RegionLocation, RegionMetadata } from '@/models';
 
 interface TransferState {
   originChain: ChainType;
-  setOriginChain: (chain: ChainType) => void;
+  setOriginChain: (_chain: ChainType) => void;
   destinationChain: ChainType;
-  setDestinationChain: (chain: ChainType) => void;
+  setDestinationChain: (_chain: ChainType) => void;
   selectedRegion: RegionMetadata | null;
-  setSelectedRegion: (region: RegionMetadata | null) => void;
+  setSelectedRegion: (_region: RegionMetadata | null) => void;
   filteredRegions: RegionMetadata[];
   asset: AssetType;
-  setAsset: (asset: AssetType) => void;
+  setAsset: (_asset: AssetType) => void;
   symbol: string;
   coretimeApi: ApiPromise | null;
   coretimeApiState: ApiState;
@@ -27,14 +34,22 @@ interface TransferState {
 
 const defaultTasksData: TransferState = {
   originChain: ChainType.NONE,
-  setOriginChain: () => { },
+  setOriginChain: () => {
+    /** */
+  },
   destinationChain: ChainType.NONE,
-  setDestinationChain: () => { },
+  setDestinationChain: () => {
+    /** */
+  },
   selectedRegion: null,
-  setSelectedRegion: () => { },
+  setSelectedRegion: () => {
+    /** */
+  },
   filteredRegions: [],
   asset: AssetType.TOKEN,
-  setAsset: () => { },
+  setAsset: () => {
+    /** */
+  },
   symbol: '',
   coretimeApi: null,
   coretimeApiState: ApiState.DISCONNECTED,
@@ -42,12 +57,18 @@ const defaultTasksData: TransferState = {
   regionxApiState: ApiState.DISCONNECTED,
   relayApi: null,
   relayApiState: ApiState.DISCONNECTED,
-  fetchRegions: () => { },
+  fetchRegions: () => {
+    /** */
+  },
 };
 
 const TransferStateContext = createContext<TransferState>(defaultTasksData);
 
-export const TransferStateProvider = ({ children }: { children: ReactNode }) => {
+export const TransferStateProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const { regions, fetchRegions } = useRegions();
 
   const {
