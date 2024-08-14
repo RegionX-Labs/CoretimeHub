@@ -17,7 +17,7 @@ import {
 import { useAccounts } from '@/contexts/account';
 import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
-import { AssetType, ChainType, CORETIME_DECIMALS } from '@/models';
+import { AssetType, ChainType } from '@/models';
 
 import { useTransferState } from '../contexts/transferState';
 
@@ -34,6 +34,7 @@ export const useTransferHandlers = () => {
     coretimeApiState,
     regionxApiState,
     relayApiState,
+    relayTokenDecimals,
   } = useTransferState();
 
   const [working, setWorking] = useState(false);
@@ -87,7 +88,7 @@ export const useTransferHandlers = () => {
       return;
     }
 
-    const amount = transferAmount * Math.pow(10, CORETIME_DECIMALS);
+    const amount = transferAmount * Math.pow(10, relayTokenDecimals);
     const receiverKeypair = new Keyring();
     receiverKeypair.addFromAddress(newOwner);
 

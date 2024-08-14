@@ -30,6 +30,7 @@ interface TransferState {
   relayApi: ApiPromise | null;
   relayApiState: ApiState;
   fetchRegions: () => void;
+  relayTokenDecimals: number;
 }
 
 const defaultTasksData: TransferState = {
@@ -60,6 +61,7 @@ const defaultTasksData: TransferState = {
   fetchRegions: () => {
     /** */
   },
+  relayTokenDecimals: 0,
 };
 
 const TransferStateContext = createContext<TransferState>(defaultTasksData);
@@ -78,7 +80,7 @@ export const TransferStateProvider = ({
     state: { api: regionXApi, apiState: regionxApiState },
   } = useRegionXApi();
   const {
-    state: { api: relayApi, apiState: relayApiState },
+    state: { api: relayApi, apiState: relayApiState, decimals: relayTokenDecimals, },
   } = useRelayApi();
 
   const [originChain, setOriginChain] = useState<ChainType>(ChainType.RELAY);
@@ -127,6 +129,7 @@ export const TransferStateProvider = ({
         relayApi,
         relayApiState,
         fetchRegions,
+        relayTokenDecimals,
       }}
     >
       {children}

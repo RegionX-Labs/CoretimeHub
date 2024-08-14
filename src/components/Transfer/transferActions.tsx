@@ -14,21 +14,53 @@ import { AssetType, ChainType } from '@/models';
 import { assetType } from './common';
 import { useTransferState } from './contexts/transferState';
 import { useTransferHandlers } from './hooks/useTransferHandlers';
+import { useBalances } from '@/contexts/balance';
+import { useToast } from '@/contexts/toast';
 
 const TransferActions = () => {
-  const { handleTransfer, working, newOwner, setNewOwner, setTransferAmount } =
-    useTransferHandlers();
+  const {
+    transferAmount,
+    handleTransfer,
+    working,
+    newOwner,
+    setNewOwner,
+    setTransferAmount,
+  } = useTransferHandlers();
 
-  const { originChain, destinationChain, symbol } = useTransferState();
+  const { symbol, originChain, destinationChain, relayTokenDecimals } = useTransferState();
+  const { balance } = useBalances();
 
   const router = useRouter();
   const { network } = useNetwork();
+  const { toastWarning } = useToast();
 
   const onHome = () => {
     router.push({
       pathname: '/',
       query: { network },
     });
+  };
+
+  const onTransfer = () => {
+    if (!transferAmount) {
+      toastWarning('Please input the amount');
+      return;
+    }
+    const _transferAmount = transferAmount * Math.pow(10, relayTokenDecimals);
+
+    // Ensure the user has a sufficient balance:
+    // TODO: check for existential deposit
+    if (
+      (originChain === ChainType.CORETIME &&
+        balance.coretime < _transferAmount) ||
+      (originChain === ChainType.REGIONX &&
+        balance.rxRcCurrencyBalance < _transferAmount) ||
+      (originChain === ChainType.RELAY && balance.relay < _transferAmount)
+    ) {
+      toastWarning('Insufficient balance');
+      return;
+    }
+    handleTransfer();
   };
 
   return (
@@ -85,7 +117,7 @@ const TransferActions = () => {
         </Button>
         <ProgressButton
           label='Transfer'
-          onClick={handleTransfer}
+          onClick={onTransfer}
           loading={working}
         />
       </Box>
