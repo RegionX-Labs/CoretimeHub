@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Keyring } from '@polkadot/api';
+import { ApiPromise, Keyring } from '@polkadot/api';
 import { ChainType, AssetType, CORETIME_DECIMALS } from '@/models';
 import { useToast } from '@/contexts/toast';
 import { useTransferState } from './useTransferState';
@@ -27,8 +27,10 @@ export const useTransferHandlers = () => {
     asset,
     coretimeApi,
     regionXApi,
+    relayApi,
     coretimeApiState,
     regionxApiState,
+    relayApiState,
     setAsset,
     setOriginChain,
   } = useTransferState();
@@ -94,7 +96,7 @@ export const useTransferHandlers = () => {
     receiverKeypair.addFromAddress(newOwner);
 
     if (originChain === destinationChain) {
-      if (!(coretimeApi && coretimeApiState === ApiState.READY)) return;
+      if (!coretimeApi || !(coretimeApiState === ApiState.READY)) return;
       await transferNativeToken(
         coretimeApi,
         activeSigner,
@@ -104,12 +106,6 @@ export const useTransferHandlers = () => {
         defaultHandler
       );
     } else {
-      if (
-        !(coretimeApi && coretimeApiState === ApiState.READY) ||
-        !(regionXApi && regionxApiState === ApiState.READY)
-      )
-        return;
-
       let transferFunction;
       if (
         originChain === ChainType.CORETIME &&
@@ -137,13 +133,34 @@ export const useTransferHandlers = () => {
         return;
       }
 
-      transferFunction(
-        originChain === ChainType.CORETIME ? coretimeApi : regionXApi,
-        { address: activeAccount.address, signer: activeSigner },
-        amount.toString(),
-        receiverKeypair.pairs[0].publicKey,
-        defaultHandler
-      );
+      const transfer = (api: ApiPromise) =>
+        transferFunction(
+          api,
+          { address: activeAccount.address, signer: activeSigner },
+          amount.toString(),
+          receiverKeypair.pairs[0].publicKey,
+          defaultHandler
+        );
+
+      if (
+        originChain === ChainType.CORETIME &&
+        coretimeApi &&
+        coretimeApiState === ApiState.READY
+      ) {
+        transfer(coretimeApi);
+      } else if (
+        originChain === ChainType.RELAY &&
+        relayApi &&
+        relayApiState === ApiState.READY
+      ) {
+        transfer(relayApi);
+      } else if (
+        originChain === ChainType.REGIONX &&
+        regionXApi &&
+        regionxApiState === ApiState.READY
+      ) {
+        transfer(regionXApi);
+      }
     }
   };
 
