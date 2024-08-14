@@ -14,12 +14,9 @@ import {
 } from '@mui/material';
 import { clsx } from 'clsx';
 import { humanizer } from 'humanize-duration';
-import TimeAgo from 'javascript-time-ago';
-// English.
-import en from 'javascript-time-ago/locale/en';
 import React, { useEffect, useState } from 'react';
 
-import { timesliceToTimestamp } from '@/utils/functions';
+import { getRelativeTimeString, timesliceToTimestamp } from '@/utils/functions';
 
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
@@ -79,10 +76,6 @@ const RegionCardInner = ({
   updateName,
 }: RegionCardInnerProps) => {
   const { tasks } = useTasks();
-
-  TimeAgo.addLocale(en);
-  // Create formatter (English).
-  const timeAgo = new TimeAgo('en-US');
 
   const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
   const { region, taskId, location, currentUsage, consumed, coreOccupancy } =
@@ -237,10 +230,10 @@ const RegionCardInner = ({
         >
           <Typography variant='h2'>{`Core Index: #${region.getCore()}`}</Typography>
           <Typography variant='h2'>
-            Begin: {timeAgo.format(beginTimestamp)}
+            Begin: {getRelativeTimeString(beginTimestamp)}
           </Typography>
           <Typography variant='h2'>
-            End: {timeAgo.format(endTimestamp)}
+            End: {getRelativeTimeString(endTimestamp)}
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1rem' }}>

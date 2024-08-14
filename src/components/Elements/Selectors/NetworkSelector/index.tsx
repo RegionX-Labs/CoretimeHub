@@ -9,7 +9,7 @@ import {
 import { useNetwork } from '@/contexts/network';
 import { NetworkType } from '@/models';
 
-const RelaySelect = () => {
+export const NetworkSelector = () => {
   const router = useRouter();
   const { network } = useNetwork();
 
@@ -84,5 +84,3 @@ const RelaySelect = () => {
     </FormControl>
   );
 };
-
-export default RelaySelect;

@@ -1,8 +1,7 @@
 import { Box, Button, Paper, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import { CountDown, SalePhaseCard } from '@/components/Elements';
-import { PurchaseHistoryModal } from '@/components/Modals';
+import { CountDown, PurchaseHistoryModal, SalePhaseCard } from '@/components';
 
 import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';

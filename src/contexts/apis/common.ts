@@ -18,6 +18,8 @@ export type State = {
   decimals: number;
   height: number;
   timestamp: number;
+  // Existential deposit
+  ed: number;
 };
 
 export const initialState: State = {
@@ -32,6 +34,7 @@ export const initialState: State = {
   decimals: 0,
   height: 0,
   timestamp: 0,
+  ed: 0,
 };
 
 ///
@@ -66,6 +69,7 @@ export const reducer = (state: any, action: any) => {
         ...state,
         api: null,
         apiState: ApiState.DISCONNECTED,
+        socket: '',
         symbol: '',
         name: '',
         height: 0,
@@ -77,6 +81,8 @@ export const reducer = (state: any, action: any) => {
       return { ...state, name: action.payload };
     case 'SET_DECIMALS':
       return { ...state, decimals: action.payload };
+    case 'SET_ED':
+      return { ...state, ed: action.payload };
     case 'SET_HEIGHT':
       return { ...state, height: action.payload };
     case 'SET_TIMESTAMP':
@@ -124,6 +130,7 @@ export const connect = (
       const chainInfo = _api.registry.getChainProperties();
       if (chainInfo) {
         const { tokenDecimals, tokenSymbol } = chainInfo.toHuman() as any;
+        const ed = _api.consts.balances.existentialDeposit.toJSON();
         dispatch({
           type: 'SET_SYMBOL',
           payload: tokenSymbol ? tokenSymbol[0] : 'UNIT',
@@ -131,6 +138,10 @@ export const connect = (
         dispatch({
           type: 'SET_DECIMALS',
           payload: tokenDecimals ? parseInt(tokenDecimals[0]) : 12,
+        });
+        dispatch({
+          type: 'SET_ED',
+          payload: ed,
         });
       }
 

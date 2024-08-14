@@ -1,6 +1,6 @@
-import BuildRoundedIcon from '@mui/icons-material/BuildRounded';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ExploreIcon from '@mui/icons-material/Explore';
+import GridViewIcon from '@mui/icons-material/GridView';
 import HistoryIcon from '@mui/icons-material/History';
 import HomeIcon from '@mui/icons-material/Home';
 import ListOutlinedIcon from '@mui/icons-material/ListOutlined';
@@ -13,15 +13,16 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
+import { enableRegionX } from '@/utils/functions';
+
 import Logo from '@/assets/logo.png';
-import { EXPERIMENTAL } from '@/consts';
 import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
+import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { RenewIcon } from '@/icons';
-import { NetworkType } from '@/models';
 
 import styles from './index.module.scss';
-import { StatusIndicator } from '../Elements';
+import { StatusIndicator } from '../../Elements';
 
 interface MenuItemProps {
   label: string;
@@ -80,16 +81,14 @@ export const Sidebar = () => {
 
   const { network } = useNetwork();
   const {
-    state: { apiState: relayApiState },
+    state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
   const {
-    state: { apiState: coretimeApiState },
+    state: { api: coretimeApi, apiState: coretimeApiState },
   } = useCoretimeApi();
   const {
-    state: { apiState: regionxApiState },
+    state: { api: regionXApi, apiState: regionxApiState },
   } = useRegionXApi();
-
-  const enableRegionX = network === NetworkType.ROCOCO || EXPERIMENTAL;
 
   const menu = {
     general: [
@@ -120,10 +119,10 @@ export const Sidebar = () => {
         icon: <RenewIcon color={theme.palette.text.primary} />,
       },
       {
-        label: 'Manage',
+        label: 'Dashboard',
         route: '/paras',
         enabled: true,
-        icon: <BuildRoundedIcon />,
+        icon: <GridViewIcon />,
       },
     ],
     'primary market': [
@@ -144,13 +143,13 @@ export const Sidebar = () => {
       {
         label: 'Explore the Market',
         route: '/marketplace',
-        enabled: enableRegionX,
+        enabled: enableRegionX(network),
         icon: <ExploreIcon />,
       },
       {
         label: 'Orders',
         route: '/orders',
-        enabled: enableRegionX,
+        enabled: enableRegionX(network),
         icon: <ListOutlinedIcon />,
       },
       {
@@ -160,6 +159,11 @@ export const Sidebar = () => {
         icon: <RepeatOutlinedIcon />,
       },
     ],
+  };
+
+  const getApiState = (api: any, state: ApiState) => {
+    if (!api) return ApiState.DISCONNECTED;
+    return state;
   };
 
   return (
@@ -210,10 +214,19 @@ export const Sidebar = () => {
           ))}
         </Stack>
         <div className={styles.statusContainer}>
-          <StatusIndicator state={relayApiState} label='Relay chain' />
-          <StatusIndicator state={coretimeApiState} label='Coretime chain' />
-          {enableRegionX && (
-            <StatusIndicator state={regionxApiState} label='RegionX chain' />
+          <StatusIndicator
+            state={getApiState(relayApi, relayApiState)}
+            label='Relay chain'
+          />
+          <StatusIndicator
+            state={getApiState(coretimeApi, coretimeApiState)}
+            label='Coretime chain'
+          />
+          {enableRegionX(network) && (
+            <StatusIndicator
+              state={getApiState(regionXApi, regionxApiState)}
+              label='RegionX chain'
+            />
           )}
         </div>
       </Box>

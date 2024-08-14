@@ -14,10 +14,11 @@ import { useState } from 'react';
 
 import { getTimeStringLong } from '@/utils/functions';
 
+import { SaleDetailsModal } from '@/components';
+
 import { SalesHistoryItem } from '@/models';
 
 import { StyledTableCell, StyledTableRow } from '../common';
-import { SaleDetailsModal } from '../../Modals';
 
 interface SalesHistoryTableProps {
   data: SalesHistoryItem[];

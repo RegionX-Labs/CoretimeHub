@@ -8,7 +8,8 @@ import React, {
   useState,
 } from 'react';
 
-import { EXPERIMENTAL } from '@/consts';
+import { enableRegionX } from '@/utils/functions';
+
 import {
   ContextStatus,
   ISMPRecordStatus,
@@ -117,10 +118,9 @@ const RegionDataProvider = ({ children }: Props) => {
     const tasks = await fetchWorkplan();
 
     const ctRegions = await collectCoretimeRegions(tasks);
-    const rxRegions =
-      EXPERIMENTAL || network === NetworkType.ROCOCO
-        ? await collectRegionXRegions(tasks)
-        : [];
+    const rxRegions = enableRegionX(network)
+      ? await collectRegionXRegions(tasks)
+      : [];
 
     setRegions(ctRegions.concat(rxRegions));
     setStatus(ContextStatus.LOADED);

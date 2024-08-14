@@ -1,8 +1,8 @@
 import React, { ReactElement } from 'react';
 
+import { Header } from './Header';
 import styles from './index.module.scss';
-import { Header } from '../Header';
-import { Sidebar } from '../Sidebar';
+import { Sidebar } from './Sidebar';
 
 interface Props {
   children: ReactElement | ReactElement[];

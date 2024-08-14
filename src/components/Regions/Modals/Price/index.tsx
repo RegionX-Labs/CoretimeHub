@@ -9,8 +9,7 @@ import {
   useTheme,
 } from '@mui/material';
 
-import { SalePriceChart } from '@/components/Charts';
-import { ActionButton, CountDown } from '@/components/Elements';
+import { ActionButton, CountDown, SalePriceChart } from '@/components';
 
 import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
@@ -25,7 +24,7 @@ export const PriceModal = ({ open, onClose }: PriceModalProps) => {
   const theme = useTheme();
 
   const {
-    phase: { currentPhase, saleStartTimestamp },
+    phase: { currentPhase, endpoints: saleEndpoints },
   } = useSaleInfo();
 
   return (
@@ -50,7 +49,7 @@ export const PriceModal = ({ open, onClose }: PriceModalProps) => {
             >
               <Typography>Sale starts in:</Typography>
               <CountDown
-                remainingTime={(saleStartTimestamp - Date.now()) / 1000}
+                remainingTime={(saleEndpoints.fixed.end - Date.now()) / 1000}
               />
             </Stack>
           </Box>

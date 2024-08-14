@@ -6,6 +6,7 @@ import { getCorePriceAt, getCurrentPhase } from '@/utils/sale';
 import {
   ContextStatus,
   PhaseEndpoints,
+  RELAY_CHAIN_BLOCK_TIME,
   SaleConfig,
   SaleInfo,
   SalePhase,
@@ -57,8 +58,6 @@ const defaultEndpoints = {
 const defaultSalePhase = {
   currentPhase: SalePhase.Interlude,
   currentPrice: undefined,
-  saleStartTimestamp: 0,
-  saleEndTimestamp: 0,
   endpoints: defaultEndpoints,
 };
 
@@ -98,8 +97,6 @@ const SaleInfoProvider = ({ children }: Props) => {
   );
   const [at, setAt] = useState(0);
   const [currentPrice, setCurrentPrice] = useState<number | undefined>();
-  const [saleStartTimestamp, setSaleStartTimestamp] = useState(0);
-  const [saleEndTimestamp, setSaleEndTimestamp] = useState(0);
   const [endpoints, setEndpoints] = useState<PhaseEndpoints>(defaultEndpoints);
 
   useEffect(() => {
@@ -139,18 +136,20 @@ const SaleInfoProvider = ({ children }: Props) => {
       setConfig(config);
 
       const saleStart = saleInfo.saleStart;
-      const saleEnd = saleInfo.regionBegin * timeslicePeriod;
+      // Sale start != bulk phase start. sale_start = bulk_phase_start + interlude_length.
       const saleStartTimestamp = await getBlockTimestamp(
         coretimeApi,
         saleStart,
         network
       );
-      const saleEndTimestamp = await getBlockTimestamp(relayApi, saleEnd);
 
-      setSaleStartTimestamp(saleStartTimestamp);
-      setSaleEndTimestamp(saleEndTimestamp);
-
+      const regionDuration = saleInfo.regionEnd - saleInfo.regionBegin;
       const blockTime = getBlockTime(network); // Block time on the coretime chain
+
+      const saleEndTimestamp =
+        saleStartTimestamp -
+        config.interludeLength * blockTime +
+        regionDuration * timeslicePeriod * RELAY_CHAIN_BLOCK_TIME;
 
       const _endpoints = {
         interlude: {
@@ -198,8 +197,6 @@ const SaleInfoProvider = ({ children }: Props) => {
         phase: {
           currentPhase,
           currentPrice,
-          saleStartTimestamp,
-          saleEndTimestamp,
           endpoints,
         },
         fetchSaleInfo,

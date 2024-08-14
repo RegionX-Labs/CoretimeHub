@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useReducer } from 'react';
 
-import { EXPERIMENTAL, WS_REGIONX_COCOS_CHAIN } from '@/consts';
+import { enableRegionX } from '@/utils/functions';
+
+import { WS_REGIONX_COCOS_CHAIN } from '@/consts';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
 import { NetworkType } from '@/models';
@@ -109,14 +111,12 @@ const RegionXApiContextProvider = (props: any) => {
   };
 
   useEffect(() => {
-    if (network !== NetworkType.ROCOCO && !EXPERIMENTAL) {
+    if (!enableRegionX(network)) {
       return;
     }
     const url = getUrl(network);
-    if (state.socket === url) return;
-    if (!url) return;
+    if (!url || state.socket === url) return;
 
-    connect(state, WS_REGIONX_COCOS_CHAIN, dispatch, false, types, customRpc);
     if (state.socket !== url) {
       try {
         disconnect(state);
@@ -125,7 +125,7 @@ const RegionXApiContextProvider = (props: any) => {
       }
       connect(state, url, dispatch, true, types, customRpc);
     }
-  }, [network, state]);
+  }, [network, state.socket]);
 
   useEffect(() => {
     dispatch({ type: 'DISCONNECTED' });

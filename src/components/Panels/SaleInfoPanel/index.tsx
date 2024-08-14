@@ -1,12 +1,9 @@
 import { Box, Button, CircularProgress, useTheme } from '@mui/material';
-import TimeAgo from 'javascript-time-ago';
-import en from 'javascript-time-ago/locale/en.json';
 import { useState } from 'react';
 
 import { getBalanceString, getTimeStringShort } from '@/utils/functions';
 
-import { SalePhaseCard } from '@/components/Elements';
-import { PriceModal } from '@/components/Modals';
+import { PriceModal, SalePhaseCard } from '@/components';
 
 import DollarIcon from '@/assets/dollar.png';
 import ListIcon from '@/assets/list.png';
@@ -19,8 +16,6 @@ import { DetailCard } from './DetailCard';
 import styles from './index.module.scss';
 
 export const SaleInfoPanel = () => {
-  TimeAgo.addLocale(en);
-
   const theme = useTheme();
 
   const {
@@ -28,7 +23,7 @@ export const SaleInfoPanel = () => {
   } = useCoretimeApi();
 
   const {
-    phase: { currentPhase, currentPrice, saleStartTimestamp, saleEndTimestamp },
+    phase: { currentPhase, currentPrice, endpoints: saleEndpoints },
     saleInfo,
   } = useSaleInfo();
 
@@ -58,13 +53,12 @@ export const SaleInfoPanel = () => {
           title='Sale details'
           items={{
             left: {
-              label:
-                saleStartTimestamp < Date.now() ? 'Started at' : 'Starts at:',
-              value: getTimeStringShort(saleStartTimestamp),
+              label: 'Leadin start',
+              value: getTimeStringShort(saleEndpoints.leadin.start),
             },
             right: {
-              label: saleEndTimestamp > Date.now() ? 'Ends at' : 'Ended at:',
-              value: getTimeStringShort(saleEndTimestamp),
+              label: 'Sale end',
+              value: getTimeStringShort(saleEndpoints.fixed.end),
             },
           }}
         />

@@ -74,8 +74,6 @@ export type PhaseEndpoints = {
 export type SalePhaseInfo = {
   currentPhase: SalePhase;
   currentPrice?: number;
-  saleStartTimestamp: number;
-  saleEndTimestamp: number;
   endpoints: PhaseEndpoints;
 };
 
@@ -106,7 +104,7 @@ export type PurchaseHistoryItem = {
   address: string;
   core: number;
   extrinsicId: string;
-  timestamp: string;
+  timestamp: Date;
   price: number;
   type: string;
 };

@@ -110,7 +110,11 @@ const AccountProvider = ({ children }: Props) => {
     asyncLoadAccounts();
   };
 
-  const disconnectWallet = () => dispatch({ type: 'DISCONNECT' });
+  const disconnectWallet = () => {
+    localStorage.removeItem(LOCAL_STORAGE_ACCOUNTS);
+    localStorage.removeItem(LOCAL_STORAGE_ACTIVE_ACCOUNT);
+    dispatch({ type: 'DISCONNECT' });
+  };
 
   useEffect(() => {
     const accounts = state.accounts;
