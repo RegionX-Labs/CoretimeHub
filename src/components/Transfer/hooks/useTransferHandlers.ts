@@ -159,9 +159,7 @@ export const useTransferHandlers = () => {
       return;
     }
     const receiverKeypair = new Keyring();
-    receiverKeypair.addFromAddress(
-      newOwner ? newOwner : activeAccount.address
-    );
+    receiverKeypair.addFromAddress(newOwner ? newOwner : activeAccount.address);
 
     if (originChain === destinationChain) {
       if (!(coretimeApi && coretimeApiState === ApiState.READY)) return;

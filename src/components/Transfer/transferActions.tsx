@@ -27,15 +27,7 @@ const TransferActions = () => {
   };
 
   return (
-    <Box
-      width='60%'
-      margin='0.5rem auto'
-      sx={{
-        overflowY: 'auto',
-        '::-webkit-scrollbar': { display: 'none' },
-        height: '100%',
-      }}
-    >
+    <Box width='60%' margin='0.5rem auto'>
       <Stack margin='0.5rem 0' direction='column' gap={0.5} alignItems='center'>
         <ArrowDownward />
       </Stack>
