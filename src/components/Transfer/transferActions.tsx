@@ -8,7 +8,10 @@ import { ProgressButton } from '@/components/Elements/Buttons/ProgressButton';
 import { AddressInput } from '@/components/Elements/Inputs/AddressInput';
 import { AmountInput } from '@/components/Elements/Inputs/AmountInput';
 
+import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
+import { useBalances } from '@/contexts/balance';
 import { useNetwork } from '@/contexts/network';
+import { useToast } from '@/contexts/toast';
 import { AssetType, ChainType } from '@/models';
 
 import { assetType } from './common';
@@ -16,19 +19,61 @@ import { useTransferState } from './contexts/transferState';
 import { useTransferHandlers } from './hooks/useTransferHandlers';
 
 const TransferActions = () => {
-  const { handleTransfer, working, newOwner, setNewOwner, setTransferAmount } =
-    useTransferHandlers();
+  const {
+    transferAmount,
+    handleTransfer,
+    working,
+    newOwner,
+    setNewOwner,
+    setTransferAmount,
+  } = useTransferHandlers();
 
-  const { originChain, destinationChain, symbol } = useTransferState();
+  const {
+    state: { ed: coretimeChainED },
+  } = useCoretimeApi();
+  const {
+    state: { ed: _regionXChainED }, // This is for the native asset
+  } = useRegionXApi();
+  const {
+    state: { symbol, decimals: relayTokenDecimals, ed: relayChainED },
+  } = useRelayApi();
+
+  const { originChain, destinationChain } = useTransferState();
+  const { balance } = useBalances();
 
   const router = useRouter();
   const { network } = useNetwork();
+  const { toastWarning } = useToast();
 
   const onHome = () => {
     router.push({
       pathname: '/',
       query: { network },
     });
+  };
+
+  const onTransfer = () => {
+    if (!transferAmount) {
+      toastWarning('Please input the amount');
+      return;
+    }
+    const _transferAmount = transferAmount * Math.pow(10, relayTokenDecimals);
+
+    // Ensure the user has a sufficient balance:
+
+    if (
+      (originChain === ChainType.CORETIME &&
+        balance.coretime - coretimeChainED < _transferAmount) ||
+      (originChain === ChainType.REGIONX &&
+        // ED is not really relevant since rc asset is not the native asset.
+        balance.rxRcCurrencyBalance < _transferAmount) ||
+      (originChain === ChainType.RELAY &&
+        balance.relay - relayChainED < _transferAmount)
+    ) {
+      toastWarning('Insufficient balance');
+      return;
+    }
+    handleTransfer();
   };
 
   return (
@@ -85,7 +130,7 @@ const TransferActions = () => {
         </Button>
         <ProgressButton
           label='Transfer'
-          onClick={handleTransfer}
+          onClick={onTransfer}
           loading={working}
         />
       </Box>

@@ -8,10 +8,6 @@ export const RELAY_CHAIN_BLOCK_TIME = 6 * SECOND;
 
 export const RELAY_ASSET_ID = 1;
 
-export const CORETIME_DECIMALS = 12;
-export const REGIONX_DECIMALS = 12;
-
-export const CORETIME_TOKEN_UNIT = Math.pow(10, CORETIME_DECIMALS);
 export const LISTING_DEPOSIT = 0;
 
 /// Given that a timeslice is 8 minutes;

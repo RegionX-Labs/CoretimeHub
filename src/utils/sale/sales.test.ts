@@ -1,6 +1,6 @@
 import { expect } from '@jest/globals';
 
-import { CORETIME_TOKEN_UNIT, SaleInfo, SalePhase } from '@/models';
+import { SaleInfo, SalePhase } from '@/models';
 
 import { getCorePriceAt, getCurrentPhase } from '.';
 
@@ -11,7 +11,7 @@ describe('Purchase page', () => {
     firstCore: 45,
     idealCoresSold: 5,
     leadinLength: 21600, // Block number
-    price: 50 * CORETIME_TOKEN_UNIT,
+    price: 50 * Math.pow(10, 12),
     regionBegin: 124170, // Timeslice
     regionEnd: 125430, // Timeslice
     saleStart: 1001148, // Block number

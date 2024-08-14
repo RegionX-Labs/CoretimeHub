@@ -15,26 +15,31 @@ import {
 } from '@/utils/transfers/native';
 
 import { useAccounts } from '@/contexts/account';
+import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useToast } from '@/contexts/toast';
-import { AssetType, ChainType, CORETIME_DECIMALS } from '@/models';
+import { AssetType, ChainType } from '@/models';
 
+import { assetType } from '../common';
 import { useTransferState } from '../contexts/transferState';
 
 export const useTransferHandlers = () => {
   const { toastError, toastInfo, toastWarning, toastSuccess } = useToast();
+  const { originChain, destinationChain, selectedRegion } = useTransferState();
+
   const {
-    originChain,
-    destinationChain,
-    selectedRegion,
-    asset,
-    coretimeApi,
-    regionXApi,
-    relayApi,
-    coretimeApiState,
-    regionxApiState,
-    relayApiState,
-  } = useTransferState();
+    state: { api: coretimeApi, apiState: coretimeApiState },
+  } = useCoretimeApi();
+  const {
+    state: { api: regionXApi, apiState: regionxApiState },
+  } = useRegionXApi();
+  const {
+    state: {
+      api: relayApi,
+      apiState: relayApiState,
+      decimals: relayTokenDecimals,
+    },
+  } = useRelayApi();
 
   const [working, setWorking] = useState(false);
   const [newOwner, setNewOwner] = useState('');
@@ -68,9 +73,9 @@ export const useTransferHandlers = () => {
     }
 
     setWorking(true);
-    if (asset === AssetType.REGION) {
+    if (assetType(originChain, destinationChain) === AssetType.REGION) {
       await handleRegionTransfer();
-    } else if (asset === AssetType.TOKEN) {
+    } else if (assetType(originChain, destinationChain) === AssetType.TOKEN) {
       await handleTokenTransfer();
     }
   };
@@ -87,7 +92,7 @@ export const useTransferHandlers = () => {
       return;
     }
 
-    const amount = transferAmount * Math.pow(10, CORETIME_DECIMALS);
+    const amount = transferAmount * Math.pow(10, relayTokenDecimals);
     const receiverKeypair = new Keyring();
     receiverKeypair.addFromAddress(newOwner);
 

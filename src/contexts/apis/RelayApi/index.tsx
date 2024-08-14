@@ -52,8 +52,8 @@ const RelayApiContextProvider = (props: any) => {
 
   useEffect(() => {
     const url = getUrl(network);
-    if (state.socket === url) return;
-    if (!url) return;
+    if (!url || state.socket === url) return;
+
     if (state.socket !== url) {
       try {
         disconnect(state);

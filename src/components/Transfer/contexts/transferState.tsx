@@ -1,4 +1,3 @@
-import { ApiPromise } from '@polkadot/api';
 import {
   createContext,
   ReactNode,
@@ -7,10 +6,8 @@ import {
   useState,
 } from 'react';
 
-import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
-import { AssetType, ChainType, RegionLocation, RegionMetadata } from '@/models';
+import { ChainType, RegionLocation, RegionMetadata } from '@/models';
 
 interface TransferState {
   originChain: ChainType;
@@ -20,16 +17,6 @@ interface TransferState {
   selectedRegion: RegionMetadata | null;
   setSelectedRegion: (_region: RegionMetadata | null) => void;
   filteredRegions: RegionMetadata[];
-  asset: AssetType;
-  setAsset: (_asset: AssetType) => void;
-  symbol: string;
-  coretimeApi: ApiPromise | null;
-  coretimeApiState: ApiState;
-  regionXApi: ApiPromise | null;
-  regionxApiState: ApiState;
-  relayApi: ApiPromise | null;
-  relayApiState: ApiState;
-  fetchRegions: () => void;
 }
 
 const defaultTasksData: TransferState = {
@@ -46,20 +33,6 @@ const defaultTasksData: TransferState = {
     /** */
   },
   filteredRegions: [],
-  asset: AssetType.TOKEN,
-  setAsset: () => {
-    /** */
-  },
-  symbol: '',
-  coretimeApi: null,
-  coretimeApiState: ApiState.DISCONNECTED,
-  regionXApi: null,
-  regionxApiState: ApiState.DISCONNECTED,
-  relayApi: null,
-  relayApiState: ApiState.DISCONNECTED,
-  fetchRegions: () => {
-    /** */
-  },
 };
 
 const TransferStateContext = createContext<TransferState>(defaultTasksData);
@@ -69,17 +42,7 @@ export const TransferStateProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const { regions, fetchRegions } = useRegions();
-
-  const {
-    state: { api: coretimeApi, apiState: coretimeApiState, symbol },
-  } = useCoretimeApi();
-  const {
-    state: { api: regionXApi, apiState: regionxApiState },
-  } = useRegionXApi();
-  const {
-    state: { api: relayApi, apiState: relayApiState },
-  } = useRelayApi();
+  const { regions } = useRegions();
 
   const [originChain, setOriginChain] = useState<ChainType>(ChainType.RELAY);
   const [destinationChain, setDestinationChain] = useState<ChainType>(
@@ -91,7 +54,6 @@ export const TransferStateProvider = ({
   const [filteredRegions, setFilteredRegions] = useState<Array<RegionMetadata>>(
     []
   );
-  const [asset, setAsset] = useState<AssetType>(AssetType.TOKEN);
 
   useEffect(() => {
     if (originChain === ChainType.CORETIME) {
@@ -117,16 +79,6 @@ export const TransferStateProvider = ({
         selectedRegion,
         setSelectedRegion,
         filteredRegions,
-        asset,
-        setAsset,
-        symbol,
-        coretimeApi,
-        coretimeApiState,
-        regionXApi,
-        regionxApiState,
-        relayApi,
-        relayApiState,
-        fetchRegions,
       }}
     >
       {children}
