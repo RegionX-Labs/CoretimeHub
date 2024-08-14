@@ -65,7 +65,7 @@ const TransferActions = () => {
       (originChain === ChainType.CORETIME &&
         balance.coretime - coretimeChainED < _transferAmount) ||
       (originChain === ChainType.REGIONX &&
-        // TODO ed:
+        // ED is not really relevant since rc asset is not the native asset.
         balance.rxRcCurrencyBalance < _transferAmount) ||
       (originChain === ChainType.RELAY &&
         balance.relay - relayChainED < _transferAmount)
