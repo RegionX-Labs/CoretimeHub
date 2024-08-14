@@ -59,10 +59,10 @@ export const usePurchaseHistory = (
                   address: account,
                   core,
                   extrinsicId: `${height}-${extrinsicId}`,
-                  timestamp: new Date(`${timestamp}Z`),
+                  timestamp: new Date(Number(timestamp)),
                   price: parseInt(price),
                   type: purchaseType,
-                }) as PurchaseHistoryItem
+                } as PurchaseHistoryItem)
             )
           );
         }

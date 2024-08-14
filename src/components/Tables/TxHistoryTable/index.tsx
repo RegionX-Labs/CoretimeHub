@@ -10,9 +10,9 @@ import {
   TablePagination,
   TableRow,
 } from '@mui/material';
-import TimeAgo from 'javascript-time-ago';
-import en from 'javascript-time-ago/locale/en';
 import { useState } from 'react';
+
+import { getRelativeTimeString } from '@/utils/functions';
 
 import { Link } from '@/components/Elements';
 
@@ -27,10 +27,6 @@ interface TxHistoryTableProps {
 }
 
 export const TxHistoryTable = ({ data }: TxHistoryTableProps) => {
-  TimeAgo.addLocale(en);
-  // Create formatter (English).
-  const timeAgo = new TimeAgo('en-US');
-
   const { network } = useNetwork();
 
   // table pagination
@@ -89,7 +85,7 @@ export const TxHistoryTable = ({ data }: TxHistoryTableProps) => {
                     )}
                   </StyledTableCell>
                   <StyledTableCell align='center'>
-                    {timeAgo.format(timestamp, 'round-minute')}
+                    {getRelativeTimeString(timestamp)}
                   </StyledTableCell>
                 </StyledTableRow>
               )

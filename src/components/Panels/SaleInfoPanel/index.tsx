@@ -1,6 +1,4 @@
 import { Box, Button, CircularProgress, useTheme } from '@mui/material';
-import TimeAgo from 'javascript-time-ago';
-import en from 'javascript-time-ago/locale/en.json';
 import { useState } from 'react';
 
 import { getBalanceString, getTimeStringShort } from '@/utils/functions';
@@ -18,8 +16,6 @@ import { DetailCard } from './DetailCard';
 import styles from './index.module.scss';
 
 export const SaleInfoPanel = () => {
-  TimeAgo.addLocale(en);
-
   const theme = useTheme();
 
   const {
