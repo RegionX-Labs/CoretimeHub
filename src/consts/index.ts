@@ -16,6 +16,8 @@ export const API_CORETIME_DICT = {
   [NetworkType.NONE]: '',
 };
 
+export const API_COCOS_INDEXER = process.env.COCOS_INDEXER ?? '';
+
 export const SUSBCAN_CORETIME_URL = {
   [NetworkType.ROCOCO]: 'https://coretime-rococo.subscan.io',
   [NetworkType.KUSAMA]: 'https://coretime-kusama.subscan.io',
