@@ -92,12 +92,7 @@ export const OrderProcessorTable = ({ data }: OrderProcessorTableProps) => {
                       </Button>
                     </StyledTableCell>
                     <StyledTableCell align='center'>
-                      <Link
-                        href={`${SUSBCAN_CORETIME_URL[network]}/extrinsic/${height}-${extrinsicId}`}
-                        target='_blank'
-                      >
-                        {height}-{extrinsicId}
-                      </Link>
+                      {height}-{extrinsicId}
                     </StyledTableCell>
                     <StyledTableCell align='center'>
                       <Link
