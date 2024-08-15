@@ -88,7 +88,7 @@ export const OrderProcessorTable = ({ data }: OrderProcessorTableProps) => {
                   <StyledTableRow key={index}>
                     <StyledTableCell align='center'>
                       <Button onClick={() => setActiveOrderId(orderId)}>
-                        {orderId + 1}
+                        {orderId}
                       </Button>
                     </StyledTableCell>
                     <StyledTableCell align='center'>
