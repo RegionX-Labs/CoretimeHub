@@ -106,7 +106,7 @@ export type PurchaseHistoryItem = {
   extrinsicId: string;
   timestamp: Date;
   price: number;
-  type: string;
+  type: PurchaseType;
 };
 
 export type SalesHistoryItem = {
