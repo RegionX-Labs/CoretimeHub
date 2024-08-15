@@ -19,12 +19,16 @@ import {
   OrderCreationModal,
 } from '@/components';
 
+import { useAccounts } from '@/contexts/account';
 import { useOrders } from '@/contexts/orders';
 import { ContextStatus, Order } from '@/models';
 
 const OrderDashboard = () => {
   const theme = useTheme();
   const { orders, status } = useOrders();
+  const {
+    state: { activeAccount },
+  } = useAccounts();
 
   const [orderCreationModalOpen, openOrderCreationModal] = useState(false);
   const [expiredOnly, watchExpired] = useState(false);
@@ -116,6 +120,7 @@ const OrderDashboard = () => {
                   selectOrder(order);
                   openContributionModal(true);
                 }}
+                disabled={activeAccount === null}
               >
                 Contribute
               </Button>
