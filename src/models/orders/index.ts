@@ -4,28 +4,26 @@ import { Address, ParaId } from '../common';
 
 type PartsOf57600 = number;
 
-export type Requirements = {
+export type Order = {
+  orderId: number;
   begin: Timeslice;
   end: Timeslice;
-  coreOccupancy: PartsOf57600;
-};
-
-export type OnChainOrder = {
   creator: Address;
-  paraId: ParaId;
-  requirements: Requirements;
-};
-
-export type Order = OnChainOrder & {
-  orderId: number;
-  totalContribution: number;
+  exist: boolean;
+  coreOccupancy: PartsOf57600;
   contribution: number;
+  paraId: ParaId;
+  totalContribution: number;
 };
 
 export type OrderItem = {
   orderId: number;
-  extrinsicId: string;
+  height: number;
+  extrinsicId: number;
+  timestamp: Date;
+  begin: number;
+  core: number;
+  mask: string;
   account: string;
   reward: number;
-  timestamp: Date;
 };
