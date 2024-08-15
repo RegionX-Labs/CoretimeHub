@@ -66,8 +66,7 @@ const OrderProvider = ({ children }: Props) => {
         if (status !== 200 || nodes === null) break;
 
         sum += nodes.reduce(
-          (a: Contribution, b: Contribution) =>
-            Number(a.amount) + Number(b.amount),
+          (acc: number, item: Contribution) => acc + parseInt(item.amount),
           0
         );
 
