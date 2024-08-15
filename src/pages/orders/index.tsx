@@ -9,7 +9,10 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+
+import { enableRegionX } from '@/utils/functions';
 
 import {
   ActionButton,
@@ -20,11 +23,15 @@ import {
 } from '@/components';
 
 import { useAccounts } from '@/contexts/account';
+import { useNetwork } from '@/contexts/network';
 import { useOrders } from '@/contexts/orders';
 import { ContextStatus, Order } from '@/models';
 
 const OrderDashboard = () => {
   const theme = useTheme();
+  const router = useRouter();
+
+  const { network } = useNetwork();
   const { orders, status } = useOrders();
   const {
     state: { activeAccount },
@@ -36,6 +43,12 @@ const OrderDashboard = () => {
   const [ordersToShow, setOrdersToShow] = useState<Order[]>([]);
   const [orderSelected, selectOrder] = useState<Order | undefined>();
   const [contributionModal, openContributionModal] = useState(false);
+
+  useEffect(() => {
+    if (!enableRegionX(network)) {
+      router.push('/');
+    }
+  }, [network, router]);
 
   useEffect(() => {
     setOrdersToShow(orders.filter(({ processed }) => !processed));
