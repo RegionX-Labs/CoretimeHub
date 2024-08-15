@@ -14,6 +14,7 @@ export type Order = {
   contribution: number;
   paraId: ParaId;
   totalContribution: number;
+  processed: boolean;
 };
 
 export type OrderItem = {

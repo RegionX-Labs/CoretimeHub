@@ -39,6 +39,7 @@ export const fetchOrders = async (
         coreOccupancy
         contribution
         paraId
+        processed
       }
       pageInfo {
         hasNextPage

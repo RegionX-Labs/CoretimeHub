@@ -38,8 +38,7 @@ const OrderDashboard = () => {
   const [contributionModal, openContributionModal] = useState(false);
 
   useEffect(() => {
-    // TODO: expiry
-    setOrdersToShow(orders);
+    setOrdersToShow(orders.filter(({ processed }) => !processed));
   }, [orders]);
 
   return (
