@@ -9,7 +9,10 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+
+import { enableRegionX } from '@/utils/functions';
 
 import {
   ActionButton,
@@ -19,12 +22,20 @@ import {
   OrderCreationModal,
 } from '@/components';
 
+import { useAccounts } from '@/contexts/account';
+import { useNetwork } from '@/contexts/network';
 import { useOrders } from '@/contexts/orders';
 import { ContextStatus, Order } from '@/models';
 
 const OrderDashboard = () => {
   const theme = useTheme();
+  const router = useRouter();
+
+  const { network } = useNetwork();
   const { orders, status } = useOrders();
+  const {
+    state: { activeAccount },
+  } = useAccounts();
 
   const [orderCreationModalOpen, openOrderCreationModal] = useState(false);
   const [expiredOnly, watchExpired] = useState(false);
@@ -34,8 +45,13 @@ const OrderDashboard = () => {
   const [contributionModal, openContributionModal] = useState(false);
 
   useEffect(() => {
-    // TODO: expiry
-    setOrdersToShow(orders);
+    if (!enableRegionX(network)) {
+      router.push('/');
+    }
+  }, [network, router]);
+
+  useEffect(() => {
+    setOrdersToShow(orders.filter(({ processed }) => !processed));
   }, [orders]);
 
   return (
@@ -116,6 +132,7 @@ const OrderDashboard = () => {
                   selectOrder(order);
                   openContributionModal(true);
                 }}
+                disabled={activeAccount === null}
               >
                 Contribute
               </Button>

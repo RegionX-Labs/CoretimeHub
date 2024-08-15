@@ -32,7 +32,7 @@ export const OrderCard = ({
     state: { decimals, symbol },
   } = useRelayApi();
   const { network } = useNetwork();
-  const { requirements, paraId } = order;
+  const { begin, end, coreOccupancy, paraId } = order;
 
   const logo = chainData[network][order.paraId]?.logo;
 
@@ -62,7 +62,7 @@ export const OrderCard = ({
           <Typography
             sx={{ color: theme.palette.common.black, fontWeight: 500 }}
           >
-            {requirements.begin}
+            {begin}
           </Typography>
         </Box>
         <Box className={styles.timeItem}>
@@ -70,13 +70,13 @@ export const OrderCard = ({
           <Typography
             sx={{ color: theme.palette.common.black, fontWeight: 500 }}
           >
-            {requirements.end}
+            {end}
           </Typography>
         </Box>
       </Box>
 
       <Stack direction='row' alignItems='center' justifyContent='space-between'>
-        <Typography>Contributed</Typography>
+        <Typography>Contribution</Typography>
         <Typography sx={{ color: theme.palette.common.black }}>
           {`${getBalanceString(
             order.contribution.toString(),
@@ -90,13 +90,17 @@ export const OrderCard = ({
         </Typography>
       </Stack>
       <LinearProgress
-        value={(order.contribution / order.totalContribution) * 100}
+        value={
+          order.totalContribution === 0
+            ? 0
+            : (order.contribution / order.totalContribution) * 100
+        }
         variant='determinate'
       />
       <Stack direction='row' alignItems='center' justifyContent='space-between'>
         <Typography>Core Occupancy</Typography>
         <Typography sx={{ color: theme.palette.common.black, fontWeight: 500 }}>
-          {`${((requirements.coreOccupancy / 57600) * 100).toFixed(2)} %`}
+          {`${((coreOccupancy / 57600) * 100).toFixed(2)} %`}
         </Typography>
       </Stack>
       <Stack direction='row' alignItems='center' justifyContent='space-between'>

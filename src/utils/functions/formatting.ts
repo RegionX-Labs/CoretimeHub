@@ -2,7 +2,7 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import moment from 'moment';
 
-TimeAgo.addDefaultLocale(en);
+TimeAgo.addLocale(en);
 
 export const getTimeStringShort = (timestamp: number | Date): string => {
   return moment(timestamp).format('MMM DD HH:mm');

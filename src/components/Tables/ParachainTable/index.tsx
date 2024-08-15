@@ -158,7 +158,7 @@ export const ParachainTable = ({
             : parachains
           ).map(({ id, name, state, watching, logo, homepage }, index) => (
             <StyledTableRow key={index}>
-              <StyledTableCell style={{ width: '10%' }}>
+              <StyledTableCell style={{ width: '10%' }} align='center'>
                 <Link href={`${SUSBCAN_RELAY_URL[network]}/parachain/${id}`}>
                   {id}
                 </Link>
@@ -188,7 +188,12 @@ export const ParachainTable = ({
                   )}
                 </Stack>
               </StyledTableCell>
-              <StyledTableCell style={{ margin: 0, width: '20%' }}>
+              <StyledTableCell
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
                 <ParaStateCard state={state} />
               </StyledTableCell>
               <StyledTableCell style={{ width: '25%' }}>

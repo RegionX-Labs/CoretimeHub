@@ -9,6 +9,7 @@ import {
   TablePagination,
   TableRow,
   Tooltip,
+  useTheme,
 } from '@mui/material';
 import { useState } from 'react';
 
@@ -32,6 +33,8 @@ interface PurchaseHistoryTableProps {
 }
 
 export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
+  const theme = useTheme();
+
   const { network } = useNetwork();
   const {
     state: { symbol, decimals },
@@ -95,17 +98,22 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
                     </Link>
                   </StyledTableCell>
                   <StyledTableCell align='center'>
-                    <Link
-                      href={`${SUSBCAN_CORETIME_URL[network]}/account/${address}`}
-                      target='_blank'
+                    <Stack
+                      justifyContent='center'
+                      direction='row'
+                      sx={{
+                        cursor: 'pointer',
+                        color: theme.palette.primary.main,
+                      }}
+                      onClick={() =>
+                        window.open(
+                          `${SUSBCAN_CORETIME_URL[network]}/account/${address}`,
+                          '_blank'
+                        )
+                      }
                     >
-                      <Address
-                        value={address}
-                        isCopy={true}
-                        isShort={true}
-                        size={24}
-                      />
-                    </Link>
+                      <Address value={address} isCopy isShort size={24} />
+                    </Stack>
                   </StyledTableCell>
                   <StyledTableCell align='center'>{core}</StyledTableCell>
                   <StyledTableCell align='center'>

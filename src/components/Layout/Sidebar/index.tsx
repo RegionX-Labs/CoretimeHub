@@ -4,6 +4,7 @@ import GridViewIcon from '@mui/icons-material/GridView';
 import HistoryIcon from '@mui/icons-material/History';
 import HomeIcon from '@mui/icons-material/Home';
 import ListOutlinedIcon from '@mui/icons-material/ListOutlined';
+import RepeatOutlinedIcon from '@mui/icons-material/RepeatOutlined';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { Box, Stack, Typography, useTheme } from '@mui/material';
@@ -151,6 +152,12 @@ export const Sidebar = () => {
         enabled: enableRegionX(network),
         icon: <ListOutlinedIcon />,
       },
+      {
+        label: 'Order Processor',
+        route: '/orders/processor',
+        enabled: enableRegionX(network),
+        icon: <RepeatOutlinedIcon />,
+      },
     ],
   };
 
@@ -160,7 +167,7 @@ export const Sidebar = () => {
   };
 
   return (
-    <div className={styles.sidebar}>
+    <Box className={styles.sidebar}>
       <Box
         sx={{
           display: 'flex',
@@ -172,16 +179,8 @@ export const Sidebar = () => {
           <Image src={Logo} alt='logo' />
         </Link>
       </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          flexGrow: 1,
-          fontSize: '1rem',
-          padding: '2rem 1.5rem',
-        }}
-      >
-        <Stack direction='column' gap='1rem' flexGrow={1}>
+      <Box className={styles.menuContainer}>
+        <Stack direction='column' gap='1rem' className={styles.menuItems}>
           {Object.entries(menu).map(([label, submenu], index) => (
             <Box
               key={index}
@@ -206,7 +205,7 @@ export const Sidebar = () => {
             </Box>
           ))}
         </Stack>
-        <div className={styles.statusContainer}>
+        <Box className={styles.statusContainer}>
           <StatusIndicator
             state={getApiState(relayApi, relayApiState)}
             label='Relay chain'
@@ -221,8 +220,8 @@ export const Sidebar = () => {
               label='RegionX chain'
             />
           )}
-        </div>
+        </Box>
       </Box>
-    </div>
+    </Box>
   );
 };

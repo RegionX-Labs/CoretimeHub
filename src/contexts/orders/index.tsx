@@ -6,13 +6,14 @@ import {
   useState,
 } from 'react';
 
-import { getOrderAccount } from '@/utils/order';
-
-import { ContextStatus, OnChainOrder, Order, RELAY_ASSET_ID } from '@/models';
+import { fetchContribution, fetchOrders as fetchOrdersApi } from '@/apis';
+import { ApiResponse, ContextStatus, Order } from '@/models';
 
 import { useAccounts } from '../account';
-import { useRegionXApi } from '../apis';
-import { ApiState } from '../apis/types';
+
+interface Contribution {
+  amount: string;
+}
 
 interface OrderData {
   status: ContextStatus;
@@ -41,59 +42,92 @@ const OrderProvider = ({ children }: Props) => {
   const {
     state: { activeAccount },
   } = useAccounts();
-  const {
-    state: { api, apiState },
-  } = useRegionXApi();
 
   const fetchOrders = useCallback(async () => {
-    if (!api || apiState !== ApiState.READY) {
-      return;
-    }
+    const getContribution = async (orderId: number) => {
+      let finished = false;
+      let after: string | null = null;
+
+      let sum = 0;
+      while (!finished) {
+        const res: ApiResponse = await fetchContribution(
+          orderId,
+          activeAccount?.address,
+          after
+        );
+
+        const {
+          status,
+          data: {
+            orderContributions: { nodes, pageInfo },
+          },
+        } = res;
+
+        if (status !== 200 || nodes === null) break;
+
+        sum += nodes.reduce(
+          (acc: number, item: Contribution) => acc + parseInt(item.amount),
+          0
+        );
+
+        finished = !pageInfo.hasNextPage;
+        after = pageInfo.endCursor;
+      }
+      return sum;
+    };
+
     try {
       setStatus(ContextStatus.LOADING);
 
       // fetch orders
-      const orderEntries = await api.query.orders.orders.entries();
-      const records: Order[] = [];
+      let finished = false;
+      let after: string | null = null;
 
-      for await (const [key, value] of orderEntries) {
-        const [orderId] = key.toHuman() as [number];
-        const orderAccount = getOrderAccount(api, orderId);
+      const result = [];
+      while (!finished) {
+        const res: ApiResponse = await fetchOrdersApi(after);
 
-        const obj = value.toJSON() as OnChainOrder;
+        const {
+          status,
+          data: {
+            orders: { nodes, pageInfo },
+          },
+        } = res;
 
-        const totalContribution = (
-          (
-            await api.query.tokens.accounts(
-              orderAccount.toString(),
-              RELAY_ASSET_ID
-            )
-          ).toJSON() as any
-        ).free;
-        const contribution = (
-          await api.query.orders.contributions(orderId, activeAccount?.address)
-        ).toJSON() as number;
+        if (status !== 200 || nodes === null) break;
 
-        records.push({
-          ...obj,
-          orderId,
-          contribution,
-          totalContribution,
-        } as Order);
+        result.push(...nodes);
+
+        finished = !pageInfo.hasNextPage;
+        after = pageInfo.endCursor;
       }
-      setOrders(records);
+      if (!finished) {
+        setStatus(ContextStatus.ERROR);
+      } else {
+        setOrders(
+          await Promise.all(
+            result.map(
+              async (item) =>
+                ({
+                  ...item,
+                  totalContribution: parseInt(item.contribution),
+                  contribution: await getContribution(item.orderId),
+                } as Order)
+            )
+          )
+        );
+      }
 
       setStatus(ContextStatus.LOADED);
     } catch (e) {
       setStatus(ContextStatus.ERROR);
       setOrders([]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, apiState, activeAccount]);
+  }, [activeAccount]);
 
   useEffect(() => {
     fetchOrders();
-  }, [api, apiState, activeAccount, fetchOrders]);
+  }, [activeAccount, fetchOrders]);
 
   return (
     <OrderDataContext.Provider value={{ status, orders, fetchOrders }}>
