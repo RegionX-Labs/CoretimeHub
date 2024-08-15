@@ -154,8 +154,8 @@ export const Sidebar = () => {
       },
       {
         label: 'Order Processor',
-        route: '/processor',
-        enabled: enableRegionX,
+        route: '/orders/processor',
+        enabled: enableRegionX(network),
         icon: <RepeatOutlinedIcon />,
       },
     ],
