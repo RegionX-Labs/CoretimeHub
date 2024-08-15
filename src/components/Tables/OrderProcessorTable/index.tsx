@@ -23,7 +23,7 @@ import { Address, Link } from '@/components/Elements';
 import { OrderDetailsModal } from '@/components/Orders';
 
 import { SUSBCAN_CORETIME_URL } from '@/consts';
-import { useRegionXApi } from '@/contexts/apis';
+import { useRelayApi } from '@/contexts/apis';
 import { useNetwork } from '@/contexts/network';
 import { OrderItem } from '@/models';
 
@@ -37,7 +37,7 @@ export const OrderProcessorTable = ({ data }: OrderProcessorTableProps) => {
   const { network } = useNetwork();
   const {
     state: { decimals, symbol },
-  } = useRegionXApi();
+  } = useRelayApi();
 
   const [activeOrderId, setActiveOrderId] = useState<number | null>(null);
 
