@@ -167,7 +167,7 @@ export const Sidebar = () => {
   };
 
   return (
-    <div className={styles.sidebar}>
+    <Box className={styles.sidebar}>
       <Box
         sx={{
           display: 'flex',
@@ -179,16 +179,8 @@ export const Sidebar = () => {
           <Image src={Logo} alt='logo' />
         </Link>
       </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          flexGrow: 1,
-          fontSize: '1rem',
-          padding: '2rem 1.5rem',
-        }}
-      >
-        <Stack direction='column' gap='1rem' flexGrow={1}>
+      <Box className={styles.menuContainer}>
+        <Stack direction='column' gap='1rem' className={styles.menuItems}>
           {Object.entries(menu).map(([label, submenu], index) => (
             <Box
               key={index}
@@ -213,7 +205,7 @@ export const Sidebar = () => {
             </Box>
           ))}
         </Stack>
-        <div className={styles.statusContainer}>
+        <Box className={styles.statusContainer}>
           <StatusIndicator
             state={getApiState(relayApi, relayApiState)}
             label='Relay chain'
@@ -228,8 +220,8 @@ export const Sidebar = () => {
               label='RegionX chain'
             />
           )}
-        </div>
+        </Box>
       </Box>
-    </div>
+    </Box>
   );
 };

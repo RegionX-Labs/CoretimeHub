@@ -3,6 +3,7 @@
   flex-direction: column;
   width: 15rem;
   background-color: white;
+  height: 100vh;
 }
 
 .logoContainer {
@@ -27,14 +28,25 @@
 .menuContainer {
   display: flex;
   flex-direction: column;
+  height: calc(100vh - 5rem);
+  font-size: 1rem;
+  padding: 2rem 1.5rem;
+}
+
+.menuItems {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #7e8591 #efefef;
   flex-grow: 1;
-  gap: 1rem;
 }
 
 .statusContainer {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  margin-top: 1rem;
 }
 
 .menuIcon {
