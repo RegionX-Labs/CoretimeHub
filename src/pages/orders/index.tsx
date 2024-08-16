@@ -5,6 +5,7 @@ import {
   CircularProgress,
   FormControlLabel,
   Paper,
+  Stack,
   Switch,
   Typography,
   useTheme,
@@ -12,6 +13,7 @@ import {
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
+import { useRegions } from '@/hooks/order';
 import { enableRegionX } from '@/utils/functions';
 
 import {
@@ -21,6 +23,7 @@ import {
   OrderCard,
   OrderCreationModal,
 } from '@/components';
+import { OrderProcessorModal } from '@/components/Orders/Modals/OrderProcessor';
 
 import { useAccounts } from '@/contexts/account';
 import { useNetwork } from '@/contexts/network';
@@ -33,16 +36,19 @@ const OrderDashboard = () => {
 
   const { network } = useNetwork();
   const { orders, status } = useOrders();
+  const { data: regionData, loading: loadingRegions } = useRegions();
   const {
     state: { activeAccount },
   } = useAccounts();
 
-  const [orderCreationModalOpen, openOrderCreationModal] = useState(false);
   const [expiredOnly, watchExpired] = useState(false);
 
   const [ordersToShow, setOrdersToShow] = useState<Order[]>([]);
   const [orderSelected, selectOrder] = useState<Order | undefined>();
+
+  const [orderCreationModalOpen, openOrderCreationModal] = useState(false);
   const [contributionModal, openContributionModal] = useState(false);
+  const [processorModal, openProcessorModal] = useState(false);
 
   useEffect(() => {
     if (!enableRegionX(network)) {
@@ -107,7 +113,7 @@ const OrderDashboard = () => {
         <Box mt='1rem'>
           <Typography>An error occured while fetching the orders.</Typography>
         </Box>
-      ) : status !== ContextStatus.LOADED ? (
+      ) : status !== ContextStatus.LOADED || loadingRegions ? (
         <Backdrop open>
           <CircularProgress />
         </Backdrop>
@@ -121,21 +127,31 @@ const OrderDashboard = () => {
           {ordersToShow.map((order: Order, index: number) => (
             <Paper key={index} sx={{ padding: '1.5rem' }}>
               <OrderCard order={order} />
-              <Button
-                fullWidth
-                variant='contained'
-                sx={{
-                  borderRadius: '1rem',
-                  mt: '1.5rem',
-                }}
-                onClick={() => {
-                  selectOrder(order);
-                  openContributionModal(true);
-                }}
-                disabled={activeAccount === null}
-              >
-                Contribute
-              </Button>
+              <Stack direction='column' gap='.5rem' mt='1.5rem'>
+                <Button
+                  fullWidth
+                  variant='contained'
+                  sx={{
+                    borderRadius: '1rem',
+                  }}
+                  onClick={() => {
+                    openContributionModal(true);
+                    selectOrder(order);
+                  }}
+                  disabled={activeAccount === null}
+                >
+                  Contribute
+                </Button>
+                <ActionButton
+                  onClick={() => {
+                    openProcessorModal(true);
+                    selectOrder(order);
+                  }}
+                  label='Fulfill Order'
+                  fullWidth={true}
+                  disabled={activeAccount === null}
+                />
+              </Stack>
             </Paper>
           ))}
         </Box>
@@ -146,11 +162,19 @@ const OrderDashboard = () => {
         onClose={() => openOrderCreationModal(false)}
       />
       {orderSelected !== undefined && (
-        <ContributionModal
-          open={contributionModal}
-          onClose={() => openContributionModal(false)}
-          order={orderSelected}
-        />
+        <>
+          <ContributionModal
+            open={contributionModal}
+            onClose={() => openContributionModal(false)}
+            order={orderSelected}
+          />
+          <OrderProcessorModal
+            open={processorModal}
+            onClose={() => openProcessorModal(false)}
+            order={orderSelected}
+            regions={regionData}
+          />
+        </>
       )}
     </>
   );

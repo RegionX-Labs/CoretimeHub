@@ -17,6 +17,14 @@ export type Order = {
   processed: boolean;
 };
 
+// TODO: remove this type
+export type Region = {
+  begin: number | null;
+  end: number | null;
+  core: number;
+  mask: string;
+};
+
 export type OrderItem = {
   orderId: number;
   height: number;
