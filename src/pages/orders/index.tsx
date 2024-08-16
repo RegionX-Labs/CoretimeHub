@@ -13,7 +13,6 @@ import {
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { useRegions } from '@/hooks/order';
 import { enableRegionX } from '@/utils/functions';
 
 import {
@@ -29,6 +28,7 @@ import { useAccounts } from '@/contexts/account';
 import { useNetwork } from '@/contexts/network';
 import { useOrders } from '@/contexts/orders';
 import { ContextStatus, Order } from '@/models';
+import { useRegions } from '@/contexts/regions';
 
 const OrderDashboard = () => {
   const theme = useTheme();
@@ -36,7 +36,7 @@ const OrderDashboard = () => {
 
   const { network } = useNetwork();
   const { orders, status } = useOrders();
-  const { data: regionData, loading: loadingRegions } = useRegions();
+  const { regions: regionData } = useRegions();
   const {
     state: { activeAccount },
   } = useAccounts();
@@ -113,7 +113,7 @@ const OrderDashboard = () => {
         <Box mt='1rem'>
           <Typography>An error occured while fetching the orders.</Typography>
         </Box>
-      ) : status !== ContextStatus.LOADED || loadingRegions ? (
+      ) : status !== ContextStatus.LOADED ? (
         <Backdrop open>
           <CircularProgress />
         </Backdrop>
@@ -142,15 +142,20 @@ const OrderDashboard = () => {
                 >
                   Contribute
                 </Button>
-                <ActionButton
+                <Button
                   onClick={() => {
                     openProcessorModal(true);
                     selectOrder(order);
                   }}
-                  label='Fulfill Order'
-                  fullWidth={true}
+                  variant='outlined'
+                  sx={{
+                    borderRadius: '1rem',
+                  }}
+                  fullWidth
                   disabled={activeAccount === null}
-                />
+                >
+                  Fulfill Order
+                </Button>
               </Stack>
             </Paper>
           ))}

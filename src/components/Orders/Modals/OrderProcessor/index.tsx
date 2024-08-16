@@ -25,7 +25,7 @@ import { useRegionXApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useOrders } from '@/contexts/orders';
 import { useToast } from '@/contexts/toast';
-import { Order, Region } from '@/models';
+import { Order, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 import { OrderCard } from '../../OrderCard';
@@ -33,7 +33,7 @@ import { OrderCard } from '../../OrderCard';
 interface OrderProcessorModalProps extends DialogProps {
   onClose: () => void;
   order: Order;
-  regions: Array<Region>;
+  regions: Array<RegionMetadata>;
 }
 
 export const OrderProcessorModal = ({
@@ -58,7 +58,7 @@ export const OrderProcessorModal = ({
     state: { decimals: relayDecimals, symbol: relaySymbol },
   } = useRelayApi();
 
-  const [regionSelected, selectRegion] = useState<Region | null>(
+  const [regionSelected, selectRegion] = useState<RegionMetadata | null>(
     regions.length ? regions[0] : null
   );
   const [working, setWorking] = useState(false);
@@ -81,9 +81,9 @@ export const OrderProcessorModal = ({
 
     try {
       const tx = api.tx.processor.fulfillOrder(order.orderId, {
-        begin: regionSelected.begin,
-        core: regionSelected.core,
-        mask: regionSelected.mask,
+        begin: regionSelected.region.getBegin(),
+        core: regionSelected.region.getCore(),
+        mask: regionSelected.region.getMask(),
       });
 
       submitExtrinsicWithFeeInfo(
@@ -119,14 +119,15 @@ export const OrderProcessorModal = ({
     }
   };
 
-  const checkRequirements = (order: Order, region: Region | null) => {
+  const checkRequirements = (order: Order, region: RegionMetadata | null) => {
     if (!region) return false;
     return (
-      region.begin !== null &&
-      region.end !== null &&
-      region.begin <= order.begin &&
-      region.end >= order.end &&
-      countMaskOnes(region.mask) * 720 >= order?.coreOccupancy
+      region.region.getBegin() !== null &&
+      region.region.getEnd() !== null &&
+      region.region.getBegin() <= order.begin &&
+      region.region.getEnd() >= order.end &&
+      // 57600 / 80 = 720
+      countMaskOnes(region.region.getMask()) * 720 >= order?.coreOccupancy
     );
   };
 
@@ -179,11 +180,7 @@ export const OrderProcessorModal = ({
               >
                 {regions.map((region, idx) => (
                   <MenuItem key={idx} value={idx}>
-                    {`Begin: ${region.begin}, End: ${
-                      region.end
-                    }, CoreOccupancy: ${
-                      (countMaskOnes(region.mask) * 100) / 80
-                    }%`}
+                    {`${region.name}`}
                   </MenuItem>
                 ))}
               </Select>
