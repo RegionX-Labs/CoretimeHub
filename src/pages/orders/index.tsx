@@ -27,8 +27,8 @@ import { OrderProcessorModal } from '@/components/Orders/Modals/OrderProcessor';
 import { useAccounts } from '@/contexts/account';
 import { useNetwork } from '@/contexts/network';
 import { useOrders } from '@/contexts/orders';
-import { ContextStatus, Order } from '@/models';
 import { useRegions } from '@/contexts/regions';
+import { ContextStatus, Order } from '@/models';
 
 const OrderDashboard = () => {
   const theme = useTheme();
