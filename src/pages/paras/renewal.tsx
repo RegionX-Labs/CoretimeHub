@@ -20,12 +20,13 @@ import { useRenewableParachains } from '@/hooks/renewableParas';
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 import { getBalanceString, timesliceToTimestamp } from '@/utils/functions';
 
-import { Balance, ParaDisplay, ProgressButton } from '@/components';
+import { Balance, Banner, ParaDisplay, ProgressButton } from '@/components';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
+import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
 import { BrokerStatus, ContextStatus } from '@/models';
 
@@ -37,6 +38,7 @@ const Renewal = () => {
     state: { activeAccount, activeSigner },
   } = useAccounts();
   const { status, parachains } = useRenewableParachains();
+  const { saleInfo } = useSaleInfo();
 
   const {
     state: { api: relayApi, apiState: relayApiState },
@@ -248,6 +250,21 @@ const Renewal = () => {
               />
             </Stack>
           </Stack>
+          {saleInfo.coresSold === saleInfo.coresOffered && (
+            <Stack width='75%' margin='0 auto'>
+              <Banner
+                content={
+                  'No more cores are on sale! Attempting to renew will fail. To avoid these kind of \
+                  issues in the future, please renew during the interlude phase '
+                }
+                link={{
+                  title: 'Renewal FAQ',
+                  href: 'https://docs.regionx.tech/docs/faq/renewal-questions',
+                }}
+                severity='warning'
+              />
+            </Stack>
+          )}
           <Stack
             direction='row'
             gap='1rem'

@@ -3,6 +3,7 @@ import Image from 'next/image';
 
 import { chainData } from '@/chaindata';
 import { NetworkType } from '@/models';
+
 import Unknown from '../../../assets/unknown.svg';
 
 interface ParaDisplayProps {
