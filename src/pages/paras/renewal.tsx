@@ -255,7 +255,7 @@ const Renewal = () => {
               <Banner
                 content={
                   'No more cores are on sale! Attempting to renew will fail. To avoid these kind of \
-                  issues in the future, please renew during the interlude phase '
+                  issues in the future, please renew during the interlude phase. '
                 }
                 link={{
                   title: 'Renewal FAQ',
