@@ -30,7 +30,6 @@ export const ParaDisplay = ({ paraId, network }: ParaDisplayProps) => {
 
   return (
     <Stack direction='row' alignItems='center' gap='0.5rem'>
-      {paraId}
       {logo === undefined ? (
         <></>
       ) : (
@@ -43,6 +42,7 @@ export const ParaDisplay = ({ paraId, network }: ParaDisplayProps) => {
         />
       )}
       {name}
+      <p>#{paraId}</p>
     </Stack>
   );
 };
