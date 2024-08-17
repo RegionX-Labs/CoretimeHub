@@ -1,3 +1,4 @@
+import CachedIcon from '@mui/icons-material/Cached';
 import { Box, Paper, Stack, Typography } from '@mui/material';
 
 import theme from '@/utils/muiTheme';
@@ -21,8 +22,14 @@ const TransferForm = () => {
     setSelectedRegion,
   } = useTransferState();
 
+  const flip = () => {
+    const oldOriginChain = originChain;
+    setOriginChain(destinationChain);
+    setDestinationChain(oldOriginChain);
+  };
+
   return (
-    <Box width='60%' margin='0.5rem auto'>
+    <Box width='50%' margin='1rem auto'>
       <Paper
         sx={{
           padding: '2rem',
@@ -41,8 +48,19 @@ const TransferForm = () => {
           <ChainSelector chain={originChain} setChain={setOriginChain} />
         </Stack>
 
+        <Box display='flex' justifyContent='center' mt='1.5rem'>
+          <CachedIcon
+            sx={{
+              color: theme.palette.common.black,
+              fontSize: '2rem',
+              cursor: 'pointer',
+            }}
+            onClick={flip}
+          />
+        </Box>
+
         {/* Destination Chain */}
-        <Stack margin='1rem 0' direction='column' gap='1rem'>
+        <Stack margin='0.5rem 0' direction='column' gap='1rem'>
           <Typography
             sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
           >
