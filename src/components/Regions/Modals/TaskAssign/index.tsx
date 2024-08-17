@@ -80,7 +80,7 @@ const TaskItem = ({ name, id, editable = false }: TaskItemProps) => {
           onClick={(e) => e.stopPropagation()}
         />
       ) : (
-        name
+        `${name} #${id}`
       )}
       {editable &&
         (editing ? (
