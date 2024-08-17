@@ -112,7 +112,7 @@ const OrderProvider = ({ children }: Props) => {
                   ...item,
                   totalContribution: parseInt(item.contribution),
                   contribution: await getContribution(item.orderId),
-                } as Order)
+                }) as Order
             )
           )
         );
