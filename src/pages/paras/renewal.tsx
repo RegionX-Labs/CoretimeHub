@@ -251,7 +251,7 @@ const Renewal = () => {
             </Stack>
           </Stack>
           {saleInfo.coresSold === saleInfo.coresOffered && (
-            <Stack width='75%' margin='0 auto'>
+            <Stack width='75%' margin='0 auto' mt='1rem'>
               <Banner
                 content={
                   'No more cores are on sale! Attempting to renew will fail. To avoid these kind of \
@@ -262,6 +262,22 @@ const Renewal = () => {
                   href: 'https://docs.regionx.tech/docs/faq/renewal-questions',
                 }}
                 severity='warning'
+              />
+            </Stack>
+          )}
+          {/* If not all cores are sold inform the user: */}
+          {saleInfo.coresSold < saleInfo.coresOffered && (
+            <Stack width='75%' margin='0 auto' mt='1rem'>
+              <Banner
+                content={
+                  'It is highly recommended to renew during the interlude phase, as doing so guarantees \
+                  that the core will be available for renewal. '
+                }
+                link={{
+                  title: 'Renewal FAQ',
+                  href: 'https://docs.regionx.tech/docs/faq/renewal-questions',
+                }}
+                severity='info'
               />
             </Stack>
           )}
