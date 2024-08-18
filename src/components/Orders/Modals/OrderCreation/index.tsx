@@ -19,12 +19,12 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
+import { useParasInfo } from '@/hooks';
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
 import { ProgressButton } from '@/components/Elements';
 import { ParaDisplay } from '@/components/Paras';
 
-import { chainData } from '@/chaindata';
 import { useAccounts } from '@/contexts/account';
 import { useRegionXApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
@@ -60,6 +60,8 @@ export const OrderCreationModal = ({
     state: { api, apiState, symbol, decimals },
   } = useRegionXApi();
   const { saleInfo } = useSaleInfo();
+
+  const { parachains } = useParasInfo();
 
   const { network } = useNetwork();
   const { fetchOrders } = useOrders();
@@ -195,9 +197,9 @@ export const OrderCreationModal = ({
               onChange={(e) => setParaId(Number(e.target.value))}
               disabled={working}
             >
-              {Object.keys(chainData[network]).map((paraId, index: number) => (
-                <MenuItem key={index} value={paraId}>
-                  <ParaDisplay network={network} paraId={Number(paraId)} />
+              {parachains.map((para) => (
+                <MenuItem key={para.id} value={para.id}>
+                  <ParaDisplay network={network} paraId={Number(para.id)} />
                 </MenuItem>
               ))}
             </Select>
