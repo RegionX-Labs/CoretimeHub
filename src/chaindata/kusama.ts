@@ -12,6 +12,7 @@ import {
   chainsKicoPNG,
   chainsKintsugiPNG,
   chainsKreivoSVG,
+  chainsLaosPNG,
   chainsListenPNG,
   chainsMangataPNG,
   chainsPeopleKusamaSVG,
@@ -39,7 +40,6 @@ import {
   nodesIpciSVG,
   nodesKabochaSVG,
   nodesKhalaSVG,
-  chainsLaosPNG,
   nodesKrestPNG,
   nodesLitmusPNG,
   nodesLoomNetworkPNG,
@@ -75,22 +75,22 @@ const prodParasKusama: ChainDetails[] = [
     text: 'Aband',
     ui: {
       color: '#7358ff',
-      logo: chainsAbandPNG
-    }
+      logo: chainsAbandPNG,
+    },
   },
   {
     homepage: 'https://acurast.com',
     info: 'acurast',
     paraId: 2239,
     providers: {
-      Acurast: 'wss://public-rpc.canary.acurast.com'
+      Acurast: 'wss://public-rpc.canary.acurast.com',
       // Acurast: 'wss://acurast-canarynet-ws.prod.gke.papers.tech' // https://github.com/polkadot-js/apps/issues/10667
     },
     text: 'Acurast Canary',
     ui: {
       color: '#000000',
-      logo: chainsAcurastPNG
-    }
+      logo: chainsAcurastPNG,
+    },
   },
   {
     homepage: 'https://centrifuge.io/altair',
@@ -98,13 +98,13 @@ const prodParasKusama: ChainDetails[] = [
     paraId: 2088,
     providers: {
       Centrifuge: 'wss://fullnode.altair.centrifuge.io',
-      OnFinality: 'wss://altair.api.onfinality.io/public-ws'
+      OnFinality: 'wss://altair.api.onfinality.io/public-ws',
     },
     text: 'Altair',
     ui: {
       color: '#ffb700',
-      logo: chainsAltairSVG
-    }
+      logo: chainsAltairSVG,
+    },
   },
   {
     homepage: 'https://pendulumchain.org/amplitude',
@@ -112,13 +112,13 @@ const prodParasKusama: ChainDetails[] = [
     paraId: 2124,
     providers: {
       Dwellir: 'wss://amplitude-rpc.dwellir.com',
-      PendulumChain: 'wss://rpc-amplitude.pendulumchain.tech'
+      PendulumChain: 'wss://rpc-amplitude.pendulumchain.tech',
     },
     text: 'Amplitude',
     ui: {
       color: '#5DEFA7',
-      logo: chainsAmplitudeSVG
-    }
+      logo: chainsAmplitudeSVG,
+    },
   },
   {
     homepage: 'https://ajuna.io',
@@ -127,13 +127,13 @@ const prodParasKusama: ChainDetails[] = [
     providers: {
       AjunaNetwork: 'wss://rpc-parachain.bajun.network',
       OnFinality: 'wss://bajun.api.onfinality.io/public-ws',
-      RadiumBlock: 'wss://bajun.public.curie.radiumblock.co/ws'
+      RadiumBlock: 'wss://bajun.public.curie.radiumblock.co/ws',
     },
     text: 'Bajun Network',
     ui: {
       color: '#161212',
-      logo: nodesBajunPNG
-    }
+      logo: nodesBajunPNG,
+    },
   },
   {
     homepage: 'https://app.basilisk.cloud',
@@ -141,14 +141,14 @@ const prodParasKusama: ChainDetails[] = [
     paraId: 2090,
     providers: {
       Basilisk: 'wss://rpc.basilisk.cloud',
-      Dwellir: 'wss://basilisk-rpc.dwellir.com'
+      Dwellir: 'wss://basilisk-rpc.dwellir.com',
       // OnFinality: 'wss://basilisk.api.onfinality.io/public-ws' // https://github.com/polkadot-js/apps/issues/9414
     },
     text: 'Basilisk',
     ui: {
       color: '#49E49F',
-      logo: nodesBasiliskPNG
-    }
+      logo: nodesBasiliskPNG,
+    },
   },
   {
     homepage: 'https://ksm.vtoken.io/?ref=polkadotjs',
@@ -158,26 +158,26 @@ const prodParasKusama: ChainDetails[] = [
       Dwellir: 'wss://bifrost-rpc.dwellir.com',
       Liebi: 'wss://bifrost-rpc.liebi.com/ws',
       LiebiUS: 'wss://us.bifrost-rpc.liebi.com/ws',
-      OnFinality: 'wss://bifrost-parachain.api.onfinality.io/public-ws'
+      OnFinality: 'wss://bifrost-parachain.api.onfinality.io/public-ws',
     },
     text: 'Bifrost',
     ui: {
       color: '#5a25f0',
-      logo: nodesBifrostSVG
-    }
+      logo: nodesBifrostSVG,
+    },
   },
   {
     homepage: 'https://www.calamari.network/',
     info: 'calamari',
     paraId: 2084,
     providers: {
-      'Manta Network': 'wss://calamari.systems'
+      'Manta Network': 'wss://calamari.systems',
     },
     text: 'Calamari',
     ui: {
       color: '#000000',
-      logo: nodesCalamariPNG
-    }
+      logo: nodesCalamariPNG,
+    },
   },
   {
     homepage: 'https://crab.network',
@@ -186,25 +186,25 @@ const prodParasKusama: ChainDetails[] = [
     providers: {
       Darwinia: 'wss://crab-rpc.darwinia.network/',
       Dcdao: 'wss://crab-rpc.dcdao.box',
-      Dwellir: 'wss://darwiniacrab-rpc.dwellir.com'
+      Dwellir: 'wss://darwiniacrab-rpc.dwellir.com',
     },
     text: 'Crab',
     ui: {
       color: '#512DBC',
-      logo: nodesCrabSVG
-    }
+      logo: nodesCrabSVG,
+    },
   },
   {
     homepage: 'https://crust.network/',
     info: 'shadow',
     paraId: 2012,
     providers: {
-      Crust: 'wss://rpc-shadow.crust.network/'
+      Crust: 'wss://rpc-shadow.crust.network/',
     },
     text: 'Crust Shadow',
     ui: {
-      logo: nodesShadowSVG
-    }
+      logo: nodesShadowSVG,
+    },
   },
   {
     homepage: 'https://crust.network/',
@@ -217,32 +217,32 @@ const prodParasKusama: ChainDetails[] = [
     },
     text: 'Crust Shadow 2',
     ui: {
-      logo: nodesShadowSVG
-    }
+      logo: nodesShadowSVG,
+    },
   },
   {
     info: 'curio',
     paraId: 3339,
     providers: {
-      Curio: 'wss://parachain.curioinvest.com/'
+      Curio: 'wss://parachain.curioinvest.com/',
     },
     text: 'Curio',
     ui: {
       color: 'rgb(96, 98, 246)',
-      logo: nodesCurioSVG
-    }
+      logo: nodesCurioSVG,
+    },
   },
   {
     homepage: 'https://ipci.io',
     info: 'ipci',
     paraId: 2222,
     providers: {
-      Airalab: 'wss://kusama.rpc.ipci.io'
+      Airalab: 'wss://kusama.rpc.ipci.io',
     },
     text: 'DAO IPCI',
     ui: {
-      logo: nodesIpciSVG
-    }
+      logo: nodesIpciSVG,
+    },
   },
   {
     homepage: 'https://dorafactory.org/kusama/',
@@ -254,8 +254,8 @@ const prodParasKusama: ChainDetails[] = [
     text: 'Dora Factory',
     ui: {
       color: '#FF761C',
-      logo: chainsDorafactoryPNG
-    }
+      logo: chainsDorafactoryPNG,
+    },
   },
   {
     homepage: 'https://genshiro.io',
@@ -267,8 +267,8 @@ const prodParasKusama: ChainDetails[] = [
     text: 'Genshiro',
     ui: {
       color: '#e8662d',
-      logo: chainsGenshiroSVG
-    }
+      logo: chainsGenshiroSVG,
+    },
   },
   {
     homepage: 'https://genshiro.equilibrium.io',
@@ -281,8 +281,8 @@ const prodParasKusama: ChainDetails[] = [
     text: 'Genshiro crowdloan 2',
     ui: {
       color: '#e8662d',
-      logo: chainsGenshiroSVG
-    }
+      logo: chainsGenshiroSVG,
+    },
   },
   {
     homepage: 'https://gmordie.com',
@@ -294,13 +294,13 @@ const prodParasKusama: ChainDetails[] = [
       // TerraBioDAO: 'wss://ws-node-gm.terrabiodao.org', // https://github.com/polkadot-js/apps/issues/8867
       // Leemo: 'wss://leemo.gmordie.com', // https://github.com/polkadot-js/apps/issues/9712
       // 'bLd Nodes': 'wss://ws.gm.bldnodes.org', // https://github.com/polkadot-js/apps/issues/9947
-      'light client': 'light://substrate-connect/kusama/gm'
+      'light client': 'light://substrate-connect/kusama/gm',
     },
     text: 'GM',
     ui: {
       color: '#f47b36',
-      logo: chainsGmJPEG
-    }
+      logo: chainsGmJPEG,
+    },
   },
   {
     homepage: 'https://hyperbridge.network',
@@ -312,22 +312,22 @@ const prodParasKusama: ChainDetails[] = [
     text: 'Hyperbridge (Messier)',
     ui: {
       color: '#ED6FF1',
-      logo: nodesHyperbridgePNG
-    }
+      logo: nodesHyperbridgePNG,
+    },
   },
   {
     homepage: 'https://imbue.network',
     info: 'imbue',
     paraId: 2121,
     providers: {
-      'Imbue Network 0': 'wss://kusama.imbuenetwork.com'
+      'Imbue Network 0': 'wss://kusama.imbuenetwork.com',
       // 'Imbue Network 1': 'wss://collator.production.imbue.network' // https://github.com/polkadot-js/apps/issues/9848
     },
     text: 'Imbue Network',
     ui: {
       color: '#baff36',
-      logo: nodesImbuePNG
-    }
+      logo: nodesImbuePNG,
+    },
   },
   {
     homepage: 'https://integritee.network',
@@ -335,13 +335,13 @@ const prodParasKusama: ChainDetails[] = [
     paraId: 2015,
     providers: {
       Integritee: 'wss://kusama.api.integritee.network',
-      OnFinality: 'wss://integritee-kusama.api.onfinality.io/public-ws'
+      OnFinality: 'wss://integritee-kusama.api.onfinality.io/public-ws',
     },
     text: 'Integritee Network',
     ui: {
       color: '#2e154b',
-      logo: nodesIntegriteeSVG
-    }
+      logo: nodesIntegriteeSVG,
+    },
   },
   {
     homepage: 'https://invarch.network/tinkernet',
@@ -351,39 +351,40 @@ const prodParasKusama: ChainDetails[] = [
       // 'InvArch Team': 'wss://tinker.invarch.network', // https://github.com/polkadot-js/apps/issues/8623
       Dwellir: 'wss://tinkernet-rpc.dwellir.com',
       // OnFinality: 'wss://invarch-tinkernet.api.onfinality.io/public-ws', // https://github.com/polkadot-js/apps/issues/9955
-      'light client': 'light://substrate-connect/kusama/tinkernet'
+      'light client': 'light://substrate-connect/kusama/tinkernet',
     },
     text: 'InvArch Tinkernet',
     ui: {
       color: '#161616',
-      logo: chainsTinkerPNG
-    }
+      logo: chainsTinkerPNG,
+    },
   },
   {
     homepage: 'https://laosnetwork.io/',
     info: 'k-laos',
     paraId: 3336,
     providers: {
-      Freeverse: 'wss://rpc.klaos.laosfoundation.io'
+      Freeverse: 'wss://rpc.klaos.laosfoundation.io',
     },
     text: 'K-Laos',
     ui: {
-      color: 'linear-gradient(158deg, rgba(226,157,0,1) 0%, rgba(234,55,203,1) 100%)',
+      color:
+        'linear-gradient(158deg, rgba(226,157,0,1) 0%, rgba(234,55,203,1) 100%)',
       logo: chainsLaosPNG,
-    }
+    },
   },
   {
     homepage: 'https://kabocha.network',
     info: 'kabocha',
     paraId: 2113,
     providers: {
-      JelliedOwl: 'wss://kabocha.jelliedowl.net'
+      JelliedOwl: 'wss://kabocha.jelliedowl.net',
     },
     text: 'Kabocha',
     ui: {
       color: 'repeating-radial-gradient(black, black 4px, yellow 5px)',
-      logo: nodesKabochaSVG
-    }
+      logo: nodesKabochaSVG,
+    },
   },
   {
     homepage: 'https://acala.network/karura/join-karura',
@@ -396,14 +397,14 @@ const prodParasKusama: ChainDetails[] = [
       'Acala Foundation 3': 'wss://karura-rpc-3.aca-api.network/ws',
       Dwellir: 'wss://karura-rpc.dwellir.com',
       // LuckyFriday: 'wss://rpc-karura.luckyfriday.io',  // https://github.com/polkadot-js/apps/issues/10663
-      OnFinality: 'wss://karura.api.onfinality.io/public-ws'
+      OnFinality: 'wss://karura.api.onfinality.io/public-ws',
       // 'Polkawallet 0': 'wss://karura.polkawallet.io' // https://github.com/polkadot-js/apps/issues/9383
     },
     text: 'Karura',
     ui: {
       color: '#ff4c3b',
-      logo: chainsKaruraSVG
-    }
+      logo: chainsKaruraSVG,
+    },
   },
   {
     homepage: 'https://phala.network/',
@@ -415,13 +416,13 @@ const prodParasKusama: ChainDetails[] = [
       OnFinality: 'wss://khala.api.onfinality.io/public-ws',
       Phala: 'wss://khala-api.phala.network/ws',
       RadiumBlock: 'wss://khala.public.curie.radiumblock.co/ws',
-      Rockx: 'wss://rockx-khala.w3node.com/polka-public-khala/ws'
+      Rockx: 'wss://rockx-khala.w3node.com/polka-public-khala/ws',
     },
     text: 'Khala Network',
     ui: {
       color: '#03f3f3',
-      logo: nodesKhalaSVG
-    }
+      logo: nodesKhalaSVG,
+    },
   },
   {
     homepage: 'https://dico.io/',
@@ -434,8 +435,8 @@ const prodParasKusama: ChainDetails[] = [
     text: 'KICO',
     ui: {
       color: '#29B58D',
-      logo: chainsKicoPNG
-    }
+      logo: chainsKicoPNG,
+    },
   },
   {
     homepage: 'https://dico.io/',
@@ -447,8 +448,8 @@ const prodParasKusama: ChainDetails[] = [
     text: 'KICO 2',
     ui: {
       color: '#29B58D',
-      logo: chainsKicoPNG
-    }
+      logo: chainsKicoPNG,
+    },
   },
   {
     homepage: 'https://kintsugi.interlay.io/',
@@ -458,13 +459,13 @@ const prodParasKusama: ChainDetails[] = [
       Dwellir: 'wss://kintsugi-rpc.dwellir.com',
       'Kintsugi Labs': 'wss://api-kusama.interlay.io/parachain',
       // LuckyFriday: 'wss://rpc-kintsugi.luckyfriday.io/', // https://github.com/polkadot-js/apps/issues/9947
-      OnFinality: 'wss://kintsugi.api.onfinality.io/public-ws'
+      OnFinality: 'wss://kintsugi.api.onfinality.io/public-ws',
     },
     text: 'Kintsugi BTC',
     ui: {
       color: '#1a0a2d',
-      logo: chainsKintsugiPNG
-    }
+      logo: chainsKintsugiPNG,
+    },
   },
   {
     homepage: 'http://apron.network/',
@@ -472,13 +473,13 @@ const prodParasKusama: ChainDetails[] = [
     isUnreachable: true,
     paraId: 2019,
     providers: {
-      Kpron: 'wss://kusama-kpron-rpc.apron.network/'
+      Kpron: 'wss://kusama-kpron-rpc.apron.network/',
     },
     text: 'Kpron',
     ui: {
       color: 'linear-gradient(45deg, #0099F7 0%, #2E49EB 100%)',
-      logo: nodesApronPNG
-    }
+      logo: nodesApronPNG,
+    },
   },
   {
     homepage: 'https://virto.network/',
@@ -486,14 +487,14 @@ const prodParasKusama: ChainDetails[] = [
     paraId: 2281,
     providers: {
       Kippu: 'wss://kreivo.kippu.rocks/',
-      Virto: 'wss://kreivo.io/'
+      Virto: 'wss://kreivo.io/',
     },
     text: 'Kreivo - By Virto',
     ui: {
       color: '#294940',
       identityIcon: 'polkadot',
-      logo: chainsKreivoSVG
-    }
+      logo: chainsKreivoSVG,
+    },
   },
   {
     homepage: 'https://krest.peaq.network/',
@@ -503,12 +504,12 @@ const prodParasKusama: ChainDetails[] = [
       Dwellir: 'wss://krest-rpc.dwellir.com',
       Krest: 'wss://wss-krest.peaq.network/',
       OnFinality: 'wss://krest.api.onfinality.io/public-ws',
-      UnitedBloc: 'wss://krest.unitedbloc.com/'
+      UnitedBloc: 'wss://krest.unitedbloc.com/',
     },
     text: 'Krest',
     ui: {
-      logo: nodesKrestPNG
-    }
+      logo: nodesKrestPNG,
+    },
   },
   {
     homepage: 'https://listen.io/',
@@ -521,21 +522,21 @@ const prodParasKusama: ChainDetails[] = [
     text: 'Listen Network',
     ui: {
       color: '#FFAD0A',
-      logo: chainsListenPNG
-    }
+      logo: chainsListenPNG,
+    },
   },
   {
     homepage: 'https://www.litentry.com/',
     info: 'litmus',
     paraId: 2106,
     providers: {
-      Litentry: 'wss://rpc.litmus-parachain.litentry.io'
+      Litentry: 'wss://rpc.litmus-parachain.litentry.io',
     },
     text: 'Litmus',
     ui: {
       color: '#3913D3',
-      logo: nodesLitmusPNG
-    }
+      logo: nodesLitmusPNG,
+    },
   },
   {
     homepage: 'https://loomx.io/',
@@ -546,8 +547,8 @@ const prodParasKusama: ChainDetails[] = [
     },
     text: 'Loom Network',
     ui: {
-      logo: nodesLoomNetworkPNG
-    }
+      logo: nodesLoomNetworkPNG,
+    },
   },
   {
     homepage: 'https://mangata.finance',
@@ -555,13 +556,13 @@ const prodParasKusama: ChainDetails[] = [
     paraId: 2110,
     providers: {
       'Mangata Archive': 'wss://kusama-archive.mangata.online',
-      'Mangata RPC': 'wss://kusama-rpc.mangata.online'
+      'Mangata RPC': 'wss://kusama-rpc.mangata.online',
     },
     text: 'Mangata',
     ui: {
       color: '#030408',
-      logo: chainsMangataPNG
-    }
+      logo: chainsMangataPNG,
+    },
   },
   {
     homepage: 'https://www.aresprotocol.io/mars',
@@ -573,8 +574,8 @@ const prodParasKusama: ChainDetails[] = [
     text: 'Mars',
     ui: {
       color: '#E56239',
-      logo: nodesAresMarsPNG
-    }
+      logo: nodesAresMarsPNG,
+    },
   },
   {
     homepage: 'https://moonbeam.network/networks/moonriver/',
@@ -587,13 +588,13 @@ const prodParasKusama: ChainDetails[] = [
       'Moonbeam Foundation': 'wss://wss.api.moonriver.moonbeam.network',
       OnFinality: 'wss://moonriver.api.onfinality.io/public-ws',
       RadiumBlock: 'wss://moonriver.public.curie.radiumblock.co/ws',
-      UnitedBloc: 'wss://moonriver.unitedbloc.com'
+      UnitedBloc: 'wss://moonriver.unitedbloc.com',
     },
     text: 'Moonriver',
     ui: {
       color: '#06353d',
-      logo: nodesMoonriverSVG
-    }
+      logo: nodesMoonriverSVG,
+    },
   },
   {
     homepage: 'https://parallel.fi',
@@ -601,13 +602,13 @@ const prodParasKusama: ChainDetails[] = [
     paraId: 2085,
     providers: {
       // OnFinality: 'wss://parallel-heiko.api.onfinality.io/public-ws', // https://github.com/polkadot-js/apps/issues/9964
-      Parallel: 'wss://heiko-rpc.parallel.fi'
+      Parallel: 'wss://heiko-rpc.parallel.fi',
     },
     text: 'Parallel Heiko',
     ui: {
       color: '#42d5de',
-      logo: nodesParallelSVG
-    }
+      logo: nodesParallelSVG,
+    },
   },
   {
     homepage: 'https://parallel.fi',
@@ -618,8 +619,8 @@ const prodParasKusama: ChainDetails[] = [
     text: 'Parallel Heiko 2',
     ui: {
       color: '#42d5de',
-      logo: nodesParallelSVG
-    }
+      logo: nodesParallelSVG,
+    },
   },
   {
     homepage: 'https://picasso.composable.finance/',
@@ -627,14 +628,14 @@ const prodParasKusama: ChainDetails[] = [
     paraId: 2087,
     providers: {
       Composable: 'wss://rpc.composablenodes.tech',
-      Dwellir: 'wss://picasso-rpc.dwellir.com'
+      Dwellir: 'wss://picasso-rpc.dwellir.com',
       // LuckyFriday: 'wss://rpc-picasso.luckyfriday.io' // https://github.com/polkadot-js/apps/issues/9947
     },
     text: 'Picasso',
     ui: {
       color: '#000000',
-      logo: nodesPicassoPNG
-    }
+      logo: nodesPicassoPNG,
+    },
   },
   {
     homepage: 'https://kylin.network/',
@@ -646,22 +647,22 @@ const prodParasKusama: ChainDetails[] = [
     text: 'Pichiu',
     ui: {
       color: '#ed007e',
-      logo: nodesPichiuPNG
-    }
+      logo: nodesPichiuPNG,
+    },
   },
   {
     homepage: 'https://pioneer.bit.country/?ref=polkadotjs',
     info: 'pioneer',
     paraId: 2096,
     providers: {
-      MetaverseNetwork: 'wss://pioneer-rpc-3.bit.country/wss'
+      MetaverseNetwork: 'wss://pioneer-rpc-3.bit.country/wss',
       // OnFinality: 'wss://pioneer.api.onfinality.io/public-ws' // https://github.com/polkadot-js/apps/issues/9955
     },
     text: 'Pioneer',
     ui: {
       color: '#000000',
-      logo: nodesBitcountryPNG
-    }
+      logo: nodesBitcountryPNG,
+    },
   },
   {
     homepage: 'https://polkasmith.polkafoundry.com/',
@@ -673,8 +674,8 @@ const prodParasKusama: ChainDetails[] = [
     text: 'PolkaSmith by PolkaFoundry',
     ui: {
       color: '#0DDDFB',
-      logo: nodesPolkasmithSVG
-    }
+      logo: nodesPolkasmithSVG,
+    },
   },
   {
     info: 'qpn',
@@ -685,8 +686,8 @@ const prodParasKusama: ChainDetails[] = [
     text: 'Quantum Portal Network',
     ui: {
       color: '#b37700',
-      logo: chainsQpnPNG
-    }
+      logo: chainsQpnPNG,
+    },
   },
   {
     homepage: 'https://unique.network/',
@@ -698,13 +699,13 @@ const prodParasKusama: ChainDetails[] = [
       'Geo Load Balancer': 'wss://ws-quartz.unique.network',
       'Unique America': 'wss://us-ws-quartz.unique.network',
       'Unique Asia': 'wss://asia-ws-quartz.unique.network',
-      'Unique Europe': 'wss://eu-ws-quartz.unique.network'
+      'Unique Europe': 'wss://eu-ws-quartz.unique.network',
     },
     text: 'QUARTZ by UNIQUE',
     ui: {
       color: '#FF4D6A',
-      logo: nodesQuartzPNG
-    }
+      logo: nodesQuartzPNG,
+    },
   },
   {
     homepage: 'https://riodefi.com',
@@ -716,8 +717,8 @@ const prodParasKusama: ChainDetails[] = [
     text: 'RioDeFi',
     ui: {
       color: '#4E7AED',
-      logo: chainsRiodefiPNG
-    }
+      logo: chainsRiodefiPNG,
+    },
   },
   {
     homepage: 'http://robonomics.network/',
@@ -728,13 +729,13 @@ const prodParasKusama: ChainDetails[] = [
       Dwellir: 'wss://robonomics-rpc.dwellir.com',
       // Leemo: 'wss://robonomics.leemo.me', // https://github.com/polkadot-js/apps/issues/9817
       // OnFinality: 'wss://robonomics.api.onfinality.io/public-ws', // https://github.com/polkadot-js/apps/issues/9824
-      Samsara: 'wss://robonomics.0xsamsara.com'
+      Samsara: 'wss://robonomics.0xsamsara.com',
     },
     text: 'Robonomics',
     ui: {
       color: '#2949d3',
-      logo: nodesRobonomicsSVG
-    }
+      logo: nodesRobonomicsSVG,
+    },
   },
   {
     homepage: 'http://robonomics.network/',
@@ -745,13 +746,13 @@ const prodParasKusama: ChainDetails[] = [
       Airalab: 'wss://kusama.rpc.robonomics.network/',
       // Leemo: 'wss://robonomics.leemo.me', // https://github.com/polkadot-js/apps/issues/9817
       // OnFinality: 'wss://robonomics.api.onfinality.io/public-ws', // https://github.com/polkadot-js/apps/issues/9824
-      Samsara: 'wss://robonomics.0xsamsara.com'
+      Samsara: 'wss://robonomics.0xsamsara.com',
     },
     text: 'Robonomics 2',
     ui: {
       color: '#2949d3',
-      logo: nodesRobonomicsSVG
-    }
+      logo: nodesRobonomicsSVG,
+    },
   },
   {
     homepage: 'https://clover.finance/',
@@ -759,13 +760,13 @@ const prodParasKusama: ChainDetails[] = [
     isUnreachable: true,
     paraId: 2016,
     providers: {
-      Clover: 'wss://api-sakura.clover.finance'
+      Clover: 'wss://api-sakura.clover.finance',
     },
     text: 'Sakura',
     ui: {
       color: '#ff5995',
-      logo: nodesSakuraSVG
-    }
+      logo: nodesSakuraSVG,
+    },
   },
   {
     homepage: 'https://shiden.astar.network/',
@@ -777,13 +778,13 @@ const prodParasKusama: ChainDetails[] = [
       Dwellir: 'wss://shiden-rpc.dwellir.com',
       OnFinality: 'wss://shiden.api.onfinality.io/public-ws',
       RadiumBlock: 'wss://shiden.public.curie.radiumblock.co/ws',
-      'light client': 'light://substrate-connect/kusama/shiden'
+      'light client': 'light://substrate-connect/kusama/shiden',
     },
     text: 'Shiden',
     ui: {
       color: '#5923B2',
-      logo: chainsShidenPNG
-    }
+      logo: chainsShidenPNG,
+    },
   },
   {
     homepage: 'https://shiden.astar.network/',
@@ -791,13 +792,13 @@ const prodParasKusama: ChainDetails[] = [
     isUnreachable: true,
     paraId: 2120,
     providers: {
-      StakeTechnologies: 'wss://rpc.shiden.astar.network'
+      StakeTechnologies: 'wss://rpc.shiden.astar.network',
     },
     text: 'Shiden Crowdloan 2',
     ui: {
       color: '#5923B2',
-      logo: chainsShidenPNG
-    }
+      logo: chainsShidenPNG,
+    },
   },
   {
     homepage: 'https://icenetwork.io/snow',
@@ -808,21 +809,21 @@ const prodParasKusama: ChainDetails[] = [
     },
     text: 'SNOW Network',
     ui: {
-      logo: nodesSnowPNG
-    }
+      logo: nodesSnowPNG,
+    },
   },
   {
     homepage: 'https://sora.org/',
     info: 'sora',
     paraId: 2011,
     providers: {
-      Soramitsu: 'wss://ws.parachain-collator-2.c2.sora2.soramitsu.co.jp'
+      Soramitsu: 'wss://ws.parachain-collator-2.c2.sora2.soramitsu.co.jp',
     },
     text: 'SORA',
     ui: {
       color: '#2D2926',
-      logo: nodesSoraSubstrateSVG
-    }
+      logo: nodesSoraSubstrateSVG,
+    },
   },
   {
     homepage: 'http://subgame.org/',
@@ -834,8 +835,8 @@ const prodParasKusama: ChainDetails[] = [
     text: 'SubGame Gamma',
     ui: {
       color: '#EB027D',
-      logo: nodesSubgameSVG
-    }
+      logo: nodesSubgameSVG,
+    },
   },
   {
     homepage: 'https://subsocial.network/',
@@ -847,8 +848,8 @@ const prodParasKusama: ChainDetails[] = [
     text: 'SubsocialX',
     ui: {
       color: '#69058C',
-      logo: nodesSubsocialXSVG
-    }
+      logo: nodesSubsocialXSVG,
+    },
   },
   {
     homepage: 'https://www.t3rn.io/',
@@ -860,8 +861,8 @@ const prodParasKusama: ChainDetails[] = [
     text: 't1rn',
     ui: {
       color: '#131532',
-      logo: nodesT1rnPNG
-    }
+      logo: nodesT1rnPNG,
+    },
   },
   {
     homepage: 'https://www.datahighway.com/',
@@ -873,8 +874,8 @@ const prodParasKusama: ChainDetails[] = [
     text: 'Tanganika',
     ui: {
       color: 'linear-gradient(-90deg, #9400D3 0%, #5A5CA9 50%, #00BFFF 100%)',
-      logo: nodesDatahighwayPNG
-    }
+      logo: nodesDatahighwayPNG,
+    },
   },
   {
     homepage: 'https://trustbase.network/',
@@ -885,8 +886,8 @@ const prodParasKusama: ChainDetails[] = [
     text: 'TrustBase',
     ui: {
       color: '#ff43aa',
-      logo: nodesTrustbasePNG
-    }
+      logo: nodesTrustbasePNG,
+    },
   },
   {
     homepage: 'https://oak.tech',
@@ -894,13 +895,13 @@ const prodParasKusama: ChainDetails[] = [
     paraId: 2114,
     providers: {
       Dwellir: 'wss://turing-rpc.dwellir.com',
-      OAK: 'wss://rpc.turing.oak.tech'
+      OAK: 'wss://rpc.turing.oak.tech',
     },
     text: 'Turing Network',
     ui: {
       color: '#A8278C',
-      logo: chainsTuringPNG
-    }
+      logo: chainsTuringPNG,
+    },
   },
   {
     homepage: 'https://standard.tech/',
@@ -911,22 +912,24 @@ const prodParasKusama: ChainDetails[] = [
     },
     text: 'Unorthodox',
     ui: {
-      color: 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(42,244,187,1) 35%, rgba(10,10,10,1) 100%)',
-      logo: chainsUnorthodoxPNG
-    }
+      color:
+        'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(42,244,187,1) 35%, rgba(10,10,10,1) 100%)',
+      logo: chainsUnorthodoxPNG,
+    },
   },
   {
     homepage: 'https://xode.net',
     info: 'xode',
     paraId: 3344,
     providers: {
-      XodeCommunity: 'wss://rpcnodea01.xode.net/n7yoxCmcIrCF6VziCcDmYTwL8R03a/rpc'
+      XodeCommunity:
+        'wss://rpcnodea01.xode.net/n7yoxCmcIrCF6VziCcDmYTwL8R03a/rpc',
     },
     text: 'Xode',
     ui: {
       color: '#ed1f7a',
-      logo: nodesXodePNG
-    }
+      logo: nodesXodePNG,
+    },
   },
   {
     homepage: 'https://yerba.network',
@@ -936,21 +939,21 @@ const prodParasKusama: ChainDetails[] = [
     text: 'Yerba Network',
     ui: {
       color: '#a5503c',
-      logo: nodesYerbanetworkPNG
-    }
+      logo: nodesYerbanetworkPNG,
+    },
   },
   {
     homepage: 'https://zero.io',
     info: 'zero',
     paraId: 2236,
     providers: {
-      'Zero Network': 'wss://rpc-1.kusama.node.zero.io'
+      'Zero Network': 'wss://rpc-1.kusama.node.zero.io',
     },
     text: 'ZERO Canary',
     ui: {
       color: '#000000',
-      logo: nodesZeroSVG
-    }
+      logo: nodesZeroSVG,
+    },
   },
   {
     paraId: 1000,

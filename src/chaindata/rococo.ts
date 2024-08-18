@@ -6,11 +6,11 @@ import {
   chainsHydratePNG,
   chainsIdiyanaleLogoWhiteSVG,
   chainsJurPNG,
+  chainsLaosPNG,
   chainsMangataPNG,
   chainsMoonsamaPNG,
   chainsNeurowebTestnetPNG,
   chainsSnowbridgePNG,
-  chainsLaosPNG,
   chainsT0rnPNG,
   chainsTinkerPNG,
   chainsTotemSVG,
@@ -20,8 +20,6 @@ import {
   nodesArcticPNG,
   nodesAssetHubSVG,
   nodesAventusSVG,
-  nodesBajunPNG,
-  nodesHyperbridgePNG,
   nodesBasiliskPNG,
   nodesBasiliskRococoBgPNG,
   nodesBridgeHubBlackSVG,
@@ -34,20 +32,23 @@ import {
   nodesEncointerBlueSVG,
   nodesGiantPNG,
   nodesHelixstreetPNG,
+  nodesHyperbridgePNG,
   nodesImbuePNG,
   nodesIntegriteeSVG,
   nodesInvoPNG,
   nodesKabochaSVG,
   nodesKiltPNG,
+  nodesKineraPNG,
   nodesLitentryRococoPNG,
+  nodesMagnetPNG,
   nodesMd5PNG,
   nodesMusePNG,
   nodesOliSVG,
   nodesOzPNG,
-  nodesPangolinSVG,
   nodesPhalaSVG,
   nodesPicassoPNG,
   nodesPolkadexSVG,
+  nodesRegionxCocosPNG,
   nodesRexSVG,
   nodesRobonomicsSVG,
   nodesRocfinitySVG,
@@ -59,9 +60,6 @@ import {
   nodesYerbanetworkPNG,
   nodesZeitgeistPNG,
   nodesZeroSVG,
-  nodesKineraPNG,
-  nodesMagnetPNG,
-  nodesRegionxCocosPNG,
 } from '@/assets/logos';
 
 import { ChainDetails } from './types';
@@ -77,20 +75,20 @@ const testParasRococo: ChainDetails[] = [
     text: 'Acurast Testnet',
     ui: {
       color: '#000000',
-      logo: chainsAcurastPNG
-    }
+      logo: chainsAcurastPNG,
+    },
   },
   {
     info: 'rococoAmplitude',
     paraId: 2124,
     providers: {
-      PendulumChain: 'wss://rpc-foucoco.pendulumchain.tech'
+      PendulumChain: 'wss://rpc-foucoco.pendulumchain.tech',
     },
     text: 'Amplitude testnet (Foucoco)',
     ui: {
       color: '#5DEFA7',
-      logo: chainsAmplitudeSVG
-    }
+      logo: chainsAmplitudeSVG,
+    },
   },
   {
     info: 'arctic',
@@ -100,33 +98,33 @@ const testParasRococo: ChainDetails[] = [
     },
     text: 'Arctic',
     ui: {
-      logo: nodesArcticPNG
-    }
+      logo: nodesArcticPNG,
+    },
   },
   {
     homepage: 'https://www.aventus.io/',
     info: 'rococoAventus',
     paraId: 2056,
     providers: {
-      Aventus: 'wss://public-rpc.testnet.aventus.network'
+      Aventus: 'wss://public-rpc.testnet.aventus.network',
     },
     text: 'Aventus',
     ui: {
       color: '#E6E6FA',
-      logo: nodesAventusSVG
-    }
+      logo: nodesAventusSVG,
+    },
   },
   {
     info: 'rococoBasilisk',
     paraId: 2090,
     providers: {
-      'Galactic Council': 'wss://basilisk-rococo-rpc.play.hydration.cloud'
+      'Galactic Council': 'wss://basilisk-rococo-rpc.play.hydration.cloud',
     },
     text: 'Basilisk',
     ui: {
       color: `url(${nodesBasiliskRococoBgPNG}) #000`,
-      logo: nodesBasiliskPNG
-    }
+      logo: nodesBasiliskPNG,
+    },
   },
   {
     info: 'rococoBitgreen',
@@ -137,8 +135,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'Bitgreen',
     ui: {
       color: '#224851',
-      logo: chainsBitgreenPNG
-    }
+      logo: chainsBitgreenPNG,
+    },
   },
   {
     info: 'rococoCatalyst',
@@ -148,8 +146,8 @@ const testParasRococo: ChainDetails[] = [
     },
     text: 'Catalyst',
     ui: {
-      logo: nodesCentrifugePNG
-    }
+      logo: nodesCentrifugePNG,
+    },
   },
   {
     info: 'rococoConfti',
@@ -159,8 +157,8 @@ const testParasRococo: ChainDetails[] = [
     },
     text: 'Confti',
     ui: {
-      logo: nodesConftiSVG
-    }
+      logo: nodesConftiSVG,
+    },
   },
   {
     info: 'rococoCrust',
@@ -170,20 +168,20 @@ const testParasRococo: ChainDetails[] = [
     },
     text: 'Crust Testnet',
     ui: {
-      logo: nodesCrustParachainSVG
-    }
+      logo: nodesCrustParachainSVG,
+    },
   },
   {
     info: 'rococoCurio',
     paraId: 3339,
     providers: {
-      Curio: 'wss://testnet.parachain.curioinvest.com/'
+      Curio: 'wss://testnet.parachain.curioinvest.com/',
     },
     text: 'Curio Testnet',
     ui: {
       color: 'rgb(96, 98, 246)',
-      logo: nodesCurioSVG
-    }
+      logo: nodesCurioSVG,
+    },
   },
   {
     info: 'rococoDolphin',
@@ -193,8 +191,8 @@ const testParasRococo: ChainDetails[] = [
     },
     text: 'Dolphin',
     ui: {
-      logo: nodesDolphinSVG
-    }
+      logo: nodesDolphinSVG,
+    },
   },
   {
     info: 'rococoEthos',
@@ -205,8 +203,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'Ethos',
     ui: {
       color: '#203050',
-      logo: chainsJurPNG
-    }
+      logo: chainsJurPNG,
+    },
   },
   {
     info: 'rococoGenshiro',
@@ -217,8 +215,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'Genshiro Testnet',
     ui: {
       color: '#e8662d',
-      logo: chainsGenshiroSVG
-    }
+      logo: chainsGenshiroSVG,
+    },
   },
   {
     info: 'giantTestnet',
@@ -229,21 +227,21 @@ const testParasRococo: ChainDetails[] = [
     text: 'GIANT Protocol',
     ui: {
       color: '#45B549',
-      logo: nodesGiantPNG
-    }
+      logo: nodesGiantPNG,
+    },
   },
   {
     homepage: 'https://laosnetwork.io/',
     info: 'rorocoLaos',
     paraId: 4343,
     providers: {
-      'Freeverse.io': 'wss://rpc.giedi.laosfoundation.io'
+      'Freeverse.io': 'wss://rpc.giedi.laosfoundation.io',
     },
     text: 'Giedi',
     ui: {
       color: '#dffe77',
-      logo: chainsLaosPNG
-    }
+      logo: chainsLaosPNG,
+    },
   },
   {
     info: 'helixstreet',
@@ -253,8 +251,8 @@ const testParasRococo: ChainDetails[] = [
     },
     text: 'Helixstreet',
     ui: {
-      logo: nodesHelixstreetPNG
-    }
+      logo: nodesHelixstreetPNG,
+    },
   },
   {
     info: 'rococoHydraDX',
@@ -265,8 +263,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'HydraDX',
     ui: {
       color: '#f653a2',
-      logo: chainsHydratePNG
-    }
+      logo: chainsHydratePNG,
+    },
   },
   {
     homepage: 'https://hyperbridge.network',
@@ -278,8 +276,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'Hyperbridge (Gargantua)',
     ui: {
       color: '#ED6FF1',
-      logo: nodesHyperbridgePNG
-    }
+      logo: nodesHyperbridgePNG,
+    },
   },
   {
     info: 'rococoIdiyanale',
@@ -290,8 +288,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'Idiyanale Network',
     ui: {
       color: 'linear-gradient(90deg, #23ACF6 0%, #6FD606 100%)',
-      logo: chainsIdiyanaleLogoWhiteSVG
-    }
+      logo: chainsIdiyanaleLogoWhiteSVG,
+    },
   },
   {
     info: 'rococoImbue',
@@ -302,8 +300,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'Imbue Network',
     ui: {
       color: '#baff36',
-      logo: nodesImbuePNG
-    }
+      logo: nodesImbuePNG,
+    },
   },
   {
     info: 'rococoIntegritee',
@@ -314,8 +312,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'Integritee Network',
     ui: {
       color: '#658ea9',
-      logo: nodesIntegriteeSVG
-    }
+      logo: nodesIntegriteeSVG,
+    },
   },
   {
     homepage: 'https://ourinvo.com/',
@@ -327,8 +325,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'Invo Testnet',
     ui: {
       color: '#000000',
-      logo: nodesInvoPNG
-    }
+      logo: nodesInvoPNG,
+    },
   },
   {
     info: 'rococoKabocha',
@@ -339,8 +337,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'Kabocha (kabsoup)',
     ui: {
       color: 'repeating-radial-gradient(black, black 4px, yellow 5px)',
-      logo: nodesKabochaSVG
-    }
+      logo: nodesKabochaSVG,
+    },
   },
   {
     homepage: 'https://polkadex.trade',
@@ -352,71 +350,71 @@ const testParasRococo: ChainDetails[] = [
     text: 'Kaizen',
     ui: {
       color: '#7C30DD',
-      logo: nodesPolkadexSVG
-    }
+      logo: nodesPolkadexSVG,
+    },
   },
   {
     info: 'rococoKinera',
     isPeopleForIdentity: true,
     paraId: 4437,
     providers: {
-      'Kinera Node': 'wss://node.kinera.network'
+      'Kinera Node': 'wss://node.kinera.network',
     },
     text: 'Kinera Testnet',
     ui: {
       color: '#000000',
-      logo: nodesKineraPNG
-    }
+      logo: nodesKineraPNG,
+    },
   },
   {
     homepage: 'https://www.litentry.com/',
     info: 'rococoLitentry',
     paraId: 2106,
     providers: {
-      Litentry: 'wss://rpc.rococo-parachain.litentry.io'
+      Litentry: 'wss://rpc.rococo-parachain.litentry.io',
     },
     text: 'Litentry',
     ui: {
       color: '#ECDA38',
-      logo: nodesLitentryRococoPNG
-    }
+      logo: nodesLitentryRococoPNG,
+    },
   },
   {
     homepage: 'https://magnet.magport.io/',
     info: 'rococoMagnet',
     paraId: 4361,
     providers: {
-      Magnet: 'wss://magnet-rpc.magport.io/ws'
+      Magnet: 'wss://magnet-rpc.magport.io/ws',
     },
     text: 'Magnet',
     ui: {
       color: '#58BFAB',
-      logo: nodesMagnetPNG
-    }
+      logo: nodesMagnetPNG,
+    },
   },
   {
     info: 'rococoMangata',
     paraId: 2110,
     providers: {
-      Mangata: 'wss://collator-01-ws-rococo.mangata.online'
+      Mangata: 'wss://collator-01-ws-rococo.mangata.online',
     },
     text: 'Mangata',
     ui: {
       color: '#030408',
-      logo: chainsMangataPNG
-    }
+      logo: chainsMangataPNG,
+    },
   },
   {
     info: 'rococoMd5',
     paraId: 2093,
     providers: {
-      'Hashed Systems': 'wss://c1md5.hashed.network'
+      'Hashed Systems': 'wss://c1md5.hashed.network',
     },
     text: 'MD5 Network',
     ui: {
       color: '#175bae',
-      logo: nodesMd5PNG
-    }
+      logo: nodesMd5PNG,
+    },
   },
   {
     info: 'rococoMoonsama',
@@ -427,33 +425,33 @@ const testParasRococo: ChainDetails[] = [
     text: 'Moonsama',
     ui: {
       color: '#000000',
-      logo: chainsMoonsamaPNG
-    }
+      logo: chainsMoonsamaPNG,
+    },
   },
   {
     info: 'rococoMuse',
     paraId: 3369,
     providers: {
-      Parity: 'wss://rococo-muse-rpc.polkadot.io'
+      Parity: 'wss://rococo-muse-rpc.polkadot.io',
     },
     text: 'Muse network',
     ui: {
       color: '#110ff9',
-      logo: nodesMusePNG
-    }
+      logo: nodesMusePNG,
+    },
   },
   {
     homepage: 'https://neuroweb.ai',
     info: 'rococoNeuroWeb',
     paraId: 2043,
     providers: {
-      TraceLabs: 'wss://parachain-testnet-rpc.origin-trail.network/'
+      TraceLabs: 'wss://parachain-testnet-rpc.origin-trail.network/',
     },
     text: 'NeuroWeb Testnet',
     ui: {
       color: '#646566',
-      logo: chainsNeurowebTestnetPNG
-    }
+      logo: chainsNeurowebTestnetPNG,
+    },
   },
   {
     homepage: 'https://www.my-oli.com/en/',
@@ -463,8 +461,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'OLI',
     ui: {
       color: '#8CC63F',
-      logo: nodesOliSVG
-    }
+      logo: nodesOliSVG,
+    },
   },
   {
     info: 'rococoOpenZeppelin',
@@ -473,8 +471,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'OpenZeppelin Runtime Template',
     ui: {
       color: '#f653a2',
-      logo: nodesOzPNG
-    }
+      logo: nodesOzPNG,
+    },
   },
   {
     info: 'rococoPicasso',
@@ -485,55 +483,55 @@ const testParasRococo: ChainDetails[] = [
     text: 'Picasso Testnet',
     ui: {
       color: '#000000',
-      logo: nodesPicassoPNG
-    }
+      logo: nodesPicassoPNG,
+    },
   },
   {
     info: 'regionxCocos',
     paraId: 4479,
     providers: {
-      RegionX: 'wss://cocos-node.regionx.tech'
+      RegionX: 'wss://cocos-node.regionx.tech',
     },
     text: 'RegionX Cocos',
     ui: {
       color: '#0CC184',
-      logo: nodesRegionxCocosPNG
-    }
+      logo: nodesRegionxCocosPNG,
+    },
   },
   {
     info: 'rococoEwx',
     paraId: 3345,
     providers: {
-      'Energy Web': 'wss://public-rpc.testnet.energywebx.com/'
+      'Energy Web': 'wss://public-rpc.testnet.energywebx.com/',
     },
     text: 'REX',
     ui: {
       color: '#452E66',
-      logo: nodesRexSVG
-    }
+      logo: nodesRexSVG,
+    },
   },
   {
     info: 'rococoPhala',
     paraId: 2004,
     providers: {
-      'Phala Network': 'wss://rhala-node.phala.network/ws'
+      'Phala Network': 'wss://rhala-node.phala.network/ws',
     },
     text: 'Rhala Testnet',
     ui: {
-      logo: nodesPhalaSVG
-    }
+      logo: nodesPhalaSVG,
+    },
   },
   {
     info: 'rococoKilt',
     paraId: 2086,
     providers: {
-      BOTLabs: 'wss://rilt.kilt.io'
+      BOTLabs: 'wss://rilt.kilt.io',
     },
     text: 'RILT',
     ui: {
       color: 'linear-gradient(45deg, #8c145a 0%, #f05a27 100%)',
-      logo: nodesKiltPNG
-    }
+      logo: nodesKiltPNG,
+    },
   },
   {
     homepage: 'http://robonomics.network/',
@@ -545,8 +543,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'Robonomics',
     ui: {
       color: '#2949d3',
-      logo: nodesRobonomicsSVG
-    }
+      logo: nodesRobonomicsSVG,
+    },
   },
   {
     info: 'rocfinity',
@@ -557,8 +555,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'Rocfinity',
     ui: {
       color: '#496ddb',
-      logo: nodesRocfinitySVG
-    }
+      logo: nodesRocfinitySVG,
+    },
   },
   {
     info: 'snowbridgeAssetHub',
@@ -568,8 +566,8 @@ const testParasRococo: ChainDetails[] = [
     },
     text: 'Snowbridge Asset Hub',
     ui: {
-      logo: chainsSnowbridgePNG
-    }
+      logo: chainsSnowbridgePNG,
+    },
   },
   {
     info: 'snowbridgeBridgeHub',
@@ -579,8 +577,8 @@ const testParasRococo: ChainDetails[] = [
     },
     text: 'Snowbridge Bridge Hub',
     ui: {
-      logo: chainsSnowbridgePNG
-    }
+      logo: chainsSnowbridgePNG,
+    },
   },
   {
     info: 'rococoSocietal',
@@ -591,32 +589,32 @@ const testParasRococo: ChainDetails[] = [
     text: 'Societal',
     ui: {
       color: '#501254',
-      logo: nodesSocietalSVG
-    }
+      logo: nodesSocietalSVG,
+    },
   },
   {
     info: 'rococoSubsocial',
     paraId: 2100,
     providers: {
-      DappForce: 'wss://rco-para.subsocial.network'
+      DappForce: 'wss://rco-para.subsocial.network',
     },
     text: 'SoonsocialX',
     ui: {
       color: '#b9018c',
-      logo: nodesSoonsocialXPNG
-    }
+      logo: nodesSoonsocialXPNG,
+    },
   },
   {
     info: 'rococoSora',
     paraId: 2011,
     providers: {
-      Soramitsu: 'wss://ws.parachain-collator-1.c1.stg1.sora2.soramitsu.co.jp'
+      Soramitsu: 'wss://ws.parachain-collator-1.c1.stg1.sora2.soramitsu.co.jp',
     },
     text: 'SORA',
     ui: {
       color: '#2D2926',
-      logo: nodesSoraSubstrateSVG
-    }
+      logo: nodesSoraSubstrateSVG,
+    },
   },
   {
     info: 'rococoSpreehafen',
@@ -627,8 +625,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'Spreehafen',
     ui: {
       color: 'linear-gradient(-90deg, #9400D3 0%, #5A5CA9 50%, #00BFFF 100%)',
-      logo: nodesDatahighwayPNG
-    }
+      logo: nodesDatahighwayPNG,
+    },
   },
   {
     homepage: 'https://totemaccounting.com/',
@@ -639,9 +637,10 @@ const testParasRococo: ChainDetails[] = [
     },
     text: 'Stagex',
     ui: {
-      color: 'linear-gradient(158deg, rgba(226,157,0,1) 0%, rgba(234,55,203,1) 100%)',
-      logo: chainsTotemSVG
-    }
+      color:
+        'linear-gradient(158deg, rgba(226,157,0,1) 0%, rgba(234,55,203,1) 100%)',
+      logo: chainsTotemSVG,
+    },
   },
   {
     info: 'rococoSubzero',
@@ -651,20 +650,20 @@ const testParasRococo: ChainDetails[] = [
     },
     text: 'Subzero',
     ui: {
-      logo: nodesZeroSVG
-    }
+      logo: nodesZeroSVG,
+    },
   },
   {
     info: 't0rn',
     paraId: 3333,
     providers: {
-      t3rn: 'wss://rpc.t0rn.io'
+      t3rn: 'wss://rpc.t0rn.io',
     },
     text: 't0rn',
     ui: {
       color: '#212322',
-      logo: chainsT0rnPNG
-    }
+      logo: chainsT0rnPNG,
+    },
   },
   {
     info: 'rococoTinkernet',
@@ -674,9 +673,10 @@ const testParasRococo: ChainDetails[] = [
     },
     text: 'Tinkernet',
     ui: {
-      color: 'linear-gradient(90deg, rgba(253,52,166,1) 0%, rgba(22,213,239,1) 100%)',
-      logo: chainsTinkerPNG
-    }
+      color:
+        'linear-gradient(90deg, rgba(253,52,166,1) 0%, rgba(22,213,239,1) 100%)',
+      logo: chainsTinkerPNG,
+    },
   },
   {
     info: 'rococoTuring',
@@ -687,8 +687,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'Turing Network (Staging)',
     ui: {
       color: '#A8278C',
-      logo: chainsTuringPNG
-    }
+      logo: chainsTuringPNG,
+    },
   },
   {
     info: 'rococoUnitNetwork',
@@ -699,8 +699,8 @@ const testParasRococo: ChainDetails[] = [
     text: 'Unit Network',
     ui: {
       color: '#a351ef',
-      logo: nodesUnitnetworkPNG
-    }
+      logo: nodesUnitnetworkPNG,
+    },
   },
   {
     info: 'rococoVirto',
@@ -711,44 +711,45 @@ const testParasRococo: ChainDetails[] = [
     text: 'Virto',
     ui: {
       color: '#063970',
-      logo: chainsVirtoPNG
-    }
+      logo: chainsVirtoPNG,
+    },
   },
   {
     info: 'rococoWatr',
     paraId: 2058,
     providers: {
-      Watr: 'wss://rpc.dev.watr.org'
+      Watr: 'wss://rpc.dev.watr.org',
     },
     text: 'Watr Network',
     ui: {
       color: '#373b39',
-      logo: chainsWatrPNG
-    }
+      logo: chainsWatrPNG,
+    },
   },
   {
     info: 'rococoYerba',
     paraId: 4292,
     providers: {
-      Yerba: 'wss://rpc.dev.yerba.network'
+      Yerba: 'wss://rpc.dev.yerba.network',
     },
     text: 'Yerba Network',
     ui: {
       color: '#4f6f4b',
-      logo: nodesYerbanetworkPNG
-    }
+      logo: nodesYerbanetworkPNG,
+    },
   },
   {
     info: 'rococoZeitgeist',
     paraId: 2101,
     providers: {
-      Zeitgeist: 'wss://bsr.zeitgeist.pm'
+      Zeitgeist: 'wss://bsr.zeitgeist.pm',
     },
     text: 'Zeitgeist Battery Station',
     ui: {
-      color: 'linear-gradient(180deg, rgba(32,90,172,1) 0%, rgba(26,72,138,1) 50%, rgba(13,36,69,1) 100%)',
-      logo: nodesZeitgeistPNG
-    }
+      color:
+        'linear-gradient(180deg, rgba(32,90,172,1) 0%, rgba(26,72,138,1) 50%, rgba(13,36,69,1) 100%)',
+      logo: nodesZeitgeistPNG,
+    },
   },
   {
     paraId: 1000,
