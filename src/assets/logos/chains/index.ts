@@ -77,3 +77,4 @@ export { chainsVaraPNG } from './varaPNG';
 export { chainsVirtoPNG } from './virtoPNG';
 export { chainsVtbPNG } from './vtbPNG';
 export { chainsWatrPNG } from './watrPNG';
+export { chainsRegionXCocosPNG } from './regionxCocosPNG';
