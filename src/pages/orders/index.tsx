@@ -119,7 +119,7 @@ const OrderDashboard = () => {
           justifyContent='space-around'
         >
           {ordersToShow.map((order: Order, index: number) => (
-            <Paper key={index} sx={{ padding: '1.5rem' }}>
+            <Paper key={index} sx={{ padding: '1.5rem', margin: '1rem' }}>
               <OrderCard order={order} />
               <Button
                 fullWidth
