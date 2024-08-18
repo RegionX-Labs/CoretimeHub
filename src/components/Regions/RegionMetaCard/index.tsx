@@ -8,6 +8,7 @@ import {
   IconButton,
   Input,
   LinearProgress,
+  Link,
   Paper,
   Typography,
   useTheme,
@@ -18,8 +19,10 @@ import React, { useEffect, useState } from 'react';
 
 import { getRelativeTimeString, timesliceToTimestamp } from '@/utils/functions';
 
+import { SUSBCAN_RELAY_URL } from '@/consts';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
+import { useNetwork } from '@/contexts/network';
 import { useTasks } from '@/contexts/tasks';
 import { POOLING_TASK_ID, RegionLocation, RegionMetadata } from '@/models';
 
@@ -87,6 +90,8 @@ const RegionCardInner = ({
 
   const [beginTimestamp, setBeginTimestamp] = useState(0);
   const [endTimestamp, setEndTimestamp] = useState(0);
+
+  const { network } = useNetwork();
 
   const {
     state: { api, apiState },
@@ -251,9 +256,16 @@ const RegionCardInner = ({
       </div>
       <Divider orientation='vertical' flexItem />
       <Box sx={{ color: theme.palette.grey[200] }}>
-        <Typography variant='subtitle2'>
-          {`Task: ${getTask(taskId)}`}
-        </Typography>
+        <Link
+          sx={{ textDecoration: 'none' }}
+          rel='noopener noreferrer'
+          target='_blank'
+          href={`${SUSBCAN_RELAY_URL[network]}/parachain/${taskId}`}
+        >
+          <Typography variant='subtitle2'>
+            {`Task: ${getTask(taskId)} #${taskId}`}
+          </Typography>
+        </Link>
         <Box
           sx={{
             display: 'flex',
