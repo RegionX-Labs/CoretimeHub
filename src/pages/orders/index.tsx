@@ -5,7 +5,6 @@ import {
   CircularProgress,
   FormControlLabel,
   Paper,
-  Stack,
   Switch,
   Typography,
   useTheme,
@@ -127,21 +126,7 @@ const OrderDashboard = () => {
           {ordersToShow.map((order: Order, index: number) => (
             <Paper key={index} sx={{ padding: '1.5rem' }}>
               <OrderCard order={order} />
-              <Stack direction='column' gap='.5rem' mt='1.5rem'>
-                <Button
-                  fullWidth
-                  variant='contained'
-                  sx={{
-                    borderRadius: '1rem',
-                  }}
-                  onClick={() => {
-                    openContributionModal(true);
-                    selectOrder(order);
-                  }}
-                  disabled={activeAccount === null}
-                >
-                  Contribute
-                </Button>
+              <Box display='flex' gap='.5rem' mt='1.5rem'>
                 <Button
                   onClick={() => {
                     openProcessorModal(true);
@@ -156,7 +141,21 @@ const OrderDashboard = () => {
                 >
                   Fulfill Order
                 </Button>
-              </Stack>
+                <Button
+                  fullWidth
+                  variant='contained'
+                  sx={{
+                    borderRadius: '1rem',
+                  }}
+                  onClick={() => {
+                    openContributionModal(true);
+                    selectOrder(order);
+                  }}
+                  disabled={activeAccount === null}
+                >
+                  Contribute
+                </Button>
+              </Box>
             </Paper>
           ))}
         </Box>

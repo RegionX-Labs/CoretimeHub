@@ -58,7 +58,7 @@ export const useProcessedOrders = () => {
                   mask,
                   account: seller,
                   reward,
-                } as OrderItem)
+                }) as OrderItem
             )
           );
         }

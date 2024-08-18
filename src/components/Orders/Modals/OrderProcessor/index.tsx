@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 import { getBalanceString } from '@/utils/functions';
 
-import { ActionButton } from '@/components/Elements';
+import { ProgressButton } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useRegionXApi, useRelayApi } from '@/contexts/apis';
@@ -198,24 +198,29 @@ export const OrderProcessorModal = ({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Stack width='100%' gap='0.5rem' mt='1.5rem'>
+        <Box width='100%' gap='0.5rem' mt='1.5rem' display='flex'>
           <Button
+            onClick={onClose}
+            variant='outlined'
             fullWidth
-            variant='contained'
+            sx={{
+              borderRadius: '1rem',
+            }}
+            data-cy='btn-close-order-processor-modal'
+          >
+            Close
+          </Button>
+          <ProgressButton
+            fullWidth
+            label='Fulfill'
             sx={{
               borderRadius: '1rem',
             }}
             onClick={onProcess}
             disabled={!checkRequirements(order, regionSelected) || working}
-          >
-            Fulfill
-          </Button>
-          <ActionButton
-            label='Close'
-            onClick={onClose}
-            data-cy='btn-close-order-processor-modal'
+            loading={working}
           />
-        </Stack>
+        </Box>
       </DialogActions>
     </Dialog>
   );
