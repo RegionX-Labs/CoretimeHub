@@ -35,7 +35,7 @@ const OrderDashboard = () => {
 
   const { network } = useNetwork();
   const { orders, status } = useOrders();
-  const { regions: regionData } = useRegions();
+  const { regions } = useRegions();
   const {
     state: { activeAccount },
   } = useAccounts();
@@ -176,7 +176,7 @@ const OrderDashboard = () => {
             open={processorModal}
             onClose={() => openProcessorModal(false)}
             order={orderSelected}
-            regions={regionData}
+            regions={regions}
           />
         </>
       )}

@@ -25,7 +25,7 @@ import { useRegionXApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useOrders } from '@/contexts/orders';
 import { useToast } from '@/contexts/toast';
-import { Order, RegionMetadata } from '@/models';
+import { Order, RegionLocation, RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
 import { OrderCard } from '../../OrderCard';
@@ -187,11 +187,19 @@ export const OrderProcessorModal = ({
               {regions.length === 0 ? (
                 <Alert severity='error'>No region avilable</Alert>
               ) : (
-                !checkRequirements(order, regionSelected) && (
-                  <Alert severity='error'>
-                    The selected region does not match requirements
-                  </Alert>
-                )
+                <>
+                  {!checkRequirements(order, regionSelected) && (
+                    <Alert severity='error'>
+                      The selected region does not match requirements
+                    </Alert>
+                  )}
+                  {regionSelected?.location !==
+                    RegionLocation.REGIONX_CHAIN && (
+                    <Alert severity='warning'>
+                      The selected region must first be transferred to RegionX
+                    </Alert>
+                  )}
+                </>
               )}
             </Stack>
           }
