@@ -260,10 +260,11 @@ const RegionCardInner = ({
           sx={{ textDecoration: 'none' }}
           rel='noopener noreferrer'
           target='_blank'
+          onClick={(e) => !taskId && e.preventDefault()}
           href={`${SUSBCAN_RELAY_URL[network]}/parachain/${taskId}`}
         >
           <Typography variant='subtitle2'>
-            {`Task: ${getTask(taskId)} #${taskId}`}
+            {`Task: ${getTask(taskId)} ${taskId ? '#' + taskId : ''}`}
           </Typography>
         </Link>
         <Box

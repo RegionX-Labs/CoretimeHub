@@ -21,10 +21,12 @@ import {
   OrderCard,
   OrderCreationModal,
 } from '@/components';
+import { OrderProcessorModal } from '@/components/Orders/Modals/OrderProcessor';
 
 import { useAccounts } from '@/contexts/account';
 import { useNetwork } from '@/contexts/network';
 import { useOrders } from '@/contexts/orders';
+import { useRegions } from '@/contexts/regions';
 import { ContextStatus, Order } from '@/models';
 
 const OrderDashboard = () => {
@@ -33,16 +35,19 @@ const OrderDashboard = () => {
 
   const { network } = useNetwork();
   const { orders, status } = useOrders();
+  const { regions } = useRegions();
   const {
     state: { activeAccount },
   } = useAccounts();
 
-  const [orderCreationModalOpen, openOrderCreationModal] = useState(false);
   const [expiredOnly, watchExpired] = useState(false);
 
   const [ordersToShow, setOrdersToShow] = useState<Order[]>([]);
   const [orderSelected, selectOrder] = useState<Order | undefined>();
+
+  const [orderCreationModalOpen, openOrderCreationModal] = useState(false);
   const [contributionModal, openContributionModal] = useState(false);
+  const [processorModal, openProcessorModal] = useState(false);
 
   useEffect(() => {
     if (!enableRegionX(network)) {
@@ -121,21 +126,36 @@ const OrderDashboard = () => {
           {ordersToShow.map((order: Order, index: number) => (
             <Paper key={index} sx={{ padding: '1.5rem', margin: '1rem' }}>
               <OrderCard order={order} />
-              <Button
-                fullWidth
-                variant='contained'
-                sx={{
-                  borderRadius: '1rem',
-                  mt: '1.5rem',
-                }}
-                onClick={() => {
-                  selectOrder(order);
-                  openContributionModal(true);
-                }}
-                disabled={activeAccount === null}
-              >
-                Contribute
-              </Button>
+              <Box display='flex' gap='.5rem' mt='1.5rem'>
+                <Button
+                  onClick={() => {
+                    openProcessorModal(true);
+                    selectOrder(order);
+                  }}
+                  variant='outlined'
+                  sx={{
+                    borderRadius: '1rem',
+                  }}
+                  fullWidth
+                  disabled={activeAccount === null}
+                >
+                  Fulfill Order
+                </Button>
+                <Button
+                  fullWidth
+                  variant='contained'
+                  sx={{
+                    borderRadius: '1rem',
+                  }}
+                  onClick={() => {
+                    openContributionModal(true);
+                    selectOrder(order);
+                  }}
+                  disabled={activeAccount === null}
+                >
+                  Contribute
+                </Button>
+              </Box>
             </Paper>
           ))}
         </Box>
@@ -146,11 +166,19 @@ const OrderDashboard = () => {
         onClose={() => openOrderCreationModal(false)}
       />
       {orderSelected !== undefined && (
-        <ContributionModal
-          open={contributionModal}
-          onClose={() => openContributionModal(false)}
-          order={orderSelected}
-        />
+        <>
+          <ContributionModal
+            open={contributionModal}
+            onClose={() => openContributionModal(false)}
+            order={orderSelected}
+          />
+          <OrderProcessorModal
+            open={processorModal}
+            onClose={() => openProcessorModal(false)}
+            order={orderSelected}
+            regions={regions}
+          />
+        </>
       )}
     </>
   );

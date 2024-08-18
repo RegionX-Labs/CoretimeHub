@@ -17,6 +17,7 @@ import {
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
+import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { AssetType, ChainType } from '@/models';
 
@@ -41,6 +42,7 @@ export const useTransferHandlers = () => {
     },
   } = useRelayApi();
 
+  const { fetchRegions } = useRegions();
   const [working, setWorking] = useState(false);
   const [newOwner, setNewOwner] = useState('');
   const [transferAmount, setTransferAmount] = useState<number | undefined>();
@@ -48,22 +50,27 @@ export const useTransferHandlers = () => {
     state: { activeAccount, activeSigner },
   } = useAccounts();
 
-  const defaultHandler = {
-    ready: () => toastInfo('Transaction was initiated'),
-    inBlock: () => toastInfo('In Block'),
-    finalized: () => setWorking(false),
-    success: () => {
-      toastSuccess('Successfully transferred');
-      setWorking(false);
-    },
-    fail: () => {
-      toastError('Failed to transfer');
-      setWorking(false);
-    },
-    error: (e: any) => {
-      toastError(`Failed to transfer: ${e.message}`);
-      setWorking(false);
-    },
+  const defaultHandler = (regionTransfer = false) => {
+    return {
+      ready: () => toastInfo('Transaction was initiated'),
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => {
+        setWorking(false);
+      },
+      success: () => {
+        toastSuccess('Successfully transferred');
+        regionTransfer && fetchRegions();
+        setWorking(false);
+      },
+      fail: () => {
+        toastError('Failed to transfer');
+        setWorking(false);
+      },
+      error: (e: any) => {
+        toastError(`Failed to transfer: ${e.message}`);
+        setWorking(false);
+      },
+    };
   };
 
   const handleTransfer = async () => {
@@ -104,7 +111,7 @@ export const useTransferHandlers = () => {
         activeAccount.address,
         newOwner,
         amount.toString(),
-        defaultHandler
+        defaultHandler()
       );
     } else {
       let transferFunction: any;
@@ -140,7 +147,7 @@ export const useTransferHandlers = () => {
           { address: activeAccount.address, signer: activeSigner },
           amount.toString(),
           receiverKeypair.pairs[0].publicKey,
-          defaultHandler
+          defaultHandler()
         );
 
       if (
@@ -187,7 +194,7 @@ export const useTransferHandlers = () => {
         activeSigner,
         activeAccount.address,
         newOwner ?? activeAccount.address,
-        defaultHandler
+        defaultHandler(true)
       );
     } else if (
       originChain === ChainType.CORETIME &&
@@ -199,7 +206,7 @@ export const useTransferHandlers = () => {
         { address: activeAccount.address, signer: activeSigner },
         selectedRegion.rawId,
         receiverKeypair.pairs[0].publicKey,
-        defaultHandler
+        defaultHandler(true)
       );
     } else if (
       originChain === ChainType.REGIONX &&
@@ -211,7 +218,7 @@ export const useTransferHandlers = () => {
         { address: activeAccount.address, signer: activeSigner },
         selectedRegion.rawId,
         receiverKeypair.pairs[0].publicKey,
-        defaultHandler
+        defaultHandler(true)
       );
     } else {
       toastWarning('Currently not supported');

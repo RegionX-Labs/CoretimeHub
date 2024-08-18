@@ -50,6 +50,31 @@ export const fetchOrders = async (
   return fetchGraphql(API_COCOS_INDEXER, query);
 };
 
+export const fetchCocosRegions = async (
+  after: string | null,
+  filter?: any
+): Promise<ApiResponse> => {
+  const query = `
+  query ($after: Cursor, $filter: RegionFilter){
+    regions(
+      after: $after
+      filter: $filter
+    ) {
+      nodes {
+        begin
+        end
+        core
+        mask
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }`;
+  return fetchGraphql(API_COCOS_INDEXER, query, { filter, after });
+};
+
 export const fetchProcessedOrders = async (
   after: string | null,
   order = 'ORDER_ID_ASC'

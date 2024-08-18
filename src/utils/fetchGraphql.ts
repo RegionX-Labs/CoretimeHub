@@ -2,7 +2,8 @@ import { ApiResponse } from '@/models';
 
 export async function fetchGraphql(
   url: string,
-  query: string
+  query: string,
+  variables: object = {}
 ): Promise<ApiResponse> {
   if (!url) {
     return {
@@ -18,6 +19,7 @@ export async function fetchGraphql(
     },
     body: JSON.stringify({
       query,
+      variables,
     }),
   });
   const { data } = await res.json();

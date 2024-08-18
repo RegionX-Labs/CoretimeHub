@@ -60,7 +60,7 @@ export const TransferStateProvider = ({
       setFilteredRegions(
         regions.filter((r) => r.location === RegionLocation.CORETIME_CHAIN)
       );
-    } else if (originChain === ChainType.RELAY) {
+    } else if (originChain === ChainType.REGIONX) {
       setFilteredRegions(
         regions.filter((r) => r.location === RegionLocation.REGIONX_CHAIN)
       );

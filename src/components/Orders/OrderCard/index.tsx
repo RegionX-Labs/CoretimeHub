@@ -21,11 +21,13 @@ import styles from './index.module.scss';
 interface OrderCardProps {
   order: Order;
   direction?: 'vertical' | 'horizontal';
+  simplified?: boolean;
 }
 
 export const OrderCard = ({
   order,
   direction = 'vertical',
+  simplified = false,
 }: OrderCardProps) => {
   const theme = useTheme();
   const {
@@ -35,6 +37,9 @@ export const OrderCard = ({
   const { begin, end, coreOccupancy, paraId } = order;
 
   const logo = chainData[network][order.paraId]?.logo;
+
+  const formatBalance = (balance: number) =>
+    getBalanceString(balance.toString(), decimals, symbol);
 
   return (
     <Box className={styles.container}>
@@ -75,38 +80,46 @@ export const OrderCard = ({
         </Box>
       </Box>
 
-      <Stack direction='row' alignItems='center' justifyContent='space-between'>
-        <Typography>Contribution</Typography>
-        <Typography sx={{ color: theme.palette.common.black }}>
-          {`${getBalanceString(
-            order.contribution.toString(),
-            decimals,
-            symbol
-          )} / ${getBalanceString(
-            order.totalContribution.toString(),
-            decimals,
-            symbol
-          )}`}
-        </Typography>
-      </Stack>
-      <LinearProgress
-        value={
-          order.totalContribution === 0
-            ? 0
-            : (order.contribution / order.totalContribution) * 100
-        }
-        variant='determinate'
-      />
+      {!simplified && (
+        <>
+          <Stack
+            direction='row'
+            alignItems='center'
+            justifyContent='space-between'
+          >
+            <Typography>Contribution</Typography>
+            <Typography sx={{ color: theme.palette.common.black }}>
+              {`${formatBalance(order.contribution)} / ${formatBalance(
+                order.totalContribution
+              )}`}
+            </Typography>
+          </Stack>
+          <LinearProgress
+            value={
+              order.totalContribution === 0
+                ? 0
+                : (order.contribution / order.totalContribution) * 100
+            }
+            variant='determinate'
+          />
+        </>
+      )}
       <Stack direction='row' alignItems='center' justifyContent='space-between'>
         <Typography>Core Occupancy</Typography>
         <Typography sx={{ color: theme.palette.common.black, fontWeight: 500 }}>
           {`${((coreOccupancy / 57600) * 100).toFixed(2)} %`}
         </Typography>
       </Stack>
-      <Stack direction='row' alignItems='center' justifyContent='space-between'>
-        <Typography>Created by:</Typography>
-        <Address value={order.creator} isShort isCopy size={24} />
-      </Stack>
+      {!simplified && (
+        <Stack
+          direction='row'
+          alignItems='center'
+          justifyContent='space-between'
+        >
+          <Typography>Created by:</Typography>
+          <Address value={order.creator} isShort isCopy size={24} />
+        </Stack>
+      )}
     </Box>
   );
 };

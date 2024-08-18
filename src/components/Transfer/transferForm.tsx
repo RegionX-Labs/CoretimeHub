@@ -1,4 +1,4 @@
-import CachedIcon from '@mui/icons-material/Cached';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
 import { Box, Paper, Stack, Typography } from '@mui/material';
 
 import theme from '@/utils/muiTheme';
@@ -49,7 +49,7 @@ const TransferForm = () => {
         </Stack>
 
         <Box display='flex' justifyContent='center' mt='1.5rem'>
-          <CachedIcon
+          <ImportExportIcon
             sx={{
               color: theme.palette.common.black,
               fontSize: '2rem',

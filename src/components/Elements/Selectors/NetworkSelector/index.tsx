@@ -26,14 +26,14 @@ export const NetworkSelector = () => {
 
   const menuItems = [
     {
-      value: NetworkType.ROCOCO,
-      label: 'Rococo',
-      icon: RococoIcon,
-    },
-    {
       value: NetworkType.KUSAMA,
       label: 'Kusama',
       icon: KusamaIcon,
+    },
+    {
+      value: NetworkType.ROCOCO,
+      label: 'Rococo',
+      icon: RococoIcon,
     },
     // {
     //   value: NetworkType.WESTEND,

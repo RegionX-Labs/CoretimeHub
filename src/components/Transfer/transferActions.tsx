@@ -53,6 +53,11 @@ const TransferActions = () => {
   };
 
   const onTransfer = () => {
+    if (assetType(originChain, destinationChain) === AssetType.REGION) {
+      handleTransfer();
+      return;
+    }
+
     if (!transferAmount) {
       toastWarning('Please input the amount');
       return;
