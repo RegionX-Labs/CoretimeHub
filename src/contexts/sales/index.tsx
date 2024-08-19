@@ -68,7 +68,7 @@ const defaultSaleStatus: BrokerStatus = {
   lastCommittedTimeslice: 0,
   lastTimeslice: 0,
   privatePoolSize: 0,
-  systemPoolSize: 0
+  systemPoolSize: 0,
 };
 
 const defaultSaleData: SaleData = {
@@ -100,7 +100,9 @@ const SaleInfoProvider = ({ children }: Props) => {
   } = useRelayApi();
 
   const [saleInfo, setSaleInfo] = useState<SaleInfo>(defaultSaleData.saleInfo);
-  const [saleStatus, setSaleStatus] = useState<BrokerStatus>(defaultSaleData.saleStatus);
+  const [saleStatus, setSaleStatus] = useState<BrokerStatus>(
+    defaultSaleData.saleStatus
+  );
   const [config, setConfig] = useState<SaleConfig>(defaultSaleData.config);
 
   const [status, setStatus] = useState(ContextStatus.UNINITIALIZED);
@@ -126,26 +128,36 @@ const SaleInfoProvider = ({ children }: Props) => {
   const fetchSaleInfo = async () => {
     try {
       setStatus(ContextStatus.LOADING);
-      if (
-        !coretimeApi ||
-        coretimeApiState !== ApiState.READY ||
-        !relayApi ||
-        relayApiState !== ApiState.READY ||
-        !coretimeApi.query.broker
-      ) {
+      if (!coretimeApi || coretimeApiState !== ApiState.READY) {
         setStatus(ContextStatus.UNINITIALIZED);
         return;
       }
 
-      const saleInfoRaw = await coretimeApi.query.broker.saleInfo();
+      const [brokerStatusRaw, saleInfoRaw, configRaw] = (await new Promise(
+        (resolve, _reject) => {
+          coretimeApi.queryMulti(
+            [
+              coretimeApi.query.broker.status,
+              coretimeApi.query.broker.saleInfo,
+              coretimeApi.query.broker.configuration,
+            ],
+            (result) => {
+              resolve(result);
+            }
+          );
+        }
+      )) as Array<any>;
+
       const saleInfo = saleInfoRaw.toJSON() as SaleInfo;
       // On Rococo we have `endPrice` while on Kusama we still have `price`.
       saleInfo.price = saleInfo.price || (saleInfo as any).endPrice;
       setSaleInfo(saleInfo);
 
-      const configRaw = await coretimeApi.query.broker.configuration();
       const config = configRaw.toJSON() as SaleConfig;
       setConfig(config);
+
+      const brokerStatus = brokerStatusRaw.toJSON() as BrokerStatus;
+      setSaleStatus(brokerStatus);
 
       const saleStart = saleInfo.saleStart;
       // Sale start != bulk phase start. sale_start = bulk_phase_start + interlude_length.
@@ -186,14 +198,7 @@ const SaleInfoProvider = ({ children }: Props) => {
 
   useEffect(() => {
     fetchSaleInfo();
-  }, [
-    network,
-    coretimeApi,
-    coretimeApiState,
-    relayApi,
-    relayApiState,
-    timeslicePeriod,
-  ]);
+  }, [network, coretimeApi, coretimeApiState, timeslicePeriod]);
 
   useEffect(() => {
     if (height === 0) return;
