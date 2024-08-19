@@ -4,6 +4,7 @@ import { getBlockTime, getBlockTimestamp } from '@/utils/functions';
 import { getCorePriceAt, getCurrentPhase } from '@/utils/sale';
 
 import {
+  BrokerStatus,
   ContextStatus,
   PhaseEndpoints,
   RELAY_CHAIN_BLOCK_TIME,
@@ -21,6 +22,7 @@ interface SaleData {
   status: ContextStatus;
   saleInfo: SaleInfo;
   config: SaleConfig;
+  saleStatus: BrokerStatus;
   phase: SalePhaseInfo;
   fetchSaleInfo: () => void;
 }
@@ -61,10 +63,19 @@ const defaultSalePhase = {
   endpoints: defaultEndpoints,
 };
 
+const defaultSaleStatus: BrokerStatus = {
+  coreCount: 0,
+  lastCommittedTimeslice: 0,
+  lastTimeslice: 0,
+  privatePoolSize: 0,
+  systemPoolSize: 0
+};
+
 const defaultSaleData: SaleData = {
   status: ContextStatus.UNINITIALIZED,
   saleInfo: defaultSaleInfo,
   config: defaultSaleConfig,
+  saleStatus: defaultSaleStatus,
   phase: defaultSalePhase,
   fetchSaleInfo: () => {
     /** */
@@ -89,6 +100,7 @@ const SaleInfoProvider = ({ children }: Props) => {
   } = useRelayApi();
 
   const [saleInfo, setSaleInfo] = useState<SaleInfo>(defaultSaleData.saleInfo);
+  const [saleStatus, setSaleStatus] = useState<BrokerStatus>(defaultSaleData.saleStatus);
   const [config, setConfig] = useState<SaleConfig>(defaultSaleData.config);
 
   const [status, setStatus] = useState(ContextStatus.UNINITIALIZED);
@@ -194,6 +206,7 @@ const SaleInfoProvider = ({ children }: Props) => {
         status,
         saleInfo,
         config,
+        saleStatus,
         phase: {
           currentPhase,
           currentPrice,
