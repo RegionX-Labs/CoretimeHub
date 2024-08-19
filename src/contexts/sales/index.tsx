@@ -19,70 +19,24 @@ import { ApiState } from '../apis/types';
 import { useNetwork } from '../network';
 
 interface SaleData {
-  status: ContextStatus;
-  saleInfo: SaleInfo;
-  config: SaleConfig;
-  saleStatus: BrokerStatus;
-  phase: SalePhaseInfo;
+  status: ContextStatus | undefined;
+  saleInfo: SaleInfo | undefined;
+  config: SaleConfig | undefined;
+  saleStatus: BrokerStatus | undefined;
+  phase: SalePhaseInfo | undefined;
   fetchSaleInfo: () => void;
 }
 
-const defaultSaleInfo = {
-  coresOffered: 0,
-  coresSold: 0,
-  firstCore: 0,
-  idealCoresSold: 0,
-  leadinLength: 0,
-  price: 0,
-  regionBegin: 0,
-  regionEnd: 0,
-  saleStart: 0,
-  selloutPrice: null,
-};
-
-const defaultSaleConfig = {
-  advanceNotice: 0,
-  contributionTimeout: 0,
-  idealBulkProportion: 0,
-  interludeLength: 0,
-  leadinLength: 0,
-  limitCoresOffered: 0,
-  regionLength: 0,
-  renewalBump: 0,
-};
-
-const defaultEndpoints = {
-  fixed: { start: 0, end: 0 },
-  interlude: { start: 0, end: 0 },
-  leadin: { start: 0, end: 0 },
-};
-
-const defaultSalePhase = {
-  currentPhase: SalePhase.Interlude,
-  currentPrice: undefined,
-  endpoints: defaultEndpoints,
-};
-
-const defaultSaleStatus: BrokerStatus = {
-  coreCount: 0,
-  lastCommittedTimeslice: 0,
-  lastTimeslice: 0,
-  privatePoolSize: 0,
-  systemPoolSize: 0
-};
-
-const defaultSaleData: SaleData = {
-  status: ContextStatus.UNINITIALIZED,
-  saleInfo: defaultSaleInfo,
-  config: defaultSaleConfig,
-  saleStatus: defaultSaleStatus,
-  phase: defaultSalePhase,
+const SaleDataContext = createContext<SaleData>({
+  config: undefined,
   fetchSaleInfo: () => {
     /** */
   },
-};
-
-const SaleDataContext = createContext<SaleData>(defaultSaleData);
+  phase: undefined,
+  saleInfo: undefined,
+  saleStatus: undefined,
+  status: undefined,
+});
 
 interface Props {
   children: React.ReactNode;
@@ -99,9 +53,9 @@ const SaleInfoProvider = ({ children }: Props) => {
     state: { api: relayApi, apiState: relayApiState },
   } = useRelayApi();
 
-  const [saleInfo, setSaleInfo] = useState<SaleInfo>(defaultSaleData.saleInfo);
-  const [saleStatus, setSaleStatus] = useState<BrokerStatus>(defaultSaleData.saleStatus);
-  const [config, setConfig] = useState<SaleConfig>(defaultSaleData.config);
+  const [saleInfo, setSaleInfo] = useState<SaleInfo | undefined>();
+  const [saleStatus, setSaleStatus] = useState<BrokerStatus | undefined>();
+  const [config, setConfig] = useState<SaleConfig | undefined>();
 
   const [status, setStatus] = useState(ContextStatus.UNINITIALIZED);
   const [currentPhase, setCurrentPhase] = useState<SalePhase>(
@@ -109,13 +63,16 @@ const SaleInfoProvider = ({ children }: Props) => {
   );
   const [at, setAt] = useState(0);
   const [currentPrice, setCurrentPrice] = useState<number | undefined>();
-  const [endpoints, setEndpoints] = useState<PhaseEndpoints>(defaultEndpoints);
+  const [endpoints, setEndpoints] = useState<PhaseEndpoints>();
 
   useEffect(() => {
+    setSaleStatus(undefined);
+    if (!saleInfo) return;
     setAt(currentPhase === SalePhase.Interlude ? saleInfo.saleStart : height);
-  }, [saleInfo.saleStart, height, currentPhase]);
+  }, [saleInfo?.saleStart, height, currentPhase]);
 
   useEffect(() => {
+    if (!saleInfo) return;
     setCurrentPrice(
       status !== ContextStatus.LOADED || height === 0
         ? undefined
@@ -196,7 +153,7 @@ const SaleInfoProvider = ({ children }: Props) => {
   ]);
 
   useEffect(() => {
-    if (height === 0) return;
+    if (height === 0 || !saleInfo) return;
     setCurrentPhase(getCurrentPhase(saleInfo, height));
   }, [saleInfo, height]);
 

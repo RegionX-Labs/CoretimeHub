@@ -39,14 +39,10 @@ const Home = () => {
   const {
     state: { decimals, symbol, apiState },
   } = useCoretimeApi();
-  const {
-    status,
-    saleInfo: { regionBegin, coresSold, coresOffered },
-    phase: { currentPrice },
-  } = useSaleInfo();
+  const { status, saleInfo, phase } = useSaleInfo();
 
   const { data: purchaseHistoryData, loading: loadingPurchaseHistory } =
-    usePurchaseHistory(network, regionBegin);
+    usePurchaseHistory(network, saleInfo?.regionBegin || 0);
 
   const renewals = purchaseHistoryData.filter(
     (item) => item.type === PurchaseType.RENEWAL
@@ -123,20 +119,21 @@ const Home = () => {
       top: [
         {
           label: 'Cores Sold',
-          value: coresSold,
+          value: saleInfo?.coresSold || 0,
           icon: <ShoppingCartIcon />,
           dataCy: 'cores-sold',
         },
         {
           label: 'Cores On Sale',
-          value: coresOffered,
+          value: saleInfo?.coresOffered || 0,
           icon: <ShoppingCartIcon />,
           dataCy: 'cores-on-sale',
         },
       ],
       bottom: {
         label: 'Current Price',
-        value: currentPrice === undefined ? '---' : formatBalance(currentPrice),
+        value:
+          saleInfo?.price === undefined ? '---' : formatBalance(saleInfo.price),
         dataCy: 'current-price',
       },
     },
@@ -166,6 +163,8 @@ const Home = () => {
   return status !== ContextStatus.LOADED ||
     apiState !== ApiState.READY ||
     loadingBurnInfo ||
+    !saleInfo ||
+    !phase ||
     loadingPurchaseHistory ? (
     <Backdrop open>
       <CircularProgress data-cy='loading' />

@@ -40,12 +40,8 @@ const Purchase = () => {
   } = useAccounts();
   const { toastError, toastSuccess, toastInfo, toastWarning } = useToast();
 
-  const {
-    saleInfo,
-    status,
-    phase: { currentPhase, currentPrice },
-    fetchSaleInfo,
-  } = useSaleInfo();
+  const { saleInfo, status, phase, fetchSaleInfo } = useSaleInfo();
+
   const {
     state: { api, apiState, height, symbol, decimals },
   } = useCoretimeApi();
@@ -59,19 +55,19 @@ const Purchase = () => {
     if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
       return;
 
-    if (currentPhase === SalePhase.Interlude) {
+    if (phase?.currentPhase === SalePhase.Interlude) {
       toastWarning(
         'Sales start after the interlude period ends. Purchases can then be made.'
       );
       return;
     }
 
-    if (currentPrice === undefined) {
+    if (phase?.currentPrice === undefined) {
       toastWarning('Wait for the price to be fetched');
       return;
     }
 
-    const txPurchase = api.tx.broker.purchase(currentPrice);
+    const txPurchase = api.tx.broker.purchase(phase?.currentPrice);
 
     submitExtrinsicWithFeeInfo(
       symbol,
@@ -109,7 +105,11 @@ const Purchase = () => {
     });
   };
 
-  return (
+  return !phase || !saleInfo ? (
+    <Backdrop open>
+      <CircularProgress />
+    </Backdrop>
+  ) : (
     <Box>
       <Box
         sx={{

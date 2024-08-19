@@ -74,7 +74,7 @@ export type PhaseEndpoints = {
 export type SalePhaseInfo = {
   currentPhase: SalePhase;
   currentPrice?: number;
-  endpoints: PhaseEndpoints;
+  endpoints?: PhaseEndpoints;
 };
 
 // Response type of the Subscan API

@@ -151,7 +151,7 @@ const Renewal = () => {
     setActiveIdx(index);
   }, [router, parachains, status, parachains.length, toastError]);
 
-  return status !== ContextStatus.LOADED ? (
+  return status !== ContextStatus.LOADED || !saleInfo ? (
     <Backdrop open>
       <CircularProgress />
     </Backdrop>
