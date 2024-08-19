@@ -13,11 +13,9 @@ import { useTheme } from '@mui/material/styles';
 import { OnChainRegionId, Region } from 'coretime-utils';
 import { useConfirm } from 'material-ui-confirm';
 import moment from 'moment';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
-import { enableRegionX } from '@/utils/functions';
 
 import {
   Balance,
@@ -30,7 +28,6 @@ import { useAccounts } from '@/contexts/account';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { ApiState } from '@/contexts/apis/types';
 import { useMarket } from '@/contexts/market';
-import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
 import { ContextStatus, Listing, MarketFilterOptions } from '@/models';
 
@@ -66,9 +63,7 @@ const sortOptions: Option[] = [
 const Marketplace = () => {
   const confirm = useConfirm();
   const theme = useTheme();
-  const router = useRouter();
 
-  const { network } = useNetwork();
   const {
     state: { activeAccount, activeSigner },
   } = useAccounts();
@@ -127,10 +122,9 @@ const Marketplace = () => {
         },
         error: (e) => {
           toastError(
-            `Failed to unlist the region. Error: ${
-              e.errorMessage === 'Error'
-                ? 'Please check your balance.'
-                : e.errorMessage
+            `Failed to unlist the region. Error: ${e.errorMessage === 'Error'
+              ? 'Please check your balance.'
+              : e.errorMessage
             }`
           );
           setWorking(false);
@@ -145,12 +139,6 @@ const Marketplace = () => {
         'Are you sure that you are going to unlist the selected region from the market?',
     }).then(() => unlistRegion(region.getOnChainRegionId()));
   };
-
-  useEffect(() => {
-    if (!enableRegionX(network)) {
-      router.push('/');
-    }
-  }, [network, router]);
 
   useEffect(() => {
     const checkConditions = (listing: Listing): boolean => {
