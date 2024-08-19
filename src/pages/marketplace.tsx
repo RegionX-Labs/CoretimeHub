@@ -122,9 +122,10 @@ const Marketplace = () => {
         },
         error: (e) => {
           toastError(
-            `Failed to unlist the region. Error: ${e.errorMessage === 'Error'
-              ? 'Please check your balance.'
-              : e.errorMessage
+            `Failed to unlist the region. Error: ${
+              e.errorMessage === 'Error'
+                ? 'Please check your balance.'
+                : e.errorMessage
             }`
           );
           setWorking(false);

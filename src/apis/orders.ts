@@ -3,7 +3,7 @@ import { fetchGraphql } from '@/utils/fetchGraphql';
 import { API_COCOS_INDEXER } from '@/consts';
 import { Address, ApiResponse } from '@/models';
 
-export const fetchContribution = async (
+export const fetchUserContribution = async (
   orderId: number,
   address: Address | undefined,
   after: string | null
