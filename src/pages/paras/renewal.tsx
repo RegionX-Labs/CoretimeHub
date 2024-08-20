@@ -28,7 +28,7 @@ import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
-import { BrokerStatus, ContextStatus } from '@/models';
+import { ContextStatus } from '@/models';
 
 const Renewal = () => {
   const router = useRouter();
@@ -38,7 +38,7 @@ const Renewal = () => {
     state: { activeAccount, activeSigner },
   } = useAccounts();
   const { status, parachains } = useRenewableParachains();
-  const { saleInfo } = useSaleInfo();
+  const { saleInfo, saleStatus, status: saleInfoStatus } = useSaleInfo();
 
   const {
     state: { api: relayApi, apiState: relayApiState },
@@ -101,16 +101,14 @@ const Renewal = () => {
         coretimeApiState !== ApiState.READY ||
         !relayApi ||
         relayApiState !== ApiState.READY ||
-        !parachains[activeIdx]
+        !parachains[activeIdx] ||
+        saleInfoStatus !== ContextStatus.LOADED
       )
         return;
 
-      const { lastCommittedTimeslice } = (
-        await coretimeApi.query.broker.status()
-      ).toJSON() as BrokerStatus;
       const now = await timesliceToTimestamp(
         relayApi,
-        lastCommittedTimeslice,
+        saleStatus.lastCommittedTimeslice,
         timeslicePeriod
       );
       const expiry = await timesliceToTimestamp(
@@ -131,6 +129,8 @@ const Renewal = () => {
     activeIdx,
     parachains,
     timeslicePeriod,
+    saleInfoStatus,
+    saleStatus,
   ]);
 
   useEffect(() => {

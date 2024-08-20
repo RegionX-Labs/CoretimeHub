@@ -4,6 +4,7 @@ import { getBlockTime, getBlockTimestamp } from '@/utils/functions';
 import { getCorePriceAt, getCurrentPhase } from '@/utils/sale';
 
 import {
+  BrokerStatus,
   ContextStatus,
   PhaseEndpoints,
   RELAY_CHAIN_BLOCK_TIME,
@@ -13,7 +14,7 @@ import {
   SalePhaseInfo,
 } from '@/models';
 
-import { useCoretimeApi, useRelayApi } from '../apis';
+import { useCoretimeApi } from '../apis';
 import { ApiState } from '../apis/types';
 import { useNetwork } from '../network';
 
@@ -21,6 +22,7 @@ interface SaleData {
   status: ContextStatus;
   saleInfo: SaleInfo;
   config: SaleConfig;
+  saleStatus: BrokerStatus;
   phase: SalePhaseInfo;
   fetchSaleInfo: () => void;
 }
@@ -61,10 +63,19 @@ const defaultSalePhase = {
   endpoints: defaultEndpoints,
 };
 
+const defaultSaleStatus: BrokerStatus = {
+  coreCount: 0,
+  lastCommittedTimeslice: 0,
+  lastTimeslice: 0,
+  privatePoolSize: 0,
+  systemPoolSize: 0,
+};
+
 const defaultSaleData: SaleData = {
   status: ContextStatus.UNINITIALIZED,
   saleInfo: defaultSaleInfo,
   config: defaultSaleConfig,
+  saleStatus: defaultSaleStatus,
   phase: defaultSalePhase,
   fetchSaleInfo: () => {
     /** */
@@ -84,11 +95,10 @@ const SaleInfoProvider = ({ children }: Props) => {
     timeslicePeriod,
   } = useCoretimeApi();
 
-  const {
-    state: { api: relayApi, apiState: relayApiState },
-  } = useRelayApi();
-
   const [saleInfo, setSaleInfo] = useState<SaleInfo>(defaultSaleData.saleInfo);
+  const [saleStatus, setSaleStatus] = useState<BrokerStatus>(
+    defaultSaleData.saleStatus
+  );
   const [config, setConfig] = useState<SaleConfig>(defaultSaleData.config);
 
   const [status, setStatus] = useState(ContextStatus.UNINITIALIZED);
@@ -114,26 +124,36 @@ const SaleInfoProvider = ({ children }: Props) => {
   const fetchSaleInfo = async () => {
     try {
       setStatus(ContextStatus.LOADING);
-      if (
-        !coretimeApi ||
-        coretimeApiState !== ApiState.READY ||
-        !relayApi ||
-        relayApiState !== ApiState.READY ||
-        !coretimeApi.query.broker
-      ) {
+      if (!coretimeApi || coretimeApiState !== ApiState.READY) {
         setStatus(ContextStatus.UNINITIALIZED);
         return;
       }
 
-      const saleInfoRaw = await coretimeApi.query.broker.saleInfo();
+      const [brokerStatusRaw, saleInfoRaw, configRaw] = (await new Promise(
+        (resolve, _reject) => {
+          coretimeApi.queryMulti(
+            [
+              coretimeApi.query.broker.status,
+              coretimeApi.query.broker.saleInfo,
+              coretimeApi.query.broker.configuration,
+            ],
+            (result) => {
+              resolve(result);
+            }
+          );
+        }
+      )) as Array<any>;
+
       const saleInfo = saleInfoRaw.toJSON() as SaleInfo;
       // On Rococo we have `endPrice` while on Kusama we still have `price`.
       saleInfo.price = saleInfo.price || (saleInfo as any).endPrice;
       setSaleInfo(saleInfo);
 
-      const configRaw = await coretimeApi.query.broker.configuration();
       const config = configRaw.toJSON() as SaleConfig;
       setConfig(config);
+
+      const brokerStatus = brokerStatusRaw.toJSON() as BrokerStatus;
+      setSaleStatus(brokerStatus);
 
       const saleStart = saleInfo.saleStart;
       // Sale start != bulk phase start. sale_start = bulk_phase_start + interlude_length.
@@ -174,14 +194,7 @@ const SaleInfoProvider = ({ children }: Props) => {
 
   useEffect(() => {
     fetchSaleInfo();
-  }, [
-    network,
-    coretimeApi,
-    coretimeApiState,
-    relayApi,
-    relayApiState,
-    timeslicePeriod,
-  ]);
+  }, [network, coretimeApi, coretimeApiState, timeslicePeriod]);
 
   useEffect(() => {
     if (height === 0) return;
@@ -194,6 +207,7 @@ const SaleInfoProvider = ({ children }: Props) => {
         status,
         saleInfo,
         config,
+        saleStatus,
         phase: {
           currentPhase,
           currentPrice,

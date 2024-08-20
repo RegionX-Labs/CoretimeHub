@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 
-import { fetchContribution, fetchOrders as fetchOrdersApi } from '@/apis';
+import { fetchOrders as fetchOrdersApi, fetchUserContribution } from '@/apis';
 import { ApiResponse, ContextStatus, Order } from '@/models';
 
 import { useAccounts } from '../account';
@@ -44,13 +44,13 @@ const OrderProvider = ({ children }: Props) => {
   } = useAccounts();
 
   const fetchOrders = useCallback(async () => {
-    const getContribution = async (orderId: number) => {
+    const getUserContribution = async (orderId: number) => {
       let finished = false;
       let after: string | null = null;
 
       let sum = 0;
       while (!finished) {
-        const res: ApiResponse = await fetchContribution(
+        const res: ApiResponse = await fetchUserContribution(
           orderId,
           activeAccount?.address,
           after
@@ -111,7 +111,7 @@ const OrderProvider = ({ children }: Props) => {
                 ({
                   ...item,
                   totalContribution: parseInt(item.contribution),
-                  contribution: await getContribution(item.orderId),
+                  contribution: await getUserContribution(item.orderId),
                 }) as Order
             )
           )
