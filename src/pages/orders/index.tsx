@@ -23,12 +23,13 @@ import { OrderProcessorModal } from '@/components/Orders/Modals/OrderProcessor';
 import { useAccounts } from '@/contexts/account';
 import { useOrders } from '@/contexts/orders';
 import { useRegions } from '@/contexts/regions';
+import { useSaleInfo } from '@/contexts/sales';
 import { ContextStatus, Order } from '@/models';
 
 const OrderDashboard = () => {
   const theme = useTheme();
 
-  const { orders, status } = useOrders();
+  const { orders, status: orderStatus } = useOrders();
   const { regions } = useRegions();
   const {
     state: { activeAccount },
@@ -42,10 +43,18 @@ const OrderDashboard = () => {
   const [orderCreationModalOpen, openOrderCreationModal] = useState(false);
   const [contributionModal, openContributionModal] = useState(false);
   const [processorModal, openProcessorModal] = useState(false);
+  const { saleStatus, status: saleInfoStatus } = useSaleInfo();
 
   useEffect(() => {
-    setOrdersToShow(orders.filter(({ processed }) => !processed));
-  }, [orders]);
+    let _orders: Array<Order> = orders.filter(({ processed }) => !processed);
+
+    if (saleInfoStatus === ContextStatus.LOADED) {
+      _orders = _orders.filter(
+        ({ end }) => end > saleStatus.lastCommittedTimeslice
+      );
+    }
+    setOrdersToShow(_orders);
+  }, [orders, saleInfoStatus, saleStatus]);
 
   return (
     <>
@@ -96,11 +105,11 @@ const OrderDashboard = () => {
           />
         </Box>
       </Box>
-      {status === ContextStatus.ERROR ? (
+      {orderStatus === ContextStatus.ERROR ? (
         <Box mt='1rem'>
           <Typography>An error occured while fetching the orders.</Typography>
         </Box>
-      ) : status !== ContextStatus.LOADED ? (
+      ) : orderStatus !== ContextStatus.LOADED ? (
         <Backdrop open>
           <CircularProgress />
         </Backdrop>

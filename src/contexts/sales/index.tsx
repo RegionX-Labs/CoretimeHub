@@ -14,7 +14,7 @@ import {
   SalePhaseInfo,
 } from '@/models';
 
-import { useCoretimeApi, useRelayApi } from '../apis';
+import { useCoretimeApi } from '../apis';
 import { ApiState } from '../apis/types';
 import { useNetwork } from '../network';
 
@@ -94,10 +94,6 @@ const SaleInfoProvider = ({ children }: Props) => {
     state: { api: coretimeApi, apiState: coretimeApiState, height },
     timeslicePeriod,
   } = useCoretimeApi();
-
-  const {
-    state: { api: relayApi, apiState: relayApiState },
-  } = useRelayApi();
 
   const [saleInfo, setSaleInfo] = useState<SaleInfo>(defaultSaleData.saleInfo);
   const [saleStatus, setSaleStatus] = useState<BrokerStatus>(
