@@ -38,7 +38,7 @@ const Renewal = () => {
     state: { activeAccount, activeSigner },
   } = useAccounts();
   const { status, parachains } = useRenewableParachains();
-  const { saleInfo, saleStatus, status: saleInfoStatus } = useSaleInfo();
+  const { saleInfo, saleStatus, status: saleInfoStatus, phase } = useSaleInfo();
 
   const {
     state: { api: relayApi, apiState: relayApiState },
@@ -57,7 +57,7 @@ const Renewal = () => {
   const [working, setWorking] = useState(false);
   const [expiryTimestamp, setExpiryTimestamp] = useState(0);
 
-  const formatDuration = humanizer({ units: ['w', 'd'], round: true });
+  const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
 
   const handleRenew = () => {
     if (!activeAccount || !coretimeApi || !coretimeApiState || !activeSigner)
@@ -116,7 +116,13 @@ const Renewal = () => {
         parachains[activeIdx].when,
         timeslicePeriod
       );
-      setExpiryTimestamp(expiry - now);
+
+      if (expiry - now < 0) {
+        setExpiryTimestamp(phase.endpoints.fixed.end - now);
+      } else {
+        setExpiryTimestamp(expiry - now);
+      }
+
       setLoading(false);
     };
 
@@ -131,6 +137,7 @@ const Renewal = () => {
     timeslicePeriod,
     saleInfoStatus,
     saleStatus,
+    phase,
   ]);
 
   useEffect(() => {
