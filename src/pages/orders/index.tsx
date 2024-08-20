@@ -3,9 +3,7 @@ import {
   Box,
   Button,
   CircularProgress,
-  FormControlLabel,
   Paper,
-  Switch,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -34,8 +32,6 @@ const OrderDashboard = () => {
   const {
     state: { activeAccount },
   } = useAccounts();
-
-  const [expiredOnly, watchExpired] = useState(false);
 
   const [ordersToShow, setOrdersToShow] = useState<Order[]>([]);
   const [orderSelected, selectOrder] = useState<Order | undefined>();
@@ -82,23 +78,7 @@ const OrderDashboard = () => {
             Explorer the orders
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: '1.5rem', height: '3.25rem' }}>
-          <FormControlLabel
-            control={
-              <Switch
-                color='success'
-                checked={expiredOnly}
-                onChange={(e) => watchExpired(e.target.checked)}
-              />
-            }
-            label='Expired Only'
-            labelPlacement='start'
-            sx={{
-              color: theme.palette.common.black,
-              padding: '0.25rem',
-            }}
-          />
-
+        <Box sx={{ display: 'flex', gap: '1.5rem', height: '2.75rem' }}>
           <ActionButton
             label='Create New Order'
             onClick={() => openOrderCreationModal(true)}

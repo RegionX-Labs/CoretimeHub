@@ -179,7 +179,7 @@ const ParachainManagement = () => {
             Watch parachains state, register and manage parachains
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: '1.5rem', height: '3.25rem' }}>
+        <Box sx={{ display: 'flex', gap: '1.5rem', height: '2.75rem' }}>
           <FormControlLabel
             control={
               <Switch
