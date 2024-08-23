@@ -13,11 +13,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
-import {
-  getBalanceString,
-  getRelativeTimeString,
-  getTimeStringLong,
-} from '@/utils/functions';
+import { getBalanceString, getRelativeTimeString, getTimeStringLong } from '@/utils/functions';
 
 import { Address, Link } from '@/components/Elements';
 
@@ -77,17 +73,7 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
               ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : data
             ).map(
-              (
-                {
-                  address,
-                  core,
-                  extrinsicId: extrinsic_index,
-                  timestamp,
-                  price,
-                  type,
-                },
-                index
-              ) => (
+              ({ address, core, extrinsicId: extrinsic_index, timestamp, price, type }, index) => (
                 <StyledTableRow key={index}>
                   <StyledTableCell align='center'>
                     <Link
@@ -106,10 +92,7 @@ export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
                         color: theme.palette.primary.main,
                       }}
                       onClick={() =>
-                        window.open(
-                          `${SUSBCAN_CORETIME_URL[network]}/account/${address}`,
-                          '_blank'
-                        )
+                        window.open(`${SUSBCAN_CORETIME_URL[network]}/account/${address}`, '_blank')
                       }
                     >
                       <Address value={address} isCopy isShort size={24} />

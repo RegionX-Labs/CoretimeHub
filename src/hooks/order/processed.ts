@@ -26,8 +26,7 @@ export const useProcessedOrders = () => {
           const { status, data } = res;
           if (status !== 200) break;
 
-          if (data.processedOrders.nodes !== null)
-            result.push(...data.processedOrders.nodes);
+          if (data.processedOrders.nodes !== null) result.push(...data.processedOrders.nodes);
 
           finished = !data.processedOrders.pageInfo.hasNextPage;
           after = data.processedOrders.pageInfo.endCursor;
@@ -37,17 +36,7 @@ export const useProcessedOrders = () => {
         } else {
           setData(
             result.map(
-              ({
-                orderId,
-                height,
-                extrinsicId,
-                timestamp,
-                begin,
-                core,
-                mask,
-                seller,
-                reward,
-              }) =>
+              ({ orderId, height, extrinsicId, timestamp, begin, core, mask, seller, reward }) =>
                 ({
                   orderId,
                   height,

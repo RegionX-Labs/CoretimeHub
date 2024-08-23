@@ -20,29 +20,17 @@ interface OrderDetailsModalProps extends DialogProps {
   orderId: number;
 }
 
-export const OrderDetailsModal = ({
-  open,
-  onClose,
-  orderId,
-}: OrderDetailsModalProps) => {
+export const OrderDetailsModal = ({ open, onClose, orderId }: OrderDetailsModalProps) => {
   const { orders } = useOrders();
   const order = orders.find((item) => item.orderId === orderId);
 
   const theme = useTheme();
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth='md'
-      data-cy='order-details-modal'
-    >
+    <Dialog open={open} onClose={onClose} maxWidth='md' data-cy='order-details-modal'>
       <DialogContent className={styles.container}>
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Order #{orderId + 1}
           </Typography>
         </Box>
@@ -56,11 +44,7 @@ export const OrderDetailsModal = ({
       </DialogContent>
       <DialogActions>
         <Box>
-          <ActionButton
-            label='Close'
-            onClick={onClose}
-            data-cy='btn-close-order-details-modal'
-          />
+          <ActionButton label='Close' onClick={onClose} data-cy='btn-close-order-details-modal' />
         </Box>
       </DialogActions>
     </Dialog>

@@ -43,9 +43,7 @@ export const fetchRegions = async (
           );
           return [
             region,
-            record.pending
-              ? ISMPRecordStatus.PENDING
-              : ISMPRecordStatus.UNAVAILABLE,
+            record.pending ? ISMPRecordStatus.PENDING : ISMPRecordStatus.UNAVAILABLE,
             record.pending,
           ];
         }

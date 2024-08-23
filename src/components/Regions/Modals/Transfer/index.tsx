@@ -34,11 +34,7 @@ interface TransferModalProps extends DialogProps {
   regionMetadata: RegionMetadata;
 }
 
-export const TransferModal = ({
-  open,
-  onClose,
-  regionMetadata,
-}: TransferModalProps) => {
+export const TransferModal = ({ open, onClose, regionMetadata }: TransferModalProps) => {
   const theme = useTheme();
 
   const {
@@ -141,33 +137,20 @@ export const TransferModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent className={styles.container}>
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Transfer Region
           </Typography>
-          <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
-          >
+          <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
             Here you can transfer your region to a new owner
           </Typography>
         </Box>
         <Box className={styles.content}>
           <RegionOverview regionMetadata={regionMetadata} />
-          <Paper
-            className={styles.addressContainer}
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Paper className={styles.addressContainer} sx={{ color: theme.palette.common.black }}>
             <Typography sx={{ fontWeight: 500 }}>Transfer to</Typography>
             <Typography></Typography>
 
-            <AddressInput
-              label='New owner:'
-              address={newOwner}
-              onChange={(e) => setNewOwner(e)}
-            />
+            <AddressInput label='New owner:' address={newOwner} onChange={(e) => setNewOwner(e)} />
           </Paper>
         </Box>
       </DialogContent>
@@ -176,11 +159,7 @@ export const TransferModal = ({
           Cancel
         </Button>
 
-        <ProgressButton
-          onClick={onTransfer}
-          loading={working}
-          label='Transfer'
-        />
+        <ProgressButton onClick={onTransfer} loading={working} label='Transfer' />
       </DialogActions>
     </Dialog>
   );

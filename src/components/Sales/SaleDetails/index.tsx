@@ -32,11 +32,7 @@ interface SaleDetailsModalProps extends DialogProps {
   info: SalesHistoryItem;
 }
 
-export const SaleDetailsModal = ({
-  open,
-  onClose,
-  info,
-}: SaleDetailsModalProps) => {
+export const SaleDetailsModal = ({ open, onClose, info }: SaleDetailsModalProps) => {
   const theme = useTheme();
   const { network } = useNetwork();
   const {
@@ -57,18 +53,10 @@ export const SaleDetailsModal = ({
   const { loading, data, isError } = useSaleDetails(network, saleCycle);
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth='md'
-      data-cy='sale-details-modal'
-    >
+    <Dialog open={open} onClose={onClose} maxWidth='md' data-cy='sale-details-modal'>
       <DialogContent className={styles.container}>
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Coretime Sale#{saleCycle}
           </Typography>
         </Box>
@@ -86,21 +74,11 @@ export const SaleDetailsModal = ({
         ) : (
           <Box className={styles.tableContainer}>
             <Stack direction='row' justifyContent='space-between'>
-              <InfoItem
-                label='Region Begin'
-                value={regionBegin.toLocaleString()}
-              />
-              <InfoItem
-                label='Length'
-                value={(regionEnd - regionBegin).toLocaleString()}
-              />
+              <InfoItem label='Region Begin' value={regionBegin.toLocaleString()} />
+              <InfoItem label='Length' value={(regionEnd - regionBegin).toLocaleString()} />
               <InfoItem
                 label='Start Price'
-                value={getBalanceString(
-                  startPrice.toString(),
-                  decimals,
-                  symbol
-                )}
+                value={getBalanceString(startPrice.toString(), decimals, symbol)}
               />
               <InfoItem
                 label='End Price'
@@ -119,9 +97,7 @@ export const SaleDetailsModal = ({
                 }}
               >
                 {endTimestamp
-                  ? `${getTimeStringShort(
-                      startTimestamp
-                    )} ~ ${getTimeStringShort(endTimestamp)}`
+                  ? `${getTimeStringShort(startTimestamp)} ~ ${getTimeStringShort(endTimestamp)}`
                   : getTimeStringShort(startTimestamp)}
               </Typography>
               <Tooltip

@@ -23,10 +23,8 @@ export const CountDown = ({ remainingTime }: CountDownProps) => {
   const [daysDuration, setDaysDuration] = useState(0);
 
   const getTimeSeconds = (time: number) => (minuteSeconds - time) | 0;
-  const getTimeMinutes = (time: number) =>
-    ((time % hourSeconds) / minuteSeconds) | 0;
-  const getTimeHours = (time: number) =>
-    ((time % daySeconds) / hourSeconds) | 0;
+  const getTimeMinutes = (time: number) => ((time % hourSeconds) / minuteSeconds) | 0;
+  const getTimeHours = (time: number) => ((time % daySeconds) / hourSeconds) | 0;
   const getTimeDays = (time: number) => (time / daySeconds) | 0;
   const renderTime = (dimension: string, time: number) => {
     return (
@@ -119,9 +117,7 @@ export const CountDown = ({ remainingTime }: CountDownProps) => {
         })}
       >
         {({ elapsedTime, color }) => (
-          <span style={{ color }}>
-            {renderTime('seconds', getTimeSeconds(elapsedTime))}
-          </span>
+          <span style={{ color }}>{renderTime('seconds', getTimeSeconds(elapsedTime))}</span>
         )}
       </CountdownCircleTimer>
     </Stack>

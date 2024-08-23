@@ -30,7 +30,6 @@ import {
   Westend,
   WestendCoretime,
 } from '@/assets/networks';
-import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 
 const coretimeIcons = {
@@ -50,14 +49,14 @@ const relayIcons = {
 export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
   const { network } = useNetwork();
   const {
-    state: { name: coretimeChain, apiState: coretimeState },
+    state: { name: coretimeChain, isApiReady: isCoretimeReady },
   } = useCoretimeApi();
   const {
-    state: { name: relayChain, apiState: relayState },
+    state: { name: relayChain, isApiReady: isRelayReady },
   } = useRelayApi();
 
   const {
-    state: { name: regionXChain, apiState: regionXState },
+    state: { name: regionXChain, isApiReady: isRegionXReady },
   } = useRegionXApi();
 
   const menuItems = [
@@ -65,13 +64,13 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
       icon: relayIcons[network],
       label: relayChain,
       value: ChainType.RELAY,
-      loading: coretimeState !== ApiState.READY,
+      loading: !isRelayReady,
     },
     {
       icon: coretimeIcons[network],
       label: coretimeChain,
       value: ChainType.CORETIME,
-      loading: relayState !== ApiState.READY,
+      loading: !isCoretimeReady,
     },
     ...(enableRegionX(network)
       ? [
@@ -79,7 +78,7 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
             icon: RegionX,
             label: regionXChain,
             value: ChainType.REGIONX,
-            loading: regionXState !== ApiState.READY,
+            loading: isRegionXReady,
           },
         ]
       : []),

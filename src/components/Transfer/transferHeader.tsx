@@ -8,16 +8,10 @@ const TransferHeader = () => {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
       <Box>
-        <Typography
-          variant='subtitle1'
-          sx={{ color: theme.palette.common.black }}
-        >
+        <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
           Cross-Chain Transfer
         </Typography>
-        <Typography
-          variant='subtitle2'
-          sx={{ color: theme.palette.text.primary }}
-        >
+        <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
           Cross-chain transfer regions
         </Typography>
       </Box>

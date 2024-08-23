@@ -21,17 +21,12 @@ export const useSaleDetails = (network: NetworkType, saleCycle: number) => {
 
         const result = [];
         while (!finished) {
-          const res: ApiResponse = await fetchSaleDetailsData(
-            network,
-            saleCycle,
-            after
-          );
+          const res: ApiResponse = await fetchSaleDetailsData(network, saleCycle, after);
 
           const { status, data } = res;
           if (status !== 200) break;
 
-          if (data.purchases.nodes !== null)
-            result.push(...data.purchases.nodes);
+          if (data.purchases.nodes !== null) result.push(...data.purchases.nodes);
 
           finished = !data.purchases.pageInfo.hasNextPage;
           after = data.purchases.pageInfo.endCursor;
@@ -41,15 +36,7 @@ export const useSaleDetails = (network: NetworkType, saleCycle: number) => {
         } else {
           setData(
             result.map(
-              ({
-                account,
-                core,
-                extrinsicId,
-                height,
-                price,
-                purchaseType,
-                timestamp,
-              }) =>
+              ({ account, core, extrinsicId, height, price, purchaseType, timestamp }) =>
                 ({
                   address: account,
                   core,

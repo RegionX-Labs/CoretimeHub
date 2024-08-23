@@ -45,26 +45,19 @@ const Home = () => {
     phase: { currentPrice },
   } = useSaleInfo();
 
-  const { data: purchaseHistoryData, loading: loadingPurchaseHistory } =
-    usePurchaseHistory(network, regionBegin);
-
-  const renewals = purchaseHistoryData.filter(
-    (item) => item.type === PurchaseType.RENEWAL
+  const { data: purchaseHistoryData, loading: loadingPurchaseHistory } = usePurchaseHistory(
+    network,
+    regionBegin
   );
+
+  const renewals = purchaseHistoryData.filter((item) => item.type === PurchaseType.RENEWAL);
   const numRenewals = renewals.length;
   const renewalCost =
     numRenewals === 0
       ? 0
-      : Math.floor(
-          renewals.reduce((sum, item) => sum + item.price, 0) / numRenewals
-        );
+      : Math.floor(renewals.reduce((sum, item) => sum + item.price, 0) / numRenewals);
 
-  const {
-    currentBurn,
-    prevBurn,
-    totalBurn,
-    loading: loadingBurnInfo,
-  } = useBurnInfo(network);
+  const { currentBurn, prevBurn, totalBurn, loading: loadingBurnInfo } = useBurnInfo(network);
 
   const formatBalance = (value: number): string => {
     return getBalanceString(value.toString(), decimals, symbol);
@@ -191,9 +184,7 @@ const Home = () => {
           >
             RegionX | Coretime Hub
           </Typography>
-          <Typography>
-            Explore all the possibilities RegionX Coretime Hub offers
-          </Typography>
+          <Typography>Explore all the possibilities RegionX Coretime Hub offers</Typography>
         </Box>
         <Stack direction='row' gap='1.25rem'>
           {sections.map(({ top, bottom }, index) => (
@@ -250,9 +241,7 @@ const Home = () => {
                   padding: '1rem 1.25rem',
                 }}
               >
-                <Typography sx={{ color: theme.palette.common.black }}>
-                  {bottom.label}
-                </Typography>
+                <Typography sx={{ color: theme.palette.common.black }}>{bottom.label}</Typography>
                 <Typography
                   sx={{ color: theme.palette.common.black, fontWeight: 600 }}
                   data-cy={bottom.dataCy}
@@ -292,18 +281,11 @@ const Home = () => {
         <Card sx={{ padding: '1.5rem' }} data-cy='purchase-history-table'>
           <Stack direction='column' gap='1rem'>
             <Box>
-              <Typography
-                variant='subtitle1'
-                sx={{ color: theme.palette.common.black }}
-              >
+              <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
                 Purchase History
               </Typography>
-              <Typography
-                variant='subtitle2'
-                sx={{ color: theme.palette.text.primary }}
-              >
-                Get an insight into all purchases and renewals made during the
-                current bulk period
+              <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
+                Get an insight into all purchases and renewals made during the current bulk period
               </Typography>
             </Box>
             <PurchaseHistoryTable data={purchaseHistoryData} />

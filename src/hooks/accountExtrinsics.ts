@@ -1,17 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import { fetchAccountExtrinsics } from '@/apis';
-import {
-  AccountTxHistoryItem,
-  Address,
-  ApiResponse,
-  NetworkType,
-} from '@/models';
+import { AccountTxHistoryItem, Address, ApiResponse, NetworkType } from '@/models';
 
-export const useAccountExtrinsics = (
-  network: NetworkType,
-  account: Address
-) => {
+export const useAccountExtrinsics = (network: NetworkType, account: Address) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<AccountTxHistoryItem[]>([]);
   const [isError, setError] = useState(false);
@@ -32,16 +24,11 @@ export const useAccountExtrinsics = (
 
         const result = [];
         while (!finished) {
-          const res: ApiResponse = await fetchAccountExtrinsics(
-            network,
-            account,
-            after
-          );
+          const res: ApiResponse = await fetchAccountExtrinsics(network, account, after);
           const { status, data } = res;
           if (status !== 200) break;
 
-          if (data.extrinsics.nodes !== null)
-            result.push(...data.extrinsics.nodes);
+          if (data.extrinsics.nodes !== null) result.push(...data.extrinsics.nodes);
 
           finished = !data.extrinsics.pageInfo.hasNextPage;
           after = data.extrinsics.pageInfo.endCursor;

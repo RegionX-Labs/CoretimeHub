@@ -45,9 +45,7 @@ const OrderDashboard = () => {
     let _orders: Array<Order> = orders.filter(({ processed }) => !processed);
 
     if (saleInfoStatus === ContextStatus.LOADED) {
-      _orders = _orders.filter(
-        ({ end }) => end > saleStatus.lastCommittedTimeslice
-      );
+      _orders = _orders.filter(({ end }) => end > saleStatus.lastCommittedTimeslice);
     }
     setOrdersToShow(_orders);
   }, [orders, saleInfoStatus, saleStatus]);
@@ -65,24 +63,15 @@ const OrderDashboard = () => {
         }}
       >
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Orders Dashboard
           </Typography>
-          <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
-          >
+          <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
             Explorer the orders
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1.5rem', height: '2.75rem' }}>
-          <ActionButton
-            label='Create New Order'
-            onClick={() => openOrderCreationModal(true)}
-          />
+          <ActionButton label='Create New Order' onClick={() => openOrderCreationModal(true)} />
         </Box>
       </Box>
       {orderStatus === ContextStatus.ERROR ? (
@@ -94,12 +83,7 @@ const OrderDashboard = () => {
           <CircularProgress />
         </Backdrop>
       ) : (
-        <Box
-          mt='2rem'
-          display='flex'
-          flexWrap='wrap'
-          justifyContent='space-around'
-        >
+        <Box mt='2rem' display='flex' flexWrap='wrap' justifyContent='space-around'>
           {ordersToShow.map((order: Order, index: number) => (
             <Paper key={index} sx={{ padding: '1.5rem', margin: '1rem' }}>
               <OrderCard order={order} />

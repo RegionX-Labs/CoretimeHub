@@ -9,12 +9,7 @@ interface AmountInputProps {
 
 // TODO: Fetch dot price and show how much is the currency amount worth.
 
-export const AmountInput = ({
-  currency,
-  title,
-  caption,
-  setAmount,
-}: AmountInputProps) => {
+export const AmountInput = ({ currency, title, caption, setAmount }: AmountInputProps) => {
   return (
     <>
       <Stack alignItems='baseline' direction='row' gap={1} mb='0.5rem'>
@@ -28,9 +23,7 @@ export const AmountInput = ({
       <TextField
         placeholder={`Enter ${currency} amount`}
         InputProps={{
-          endAdornment: (
-            <InputAdornment position='end'>{currency}</InputAdornment>
-          ),
+          endAdornment: <InputAdornment position='end'>{currency}</InputAdornment>,
           style: {
             borderRadius: '1rem',
             textAlign: 'center',

@@ -1,12 +1,6 @@
 import { encodeAddress } from '@polkadot/util-crypto';
 import { CoreIndex, getEncodedRegionId, Region } from 'coretime-utils';
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 import { enableRegionX } from '@/utils/functions';
 
@@ -23,7 +17,6 @@ import * as RegionXRegions from './regionx';
 import { useAccounts } from '../account';
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { useRegionXApi } from '../apis/RegionXApi';
-import { ApiState } from '../apis/types';
 import { useNetwork } from '../network';
 import { Tasks, useTasks } from '../tasks';
 
@@ -52,14 +45,14 @@ interface Props {
 
 const RegionDataProvider = ({ children }: Props) => {
   const {
-    state: { api: coretimeApi, apiState: coretimeApiState },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady },
     timeslicePeriod,
   } = useCoretimeApi();
   const {
-    state: { api: regionxApi, apiState: regionxApiState },
+    state: { api: regionxApi, isApiReady: isRegionXReady },
   } = useRegionXApi();
   const {
-    state: { api: relayApi, apiState: relayApiState, height: relayBlockNumber },
+    state: { api: relayApi, isApiReady: isRelayReady, height: relayBlockNumber },
   } = useRelayApi();
   const {
     state: { activeAccount },
@@ -70,9 +63,7 @@ const RegionDataProvider = ({ children }: Props) => {
 
   const [currentAddress, setCurrentAddress] = useState<string | null>(null);
   const [regions, setRegions] = useState<Array<RegionMetadata>>([]);
-  const [status, setStatus] = useState<ContextStatus>(
-    ContextStatus.UNINITIALIZED
-  );
+  const [status, setStatus] = useState<ContextStatus>(ContextStatus.UNINITIALIZED);
 
   useEffect(() => {
     setStatus(ContextStatus.UNINITIALIZED);
@@ -81,8 +72,8 @@ const RegionDataProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (network === NetworkType.NONE) return;
-    if (!coretimeApi || coretimeApiState !== ApiState.READY) return;
-    if (!relayApi || relayApiState !== ApiState.READY) return;
+    if (!coretimeApi || !isCoretimeReady) return;
+    if (!relayApi || !isRelayReady) return;
     if (relayBlockNumber === 0) return;
 
     if (!activeAccount) {
@@ -101,11 +92,11 @@ const RegionDataProvider = ({ children }: Props) => {
   }, [
     activeAccount,
     coretimeApi,
-    coretimeApiState,
+    isCoretimeReady,
     relayApi,
-    relayApiState,
+    isRelayReady,
     regionxApi,
-    regionxApiState,
+    isRegionXReady,
     relayBlockNumber,
     timeslicePeriod,
     status,
@@ -118,35 +109,25 @@ const RegionDataProvider = ({ children }: Props) => {
     const tasks = await fetchWorkplan();
 
     const ctRegions = await collectCoretimeRegions(tasks);
-    const rxRegions = enableRegionX(network)
-      ? await collectRegionXRegions(tasks)
-      : [];
+    const rxRegions = enableRegionX(network) ? await collectRegionXRegions(tasks) : [];
 
     setRegions(ctRegions.concat(rxRegions));
     setStatus(ContextStatus.LOADED);
   };
 
-  const collectCoretimeRegions = async (
-    tasks: Tasks
-  ): Promise<Array<RegionMetadata>> => {
+  const collectCoretimeRegions = async (tasks: Tasks): Promise<Array<RegionMetadata>> => {
     const region_metadata: Array<RegionMetadata> = [];
     const regions = await CoretimeRegions.fetchRegions(coretimeApi);
 
     for await (const region of regions) {
-      const metadata = await constructMetadata(
-        region,
-        tasks,
-        RegionLocation.CORETIME_CHAIN
-      );
+      const metadata = await constructMetadata(region, tasks, RegionLocation.CORETIME_CHAIN);
       metadata && region_metadata.push(metadata);
     }
 
     return region_metadata;
   };
 
-  const collectRegionXRegions = async (
-    tasks: Tasks
-  ): Promise<Array<RegionMetadata>> => {
+  const collectRegionXRegions = async (tasks: Tasks): Promise<Array<RegionMetadata>> => {
     const region_metadata: Array<RegionMetadata> = [];
     const regions = await RegionXRegions.fetchRegions(regionxApi);
 
@@ -175,8 +156,7 @@ const RegionDataProvider = ({ children }: Props) => {
     if (!activeAccount || !region.getOwner()) return null;
     // Only user owned non-expired regions.
     if (
-      encodeAddress(region.getOwner(), 42) !==
-        encodeAddress(activeAccount.address, 42) ||
+      encodeAddress(region.getOwner(), 42) !== encodeAddress(activeAccount.address, 42) ||
       region.consumed({ timeslicePeriod, relayBlockNumber }) > 1
     )
       return null;
@@ -186,8 +166,7 @@ const RegionDataProvider = ({ children }: Props) => {
       location === RegionLocation.CORETIME_CHAIN ? coretimeApi : regionxApi
     ).toString();
 
-    const name =
-      localStorage.getItem(`region-${rawId}`) ?? `Region #${region.getCore()}`; // RegionId is the first three digits.
+    const name = localStorage.getItem(`region-${rawId}`) ?? `Region #${region.getCore()}`; // RegionId is the first three digits.
 
     let task = tasks[rawId.toString()] ?? null;
     // If the region isn't still active it cannot be in the workload.

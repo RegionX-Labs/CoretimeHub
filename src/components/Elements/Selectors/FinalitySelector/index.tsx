@@ -7,10 +7,7 @@ interface FinalitySelectorProps {
   setFinality: (_: FinalityType) => void;
 }
 
-export const FinalitySelector = ({
-  finality,
-  setFinality,
-}: FinalitySelectorProps) => {
+export const FinalitySelector = ({ finality, setFinality }: FinalitySelectorProps) => {
   return (
     <Select
       value={finality}

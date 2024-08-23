@@ -15,10 +15,7 @@ import theme from '@/utils/muiTheme';
 import { Layout } from '@/components';
 
 import { AccountProvider } from '@/contexts/account';
-import {
-  CoretimeApiContextProvider,
-  RelayApiContextProvider,
-} from '@/contexts/apis';
+import { CoretimeApiContextProvider, RelayApiContextProvider } from '@/contexts/apis';
 import { RegionXApiContextProvider } from '@/contexts/apis/RegionXApi';
 import { BalanceProvider } from '@/contexts/balance';
 import { MarketProvider } from '@/contexts/market';

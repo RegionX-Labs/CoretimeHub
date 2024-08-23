@@ -3,13 +3,7 @@ type IconProps = {
 };
 export const AssignmentIcon = ({ color }: IconProps) => {
   return (
-    <svg
-      width='21'
-      height='18'
-      viewBox='0 0 21 18'
-      fill='none'
-      xmlns='http://www.w3.org/2000/svg'
-    >
+    <svg width='21' height='18' viewBox='0 0 21 18' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <path
         d='M4.00716 1.04801C4.57716 0.383006 5.40916 6.19888e-06 6.28516 6.19888e-06H14.7152C15.5912 6.19888e-06 16.4232 0.383006 16.9932 1.04801L18.7152 3.05701C18.4822 3.02001 18.2432 3.00001 18.0002 3.00001H3.00016C2.75716 3.00001 2.51816 3.02001 2.28516 3.05701L4.00716 1.04801Z'
         fill={color}

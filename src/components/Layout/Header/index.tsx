@@ -12,12 +12,7 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 
-import {
-  Address,
-  NetworkSelector,
-  ProgressButton,
-  TxHistoryModal,
-} from '@/components';
+import { Address, NetworkSelector, ProgressButton, TxHistoryModal } from '@/components';
 
 import { KeyringState, useAccounts } from '@/contexts/account';
 

@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { getRelativeTimeString, timesliceToTimestamp } from '@/utils/functions';
 
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
@@ -18,7 +17,7 @@ export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
   const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
 
   const {
-    state: { api: relayApi, apiState: relayApiState },
+    state: { api: relayApi, isApiReady: isRelayReady },
   } = useRelayApi();
 
   const theme = useTheme();
@@ -30,26 +29,18 @@ export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
   const { timeslicePeriod } = useCoretimeApi();
 
   useEffect(() => {
-    if (!relayApi || relayApiState !== ApiState.READY) {
+    if (!relayApi || !isRelayReady) {
       return;
     }
     const fetchTimestamps = async () => {
-      const begin = await timesliceToTimestamp(
-        relayApi,
-        region.getBegin(),
-        timeslicePeriod
-      );
-      const end = await timesliceToTimestamp(
-        relayApi,
-        region.getEnd(),
-        timeslicePeriod
-      );
+      const begin = await timesliceToTimestamp(relayApi, region.getBegin(), timeslicePeriod);
+      const end = await timesliceToTimestamp(relayApi, region.getEnd(), timeslicePeriod);
 
       setBeginTimestamp(begin);
       setEndTimestamp(end);
     };
     fetchTimestamps();
-  }, [relayApi, relayApiState, region, timeslicePeriod]);
+  }, [relayApi, isRelayReady, region, timeslicePeriod]);
   return (
     <Paper className={styles.container}>
       <Box className={styles.regionInfo}>
@@ -63,10 +54,7 @@ export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
           >
             {regionMetadata.name}
           </Typography>
-          <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
-          >
+          <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
             {`Duration: ${formatDuration(endTimestamp - beginTimestamp)}`}
           </Typography>
         </Box>

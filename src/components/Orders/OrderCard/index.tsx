@@ -1,10 +1,4 @@
-import {
-  Box,
-  LinearProgress,
-  Stack,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, LinearProgress, Stack, Typography, useTheme } from '@mui/material';
 import Image from 'next/image';
 
 import { getBalanceString } from '@/utils/functions';
@@ -38,8 +32,7 @@ export const OrderCard = ({
 
   const logo = chainData[network][order.paraId]?.logo;
 
-  const formatBalance = (balance: number) =>
-    getBalanceString(balance.toString(), decimals, symbol);
+  const formatBalance = (balance: number) => getBalanceString(balance.toString(), decimals, symbol);
 
   return (
     <Box className={styles.container}>
@@ -49,14 +42,10 @@ export const OrderCard = ({
         justifyContent={direction === 'horizontal' ? 'flex-start' : 'center'}
         alignItems='center'
       >
-        {logo !== undefined && (
-          <Image src={logo} alt='chain icon' width={64} height={64} />
-        )}
+        {logo !== undefined && <Image src={logo} alt='chain icon' width={64} height={64} />}
         <Box>
           <Typography sx={{ fontSize: 14 }}>Para ID</Typography>
-          <Typography
-            sx={{ fontSize: '1rem', color: theme.palette.common.black }}
-          >
+          <Typography sx={{ fontSize: '1rem', color: theme.palette.common.black }}>
             {`# ${paraId}`}
           </Typography>
         </Box>
@@ -64,34 +53,22 @@ export const OrderCard = ({
       <Box className={styles.timeInfo}>
         <Box className={styles.timeItem}>
           <Typography>Begin: </Typography>
-          <Typography
-            sx={{ color: theme.palette.common.black, fontWeight: 500 }}
-          >
+          <Typography sx={{ color: theme.palette.common.black, fontWeight: 500 }}>
             {begin}
           </Typography>
         </Box>
         <Box className={styles.timeItem}>
           <Typography>End: </Typography>
-          <Typography
-            sx={{ color: theme.palette.common.black, fontWeight: 500 }}
-          >
-            {end}
-          </Typography>
+          <Typography sx={{ color: theme.palette.common.black, fontWeight: 500 }}>{end}</Typography>
         </Box>
       </Box>
 
       {!simplified && (
         <>
-          <Stack
-            direction='row'
-            alignItems='center'
-            justifyContent='space-between'
-          >
+          <Stack direction='row' alignItems='center' justifyContent='space-between'>
             <Typography>Contribution</Typography>
             <Typography sx={{ color: theme.palette.common.black }}>
-              {`${formatBalance(order.contribution)} / ${formatBalance(
-                order.totalContribution
-              )}`}
+              {`${formatBalance(order.contribution)} / ${formatBalance(order.totalContribution)}`}
             </Typography>
           </Stack>
           <LinearProgress
@@ -111,11 +88,7 @@ export const OrderCard = ({
         </Typography>
       </Stack>
       {!simplified && (
-        <Stack
-          direction='row'
-          alignItems='center'
-          justifyContent='space-between'
-        >
+        <Stack direction='row' alignItems='center' justifyContent='space-between'>
           <Typography>Created by:</Typography>
           <Address value={order.creator} isShort isCopy size={24} />
         </Stack>

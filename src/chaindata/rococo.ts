@@ -637,8 +637,7 @@ const testParasRococo: ChainDetails[] = [
     },
     text: 'Stagex',
     ui: {
-      color:
-        'linear-gradient(158deg, rgba(226,157,0,1) 0%, rgba(234,55,203,1) 100%)',
+      color: 'linear-gradient(158deg, rgba(226,157,0,1) 0%, rgba(234,55,203,1) 100%)',
       logo: chainsTotemSVG,
     },
   },
@@ -673,8 +672,7 @@ const testParasRococo: ChainDetails[] = [
     },
     text: 'Tinkernet',
     ui: {
-      color:
-        'linear-gradient(90deg, rgba(253,52,166,1) 0%, rgba(22,213,239,1) 100%)',
+      color: 'linear-gradient(90deg, rgba(253,52,166,1) 0%, rgba(22,213,239,1) 100%)',
       logo: chainsTinkerPNG,
     },
   },

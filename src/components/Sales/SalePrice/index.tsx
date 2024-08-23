@@ -3,11 +3,7 @@ import { ApexOptions } from 'apexcharts';
 import dynamic from 'next/dynamic';
 import * as React from 'react';
 
-import {
-  formatNumber,
-  getTimeStringShort,
-  planckBnToUnit,
-} from '@/utils/functions';
+import { formatNumber, getTimeStringShort, planckBnToUnit } from '@/utils/functions';
 import { getCorePriceAt, isNewPricing } from '@/utils/sale';
 
 import { useCoretimeApi } from '@/contexts/apis';
@@ -33,14 +29,9 @@ export const SalePriceChart = () => {
   const startPrice =
     saleInfo.leadinLength === 0
       ? 0
-      : planckBnToUnit(
-          getCorePriceAt(saleStart, saleInfo).toString(),
-          decimals
-        );
+      : planckBnToUnit(getCorePriceAt(saleStart, saleInfo).toString(), decimals);
   const curPrice =
-    currentPrice === undefined
-      ? 0
-      : planckBnToUnit(currentPrice.toString(), decimals);
+    currentPrice === undefined ? 0 : planckBnToUnit(currentPrice.toString(), decimals);
   const floorPrice = planckBnToUnit(saleInfo.price.toString(), decimals);
 
   const data = [
@@ -137,8 +128,7 @@ export const SalePriceChart = () => {
       intersect: true,
       shared: false,
       x: {
-        formatter: (v: number) =>
-          v === currentTimestamp ? 'Now' : getTimeStringShort(v),
+        formatter: (v: number) => (v === currentTimestamp ? 'Now' : getTimeStringShort(v)),
       },
     },
     grid: {
@@ -157,21 +147,15 @@ export const SalePriceChart = () => {
   const series = [
     {
       name: 'Interlude Period',
-      data: data.map(({ phase, value }) =>
-        phase === SalePhase.Interlude ? value : null
-      ),
+      data: data.map(({ phase, value }) => (phase === SalePhase.Interlude ? value : null)),
     },
     {
       name: 'Leadin Period',
-      data: data.map(({ phase, value }) =>
-        phase === SalePhase.Leadin ? value : null
-      ),
+      data: data.map(({ phase, value }) => (phase === SalePhase.Leadin ? value : null)),
     },
     {
       name: 'Fixed Price Period',
-      data: data.map(({ phase, value }) =>
-        phase === SalePhase.Regular ? value : null
-      ),
+      data: data.map(({ phase, value }) => (phase === SalePhase.Regular ? value : null)),
     },
   ];
 
@@ -180,12 +164,6 @@ export const SalePriceChart = () => {
       <CircularProgress />
     </Stack>
   ) : (
-    <Chart
-      options={options}
-      series={series}
-      type='line'
-      width={560}
-      height={320}
-    />
+    <Chart options={options} series={series} type='line' width={560} height={320} />
   );
 };

@@ -16,13 +16,7 @@ export const ParaDisplay = ({ paraId, network }: ParaDisplayProps) => {
   if (data === undefined)
     return (
       <Stack direction='row' alignItems='center' gap='0.5rem'>
-        <Image
-          src={Unknown}
-          width={32}
-          height={32}
-          style={{ borderRadius: '100%' }}
-          alt=''
-        />
+        <Image src={Unknown} width={32} height={32} style={{ borderRadius: '100%' }} alt='' />
         Parachain #{paraId}
       </Stack>
     );
@@ -34,13 +28,7 @@ export const ParaDisplay = ({ paraId, network }: ParaDisplayProps) => {
       {logo === undefined ? (
         <></>
       ) : (
-        <Image
-          src={logo}
-          width={32}
-          height={32}
-          style={{ borderRadius: '100%' }}
-          alt=''
-        />
+        <Image src={logo} width={32} height={32} style={{ borderRadius: '100%' }} alt='' />
       )}
       {name}
       <p>#{paraId}</p>

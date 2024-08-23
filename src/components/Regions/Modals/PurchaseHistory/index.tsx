@@ -26,10 +26,7 @@ interface PurchaseHistoryModalProps extends DialogProps {
   onClose: () => void;
 }
 
-export const PurchaseHistoryModal = ({
-  open,
-  onClose,
-}: PurchaseHistoryModalProps) => {
+export const PurchaseHistoryModal = ({ open, onClose }: PurchaseHistoryModalProps) => {
   const theme = useTheme();
   const { network } = useNetwork();
   const {
@@ -38,26 +35,14 @@ export const PurchaseHistoryModal = ({
   const { loading, data, isError } = usePurchaseHistory(network, regionBegin);
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth='md'
-      data-cy='purchase-history-modal'
-    >
+    <Dialog open={open} onClose={onClose} maxWidth='md' data-cy='purchase-history-modal'>
       <DialogContent className={styles.container}>
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Purchase History
           </Typography>
-          <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
-          >
-            Get an insight into all purchases and renewals made during the
-            current bulk period.
+          <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
+            Get an insight into all purchases and renewals made during the current bulk period.
           </Typography>
         </Box>
         {loading || isError ? (

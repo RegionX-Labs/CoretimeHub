@@ -26,10 +26,7 @@ export const transferRegionOnCoretimeChain = async (
   newOwner: string,
   handlers: TxStatusHandlers
 ) => {
-  const txTransfer = coretimeApi.tx.broker.transfer(
-    region.getOnChainRegionId(),
-    newOwner
-  );
+  const txTransfer = coretimeApi.tx.broker.transfer(region.getOnChainRegionId(), newOwner);
   sendTx(txTransfer, senderAddress, signer, handlers);
 };
 
@@ -41,9 +38,6 @@ export const transferRegionOnRegionXChain = async (
   newOwner: string,
   handlers: TxStatusHandlers
 ) => {
-  const txTransfer = regionxApi.tx.regions.transfer(
-    region.getOnChainRegionId(),
-    newOwner
-  );
+  const txTransfer = regionxApi.tx.regions.transfer(region.getOnChainRegionId(), newOwner);
   sendTx(txTransfer, senderAddress, signer, handlers);
 };

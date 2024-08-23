@@ -1,12 +1,5 @@
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import {
-  Box,
-  LinearProgress,
-  Paper,
-  Stack,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, LinearProgress, Paper, Stack, Typography, useTheme } from '@mui/material';
 import { humanizer } from 'humanize-duration';
 import React from 'react';
 
@@ -30,13 +23,7 @@ export const MarketRegion = ({ listing }: MarketRegionProps) => {
     state: { symbol, decimals },
   } = useRelayApi();
 
-  const {
-    region,
-    regionCoreOccupancy,
-    regionConsumed,
-    beginTimestamp,
-    endTimestamp,
-  } = listing;
+  const { region, regionCoreOccupancy, regionConsumed, beginTimestamp, endTimestamp } = listing;
 
   const progress = [
     {
@@ -54,19 +41,11 @@ export const MarketRegion = ({ listing }: MarketRegionProps) => {
   const prices = [
     {
       label: 'Price/timeslice:',
-      value: getBalanceString(
-        listing.timeslicePrice.toString(),
-        decimals,
-        symbol
-      ),
+      value: getBalanceString(listing.timeslicePrice.toString(), decimals, symbol),
     },
     {
       label: 'Total:',
-      value: getBalanceString(
-        listing.currentPrice.toString(),
-        decimals,
-        symbol
-      ),
+      value: getBalanceString(listing.currentPrice.toString(), decimals, symbol),
     },
   ];
 
@@ -90,17 +69,13 @@ export const MarketRegion = ({ listing }: MarketRegionProps) => {
       <Box className={styles.timeInfo}>
         <Box className={styles.timeItem}>
           <Typography>Begin: </Typography>
-          <Typography
-            sx={{ color: theme.palette.common.black, fontWeight: 500 }}
-          >
+          <Typography sx={{ color: theme.palette.common.black, fontWeight: 500 }}>
             {getTimeStringShort(beginTimestamp)}
           </Typography>
         </Box>
         <Box className={styles.timeItem}>
           <Typography>End: </Typography>
-          <Typography
-            sx={{ color: theme.palette.common.black, fontWeight: 500 }}
-          >
+          <Typography sx={{ color: theme.palette.common.black, fontWeight: 500 }}>
             {getTimeStringShort(endTimestamp)}
           </Typography>
         </Box>
@@ -158,12 +133,8 @@ export const MarketRegion = ({ listing }: MarketRegionProps) => {
         <Stack direction='row' justifyContent='space-between'>
           {prices.map(({ label, value }, index) => (
             <Box key={index} className={styles.priceItem}>
-              <Typography sx={{ color: theme.palette.primary.main }}>
-                {label}
-              </Typography>
-              <Typography
-                sx={{ color: theme.palette.common.black, fontWeight: 700 }}
-              >
+              <Typography sx={{ color: theme.palette.primary.main }}>{label}</Typography>
+              <Typography sx={{ color: theme.palette.common.black, fontWeight: 700 }}>
                 {value}
               </Typography>
             </Box>

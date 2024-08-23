@@ -26,11 +26,7 @@ interface TxHistoryModalProps extends DialogProps {
   account: Address;
 }
 
-export const TxHistoryModal = ({
-  open,
-  onClose,
-  account,
-}: TxHistoryModalProps) => {
+export const TxHistoryModal = ({ open, onClose, account }: TxHistoryModalProps) => {
   const theme = useTheme();
 
   const { network } = useNetwork();
@@ -40,10 +36,7 @@ export const TxHistoryModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent className={styles.container}>
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Transaction History
           </Typography>
         </Box>

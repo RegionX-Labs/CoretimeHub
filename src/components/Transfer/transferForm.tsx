@@ -40,9 +40,7 @@ const TransferForm = () => {
       >
         {/* Origin Chain */}
         <Stack margin='0.5rem 0' direction='column' gap='1rem'>
-          <Typography
-            sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
-          >
+          <Typography sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}>
             Origin chain:
           </Typography>
           <ChainSelector chain={originChain} setChain={setOriginChain} />
@@ -61,15 +59,10 @@ const TransferForm = () => {
 
         {/* Destination Chain */}
         <Stack margin='0.5rem 0' direction='column' gap='1rem'>
-          <Typography
-            sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}
-          >
+          <Typography sx={{ color: theme.palette.common.black, fontSize: '1.25rem' }}>
             Destination chain:
           </Typography>
-          <ChainSelector
-            chain={destinationChain}
-            setChain={setDestinationChain}
-          />
+          <ChainSelector chain={destinationChain} setChain={setDestinationChain} />
         </Stack>
 
         {/* Region Selector */}
@@ -81,9 +74,7 @@ const TransferForm = () => {
               <RegionSelector
                 regions={filteredRegions}
                 selectedRegion={selectedRegion}
-                handleRegionChange={(indx) =>
-                  setSelectedRegion(filteredRegions[indx])
-                }
+                handleRegionChange={(indx) => setSelectedRegion(filteredRegions[indx])}
               />
             </Stack>
           )}

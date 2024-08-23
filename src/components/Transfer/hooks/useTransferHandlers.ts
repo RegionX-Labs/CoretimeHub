@@ -9,14 +9,10 @@ import {
   transferTokensFromRelayToCoretime,
   transferTokensFromRelayToRegionX,
 } from '@/utils/transfers/crossChain';
-import {
-  transferNativeToken,
-  transferRegionOnCoretimeChain,
-} from '@/utils/transfers/native';
+import { transferNativeToken, transferRegionOnCoretimeChain } from '@/utils/transfers/native';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { AssetType, ChainType } from '@/models';
@@ -29,17 +25,13 @@ export const useTransferHandlers = () => {
   const { originChain, destinationChain, selectedRegion } = useTransferState();
 
   const {
-    state: { api: coretimeApi, apiState: coretimeApiState },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady },
   } = useCoretimeApi();
   const {
-    state: { api: regionXApi, apiState: regionxApiState },
+    state: { api: regionXApi, isApiReady: isRegionXReady },
   } = useRegionXApi();
   const {
-    state: {
-      api: relayApi,
-      apiState: relayApiState,
-      decimals: relayTokenDecimals,
-    },
+    state: { api: relayApi, isApiReady: isRelayReady, decimals: relayTokenDecimals },
   } = useRelayApi();
 
   const { fetchRegions } = useRegions();
@@ -104,7 +96,7 @@ export const useTransferHandlers = () => {
     receiverKeypair.addFromAddress(newOwner);
 
     if (originChain === destinationChain) {
-      if (!coretimeApi || !(coretimeApiState === ApiState.READY)) return;
+      if (!coretimeApi || !isCoretimeReady) return;
       await transferNativeToken(
         coretimeApi,
         activeSigner,
@@ -115,25 +107,13 @@ export const useTransferHandlers = () => {
       );
     } else {
       let transferFunction: any;
-      if (
-        originChain === ChainType.CORETIME &&
-        destinationChain === ChainType.RELAY
-      ) {
+      if (originChain === ChainType.CORETIME && destinationChain === ChainType.RELAY) {
         transferFunction = transferTokensFromCoretimeToRelay;
-      } else if (
-        originChain === ChainType.REGIONX &&
-        destinationChain === ChainType.RELAY
-      ) {
+      } else if (originChain === ChainType.REGIONX && destinationChain === ChainType.RELAY) {
         transferFunction = transferTokensFromRegionXToRelay;
-      } else if (
-        originChain === ChainType.RELAY &&
-        destinationChain === ChainType.CORETIME
-      ) {
+      } else if (originChain === ChainType.RELAY && destinationChain === ChainType.CORETIME) {
         transferFunction = transferTokensFromRelayToCoretime;
-      } else if (
-        originChain === ChainType.RELAY &&
-        destinationChain === ChainType.REGIONX
-      ) {
+      } else if (originChain === ChainType.RELAY && destinationChain === ChainType.REGIONX) {
         transferFunction = transferTokensFromRelayToRegionX;
       } else {
         toastWarning('Currently not supported');
@@ -150,23 +130,11 @@ export const useTransferHandlers = () => {
           defaultHandler()
         );
 
-      if (
-        originChain === ChainType.CORETIME &&
-        coretimeApi &&
-        coretimeApiState === ApiState.READY
-      ) {
+      if (originChain === ChainType.CORETIME && coretimeApi && isCoretimeReady) {
         transfer(coretimeApi);
-      } else if (
-        originChain === ChainType.RELAY &&
-        relayApi &&
-        relayApiState === ApiState.READY
-      ) {
+      } else if (originChain === ChainType.RELAY && relayApi && isRelayReady) {
         transfer(relayApi);
-      } else if (
-        originChain === ChainType.REGIONX &&
-        regionXApi &&
-        regionxApiState === ApiState.READY
-      ) {
+      } else if (originChain === ChainType.REGIONX && regionXApi && isRegionXReady) {
         transfer(regionXApi);
       }
     }
@@ -187,7 +155,7 @@ export const useTransferHandlers = () => {
     receiverKeypair.addFromAddress(newOwner ? newOwner : activeAccount.address);
 
     if (originChain === destinationChain) {
-      if (!(coretimeApi && coretimeApiState === ApiState.READY)) return;
+      if (!(coretimeApi && isCoretimeReady)) return;
       await transferRegionOnCoretimeChain(
         coretimeApi,
         selectedRegion.region,
@@ -196,11 +164,8 @@ export const useTransferHandlers = () => {
         newOwner ?? activeAccount.address,
         defaultHandler(true)
       );
-    } else if (
-      originChain === ChainType.CORETIME &&
-      destinationChain === ChainType.REGIONX
-    ) {
-      if (!(coretimeApi && coretimeApiState === ApiState.READY)) return;
+    } else if (originChain === ChainType.CORETIME && destinationChain === ChainType.REGIONX) {
+      if (!(coretimeApi && isCoretimeReady)) return;
       await coretimeToRegionXTransfer(
         coretimeApi,
         { address: activeAccount.address, signer: activeSigner },
@@ -208,11 +173,8 @@ export const useTransferHandlers = () => {
         receiverKeypair.pairs[0].publicKey,
         defaultHandler(true)
       );
-    } else if (
-      originChain === ChainType.REGIONX &&
-      destinationChain === ChainType.CORETIME
-    ) {
-      if (!(regionXApi && regionxApiState === ApiState.READY)) return;
+    } else if (originChain === ChainType.REGIONX && destinationChain === ChainType.CORETIME) {
+      if (!(regionXApi && isRegionXReady)) return;
       coretimeFromRegionXTransfer(
         regionXApi,
         { address: activeAccount.address, signer: activeSigner },

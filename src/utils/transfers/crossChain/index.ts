@@ -39,20 +39,16 @@ export async function coretimeToRegionXTransfer(
   const feeAssetItem = 0;
   const weightLimit = 'Unlimited';
 
-  const reserveTransfer =
-    coretimeApi.tx.polkadotXcm.limitedReserveTransferAssets(
-      versionWrap(RegionXChain),
-      versionWrap(beneficiary),
-      versionWrap([
-        fungibleAsset(RcTokenFromParachainPerspective, '2500000000'), // Fee payment asset
-        nonFungibleAsset(
-          CoretimeRegionFromCoretimePerspective,
-          rawRegionId.toString()
-        ),
-      ]),
-      feeAssetItem,
-      weightLimit
-    );
+  const reserveTransfer = coretimeApi.tx.polkadotXcm.limitedReserveTransferAssets(
+    versionWrap(RegionXChain),
+    versionWrap(beneficiary),
+    versionWrap([
+      fungibleAsset(RcTokenFromParachainPerspective, '2500000000'), // Fee payment asset
+      nonFungibleAsset(CoretimeRegionFromCoretimePerspective, rawRegionId.toString()),
+    ]),
+    feeAssetItem,
+    weightLimit
+  );
 
   const { address, signer } = sender;
   sendTx(reserveTransfer, address, signer, handlers);
@@ -85,10 +81,7 @@ export function coretimeFromRegionXTransfer(
     versionWrap(beneficiary),
     versionWrap([
       fungibleAsset(RcTokenFromParachainPerspective, '2500000000'), // Fee payment asset
-      nonFungibleAsset(
-        CoretimeRegionFromRegionXPerspective,
-        rawRegionId.toString()
-      ),
+      nonFungibleAsset(CoretimeRegionFromRegionXPerspective, rawRegionId.toString()),
     ]),
     feeAssetItem,
     weightLimit
@@ -190,14 +183,13 @@ export function transferTokensFromRegionXToRelay(
   const feeAssetItem = 0;
   const weightLimit = 'Unlimited';
 
-  const teleportTransfer =
-    regionXApi.tx.polkadotXcm.limitedReserveTransferAssets(
-      versionWrap(RelayChainFromParachainPerspective),
-      versionWrap(beneficiary),
-      versionWrap([fungibleAsset(RcTokenFromParachainPerspective, amount)]),
-      feeAssetItem,
-      weightLimit
-    );
+  const teleportTransfer = regionXApi.tx.polkadotXcm.limitedReserveTransferAssets(
+    versionWrap(RelayChainFromParachainPerspective),
+    versionWrap(beneficiary),
+    versionWrap([fungibleAsset(RcTokenFromParachainPerspective, amount)]),
+    feeAssetItem,
+    weightLimit
+  );
 
   const { address, signer } = sender;
 

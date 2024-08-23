@@ -42,8 +42,7 @@ export const SaleInfoPanel = () => {
     openPriceModal(true);
   };
 
-  const formatBalance = (x: number) =>
-    getBalanceString(x.toString(), decimals, symbol);
+  const formatBalance = (x: number) => getBalanceString(x.toString(), decimals, symbol);
 
   return (
     <>
@@ -81,10 +80,7 @@ export const SaleInfoPanel = () => {
           title='Price details'
           items={{
             left: {
-              label:
-                currentPhase === SalePhase.Interlude
-                  ? 'Start price'
-                  : 'Current price',
+              label: currentPhase === SalePhase.Interlude ? 'Start price' : 'Current price',
               value:
                 currentPrice !== undefined ? (
                   formatBalance(currentPrice)
@@ -94,10 +90,7 @@ export const SaleInfoPanel = () => {
             },
             right: {
               label: 'Floor price',
-              value:
-                saleInfo.price !== undefined
-                  ? formatBalance(saleInfo.price)
-                  : '---',
+              value: saleInfo.price !== undefined ? formatBalance(saleInfo.price) : '---',
             },
           }}
           button={

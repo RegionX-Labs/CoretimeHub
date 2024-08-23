@@ -8,8 +8,7 @@ export const ParaStateCard = ({ state }: { state: ParaState }) => {
       title: 'Reserved',
       color: '#008000',
       background: 'rgba(0, 128, 0, 0.1)',
-      tooltip:
-        'A parachain with a reserved para ID that is not yet registered.',
+      tooltip: 'A parachain with a reserved para ID that is not yet registered.',
     },
     [ParaState.ONBOARDING]: {
       title: 'Onboarding',
@@ -39,8 +38,7 @@ export const ParaStateCard = ({ state }: { state: ParaState }) => {
       title: 'Active Parachain',
       color: '#9F53FF',
       background: '#EDDFFF',
-      tooltip:
-        'An active parachain that can be renewed and is able to produce blocks.',
+      tooltip: 'An active parachain that can be renewed and is able to produce blocks.',
     },
     [ParaState.IN_WORKPLAN]: {
       title: 'Idle(In workplan)',
@@ -52,8 +50,7 @@ export const ParaStateCard = ({ state }: { state: ParaState }) => {
       title: 'Lease Holding',
       color: '#5e9b53',
       background: '#f1ffe1',
-      tooltip:
-        'Parachain that secured coretime through the legacy slot auction model.',
+      tooltip: 'Parachain that secured coretime through the legacy slot auction model.',
     },
     [ParaState.SYSTEM]: {
       title: 'System Parachain',

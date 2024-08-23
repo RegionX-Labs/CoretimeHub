@@ -1,10 +1,4 @@
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 import { useRegions } from '@/contexts/regions';
 import { ChainType, RegionLocation, RegionMetadata } from '@/models';
@@ -37,33 +31,19 @@ const defaultTasksData: TransferState = {
 
 const TransferStateContext = createContext<TransferState>(defaultTasksData);
 
-export const TransferStateProvider = ({
-  children,
-}: {
-  children: ReactNode;
-}) => {
+export const TransferStateProvider = ({ children }: { children: ReactNode }) => {
   const { regions } = useRegions();
 
   const [originChain, setOriginChain] = useState<ChainType>(ChainType.RELAY);
-  const [destinationChain, setDestinationChain] = useState<ChainType>(
-    ChainType.CORETIME
-  );
-  const [selectedRegion, setSelectedRegion] = useState<RegionMetadata | null>(
-    null
-  );
-  const [filteredRegions, setFilteredRegions] = useState<Array<RegionMetadata>>(
-    []
-  );
+  const [destinationChain, setDestinationChain] = useState<ChainType>(ChainType.CORETIME);
+  const [selectedRegion, setSelectedRegion] = useState<RegionMetadata | null>(null);
+  const [filteredRegions, setFilteredRegions] = useState<Array<RegionMetadata>>([]);
 
   useEffect(() => {
     if (originChain === ChainType.CORETIME) {
-      setFilteredRegions(
-        regions.filter((r) => r.location === RegionLocation.CORETIME_CHAIN)
-      );
+      setFilteredRegions(regions.filter((r) => r.location === RegionLocation.CORETIME_CHAIN));
     } else if (originChain === ChainType.REGIONX) {
-      setFilteredRegions(
-        regions.filter((r) => r.location === RegionLocation.REGIONX_CHAIN)
-      );
+      setFilteredRegions(regions.filter((r) => r.location === RegionLocation.REGIONX_CHAIN));
     } else {
       setFilteredRegions([]);
     }

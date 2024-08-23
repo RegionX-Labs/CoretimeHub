@@ -13,13 +13,7 @@ interface AddressProps {
   center?: boolean;
 }
 
-export const Address = ({
-  value,
-  isShort,
-  isCopy,
-  size = 32,
-  center,
-}: AddressProps) => {
+export const Address = ({ value, isShort, isCopy, size = 32, center }: AddressProps) => {
   const { toastInfo } = useToast();
 
   const onCopy = () => {

@@ -15,7 +15,6 @@ import {
 } from '@/models';
 
 import { useCoretimeApi } from '../apis';
-import { ApiState } from '../apis/types';
 import { useNetwork } from '../network';
 
 interface SaleData {
@@ -91,20 +90,16 @@ interface Props {
 const SaleInfoProvider = ({ children }: Props) => {
   const { network } = useNetwork();
   const {
-    state: { api: coretimeApi, apiState: coretimeApiState, height },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady, height },
     timeslicePeriod,
   } = useCoretimeApi();
 
   const [saleInfo, setSaleInfo] = useState<SaleInfo>(defaultSaleData.saleInfo);
-  const [saleStatus, setSaleStatus] = useState<BrokerStatus>(
-    defaultSaleData.saleStatus
-  );
+  const [saleStatus, setSaleStatus] = useState<BrokerStatus>(defaultSaleData.saleStatus);
   const [config, setConfig] = useState<SaleConfig>(defaultSaleData.config);
 
   const [status, setStatus] = useState(ContextStatus.UNINITIALIZED);
-  const [currentPhase, setCurrentPhase] = useState<SalePhase>(
-    SalePhase.Interlude
-  );
+  const [currentPhase, setCurrentPhase] = useState<SalePhase>(SalePhase.Interlude);
   const [at, setAt] = useState(0);
   const [currentPrice, setCurrentPrice] = useState<number | undefined>();
   const [endpoints, setEndpoints] = useState<PhaseEndpoints>(defaultEndpoints);
@@ -115,34 +110,30 @@ const SaleInfoProvider = ({ children }: Props) => {
 
   useEffect(() => {
     setCurrentPrice(
-      status !== ContextStatus.LOADED || height === 0
-        ? undefined
-        : getCorePriceAt(at, saleInfo)
+      status !== ContextStatus.LOADED || height === 0 ? undefined : getCorePriceAt(at, saleInfo)
     );
   }, [status, at, height, network, saleInfo]);
 
   const fetchSaleInfo = async () => {
     try {
       setStatus(ContextStatus.LOADING);
-      if (!coretimeApi || coretimeApiState !== ApiState.READY) {
+      if (!coretimeApi || !isCoretimeReady) {
         setStatus(ContextStatus.UNINITIALIZED);
         return;
       }
 
-      const [brokerStatusRaw, saleInfoRaw, configRaw] = (await new Promise(
-        (resolve, _reject) => {
-          coretimeApi.queryMulti(
-            [
-              coretimeApi.query.broker.status,
-              coretimeApi.query.broker.saleInfo,
-              coretimeApi.query.broker.configuration,
-            ],
-            (result) => {
-              resolve(result);
-            }
-          );
-        }
-      )) as Array<any>;
+      const [brokerStatusRaw, saleInfoRaw, configRaw] = (await new Promise((resolve, _reject) => {
+        coretimeApi.queryMulti(
+          [
+            coretimeApi.query.broker.status,
+            coretimeApi.query.broker.saleInfo,
+            coretimeApi.query.broker.configuration,
+          ],
+          (result) => {
+            resolve(result);
+          }
+        );
+      })) as Array<any>;
 
       const saleInfo = saleInfoRaw.toJSON() as SaleInfo;
       // On Rococo we have `endPrice` while on Kusama we still have `price`.
@@ -157,11 +148,7 @@ const SaleInfoProvider = ({ children }: Props) => {
 
       const saleStart = saleInfo.saleStart;
       // Sale start != bulk phase start. sale_start = bulk_phase_start + interlude_length.
-      const saleStartTimestamp = await getBlockTimestamp(
-        coretimeApi,
-        saleStart,
-        network
-      );
+      const saleStartTimestamp = await getBlockTimestamp(coretimeApi, saleStart, network);
 
       const regionDuration = saleInfo.regionEnd - saleInfo.regionBegin;
       const blockTime = getBlockTime(network); // Block time on the coretime chain
@@ -194,7 +181,7 @@ const SaleInfoProvider = ({ children }: Props) => {
 
   useEffect(() => {
     fetchSaleInfo();
-  }, [network, coretimeApi, coretimeApiState, timeslicePeriod]);
+  }, [network, coretimeApi, isCoretimeReady, timeslicePeriod]);
 
   useEffect(() => {
     if (height === 0) return;

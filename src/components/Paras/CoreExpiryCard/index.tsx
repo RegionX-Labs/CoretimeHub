@@ -30,12 +30,8 @@ export const CoreExpiryCard = ({ paraId, height }: CoreExpiryProps) => {
 
   return (
     <Stack direction='column' gap='0.5rem' alignItems='start'>
-      <Typography
-        sx={{ color: theme.palette.text.primary, fontSize: '0.875rem' }}
-      >
-        {`Core #${core} expires in ${formatDuration(
-          (until - height) * RELAY_CHAIN_BLOCK_TIME
-        )}`}
+      <Typography sx={{ color: theme.palette.text.primary, fontSize: '0.875rem' }}>
+        {`Core #${core} expires in ${formatDuration((until - height) * RELAY_CHAIN_BLOCK_TIME)}`}
       </Typography>
     </Stack>
   );

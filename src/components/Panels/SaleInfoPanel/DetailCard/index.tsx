@@ -17,32 +17,20 @@ interface DetailCardProps {
   children?: React.ReactNode;
 }
 
-export const DetailCard = ({
-  icon,
-  title,
-  items,
-  button,
-  children,
-}: DetailCardProps) => {
+export const DetailCard = ({ icon, title, items, button, children }: DetailCardProps) => {
   const theme = useTheme();
   return (
     <Paper className={styles.container}>
       <Box className={styles.headerWrapper}>
         <Box className={styles.titleWrapper}>
           <Image src={icon} className={styles.iconWrapper} alt='icon' />
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             {title}
           </Typography>
         </Box>
         {button !== undefined ? <>{button}</> : <></>}
       </Box>
-      <Box
-        className={styles.infoSection}
-        sx={{ color: theme.palette.common.black }}
-      >
+      <Box className={styles.infoSection} sx={{ color: theme.palette.common.black }}>
         {items ? (
           <>
             <InfoItem {...items.left} />

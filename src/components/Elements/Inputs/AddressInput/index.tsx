@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  IconButton,
-  Input,
-  InputAdornment,
-  Typography,
-} from '@mui/material';
+import { Box, Button, IconButton, Input, InputAdornment, Typography } from '@mui/material';
 import Identicon from '@polkadot/react-identicon';
 
 import { isValidAddress, writeToClipboard } from '@/utils/functions';
@@ -19,11 +12,7 @@ export interface AddressInputProps {
   label: string;
 }
 
-export const AddressInput = ({
-  onChange,
-  address,
-  label,
-}: AddressInputProps) => {
+export const AddressInput = ({ onChange, address, label }: AddressInputProps) => {
   const {
     state: { activeAccount },
   } = useAccounts();

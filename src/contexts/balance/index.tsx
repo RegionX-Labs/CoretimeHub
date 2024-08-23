@@ -4,7 +4,6 @@ import { enableRegionX } from '@/utils/functions';
 
 import { useAccounts } from '../account';
 import { useCoretimeApi, useRegionXApi, useRelayApi } from '../apis';
-import { ApiState } from '../apis/types';
 import { useNetwork } from '../network';
 
 interface Props {
@@ -37,13 +36,13 @@ const BalanceProvider = ({ children }: Props) => {
     state: { activeAccount },
   } = useAccounts();
   const {
-    state: { api: coretimeApi, apiState: coretimeApiState },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady },
   } = useCoretimeApi();
   const {
-    state: { api: relayApi, apiState: relayApiState },
+    state: { api: relayApi, isApiReady: isRelayReady },
   } = useRelayApi();
   const {
-    state: { api: regionxApi, apiState: regionxApiState },
+    state: { api: regionxApi, isApiReady: isRegionXReady },
   } = useRegionXApi();
 
   const [coretimeBalance, setCoretimeBalance] = useState(0);
@@ -60,13 +59,7 @@ const BalanceProvider = ({ children }: Props) => {
         setRxCurrencyBalance(0);
         return;
       }
-      if (
-        coretimeApiState !== ApiState.READY ||
-        relayApiState !== ApiState.READY ||
-        !coretimeApi ||
-        !relayApi
-      )
-        return;
+      if (!isCoretimeReady || !isRelayReady || !coretimeApi || !relayApi) return;
 
       const { address } = activeAccount;
       const unsubscribeCoretime = await coretimeApi.queryMulti(
@@ -93,7 +86,7 @@ const BalanceProvider = ({ children }: Props) => {
       let unsubscribeRegionx: any = null;
 
       if (enableRegionX(network)) {
-        if (!regionxApi || regionxApiState !== ApiState.READY) return;
+        if (!regionxApi || !isRegionXReady) return;
         unsubscribeRegionx = await regionxApi.queryMulti(
           [
             [regionxApi.query.system?.account, address],
@@ -121,11 +114,11 @@ const BalanceProvider = ({ children }: Props) => {
   }, [
     activeAccount,
     coretimeApi,
-    coretimeApiState,
+    isCoretimeReady,
     relayApi,
-    relayApiState,
+    isRelayReady,
     regionxApi,
-    regionxApiState,
+    isRegionXReady,
     network,
   ]);
 

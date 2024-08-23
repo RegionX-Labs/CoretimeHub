@@ -40,9 +40,7 @@ const SettingsProvider = ({ children }: Props) => {
   };
 
   return (
-    <SettingDataContext.Provider
-      value={{ watchList, setWatchList: updateWatchList }}
-    >
+    <SettingDataContext.Provider value={{ watchList, setWatchList: updateWatchList }}>
       {children}
     </SettingDataContext.Provider>
   );

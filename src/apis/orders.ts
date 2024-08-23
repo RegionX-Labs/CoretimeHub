@@ -25,9 +25,7 @@ export const fetchUserContribution = async (
   return fetchGraphql(API_COCOS_INDEXER, query);
 };
 
-export const fetchOrders = async (
-  after: string | null
-): Promise<ApiResponse> => {
+export const fetchOrders = async (after: string | null): Promise<ApiResponse> => {
   const query = `{
     orders(after: ${after}) {
       nodes {

@@ -57,8 +57,7 @@ export const RegisterModal = ({
   const [genesisHead, setGenesisHead] = useState<Uint8Array>();
   const [wasmCode, setWasmCode] = useState<Uint8Array>();
 
-  const regCost =
-    dataDepositPerByte * (BigInt(genesisHead?.length ?? 0) + maxCodeSize);
+  const regCost = dataDepositPerByte * (BigInt(genesisHead?.length ?? 0) + maxCodeSize);
 
   const onRegister = async () => {
     if (!genesisHead) {
@@ -83,33 +82,26 @@ export const RegisterModal = ({
       compactAddLength(wasmCode)
     );
 
-    submitExtrinsicWithFeeInfo(
-      symbol,
-      decimals,
-      txRegister,
-      activeAccount.address,
-      activeSigner,
-      {
-        ready: () => {
-          setWorking(true);
-          toastInfo('Transaction was initiated');
-        },
-        inBlock: () => toastInfo('In Block'),
-        finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess('Registration success');
-          fetchParaStates();
-          onClose();
-        },
-        fail: () => {
-          toastError('Failed to register');
-        },
-        error: (e) => {
-          toastError(`Failed to register ${e}`);
-          setWorking(false);
-        },
-      }
-    );
+    submitExtrinsicWithFeeInfo(symbol, decimals, txRegister, activeAccount.address, activeSigner, {
+      ready: () => {
+        setWorking(true);
+        toastInfo('Transaction was initiated');
+      },
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Registration success');
+        fetchParaStates();
+        onClose();
+      },
+      fail: () => {
+        toastError('Failed to register');
+      },
+      error: (e) => {
+        toastError(`Failed to register ${e}`);
+        setWorking(false);
+      },
+    });
   };
 
   useEffect(() => {
@@ -123,37 +115,23 @@ export const RegisterModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent className={styles.container}>
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Register Parachain
           </Typography>
-          <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
-          >
+          <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
             Fill out the detail to register parachain
           </Typography>
         </Box>
         <Box className={styles.info}>
           <Box className={styles.infoItem}>
             <Typography className={styles.itemKey}>PARA ID:</Typography>
-            <Typography
-              sx={{ color: theme.palette.common.black }}
-              className={styles.itemValue}
-            >
+            <Typography sx={{ color: theme.palette.common.black }} className={styles.itemValue}>
               {paraId}
             </Typography>
           </Box>
           <Box className={styles.infoItem}>
-            <Typography className={styles.itemKey}>
-              Registration Cost:
-            </Typography>
-            <Typography
-              sx={{ color: theme.palette.common.black }}
-              className={styles.itemValue}
-            >
+            <Typography className={styles.itemKey}>Registration Cost:</Typography>
+            <Typography sx={{ color: theme.palette.common.black }} className={styles.itemValue}>
               {getBalanceString(regCost.toString(), decimals, symbol)}
             </Typography>
           </Box>
@@ -178,11 +156,7 @@ export const RegisterModal = ({
           Cancel
         </Button>
 
-        <ProgressButton
-          onClick={onRegister}
-          label='Register'
-          loading={working}
-        />
+        <ProgressButton onClick={onRegister} label='Register' loading={working} />
       </DialogActions>
     </Dialog>
   );

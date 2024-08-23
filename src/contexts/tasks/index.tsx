@@ -6,7 +6,6 @@ import { parseHNString } from '@/utils/functions';
 import { POOLING_TASK_ID, ScheduleItem, TaskMetadata } from '@/models';
 
 import { useCoretimeApi } from '../apis';
-import { ApiState } from '../apis/types';
 
 export type Task = number | null;
 export type Tasks = Record<string, Task>;
@@ -25,10 +24,7 @@ const defaultTasksData: TasksData = {
   fetchWorkplan: async (): Promise<Tasks> => {
     return {};
   },
-  fetchRegionWorkload: async (
-    _core: CoreIndex,
-    _mask: string
-  ): Promise<Task> => {
+  fetchRegionWorkload: async (_core: CoreIndex, _mask: string): Promise<Task> => {
     return null;
   },
   loadTasksFromLocalStorage: () => {
@@ -52,19 +48,14 @@ const TaskDataProvider = ({ children }: Props) => {
   const [tasks, setTasks] = useState<TaskMetadata[]>([]);
 
   const {
-    state: { api: coretimeApi, apiState: coretimeApiState },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady },
   } = useCoretimeApi();
 
   const STORAGE_ITEM_KEY = 'tasks';
 
   // The tasks which will run on Polkadot cores in the future.
   const fetchWorkplan = async (): Promise<Tasks> => {
-    if (
-      !coretimeApi ||
-      coretimeApiState !== ApiState.READY ||
-      !coretimeApi.query.broker
-    )
-      return {};
+    if (!coretimeApi || !isCoretimeReady || !coretimeApi.query.broker) return {};
     try {
       const workplan = await coretimeApi.query.broker.workplan.entries();
       const tasks: Record<string, number | null> = {};
@@ -82,11 +73,11 @@ const TaskDataProvider = ({ children }: Props) => {
           };
 
           if (assignment === 'Pool') {
-            tasks[getEncodedRegionId(regionId, coretimeApi).toString()] =
-              POOLING_TASK_ID;
+            tasks[getEncodedRegionId(regionId, coretimeApi).toString()] = POOLING_TASK_ID;
           } else {
-            tasks[getEncodedRegionId(regionId, coretimeApi).toString()] =
-              assignment.Task ? parseHNString(assignment.Task) : null;
+            tasks[getEncodedRegionId(regionId, coretimeApi).toString()] = assignment.Task
+              ? parseHNString(assignment.Task)
+              : null;
           }
         });
       }
@@ -98,20 +89,10 @@ const TaskDataProvider = ({ children }: Props) => {
   };
 
   // The tasks currently running on a Polkadot core.
-  const fetchRegionWorkload = async (
-    core: CoreIndex,
-    regionMask: string
-  ): Promise<Task> => {
-    if (
-      !coretimeApi ||
-      coretimeApiState !== ApiState.READY ||
-      !coretimeApi.query.broker
-    )
-      return null;
+  const fetchRegionWorkload = async (core: CoreIndex, regionMask: string): Promise<Task> => {
+    if (!coretimeApi || !isCoretimeReady || !coretimeApi.query.broker) return null;
     const workload = (
-      (
-        await coretimeApi.query.broker.workload(core)
-      ).toHuman() as ScheduleItem[]
+      (await coretimeApi.query.broker.workload(core)).toHuman() as ScheduleItem[]
     )[0];
 
     if (!workload) return null;

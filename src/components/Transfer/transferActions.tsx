@@ -19,14 +19,8 @@ import { useTransferState } from './contexts/transferState';
 import { useTransferHandlers } from './hooks/useTransferHandlers';
 
 const TransferActions = () => {
-  const {
-    transferAmount,
-    handleTransfer,
-    working,
-    newOwner,
-    setNewOwner,
-    setTransferAmount,
-  } = useTransferHandlers();
+  const { transferAmount, handleTransfer, working, newOwner, setNewOwner, setTransferAmount } =
+    useTransferHandlers();
 
   const {
     state: { ed: coretimeChainED },
@@ -72,8 +66,7 @@ const TransferActions = () => {
       (originChain === ChainType.REGIONX &&
         // ED is not really relevant since rc asset is not the native asset.
         balance.rxRcCurrencyBalance < _transferAmount) ||
-      (originChain === ChainType.RELAY &&
-        balance.relay - relayChainED < _transferAmount)
+      (originChain === ChainType.RELAY && balance.relay - relayChainED < _transferAmount)
     ) {
       toastWarning('Insufficient balance');
       return;
@@ -95,11 +88,7 @@ const TransferActions = () => {
         }}
       >
         <Stack direction='column' gap={1}>
-          <AddressInput
-            address={newOwner}
-            onChange={setNewOwner}
-            label='Transfer to'
-          />
+          <AddressInput address={newOwner} onChange={setNewOwner} label='Transfer to' />
         </Stack>
         {assetType(originChain, destinationChain) === AssetType.TOKEN &&
           originChain !== ChainType.NONE &&
@@ -133,11 +122,7 @@ const TransferActions = () => {
         >
           &lt; Home
         </Button>
-        <ProgressButton
-          label='Transfer'
-          onClick={onTransfer}
-          loading={working}
-        />
+        <ProgressButton label='Transfer' onClick={onTransfer} loading={working} />
       </Box>
     </Box>
   );

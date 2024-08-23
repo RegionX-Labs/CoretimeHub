@@ -124,9 +124,7 @@ export const ParachainTable = ({
                   <IconButton
                     sx={{
                       color:
-                        sort === orderBy
-                          ? theme.palette.common.white
-                          : theme.palette.grey['200'],
+                        sort === orderBy ? theme.palette.common.white : theme.palette.grey['200'],
                     }}
                     onClick={() => {
                       let newDir: Order = direction === 'asc' ? 'desc' : 'asc';
@@ -151,17 +149,12 @@ export const ParachainTable = ({
         </TableHead>
         <TableBody>
           {(rowsPerPage > 0
-            ? parachains.slice(
-                page * rowsPerPage,
-                page * rowsPerPage + rowsPerPage
-              )
+            ? parachains.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : parachains
           ).map(({ id, name, state, watching, logo, homepage }, index) => (
             <StyledTableRow key={index}>
               <StyledTableCell style={{ width: '10%' }} align='center'>
-                <Link href={`${SUSBCAN_RELAY_URL[network]}/parachain/${id}`}>
-                  {id}
-                </Link>
+                <Link href={`${SUSBCAN_RELAY_URL[network]}/parachain/${id}`}>{id}</Link>
               </StyledTableCell>
               <StyledTableCell style={{ width: '25%' }}>
                 <Stack direction='row' alignItems='center' gap='1rem'>
@@ -207,29 +200,21 @@ export const ParachainTable = ({
               </StyledTableCell>
               <StyledTableCell style={{ width: '20%' }}>
                 {state === ParaState.RESERVED ? (
-                  <ParaActionButton onClick={() => onRegister(id)}>
-                    Register
-                  </ParaActionButton>
+                  <ParaActionButton onClick={() => onRegister(id)}>Register</ParaActionButton>
                 ) : state === ParaState.ONDEMAND_PARACHAIN ? (
                   <ParaActionButton onClick={() => onUpgrade(id)}>
                     Upgrade(Buy Coretime)
                   </ParaActionButton>
                 ) : state === ParaState.IDLE_PARA ? (
-                  <ParaActionButton onClick={onBuy}>
-                    Buy Coretime
-                  </ParaActionButton>
+                  <ParaActionButton onClick={onBuy}>Buy Coretime</ParaActionButton>
                 ) : state === ParaState.ACTIVE_RENEWABLE_PARA ? (
-                  <ParaActionButton onClick={() => onRenew(id)}>
-                    Renew Coretime
-                  </ParaActionButton>
+                  <ParaActionButton onClick={() => onRenew(id)}>Renew Coretime</ParaActionButton>
                 ) : (
                   <Typography>No action required</Typography>
                 )}
               </StyledTableCell>
               <StyledTableCell style={{ width: '5%' }}>
-                <IconButton
-                  onClick={() => onWatch(id, watching ? false : true)}
-                >
+                <IconButton onClick={() => onWatch(id, watching ? false : true)}>
                   {watching ? (
                     <StarIcon color='success' />
                   ) : (

@@ -368,8 +368,7 @@ const prodParasKusama: ChainDetails[] = [
     },
     text: 'K-Laos',
     ui: {
-      color:
-        'linear-gradient(158deg, rgba(226,157,0,1) 0%, rgba(234,55,203,1) 100%)',
+      color: 'linear-gradient(158deg, rgba(226,157,0,1) 0%, rgba(234,55,203,1) 100%)',
       logo: chainsLaosPNG,
     },
   },
@@ -922,8 +921,7 @@ const prodParasKusama: ChainDetails[] = [
     info: 'xode',
     paraId: 3344,
     providers: {
-      XodeCommunity:
-        'wss://rpcnodea01.xode.net/n7yoxCmcIrCF6VziCcDmYTwL8R03a/rpc',
+      XodeCommunity: 'wss://rpcnodea01.xode.net/n7yoxCmcIrCF6VziCcDmYTwL8R03a/rpc',
     },
     text: 'Xode',
     ui: {

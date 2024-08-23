@@ -33,11 +33,7 @@ interface PoolingModalProps extends DialogProps {
   regionMetadata: RegionMetadata;
 }
 
-export const PoolingModal = ({
-  open,
-  onClose,
-  regionMetadata,
-}: PoolingModalProps) => {
+export const PoolingModal = ({ open, onClose, regionMetadata }: PoolingModalProps) => {
   const theme = useTheme();
   const {
     state: { activeAccount, activeSigner },
@@ -64,35 +60,26 @@ export const PoolingModal = ({
       finality
     );
 
-    submitExtrinsicWithFeeInfo(
-      symbol,
-      decimals,
-      txPooling,
-      activeAccount.address,
-      activeSigner,
-      {
-        ready: () => {
-          setWorking(true);
-          toastInfo('Transaction was initiated');
-        },
-        inBlock: () => toastInfo('In Block'),
-        finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess(
-            'Successfully contributed to the instantaneous region pool'
-          );
-          onClose();
-          fetchRegions();
-        },
-        fail: () => {
-          toastError('Failed to contribute to the instantaneous region pool');
-        },
-        error: () => {
-          toastError('Failed to contribute to the instantaneous region pool');
-          setWorking(false);
-        },
-      }
-    );
+    submitExtrinsicWithFeeInfo(symbol, decimals, txPooling, activeAccount.address, activeSigner, {
+      ready: () => {
+        setWorking(true);
+        toastInfo('Transaction was initiated');
+      },
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Successfully contributed to the instantaneous region pool');
+        onClose();
+        fetchRegions();
+      },
+      fail: () => {
+        toastError('Failed to contribute to the instantaneous region pool');
+      },
+      error: () => {
+        toastError('Failed to contribute to the instantaneous region pool');
+        setWorking(false);
+      },
+    });
   };
 
   useEffect(() => {
@@ -106,10 +93,7 @@ export const PoolingModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent className={styles.container}>
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Task Pooling
           </Typography>
           <Typography
@@ -120,18 +104,14 @@ export const PoolingModal = ({
               maxWidth: '35rem',
             }}
           >
-            You can contribute your region to the instantaneous coretime pool to
-            earn rewards.
+            You can contribute your region to the instantaneous coretime pool to earn rewards.
           </Typography>
         </Box>
         <Box className={styles.content}>
           <RegionOverview regionMetadata={regionMetadata} />
         </Box>
         <Paper className={styles.options}>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Contribution options
           </Typography>
           <Box className={styles.optionItem}>
@@ -155,9 +135,7 @@ export const PoolingModal = ({
                   <Button
                     variant='text'
                     color='info'
-                    onClick={() =>
-                      activeAccount && setPayee(activeAccount.address)
-                    }
+                    onClick={() => activeAccount && setPayee(activeAccount.address)}
                   >
                     Me
                   </Button>

@@ -1,12 +1,6 @@
 import { BN } from '@polkadot/util';
 import { ContextData, Region, RegionId } from 'coretime-utils';
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 import { parseHNString, timesliceToTimestamp } from '@/utils/functions';
 
@@ -14,7 +8,6 @@ import { ContextStatus, Listing, ListingRecord } from '@/models';
 
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { useRegionXApi } from '../apis/RegionXApi';
-import { ApiState } from '../apis/types';
 import { useNetwork } from '../network';
 
 interface MarketData {
@@ -39,11 +32,11 @@ interface Props {
 
 const MarketProvider = ({ children }: Props) => {
   const {
-    state: { api: regionXApi, apiState: regionXApiState },
+    state: { api: regionXApi, isApiReady: isRegionXReady },
   } = useRegionXApi();
   const { timeslicePeriod } = useCoretimeApi();
   const {
-    state: { api: relayApi, apiState: relayApiState, height: relayBlockNumber },
+    state: { api: relayApi, isApiReady: isRelayReady, height: relayBlockNumber },
   } = useRelayApi();
   const { network } = useNetwork();
 
@@ -51,14 +44,7 @@ const MarketProvider = ({ children }: Props) => {
   const [listedRegions, setListedRegions] = useState<Array<Listing>>([]);
 
   const fetchMarket = useCallback(async () => {
-    if (
-      !regionXApi ||
-      regionXApiState !== ApiState.READY ||
-      !relayApi ||
-      relayApiState !== ApiState.READY ||
-      !relayBlockNumber
-    )
-      return;
+    if (!regionXApi || !isRegionXReady || !relayApi || !isRelayReady || !relayBlockNumber) return;
 
     try {
       setStatus(ContextStatus.LOADING);
@@ -91,8 +77,7 @@ const MarketProvider = ({ children }: Props) => {
 
       for await (const [key, value] of listingEntries) {
         const [{ begin, core, mask }] = key.toHuman() as [any];
-        const { seller, timeslicePrice, saleRecipient } =
-          value.toJSON() as ListingRecord;
+        const { seller, timeslicePrice, saleRecipient } = value.toJSON() as ListingRecord;
 
         const regionId = {
           begin: parseHNString(begin),
@@ -101,8 +86,7 @@ const MarketProvider = ({ children }: Props) => {
         } as RegionId;
 
         const region = regions.find(
-          (item) =>
-            JSON.stringify(item.getRegionId()) === JSON.stringify(regionId)
+          (item) => JSON.stringify(item.getRegionId()) === JSON.stringify(regionId)
         );
         if (!region) continue;
         const beginTimestamp = await timesliceToTimestamp(
@@ -110,11 +94,7 @@ const MarketProvider = ({ children }: Props) => {
           region.getBegin(),
           timeslicePeriod
         );
-        const endTimestamp = await timesliceToTimestamp(
-          relayApi,
-          region.getEnd(),
-          timeslicePeriod
-        );
+        const endTimestamp = await timesliceToTimestamp(relayApi, region.getEnd(), timeslicePeriod);
         const record: Listing = Listing.construct(
           { timeslicePeriod, relayBlockNumber } as ContextData,
           region,
@@ -135,20 +115,11 @@ const MarketProvider = ({ children }: Props) => {
       setStatus(ContextStatus.ERROR);
       setListedRegions([]);
     }
-  }, [regionXApi, regionXApiState, relayApi, relayApiState, relayBlockNumber]);
+  }, [regionXApi, isRegionXReady, relayApi, isRelayReady, relayBlockNumber]);
 
   useEffect(() => {
-    if (relayBlockNumber > 0 && status === ContextStatus.UNINITIALIZED)
-      fetchMarket();
-  }, [
-    regionXApi,
-    regionXApiState,
-    relayApiState,
-    relayApi,
-    relayBlockNumber,
-    status,
-    fetchMarket,
-  ]);
+    if (relayBlockNumber > 0 && status === ContextStatus.UNINITIALIZED) fetchMarket();
+  }, [relayBlockNumber, status, fetchMarket]);
 
   useEffect(() => {
     setStatus(ContextStatus.UNINITIALIZED);

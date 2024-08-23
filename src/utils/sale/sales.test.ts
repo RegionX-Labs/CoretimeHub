@@ -21,19 +21,13 @@ describe('Purchase page', () => {
   describe('getCurrentPhase', () => {
     it('Successfully recognizes interlude phase', () => {
       let blockNumber = mockSaleInfo.saleStart - 50;
-      expect(getCurrentPhase(mockSaleInfo, blockNumber)).toBe(
-        SalePhase.Interlude
-      );
+      expect(getCurrentPhase(mockSaleInfo, blockNumber)).toBe(SalePhase.Interlude);
 
       blockNumber = mockSaleInfo.saleStart - 1;
-      expect(getCurrentPhase(mockSaleInfo, blockNumber)).toBe(
-        SalePhase.Interlude
-      );
+      expect(getCurrentPhase(mockSaleInfo, blockNumber)).toBe(SalePhase.Interlude);
 
       blockNumber = mockSaleInfo.saleStart;
-      expect(getCurrentPhase(mockSaleInfo, blockNumber)).not.toBe(
-        SalePhase.Interlude
-      );
+      expect(getCurrentPhase(mockSaleInfo, blockNumber)).not.toBe(SalePhase.Interlude);
     });
 
     it('Successfully recognizes leadin phase', () => {
@@ -44,30 +38,22 @@ describe('Purchase page', () => {
       expect(getCurrentPhase(mockSaleInfo, blockNumber)).toBe(SalePhase.Leadin);
 
       blockNumber = mockSaleInfo.saleStart + mockSaleInfo.leadinLength;
-      expect(getCurrentPhase(mockSaleInfo, blockNumber)).not.toBe(
-        SalePhase.Leadin
-      );
+      expect(getCurrentPhase(mockSaleInfo, blockNumber)).not.toBe(SalePhase.Leadin);
     });
 
     it('Successfully recognizes fixed price phase', () => {
       let blockNumber = mockSaleInfo.saleStart + mockSaleInfo.leadinLength;
-      expect(getCurrentPhase(mockSaleInfo, blockNumber)).toBe(
-        SalePhase.Regular
-      );
+      expect(getCurrentPhase(mockSaleInfo, blockNumber)).toBe(SalePhase.Regular);
 
       blockNumber = mockSaleInfo.saleStart + mockSaleInfo.leadinLength + 50;
-      expect(getCurrentPhase(mockSaleInfo, blockNumber)).toBe(
-        SalePhase.Regular
-      );
+      expect(getCurrentPhase(mockSaleInfo, blockNumber)).toBe(SalePhase.Regular);
     });
   });
 
   describe('getCorePriceAt', () => {
     it('getCorePriceAt works', () => {
       const blockNumber = mockSaleInfo.saleStart;
-      expect(getCorePriceAt(blockNumber, mockSaleInfo)).toBe(
-        mockSaleInfo.price * 100
-      );
+      expect(getCorePriceAt(blockNumber, mockSaleInfo)).toBe(mockSaleInfo.price * 100);
     });
   });
 });

@@ -1,11 +1,4 @@
-import {
-  Backdrop,
-  Box,
-  Button,
-  CircularProgress,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Backdrop, Box, Button, CircularProgress, Typography, useTheme } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -56,13 +49,10 @@ const Purchase = () => {
   const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const onPurchase = async () => {
-    if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner)
-      return;
+    if (!api || apiState !== ApiState.READY || !activeAccount || !activeSigner) return;
 
     if (currentPhase === SalePhase.Interlude) {
-      toastWarning(
-        'Sales start after the interlude period ends. Purchases can then be made.'
-      );
+      toastWarning('Sales start after the interlude period ends. Purchases can then be made.');
       return;
     }
 
@@ -73,33 +63,26 @@ const Purchase = () => {
 
     const txPurchase = api.tx.broker.purchase(currentPrice);
 
-    submitExtrinsicWithFeeInfo(
-      symbol,
-      decimals,
-      txPurchase,
-      activeAccount.address,
-      activeSigner,
-      {
-        ready: () => {
-          setWorking(true);
-          toastInfo('Transaction was initiated');
-        },
-        inBlock: () => toastInfo('In Block'),
-        finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess('Transaction successful');
-          fetchSaleInfo();
-          fetchRegions();
-        },
-        fail: () => {
-          toastError('Failed to purchase a core');
-        },
-        error: (e) => {
-          toastError(`Failed to purchase a core. ${e}`);
-          setWorking(false);
-        },
-      }
-    );
+    submitExtrinsicWithFeeInfo(symbol, decimals, txPurchase, activeAccount.address, activeSigner, {
+      ready: () => {
+        setWorking(true);
+        toastInfo('Transaction was initiated');
+      },
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Transaction successful');
+        fetchSaleInfo();
+        fetchRegions();
+      },
+      fail: () => {
+        toastError('Failed to purchase a core');
+      },
+      error: (e) => {
+        toastError(`Failed to purchase a core. ${e}`);
+        setWorking(false);
+      },
+    });
   };
 
   const onManage = () => {
@@ -119,16 +102,10 @@ const Purchase = () => {
         }}
       >
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Purchase a core
           </Typography>
-          <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
-          >
+          <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
             Buy a core straight from the Coretime chain
           </Typography>
         </Box>
@@ -154,9 +131,7 @@ const Purchase = () => {
             <CircularProgress />
           </Backdrop>
         ) : (
-          <Box
-            sx={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
-          >
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <SaleInfoPanel />
             <Box sx={{ display: 'flex', gap: '1rem' }}>
               <CoreDetailsPanel saleInfo={saleInfo} />

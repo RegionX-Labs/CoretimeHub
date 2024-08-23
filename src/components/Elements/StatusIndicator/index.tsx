@@ -28,9 +28,7 @@ export const StatusIndicator = ({ state, label }: StatusIndicatorProps) => {
           <CircularProgress size='0.5rem' />
         </Tooltip>
       ) : (
-        <Tooltip
-          title={state == ApiState.READY ? 'connected' : 'connection error'}
-        >
+        <Tooltip title={state == ApiState.READY ? 'connected' : 'connection error'}>
           <CircleIcon
             sx={{ width: '0.5rem', height: '0.5rem' }}
             color={state === ApiState.READY ? 'success' : 'error'}

@@ -30,11 +30,7 @@ interface ContributionModalProps extends DialogProps {
   order: Order;
 }
 
-export const ContributionModal = ({
-  open,
-  onClose,
-  order,
-}: ContributionModalProps) => {
+export const ContributionModal = ({ open, onClose, order }: ContributionModalProps) => {
   const theme = useTheme();
 
   const {
@@ -74,33 +70,26 @@ export const ContributionModal = ({
         order.orderId,
         Math.floor(amount * Math.pow(10, relayDecimals))
       );
-      submitExtrinsicWithFeeInfo(
-        symbol,
-        decimals,
-        tx,
-        activeAccount.address,
-        activeSigner,
-        {
-          ready: () => {
-            setWorking(true);
-            toastInfo('Transaction was initiated');
-          },
-          inBlock: () => toastInfo('In Block'),
-          finalized: () => setWorking(false),
-          success: () => {
-            toastSuccess('Successfully contributed to the order');
-            onClose();
-            fetchOrders();
-          },
-          fail: () => {
-            toastError('Failed to contribute to the order');
-          },
-          error: (e) => {
-            toastError(`Failed to contribute to an order ${e}`);
-            setWorking(false);
-          },
-        }
-      );
+      submitExtrinsicWithFeeInfo(symbol, decimals, tx, activeAccount.address, activeSigner, {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully contributed to the order');
+          onClose();
+          fetchOrders();
+        },
+        fail: () => {
+          toastError('Failed to contribute to the order');
+        },
+        error: (e) => {
+          toastError(`Failed to contribute to an order ${e}`);
+          setWorking(false);
+        },
+      });
     } catch (e: any) {
       setWorking(false);
       toastError(`Failed to contribute to the order. ${e.toString()}`);
@@ -118,16 +107,10 @@ export const ContributionModal = ({
     <Dialog open={open} onClose={onClose}>
       <DialogContent className={styles.container}>
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Contribute to order
           </Typography>
-          <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
-          >
+          <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
             Here you can contribute or cancel your contribution
           </Typography>
         </Box>
@@ -145,11 +128,7 @@ export const ContributionModal = ({
           Cancel
         </Button>
 
-        <ProgressButton
-          onClick={onContribute}
-          label='Contribute'
-          loading={working}
-        />
+        <ProgressButton onClick={onContribute} label='Contribute' loading={working} />
       </DialogActions>
     </Dialog>
   );

@@ -122,8 +122,7 @@ const AccountProvider = ({ children }: Props) => {
     if (accounts.length) {
       const activeAccount = localStorage.getItem(LOCAL_STORAGE_ACTIVE_ACCOUNT);
       const account: InjectedAccountWithMeta = activeAccount
-        ? (accounts.find((acc: any) => acc.address == activeAccount) ??
-          accounts[0])
+        ? (accounts.find((acc: any) => acc.address == activeAccount) ?? accounts[0])
         : accounts[0];
 
       setActiveAccount(account);
@@ -158,14 +157,12 @@ const AccountProvider = ({ children }: Props) => {
       const metaKeys = ['genesisHash', 'name', 'source'];
 
       for (const key of keys) if (!Object.hasOwn(item, key)) return false;
-      for (const key of Object.keys(item))
-        if (keys.indexOf(key) === -1) return false;
+      for (const key of Object.keys(item)) if (keys.indexOf(key) === -1) return false;
 
       if (!isValidAddress(item.address)) return false;
 
       if (!Object.hasOwn(item.meta, 'source')) return false;
-      for (const key of Object.keys(item.meta))
-        if (metaKeys.indexOf(key) === -1) return false;
+      for (const key of Object.keys(item.meta)) if (metaKeys.indexOf(key) === -1) return false;
     }
 
     return true;
