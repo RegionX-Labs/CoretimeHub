@@ -14,11 +14,7 @@ import { useState } from 'react';
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 import theme from '@/utils/muiTheme';
 
-import {
-  AddressInput,
-  AmountInput,
-  ProgressButton,
-} from '@/components/Elements';
+import { AddressInput, AmountInput, ProgressButton } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
@@ -36,11 +32,7 @@ interface SellModalProps extends DialogProps {
   regionMetadata: RegionMetadata;
 }
 
-export const SellModal = ({
-  open,
-  onClose,
-  regionMetadata,
-}: SellModalProps) => {
+export const SellModal = ({ open, onClose, regionMetadata }: SellModalProps) => {
   const {
     state: { activeAccount, activeSigner },
   } = useAccounts();
@@ -62,9 +54,7 @@ export const SellModal = ({
 
   const listOnSale = async () => {
     if (!activeAccount || !activeSigner || !regionXApi || !isRegionXReady) {
-      toastWarning(
-        'Please connect your wallet and check the network connection.'
-      );
+      toastWarning('Please connect your wallet and check the network connection.');
       return;
     }
 
@@ -113,9 +103,7 @@ export const SellModal = ({
         error: (e) => {
           toastError(
             `Failed to list the region. Error: ${
-              e.errorMessage === 'Error'
-                ? 'Please check your balance'
-                : e.errorMessage
+              e.errorMessage === 'Error' ? 'Please check your balance' : e.errorMessage
             }`
           );
           setWorking(false);
@@ -127,10 +115,7 @@ export const SellModal = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent className={styles.container}>
-        <Typography
-          variant='subtitle1'
-          sx={{ color: theme.palette.common.black }}
-        >
+        <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
           List on Market
         </Typography>
         <Typography
@@ -156,11 +141,7 @@ export const SellModal = ({
               />
             </Stack>
             <Stack direction='column' gap={2}>
-              <AddressInput
-                label='Recipient'
-                onChange={setSaleRecipient}
-                address={saleRecipient}
-              />
+              <AddressInput label='Recipient' onChange={setSaleRecipient} address={saleRecipient} />
             </Stack>
           </Paper>
         </Stack>
@@ -169,11 +150,7 @@ export const SellModal = ({
         <Button onClick={onClose} variant='outlined'>
           Cancel
         </Button>
-        <ProgressButton
-          onClick={listOnSale}
-          label='List on sale'
-          loading={working}
-        />
+        <ProgressButton onClick={listOnSale} label='List on sale' loading={working} />
       </DialogActions>
     </Dialog>
   );

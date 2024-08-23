@@ -45,9 +45,7 @@ const MenuItem = ({ label, enabled, route, icon }: MenuItemProps) => {
         cursor: enabled ? 'pointer' : 'not-allowed',
         padding: '0.5rem 0.75rem',
         textTransform: 'capitalize',
-        color: enabled
-          ? theme.palette.text.primary
-          : theme.palette.text.disabled,
+        color: enabled ? theme.palette.text.primary : theme.palette.text.disabled,
         fontSize: '0.8rem',
         marginBottom: '0.25rem',
         ...(isActive
@@ -65,9 +63,7 @@ const MenuItem = ({ label, enabled, route, icon }: MenuItemProps) => {
     >
       <span className={styles.menuIcon}>{{ ...icon }}</span>
       <span
-        className={`${styles.menuItem} ${!enabled ? 'disabled' : ''} ${
-          isActive ? 'active' : ''
-        }`}
+        className={`${styles.menuItem} ${!enabled ? 'disabled' : ''} ${isActive ? 'active' : ''}`}
       >
         {label}
       </span>
@@ -206,10 +202,7 @@ export const Sidebar = () => {
           ))}
         </Stack>
         <Box className={styles.statusContainer}>
-          <StatusIndicator
-            state={getApiState(relayApi, relayApiState)}
-            label='Relay chain'
-          />
+          <StatusIndicator state={getApiState(relayApi, relayApiState)} label='Relay chain' />
           <StatusIndicator
             state={getApiState(coretimeApi, coretimeApiState)}
             label='Coretime chain'

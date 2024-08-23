@@ -8,9 +8,7 @@ export const InfoItem = ({ label, value }: ItemDetail) => {
   const theme = useTheme();
   return (
     <Stack direction='column' gap='0.5rem'>
-      <Typography sx={{ color: theme.palette.text.primary }}>
-        {label}
-      </Typography>
+      <Typography sx={{ color: theme.palette.text.primary }}>{label}</Typography>
       <Typography
         sx={{
           color: theme.palette.common.black,

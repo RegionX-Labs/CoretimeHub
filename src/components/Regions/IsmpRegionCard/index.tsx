@@ -11,11 +11,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import {
-  getRelativeTimeString,
-  sendUnsignedTx,
-  timesliceToTimestamp,
-} from '@/utils/functions';
+import { getRelativeTimeString, sendUnsignedTx, timesliceToTimestamp } from '@/utils/functions';
 import { makeResponse, makeTimeout, queryRequest } from '@/utils/ismp';
 
 import { useAccounts } from '@/contexts/account';
@@ -32,10 +28,7 @@ interface IsmpRegionProps {
   requestAction?: boolean;
 }
 
-export const IsmpRegionCard = ({
-  regionMetadata,
-  requestAction,
-}: IsmpRegionProps) => {
+export const IsmpRegionCard = ({ regionMetadata, requestAction }: IsmpRegionProps) => {
   const {
     state: { api: relayApi, isApiReady: isRelayReady },
   } = useRelayApi();
@@ -65,43 +58,26 @@ export const IsmpRegionCard = ({
       return;
     }
     const fetchTimestamp = async () => {
-      const timestamp = await timesliceToTimestamp(
-        relayApi,
-        region.getBegin(),
-        timeslicePeriod
-      );
+      const timestamp = await timesliceToTimestamp(relayApi, region.getBegin(), timeslicePeriod);
       setBeginTimestamp(timestamp);
     };
     fetchTimestamp();
   }, [relayApi, isRelayReady, timeslicePeriod, region]);
 
   useEffect(() => {
-    if (
-      !coretimeApi ||
-      !isCoretimeReady ||
-      !regionxApi ||
-      !isRegionXReady ||
-      !activeAccount
-    ) {
+    if (!coretimeApi || !isCoretimeReady || !regionxApi || !isRegionXReady || !activeAccount) {
       return;
     }
 
     const onError = () =>
-      toastWarning(
-        `Failed to fulfill ISMP request. Wait 5 minutes to re-request`
-      );
+      toastWarning(`Failed to fulfill ISMP request. Wait 5 minutes to re-request`);
 
     const respond = async (commitment: string) => {
       try {
         const request: any = await queryRequest(regionxApi, commitment);
-        const currentTimestamp = (
-          await regionxApi.query.timestamp.now()
-        ).toJSON() as number;
+        const currentTimestamp = (await regionxApi.query.timestamp.now()).toJSON() as number;
 
-        if (
-          request.get &&
-          currentTimestamp / 1000 > request.get.timeout_timestamp
-        ) {
+        if (request.get && currentTimestamp / 1000 > request.get.timeout_timestamp) {
           await makeTimeout(regionxApi, request, {
             ready: () => toastInfo('Request timed out'),
             inBlock: () => {
@@ -122,29 +98,23 @@ export const IsmpRegionCard = ({
           });
           fetchRegions();
         } else {
-          await makeResponse(
-            regionxApi,
-            coretimeApi,
-            request,
-            activeAccount.address,
-            {
-              ready: () => toastInfo('Fetching region record.'),
-              inBlock: () => toastInfo('In Block'),
-              finalized: () => {
-                /* */
-              },
-              success: () => {
-                toastSuccess('Region record fetched.');
-                fetchRegions();
-              },
-              fail: () => {
-                toastError(`Failed to fetch region record.`);
-              },
-              error: () => {
-                /** */
-              },
-            }
-          );
+          await makeResponse(regionxApi, coretimeApi, request, activeAccount.address, {
+            ready: () => toastInfo('Fetching region record.'),
+            inBlock: () => toastInfo('In Block'),
+            finalized: () => {
+              /* */
+            },
+            success: () => {
+              toastSuccess('Region record fetched.');
+              fetchRegions();
+            },
+            fail: () => {
+              toastError(`Failed to fetch region record.`);
+            },
+            error: () => {
+              /** */
+            },
+          });
         }
       } catch {
         onError();
@@ -152,9 +122,7 @@ export const IsmpRegionCard = ({
     };
 
     if (status === ISMPRecordStatus.PENDING) {
-      regionMetadata.requestCommitment
-        ? respond(regionMetadata.requestCommitment)
-        : onError();
+      regionMetadata.requestCommitment ? respond(regionMetadata.requestCommitment) : onError();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coretimeApi, regionxApi, isCoretimeReady, isRegionXReady, status]);
@@ -164,9 +132,7 @@ export const IsmpRegionCard = ({
       return;
     }
 
-    const request = regionxApi.tx.regions.requestRegionRecord(
-      region.getRegionId()
-    );
+    const request = regionxApi.tx.regions.requestRegionRecord(region.getRegionId());
     setWorking(true);
     sendUnsignedTx(request, {
       ready: () => toastInfo('Transaction was initiated'),
@@ -193,15 +159,12 @@ export const IsmpRegionCard = ({
       <Box
         className={styles.infoContainer}
         sx={{
-          opacity:
-            status !== ISMPRecordStatus.AVAILABLE && requestAction ? 0.3 : 1,
+          opacity: status !== ISMPRecordStatus.AVAILABLE && requestAction ? 0.3 : 1,
         }}
       >
         <Box className={styles.regionInfo}>
           <Box>
-            <Typography className={styles.regionName}>
-              {regionMetadata.name}
-            </Typography>
+            <Typography className={styles.regionName}>{regionMetadata.name}</Typography>
           </Box>
           <Box>
             <Typography sx={{ color: theme.palette.common.black }}>
@@ -261,11 +224,7 @@ export const IsmpRegionCard = ({
                     Region record unavailable
                   </Typography>
                 </Stack>
-                <LoadingButton
-                  loading={working}
-                  variant='outlined'
-                  onClick={requestRegionRecord}
-                >
+                <LoadingButton loading={working} variant='outlined' onClick={requestRegionRecord}>
                   Request Record
                 </LoadingButton>
               </>

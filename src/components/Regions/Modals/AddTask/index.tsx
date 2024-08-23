@@ -59,18 +59,12 @@ export const AddTaskModal = ({ onClose, ...props }: AddTaskModalProps) => {
   return (
     <Dialog {...props}>
       <DialogContent className={styles.container}>
-        <Typography
-          variant='subtitle1'
-          sx={{ color: theme.palette.common.black }}
-        >
+        <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
           Add New Task
         </Typography>
         <Stack direction='column' gap={1}>
           <Stack direction='column' gap={2}>
-            <Typography
-              variant='subtitle2'
-              sx={{ color: theme.palette.common.black }}
-            >
+            <Typography variant='subtitle2' sx={{ color: theme.palette.common.black }}>
               TaskID / ParaID:
             </Typography>
             <Input
@@ -83,10 +77,7 @@ export const AddTaskModal = ({ onClose, ...props }: AddTaskModalProps) => {
             />
           </Stack>
           <Stack direction='column' gap={2}>
-            <Typography
-              variant='subtitle2'
-              sx={{ color: theme.palette.common.black }}
-            >
+            <Typography variant='subtitle2' sx={{ color: theme.palette.common.black }}>
               Name:
             </Typography>
             <TextField

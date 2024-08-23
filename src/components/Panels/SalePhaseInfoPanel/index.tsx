@@ -21,9 +21,7 @@ export const SalePhaseInfoPanel = () => {
     let _remainingTime;
 
     if (currentPhase == SalePhase.Interlude) {
-      _remainingTime = Math.floor(
-        (endpoints.interlude.end - Date.now()) / 1000
-      );
+      _remainingTime = Math.floor((endpoints.interlude.end - Date.now()) / 1000);
     } else if (currentPhase == SalePhase.Leadin) {
       _remainingTime = Math.floor((endpoints.leadin.end - Date.now()) / 1000);
     } else if (currentPhase == SalePhase.Regular) {
@@ -31,12 +29,7 @@ export const SalePhaseInfoPanel = () => {
     } else return;
 
     setRemainingTime(_remainingTime);
-  }, [
-    endpoints.interlude.end,
-    endpoints.leadin.end,
-    endpoints.fixed.end,
-    currentPhase,
-  ]);
+  }, [endpoints.interlude.end, endpoints.leadin.end, endpoints.fixed.end, currentPhase]);
 
   return (
     <>
@@ -68,20 +61,13 @@ export const SalePhaseInfoPanel = () => {
         </Box>
         <Box className={styles.timerWrapper}>
           <Box className={styles.currentPhase}>
-            <SalePhaseCard
-              loading={currentPrice === undefined}
-              label=''
-              value={currentPhase}
-            />
+            <SalePhaseCard loading={currentPrice === undefined} label='' value={currentPhase} />
           </Box>
           <Typography>Ends in:</Typography>
           <CountDown remainingTime={remainingTime} />
         </Box>
       </Paper>
-      <PurchaseHistoryModal
-        open={historyModalOpen}
-        onClose={() => openHistoryModal(false)}
-      />
+      <PurchaseHistoryModal open={historyModalOpen} onClose={() => openHistoryModal(false)} />
     </>
   );
 };

@@ -12,10 +12,7 @@ export const Label = ({ text, color, width }: LabelProps) => {
       sx={{
         borderRadius: '5px',
         padding: '0.5rem 1rem',
-        background:
-          color === 'success'
-            ? theme.palette.success.main
-            : theme.palette.primary.main,
+        background: color === 'success' ? theme.palette.success.main : theme.palette.primary.main,
         color: theme.palette.common.white,
         fontWeight: 400,
         width,

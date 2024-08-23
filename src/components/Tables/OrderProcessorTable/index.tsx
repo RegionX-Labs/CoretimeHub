@@ -13,11 +13,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
-import {
-  getBalanceString,
-  getRelativeTimeString,
-  getTimeStringLong,
-} from '@/utils/functions';
+import { getBalanceString, getRelativeTimeString, getTimeStringLong } from '@/utils/functions';
 
 import { Address, Link } from '@/components/Elements';
 import { OrderDetailsModal } from '@/components/Orders';
@@ -75,50 +71,40 @@ export const OrderProcessorTable = ({ data }: OrderProcessorTableProps) => {
             </TableHead>
             <TableBody>
               {(rowsPerPage > 0
-                ? data.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
+                ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 : data
-              ).map(
-                (
-                  { orderId, height, extrinsicId, account, reward, timestamp },
-                  index
-                ) => (
-                  <StyledTableRow key={index}>
-                    <StyledTableCell align='center'>
-                      <Button onClick={() => setActiveOrderId(orderId)}>
-                        {orderId}
-                      </Button>
-                    </StyledTableCell>
-                    <StyledTableCell align='center'>
-                      {height}-{extrinsicId}
-                    </StyledTableCell>
-                    <StyledTableCell align='center'>
-                      <Link
-                        href={`${SUSBCAN_CORETIME_URL[network]}/account/${account}`}
-                        target='_blank'
-                      >
-                        <Address
-                          value={account}
-                          isCopy={true}
-                          isShort={true}
-                          size={24}
-                          center={true}
-                        />
-                      </Link>
-                    </StyledTableCell>
-                    <StyledTableCell align='center'>
-                      {getBalanceString(reward.toString(), decimals, symbol)}
-                    </StyledTableCell>
-                    <StyledTableCell align='center'>
-                      <Tooltip title={getTimeStringLong(timestamp)}>
-                        <p>{getRelativeTimeString(timestamp)}</p>
-                      </Tooltip>
-                    </StyledTableCell>
-                  </StyledTableRow>
-                )
-              )}
+              ).map(({ orderId, height, extrinsicId, account, reward, timestamp }, index) => (
+                <StyledTableRow key={index}>
+                  <StyledTableCell align='center'>
+                    <Button onClick={() => setActiveOrderId(orderId)}>{orderId}</Button>
+                  </StyledTableCell>
+                  <StyledTableCell align='center'>
+                    {height}-{extrinsicId}
+                  </StyledTableCell>
+                  <StyledTableCell align='center'>
+                    <Link
+                      href={`${SUSBCAN_CORETIME_URL[network]}/account/${account}`}
+                      target='_blank'
+                    >
+                      <Address
+                        value={account}
+                        isCopy={true}
+                        isShort={true}
+                        size={24}
+                        center={true}
+                      />
+                    </Link>
+                  </StyledTableCell>
+                  <StyledTableCell align='center'>
+                    {getBalanceString(reward.toString(), decimals, symbol)}
+                  </StyledTableCell>
+                  <StyledTableCell align='center'>
+                    <Tooltip title={getTimeStringLong(timestamp)}>
+                      <p>{getRelativeTimeString(timestamp)}</p>
+                    </Tooltip>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -157,11 +143,7 @@ export const OrderProcessorTable = ({ data }: OrderProcessorTableProps) => {
         </Stack>
       </Stack>
       {activeOrderId !== null ? (
-        <OrderDetailsModal
-          open
-          onClose={() => setActiveOrderId(null)}
-          orderId={activeOrderId}
-        />
+        <OrderDetailsModal open onClose={() => setActiveOrderId(null)} orderId={activeOrderId} />
       ) : (
         <></>
       )}

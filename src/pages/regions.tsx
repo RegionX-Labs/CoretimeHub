@@ -27,18 +27,8 @@ import { useAccounts } from '@/contexts/account';
 import { useMarket } from '@/contexts/market';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import {
-  AssignmentIcon,
-  InterlaceIcon,
-  PartitionIcon,
-  TransferIcon,
-} from '@/icons';
-import {
-  ContextStatus,
-  ISMPRecordStatus,
-  RegionLocation,
-  RegionMetadata,
-} from '@/models';
+import { AssignmentIcon, InterlaceIcon, PartitionIcon, TransferIcon } from '@/icons';
+import { ContextStatus, ISMPRecordStatus, RegionLocation, RegionMetadata } from '@/models';
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -60,16 +50,12 @@ const Dashboard = () => {
   const { toastInfo } = useToast();
 
   const selectedRegion =
-    currentRegionIndex === undefined
-      ? undefined
-      : regionsToShow[currentRegionIndex];
+    currentRegionIndex === undefined ? undefined : regionsToShow[currentRegionIndex];
   const regionSelected = selectedRegion !== undefined;
 
   const manage = (openModal: (_v: boolean) => void) => {
     if (!regionSelected) {
-      toastInfo(
-        'First select a region by clicking on one of the regions displayed.'
-      );
+      toastInfo('First select a region by clicking on one of the regions displayed.');
     } else {
       openModal(true);
     }
@@ -129,8 +115,7 @@ const Dashboard = () => {
         ({ region }) =>
           listedRegions.findIndex(
             (item) =>
-              JSON.stringify(item.region.getRegionId()) ===
-              JSON.stringify(region.getRegionId())
+              JSON.stringify(item.region.getRegionId()) === JSON.stringify(region.getRegionId())
           ) === -1
       )
     );
@@ -145,16 +130,10 @@ const Dashboard = () => {
       }}
     >
       <Box>
-        <Typography
-          variant='subtitle1'
-          sx={{ color: theme.palette.common.black }}
-        >
+        <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
           Regions Dashboard
         </Typography>
-        <Typography
-          variant='subtitle2'
-          sx={{ color: theme.palette.text.primary }}
-        >
+        <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
           Manage your cores
         </Typography>
       </Box>
@@ -188,8 +167,7 @@ const Dashboard = () => {
             <Typography>Please connect your wallet.</Typography>
           ) : regionsToShow.length === 0 ? (
             <Typography>
-              No regions owned. Go to <Link href='/purchase'>bulk sales</Link>{' '}
-              to make a purchase
+              No regions owned. Go to <Link href='/purchase'>bulk sales</Link> to make a purchase
             </Typography>
           ) : (
             <>

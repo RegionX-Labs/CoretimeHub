@@ -17,12 +17,7 @@ import { useEffect, useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
-import {
-  Balance,
-  MarketFilter,
-  MarketRegion,
-  PurchaseModal,
-} from '@/components';
+import { Balance, MarketFilter, MarketRegion, PurchaseModal } from '@/components';
 
 import { useAccounts } from '@/contexts/account';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
@@ -99,78 +94,54 @@ const Marketplace = () => {
 
     const txUnlist = regionXApi.tx.market.unlistRegion(regionId);
 
-    submitExtrinsicWithFeeInfo(
-      symbol,
-      decimals,
-      txUnlist,
-      activeAccount.address,
-      activeSigner,
-      {
-        ready: () => {
-          setWorking(true);
-          toastInfo('Transaction was initiated');
-        },
-        inBlock: () => toastInfo('In Block'),
-        finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess('Transaction successful');
-          fetchMarket();
-        },
-        fail: () => {
-          toastError(`Failed to unlist the region`);
-        },
-        error: (e) => {
-          toastError(
-            `Failed to unlist the region. Error: ${
-              e.errorMessage === 'Error'
-                ? 'Please check your balance.'
-                : e.errorMessage
-            }`
-          );
-          setWorking(false);
-        },
-      }
-    );
+    submitExtrinsicWithFeeInfo(symbol, decimals, txUnlist, activeAccount.address, activeSigner, {
+      ready: () => {
+        setWorking(true);
+        toastInfo('Transaction was initiated');
+      },
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Transaction successful');
+        fetchMarket();
+      },
+      fail: () => {
+        toastError(`Failed to unlist the region`);
+      },
+      error: (e) => {
+        toastError(
+          `Failed to unlist the region. Error: ${
+            e.errorMessage === 'Error' ? 'Please check your balance.' : e.errorMessage
+          }`
+        );
+        setWorking(false);
+      },
+    });
   };
 
   const onUnlist = (region: Region) => {
     confirm({
-      description:
-        'Are you sure that you are going to unlist the selected region from the market?',
+      description: 'Are you sure that you are going to unlist the selected region from the market?',
     }).then(() => unlistRegion(region.getOnChainRegionId()));
   };
 
   useEffect(() => {
     const checkConditions = (listing: Listing): boolean => {
       const { region, beginTimestamp, endTimestamp, currentPrice } = listing;
-      const { startDate, endDate, coreOccupancy, minDuration, price } =
-        filterOptions;
+      const { startDate, endDate, coreOccupancy, minDuration, price } = filterOptions;
 
-      if (
-        startDate &&
-        !moment(beginTimestamp).isSameOrAfter(moment(startDate), 'day')
-      )
+      if (startDate && !moment(beginTimestamp).isSameOrAfter(moment(startDate), 'day'))
         return false;
-      if (
-        endDate &&
-        !moment(endTimestamp).isSameOrAfter(moment(endDate), 'day')
-      )
-        return false;
+      if (endDate && !moment(endTimestamp).isSameOrAfter(moment(endDate), 'day')) return false;
 
       const occupancy = region.coreOccupancy();
-      if (
-        coreOccupancy &&
-        !(occupancy >= coreOccupancy.min && occupancy <= coreOccupancy.max)
-      )
+      if (coreOccupancy && !(occupancy >= coreOccupancy.min && occupancy <= coreOccupancy.max))
         return false;
 
       const duration = endTimestamp - beginTimestamp;
       if (minDuration && duration < minDuration) return false;
 
-      if (
-        price &&
-        !(currentPrice.cmp(price.min) >= 0 && currentPrice.cmp(price.max) <= 0)
-      ) {
+      if (price && !(currentPrice.cmp(price.min) >= 0 && currentPrice.cmp(price.max) <= 0)) {
         return false;
       }
 
@@ -215,16 +186,10 @@ const Marketplace = () => {
         }}
       >
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Explore the market
           </Typography>
-          <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
-          >
+          <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
             Explore all the regions listed on the marketplace
           </Typography>
         </Box>
@@ -256,12 +221,7 @@ const Marketplace = () => {
       </Box>
 
       {filteredListings.length > 0 && (
-        <Box
-          marginTop='2rem'
-          display='flex'
-          flexWrap='wrap'
-          justifyContent='space-around'
-        >
+        <Box marginTop='2rem' display='flex' flexWrap='wrap' justifyContent='space-around'>
           {filteredListings.map((listing, index) => (
             <Paper key={index}>
               <Stack direction='column' paddingBottom='1rem'>
@@ -283,9 +243,7 @@ const Marketplace = () => {
                     }
                     disabled={working}
                   >
-                    {listing.seller === activeAccount.address
-                      ? 'Unlist'
-                      : 'Purchase'}
+                    {listing.seller === activeAccount.address ? 'Unlist' : 'Purchase'}
                   </Button>
                 ) : (
                   <></>

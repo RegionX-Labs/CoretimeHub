@@ -33,16 +33,8 @@ export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
       return;
     }
     const fetchTimestamps = async () => {
-      const begin = await timesliceToTimestamp(
-        relayApi,
-        region.getBegin(),
-        timeslicePeriod
-      );
-      const end = await timesliceToTimestamp(
-        relayApi,
-        region.getEnd(),
-        timeslicePeriod
-      );
+      const begin = await timesliceToTimestamp(relayApi, region.getBegin(), timeslicePeriod);
+      const end = await timesliceToTimestamp(relayApi, region.getEnd(), timeslicePeriod);
 
       setBeginTimestamp(begin);
       setEndTimestamp(end);
@@ -62,10 +54,7 @@ export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
           >
             {regionMetadata.name}
           </Typography>
-          <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
-          >
+          <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
             {`Duration: ${formatDuration(endTimestamp - beginTimestamp)}`}
           </Typography>
         </Box>

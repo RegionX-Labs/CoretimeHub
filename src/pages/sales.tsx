@@ -1,12 +1,4 @@
-import {
-  Backdrop,
-  Box,
-  Card,
-  CircularProgress,
-  Stack,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Backdrop, Box, Card, CircularProgress, Stack, Typography, useTheme } from '@mui/material';
 
 import { useSalesHistory } from '@/hooks';
 
@@ -27,8 +19,7 @@ const Home = () => {
   } = useCoretimeApi();
   const { status } = useSaleInfo();
 
-  const { data: salesHistoryData, loading: loadingPurchaseHistory } =
-    useSalesHistory(network);
+  const { data: salesHistoryData, loading: loadingPurchaseHistory } = useSalesHistory(network);
 
   return status !== ContextStatus.LOADED ||
     apiState !== ApiState.READY ||
@@ -42,16 +33,10 @@ const Home = () => {
         <Card sx={{ padding: '1.5rem' }} data-cy='purchase-history-table'>
           <Stack direction='column' gap='1rem'>
             <Box>
-              <Typography
-                variant='subtitle1'
-                sx={{ color: theme.palette.common.black }}
-              >
+              <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
                 Historical sales
               </Typography>
-              <Typography
-                variant='subtitle2'
-                sx={{ color: theme.palette.text.primary }}
-              >
+              <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
                 Shows the full sale history
               </Typography>
             </Box>

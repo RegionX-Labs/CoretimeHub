@@ -81,8 +81,7 @@ const RegionCardInner = ({
   const { tasks } = useTasks();
 
   const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
-  const { region, taskId, location, currentUsage, consumed, coreOccupancy } =
-    regionMetadata;
+  const { region, taskId, location, currentUsage, consumed, coreOccupancy } = regionMetadata;
   const theme = useTheme();
 
   const [isEdit, setEdit] = useState(false);
@@ -105,16 +104,8 @@ const RegionCardInner = ({
     }
 
     const fetchTimestamps = async () => {
-      const begin = await timesliceToTimestamp(
-        api,
-        region.getBegin(),
-        timeslicePeriod
-      );
-      const end = await timesliceToTimestamp(
-        api,
-        region.getEnd(),
-        timeslicePeriod
-      );
+      const begin = await timesliceToTimestamp(api, region.getBegin(), timeslicePeriod);
+      const end = await timesliceToTimestamp(api, region.getEnd(), timeslicePeriod);
 
       setBeginTimestamp(begin);
       setEndTimestamp(end);
@@ -198,11 +189,7 @@ const RegionCardInner = ({
           }}
         >
           {editable && isEdit ? (
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              size='small'
-            />
+            <Input value={name} onChange={(e) => setName(e.target.value)} size='small' />
           ) : (
             <Typography variant='subtitle2'>{regionMetadata.name}</Typography>
           )}
@@ -234,12 +221,8 @@ const RegionCardInner = ({
           }}
         >
           <Typography variant='h2'>{`Core Index: #${region.getCore()}`}</Typography>
-          <Typography variant='h2'>
-            Begin: {getRelativeTimeString(beginTimestamp)}
-          </Typography>
-          <Typography variant='h2'>
-            End: {getRelativeTimeString(endTimestamp)}
-          </Typography>
+          <Typography variant='h2'>Begin: {getRelativeTimeString(beginTimestamp)}</Typography>
+          <Typography variant='h2'>End: {getRelativeTimeString(endTimestamp)}</Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1rem' }}>
           <Label
@@ -247,11 +230,7 @@ const RegionCardInner = ({
             color='primary'
             width='9rem'
           />
-          <Label
-            text={locationToLabel(location)}
-            color='success'
-            width='9rem'
-          />
+          <Label text={locationToLabel(location)} color='success' width='9rem' />
         </Box>
       </div>
       <Divider orientation='vertical' flexItem />
@@ -276,10 +255,7 @@ const RegionCardInner = ({
           }}
         >
           {progress.map(({ label, value, color }, index) => (
-            <Box
-              key={index}
-              sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}
-            >
+            <Box key={index} sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
               <LinearProgress
                 value={value * 100}
                 valueBuffer={100}

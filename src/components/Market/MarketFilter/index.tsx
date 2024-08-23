@@ -108,12 +108,7 @@ export const MarketFilter = ({ onChange }: MarketFilterProps) => {
     listedRegions.length === 0
       ? 100
       : Math.floor(
-          (Math.max(
-            ...listedRegions.map((item) => item.currentPrice.toNumber())
-          ) +
-            unit -
-            1) /
-            unit
+          (Math.max(...listedRegions.map((item) => item.currentPrice.toNumber())) + unit - 1) / unit
         );
 
   // Filters
@@ -121,10 +116,7 @@ export const MarketFilter = ({ onChange }: MarketFilterProps) => {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [occupancyIndex, setOccupancyIndex] = useState(0);
   const [durationIndex, setDurationIndex] = useState(0);
-  const [priceRange, setPriceRange] = useState<[number, number] | undefined>([
-    0,
-    maxPriceRange,
-  ]);
+  const [priceRange, setPriceRange] = useState<[number, number] | undefined>([0, maxPriceRange]);
 
   const [filter, setFilter] = useState<FilterState>(defaultFilterState);
 
@@ -187,9 +179,7 @@ export const MarketFilter = ({ onChange }: MarketFilterProps) => {
         aria-describedby={id}
         onClick={(e) => openFilters(e)}
         sx={{
-          background: open
-            ? theme.palette.common.black
-            : theme.palette.common.white,
+          background: open ? theme.palette.common.black : theme.palette.common.white,
           color: open ? theme.palette.common.white : theme.palette.common.black,
           borderRadius: '2rem',
           px: '1.5rem',
@@ -216,11 +206,7 @@ export const MarketFilter = ({ onChange }: MarketFilterProps) => {
         }}
       >
         <Paper sx={{ padding: '1.5rem', width: '20rem' }}>
-          <Stack
-            direction='row'
-            justifyContent='space-between'
-            alignItems='center'
-          >
+          <Stack direction='row' justifyContent='space-between' alignItems='center'>
             <Typography
               sx={{
                 fontSize: '1rem',
@@ -313,11 +299,7 @@ export const MarketFilter = ({ onChange }: MarketFilterProps) => {
             </FilterItem>
           </Stack>
           <Box>
-            <ActionButton
-              label='Apply Filters'
-              onClick={() => applyFilters()}
-              fullWidth
-            />
+            <ActionButton label='Apply Filters' onClick={() => applyFilters()} fullWidth />
           </Box>
         </Paper>
       </Popover>

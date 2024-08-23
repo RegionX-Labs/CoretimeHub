@@ -47,10 +47,7 @@ enum DurationType {
   CUSTOM = 1,
 }
 
-export const OrderCreationModal = ({
-  open,
-  onClose,
-}: OrderCreationModalProps) => {
+export const OrderCreationModal = ({ open, onClose }: OrderCreationModalProps) => {
   const theme = useTheme();
 
   const {
@@ -73,9 +70,7 @@ export const OrderCreationModal = ({
   const [regionEnd, setRegionEnd] = useState<number | undefined>();
   const [coreOccupancy, setCoreOccupancy] = useState(57600);
   const [working, setWorking] = useState(false);
-  const [durationType, setDurationType] = useState<DurationType>(
-    DurationType.BULK
-  );
+  const [durationType, setDurationType] = useState<DurationType>(DurationType.BULK);
 
   const onCreate = async () => {
     if (!api || apiState !== ApiState.READY) {
@@ -115,33 +110,26 @@ export const OrderCreationModal = ({
         coreOccupancy,
       });
 
-      submitExtrinsicWithFeeInfo(
-        symbol,
-        decimals,
-        tx,
-        activeAccount.address,
-        activeSigner,
-        {
-          ready: () => {
-            setWorking(true);
-            toastInfo('Transaction was initiated');
-          },
-          inBlock: () => toastInfo('In Block'),
-          finalized: () => setWorking(false),
-          success: () => {
-            toastSuccess('Successfully created a new order');
-            onClose();
-            fetchOrders();
-          },
-          fail: () => {
-            toastError('Failed to create a new order');
-          },
-          error: (e) => {
-            toastError(`Failed to create a new order ${e}`);
-            setWorking(false);
-          },
-        }
-      );
+      submitExtrinsicWithFeeInfo(symbol, decimals, tx, activeAccount.address, activeSigner, {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully created a new order');
+          onClose();
+          fetchOrders();
+        },
+        fail: () => {
+          toastError('Failed to create a new order');
+        },
+        error: (e) => {
+          toastError(`Failed to create a new order ${e}`);
+          setWorking(false);
+        },
+      });
     } catch (e: any) {
       toastError(`Failed to create a new order. ${e.toString()}`);
       setWorking(false);
@@ -172,16 +160,10 @@ export const OrderCreationModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent className={styles.container}>
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Create Order
           </Typography>
-          <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
-          >
+          <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
             Create a new order here
           </Typography>
         </Box>
@@ -211,26 +193,18 @@ export const OrderCreationModal = ({
             <ToggleButtonGroup
               value={durationType}
               exclusive
-              onChange={(e: any) =>
-                setDurationType(parseInt(e.target.value) as DurationType)
-              }
+              onChange={(e: any) => setDurationType(parseInt(e.target.value) as DurationType)}
               className={styles.durationTypes}
             >
               <ToggleButton
-                className={
-                  durationType === DurationType.BULK
-                    ? styles.activeOption
-                    : styles.option
-                }
+                className={durationType === DurationType.BULK ? styles.activeOption : styles.option}
                 value={DurationType.BULK}
               >
                 Entire bulk period
               </ToggleButton>
               <ToggleButton
                 className={
-                  durationType === DurationType.CUSTOM
-                    ? styles.activeOption
-                    : styles.option
+                  durationType === DurationType.CUSTOM ? styles.activeOption : styles.option
                 }
                 value={DurationType.CUSTOM}
               >
@@ -241,9 +215,7 @@ export const OrderCreationModal = ({
           {durationType === DurationType.CUSTOM && (
             <Stack direction='row' gap='1rem'>
               <Stack direction='column' gap='0.5rem'>
-                <Typography sx={{ color: theme.palette.common.black }}>
-                  Begin:
-                </Typography>
+                <Typography sx={{ color: theme.palette.common.black }}>Begin:</Typography>
                 <TextField
                   value={regionBegin?.toString() || ''}
                   type='number'
@@ -253,9 +225,7 @@ export const OrderCreationModal = ({
                 />
               </Stack>
               <Stack direction='column' gap='0.5rem'>
-                <Typography sx={{ color: theme.palette.common.black }}>
-                  End:
-                </Typography>
+                <Typography sx={{ color: theme.palette.common.black }}>End:</Typography>
                 <TextField
                   value={regionEnd?.toString() || ''}
                   type='number'
@@ -277,9 +247,7 @@ export const OrderCreationModal = ({
               setCoreOccupancy(newValue as number)
             }
             valueLabelDisplay='on'
-            valueLabelFormat={(value) =>
-              `${((value / 57600) * 100).toFixed(0)} %`
-            }
+            valueLabelFormat={(value) => `${((value / 57600) * 100).toFixed(0)} %`}
             step={576}
             sx={{ width: '90%', margin: '0 auto', mt: '0.5rem' }}
           />

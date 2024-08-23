@@ -95,8 +95,7 @@ const RegionXApiContextProvider = (props: any) => {
   const { network } = useNetwork();
 
   useEffect(() => {
-    state.apiState === ApiState.ERROR &&
-      toastError(`Failed to connect to RegionX chain`);
+    state.apiState === ApiState.ERROR && toastError(`Failed to connect to RegionX chain`);
   }, [state.apiState, toastError]);
 
   const disconnectRegionX = () => disconnect(state);

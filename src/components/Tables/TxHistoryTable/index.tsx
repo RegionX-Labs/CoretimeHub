@@ -64,32 +64,24 @@ export const TxHistoryTable = ({ data }: TxHistoryTableProps) => {
             {(rowsPerPage > 0
               ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : data
-            ).map(
-              ({ module, call, extrinsicId, success, timestamp }, index) => (
-                <StyledTableRow key={index}>
-                  <StyledTableCell align='center'>
-                    <Link
-                      href={`${SUSBCAN_CORETIME_URL[network]}/extrinsic/${extrinsicId}`}
-                      target='_blank'
-                    >
-                      {extrinsicId}
-                    </Link>
-                  </StyledTableCell>
-                  <StyledTableCell align='center'>{module}</StyledTableCell>
-                  <StyledTableCell align='center'>{call}</StyledTableCell>
-                  <StyledTableCell align='center'>
-                    {success ? (
-                      <Check color='success' />
-                    ) : (
-                      <Close color='error' />
-                    )}
-                  </StyledTableCell>
-                  <StyledTableCell align='center'>
-                    {getRelativeTimeString(timestamp)}
-                  </StyledTableCell>
-                </StyledTableRow>
-              )
-            )}
+            ).map(({ module, call, extrinsicId, success, timestamp }, index) => (
+              <StyledTableRow key={index}>
+                <StyledTableCell align='center'>
+                  <Link
+                    href={`${SUSBCAN_CORETIME_URL[network]}/extrinsic/${extrinsicId}`}
+                    target='_blank'
+                  >
+                    {extrinsicId}
+                  </Link>
+                </StyledTableCell>
+                <StyledTableCell align='center'>{module}</StyledTableCell>
+                <StyledTableCell align='center'>{call}</StyledTableCell>
+                <StyledTableCell align='center'>
+                  {success ? <Check color='success' /> : <Close color='error' />}
+                </StyledTableCell>
+                <StyledTableCell align='center'>{getRelativeTimeString(timestamp)}</StyledTableCell>
+              </StyledTableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

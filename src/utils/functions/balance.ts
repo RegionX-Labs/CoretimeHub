@@ -31,11 +31,7 @@ const toFixedWithoutRounding = (value: number, decimalDigits: number) => {
   return Math.floor(value * factor) / factor;
 };
 
-export const getBalanceString = (
-  balance: string,
-  decimals: number,
-  symbol: string
-): string => {
+export const getBalanceString = (balance: string, decimals: number, symbol: string): string => {
   if (balance == '0') return `0 ${symbol} `;
   const balanceNumber = Number(balance) / 10 ** decimals;
   if (balanceNumber > 1) {

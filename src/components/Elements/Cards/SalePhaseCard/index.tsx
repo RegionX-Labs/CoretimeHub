@@ -1,10 +1,4 @@
-import {
-  Box,
-  CircularProgress,
-  Tooltip,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, CircularProgress, Tooltip, Typography, useTheme } from '@mui/material';
 
 import { SalePhase } from '@/models';
 
@@ -14,12 +8,7 @@ interface SalePhaseProps {
   value: SalePhase;
   cyLabel?: string;
 }
-export const SalePhaseCard = ({
-  label,
-  loading,
-  value,
-  cyLabel,
-}: SalePhaseProps) => {
+export const SalePhaseCard = ({ label, loading, value, cyLabel }: SalePhaseProps) => {
   const theme = useTheme();
 
   const tooltip = {
@@ -27,15 +16,12 @@ export const SalePhaseCard = ({
       'During the interlude phase, renewals take place. Regular purchases cannot be made.',
     [SalePhase.Leadin]:
       'During the leadin phase, the price decreases from the start price to the floor price.',
-    [SalePhase.Regular]:
-      'During the fixed price phase, cores are sold for the floor price.',
+    [SalePhase.Regular]: 'During the fixed price phase, cores are sold for the floor price.',
   };
 
   return (
     <Box>
-      <Typography sx={{ color: theme.palette.text.primary }}>
-        {label}
-      </Typography>
+      <Typography sx={{ color: theme.palette.text.primary }}>{label}</Typography>
       <Tooltip title={tooltip[value]} arrow sx={{ fontSize: '1rem' }}>
         {loading ? (
           <CircularProgress size={16} />

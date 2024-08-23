@@ -67,9 +67,9 @@ export const useParasInfo = () => {
     const fetchLeaseHoldingParas = async (): Promise<number[]> => {
       if (!coretimeApi || !isCoretimeReady) return [];
       const leases = await coretimeApi.query.broker.leases();
-      const ids = (
-        leases.toJSON() as Array<{ until: number; task: number }>
-      ).map((lease) => lease.task);
+      const ids = (leases.toJSON() as Array<{ until: number; task: number }>).map(
+        (lease) => lease.task
+      );
       return ids;
     };
 
@@ -160,31 +160,19 @@ export const useParasInfo = () => {
     };
 
     const fetchRegistrationConsts = async () => {
-      const value = BigInt(
-        relayApi.consts.registrar.dataDepositPerByte.toString()
-      );
+      const value = BigInt(relayApi.consts.registrar.dataDepositPerByte.toString());
       setDataDepositPerByte(value);
 
-      const { maxCodeSize } = (
-        await relayApi.query.configuration.activeConfig()
-      ).toJSON() as any;
+      const { maxCodeSize } = (await relayApi.query.configuration.activeConfig()).toJSON() as any;
       setMaxCodeSize(BigInt(maxCodeSize));
     };
 
-    await Promise.all([
-      fetchNextParaId(),
-      fetchReservationCost(),
-      fetchRegistrationConsts(),
-    ]);
+    await Promise.all([fetchNextParaId(), fetchReservationCost(), fetchRegistrationConsts()]);
 
     const paras = await fetchParachainList();
     const reservedParas = await fetchReservedParas();
 
-    paras.push(
-      ...reservedParas.filter(
-        ({ id }) => paras.find((v) => v.id === id) === undefined
-      )
-    );
+    paras.push(...reservedParas.filter(({ id }) => paras.find((v) => v.id === id) === undefined));
     paras.sort((a, b) => a.id - b.id);
 
     setParachains(paras);

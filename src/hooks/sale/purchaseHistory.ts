@@ -3,10 +3,7 @@ import { useEffect, useState } from 'react';
 import { fetchPurchaseHistoryData } from '@/apis';
 import { ApiResponse, NetworkType, PurchaseHistoryItem } from '@/models';
 
-export const usePurchaseHistory = (
-  network: NetworkType,
-  regionBegin: number
-) => {
+export const usePurchaseHistory = (network: NetworkType, regionBegin: number) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<PurchaseHistoryItem[]>([]);
   const [isError, setError] = useState(false);
@@ -26,17 +23,12 @@ export const usePurchaseHistory = (
 
         const result = [];
         while (!finished) {
-          const res: ApiResponse = await fetchPurchaseHistoryData(
-            network,
-            regionBegin,
-            after
-          );
+          const res: ApiResponse = await fetchPurchaseHistoryData(network, regionBegin, after);
 
           const { status, data } = res;
           if (status !== 200) break;
 
-          if (data.purchases.nodes !== null)
-            result.push(...data.purchases.nodes);
+          if (data.purchases.nodes !== null) result.push(...data.purchases.nodes);
 
           finished = !data.purchases.pageInfo.hasNextPage;
           after = data.purchases.pageInfo.endCursor;
@@ -46,15 +38,7 @@ export const usePurchaseHistory = (
         } else {
           setData(
             result.map(
-              ({
-                account,
-                core,
-                extrinsicId,
-                height,
-                price,
-                purchaseType,
-                timestamp,
-              }) =>
+              ({ account, core, extrinsicId, height, price, purchaseType, timestamp }) =>
                 ({
                   address: account,
                   core,

@@ -2,10 +2,7 @@ import { NetworkType, SaleInfo, SalePhase } from '@/models';
 
 import { leadinFactorAt } from '../coretime';
 
-export const getCurrentPhase = (
-  saleInfo: SaleInfo,
-  blockNumber: number
-): SalePhase => {
+export const getCurrentPhase = (saleInfo: SaleInfo, blockNumber: number): SalePhase => {
   if (blockNumber < saleInfo.saleStart) {
     return SalePhase.Interlude;
   } else if (blockNumber < saleInfo.saleStart + saleInfo.leadinLength) {

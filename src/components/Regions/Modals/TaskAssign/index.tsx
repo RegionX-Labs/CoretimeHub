@@ -66,12 +66,7 @@ const TaskItem = ({ name, id, editable = false }: TaskItemProps) => {
   };
 
   return (
-    <Stack
-      direction='row'
-      justifyContent='space-between'
-      alignItems='center'
-      width='100%'
-    >
+    <Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
       {editing ? (
         <TextField
           value={newName}
@@ -101,11 +96,7 @@ const TaskItem = ({ name, id, editable = false }: TaskItemProps) => {
   );
 };
 
-export const TaskAssignModal = ({
-  open,
-  onClose,
-  regionMetadata,
-}: TaskAssignModalProps) => {
+export const TaskAssignModal = ({ open, onClose, regionMetadata }: TaskAssignModalProps) => {
   const theme = useTheme();
 
   const {
@@ -141,33 +132,26 @@ export const TaskAssignModal = ({
       finality
     );
 
-    submitExtrinsicWithFeeInfo(
-      symbol,
-      decimals,
-      txAssign,
-      activeAccount.address,
-      activeSigner,
-      {
-        ready: () => {
-          setWorking(true);
-          toastInfo('Transaction was initiated');
-        },
-        inBlock: () => toastInfo('In Block'),
-        finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess('Successfully assigned a task');
-          onClose();
-          fetchRegions();
-        },
-        fail: () => {
-          toastError('Failed to assign a task');
-        },
-        error: (e) => {
-          toastError(`Failed to assign a task. ${e}`);
-          setWorking(false);
-        },
-      }
-    );
+    submitExtrinsicWithFeeInfo(symbol, decimals, txAssign, activeAccount.address, activeSigner, {
+      ready: () => {
+        setWorking(true);
+        toastInfo('Transaction was initiated');
+      },
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Successfully assigned a task');
+        onClose();
+        fetchRegions();
+      },
+      fail: () => {
+        toastError('Failed to assign a task');
+      },
+      error: (e) => {
+        toastError(`Failed to assign a task. ${e}`);
+        setWorking(false);
+      },
+    });
   };
 
   useEffect(() => {
@@ -181,36 +165,22 @@ export const TaskAssignModal = ({
 
   return (
     <>
-      {taskModalOpen && (
-        <AddTaskModal open onClose={() => openTaskModal(false)} />
-      )}
+      {taskModalOpen && <AddTaskModal open onClose={() => openTaskModal(false)} />}
       <Dialog open={open} onClose={onClose} maxWidth='md'>
         <DialogContent className={styles.container}>
           <Box>
-            <Typography
-              variant='subtitle1'
-              sx={{ color: theme.palette.common.black }}
-            >
+            <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
               Task Assignment
             </Typography>
-            <Typography
-              variant='subtitle2'
-              sx={{ color: theme.palette.text.primary }}
-            >
+            <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
               Here you can assign your region to a specific task
             </Typography>
           </Box>
           <Box className={styles.content}>
             <RegionOverview regionMetadata={regionMetadata} />
             <Paper className={styles.taskWrapper}>
-              <Stack
-                direction='row'
-                justifyContent='space-between'
-                alignItems='center'
-              >
-                <Typography
-                  sx={{ fontWeight: 700, color: theme.palette.common.black }}
-                >
+              <Stack direction='row' justifyContent='space-between' alignItems='center'>
+                <Typography sx={{ fontWeight: 700, color: theme.palette.common.black }}>
                   Tasks
                 </Typography>
                 <Button
@@ -226,9 +196,7 @@ export const TaskAssignModal = ({
                 </Button>
               </Stack>
               <Stack direction='column' gap={2}>
-                <Typography sx={{ color: theme.palette.common.black }}>
-                  Select task
-                </Typography>
+                <Typography sx={{ color: theme.palette.common.black }}>Select task</Typography>
                 <Select
                   value={taskSelected || ''}
                   onChange={(e) => selectTask(Number(e.target.value))}
@@ -237,11 +205,7 @@ export const TaskAssignModal = ({
                 >
                   {tasks.map(({ name, id }, index) => (
                     <MenuItem key={index} value={id}>
-                      <TaskItem
-                        name={name ?? ''}
-                        id={id}
-                        editable={taskListOpen}
-                      />
+                      <TaskItem name={name ?? ''} id={id} editable={taskListOpen} />
                     </MenuItem>
                   ))}
                 </Select>
@@ -249,17 +213,14 @@ export const TaskAssignModal = ({
             </Paper>
             <Paper className={styles.finalityWrapper}>
               <Stack direction='row' gap='1rem' alignItems='center'>
-                <Typography
-                  sx={{ fontWeight: 700, color: theme.palette.common.black }}
-                >
+                <Typography sx={{ fontWeight: 700, color: theme.palette.common.black }}>
                   Finality:
                 </Typography>
                 <FinalitySelector {...{ finality, setFinality }} />
               </Stack>
               <Alert className={styles.alert} severity='info'>
                 Finally assigned regions can no longer be managed. <br />
-                They will not be displayed on the Region Management page
-                anymore.
+                They will not be displayed on the Region Management page anymore.
               </Alert>
             </Paper>
           </Box>
@@ -273,9 +234,7 @@ export const TaskAssignModal = ({
           <ProgressButton onClick={onAssign} label='Assign' loading={working} />
         </DialogActions>
       </Dialog>
-      {taskModalOpen && (
-        <AddTaskModal open onClose={() => openTaskModal(false)} />
-      )}
+      {taskModalOpen && <AddTaskModal open onClose={() => openTaskModal(false)} />}
     </>
   );
 };

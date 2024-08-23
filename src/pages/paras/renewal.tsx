@@ -59,37 +59,29 @@ const Renewal = () => {
   const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
 
   const handleRenew = () => {
-    if (!activeAccount || !coretimeApi || !isCoretimeReady || !activeSigner)
-      return;
+    if (!activeAccount || !coretimeApi || !isCoretimeReady || !activeSigner) return;
 
     const { core } = parachains[activeIdx];
 
     const txRenewal = coretimeApi.tx.broker.renew(core);
-    submitExtrinsicWithFeeInfo(
-      symbol,
-      decimals,
-      txRenewal,
-      activeAccount.address,
-      activeSigner,
-      {
-        ready: () => {
-          setWorking(true);
-          toastInfo('Transaction was initiated');
-        },
-        inBlock: () => toastInfo('In Block'),
-        finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess('Successfully renewed the selected parachain');
-        },
-        fail: () => {
-          toastError(`Failed to renew the selected parachain`);
-        },
-        error: (e) => {
-          toastError(`Failed to renew the selected parachain ${e}`);
-          setWorking(false);
-        },
-      }
-    );
+    submitExtrinsicWithFeeInfo(symbol, decimals, txRenewal, activeAccount.address, activeSigner, {
+      ready: () => {
+        setWorking(true);
+        toastInfo('Transaction was initiated');
+      },
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Successfully renewed the selected parachain');
+      },
+      fail: () => {
+        toastError(`Failed to renew the selected parachain`);
+      },
+      error: (e) => {
+        toastError(`Failed to renew the selected parachain ${e}`);
+        setWorking(false);
+      },
+    });
   };
 
   useEffect(() => {
@@ -140,12 +132,7 @@ const Renewal = () => {
   ]);
 
   useEffect(() => {
-    if (
-      !router.isReady ||
-      status !== ContextStatus.LOADED ||
-      parachains.length === 0
-    )
-      return;
+    if (!router.isReady || status !== ContextStatus.LOADED || parachains.length === 0) return;
     const { query } = router;
     if (query['paraId'] === undefined) return;
     const paraId = parseInt(query['paraId'] as string);
@@ -173,16 +160,10 @@ const Renewal = () => {
         }}
       >
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Renew a parachain
           </Typography>
-          <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
-          >
+          <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
             Renew a parachain
           </Typography>
         </Box>
@@ -198,13 +179,7 @@ const Renewal = () => {
             boxShadow: 'none',
           }}
         >
-          <Stack
-            direction='column'
-            gap={1}
-            margin='1rem 0'
-            width='75%'
-            sx={{ mx: 'auto' }}
-          >
+          <Stack direction='column' gap={1} margin='1rem 0' width='75%' sx={{ mx: 'auto' }}>
             <Typography
               variant='h1'
               textAlign='center'
@@ -237,10 +212,7 @@ const Renewal = () => {
               borderColor={theme.palette.grey[400]}
               borderRadius='1rem'
             >
-              <Property
-                property='Core number:'
-                value={parachains[activeIdx].core}
-              />
+              <Property property='Core number:' value={parachains[activeIdx].core} />
               <Property
                 tooltip='The parachain will stop with block production once it expires.'
                 property='Expiry in:'
@@ -248,11 +220,7 @@ const Renewal = () => {
               />
               <Property
                 property='Renewal price: '
-                value={getBalanceString(
-                  parachains[activeIdx].price.toString(),
-                  decimals,
-                  symbol
-                )}
+                value={getBalanceString(parachains[activeIdx].price.toString(), decimals, symbol)}
               />
             </Stack>
           </Stack>
@@ -287,18 +255,8 @@ const Renewal = () => {
               />
             </Stack>
           )}
-          <Stack
-            direction='row'
-            gap='1rem'
-            marginTop='2em'
-            justifyContent='center'
-          >
-            <ProgressButton
-              label='Renew'
-              onClick={handleRenew}
-              loading={working}
-              width='200px'
-            />
+          <Stack direction='row' gap='1rem' marginTop='2em' justifyContent='center'>
+            <ProgressButton label='Renew' onClick={handleRenew} loading={working} width='200px' />
           </Stack>
         </Paper>
       </Box>

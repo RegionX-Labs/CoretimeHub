@@ -31,26 +31,16 @@ export const PriceModal = ({ open, onClose }: PriceModalProps) => {
     <Dialog open={open} onClose={onClose} maxWidth='md' data-cy='price-modal'>
       <DialogContent className={styles.container}>
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Price Analysis
           </Typography>
         </Box>
         {currentPhase === SalePhase.Interlude ? (
           <Box>
             <Typography>{"Sale hasn't started yet."}</Typography>
-            <Stack
-              direction='column'
-              alignItems='center'
-              sx={{ mt: '2rem' }}
-              gap='1rem'
-            >
+            <Stack direction='column' alignItems='center' sx={{ mt: '2rem' }} gap='1rem'>
               <Typography>Sale starts in:</Typography>
-              <CountDown
-                remainingTime={(saleEndpoints.fixed.end - Date.now()) / 1000}
-              />
+              <CountDown remainingTime={(saleEndpoints.fixed.end - Date.now()) / 1000} />
             </Stack>
           </Box>
         ) : (
@@ -62,11 +52,7 @@ export const PriceModal = ({ open, onClose }: PriceModalProps) => {
       </DialogContent>
       <DialogActions>
         <Box>
-          <ActionButton
-            label='Close'
-            onClick={onClose}
-            data-cy='btn-close-price-modal'
-          />
+          <ActionButton label='Close' onClick={onClose} data-cy='btn-close-price-modal' />
         </Box>
       </DialogActions>
     </Dialog>

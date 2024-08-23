@@ -22,9 +22,7 @@ interface Props {
 }
 
 const NetworkProvider = ({ children }: Props) => {
-  const [activeNetwork, setActiveNetwork] = useState<NetworkType>(
-    NetworkType.NONE
-  );
+  const [activeNetwork, setActiveNetwork] = useState<NetworkType>(NetworkType.NONE);
 
   const router = useRouter();
   const { network } = router.query;

@@ -85,9 +85,7 @@ export const Balance = ({
     <Box className={styles.container}>
       {items.map(({ label, value, symbol, decimals }, index) => (
         <Box key={index} className={styles.balanceItem}>
-          <Typography sx={{ color: theme.palette.text.primary }}>
-            {label}
-          </Typography>
+          <Typography sx={{ color: theme.palette.text.primary }}>{label}</Typography>
           <Box
             sx={{
               bgcolor: theme.palette.common.white,

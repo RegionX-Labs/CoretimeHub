@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 import { fetchOrders as fetchOrdersApi, fetchUserContribution } from '@/apis';
 import { ApiResponse, ContextStatus, Order } from '@/models';
@@ -65,10 +59,7 @@ const OrderProvider = ({ children }: Props) => {
 
         if (status !== 200 || nodes === null) break;
 
-        sum += nodes.reduce(
-          (acc: number, item: Contribution) => acc + parseInt(item.amount),
-          0
-        );
+        sum += nodes.reduce((acc: number, item: Contribution) => acc + parseInt(item.amount), 0);
 
         finished = !pageInfo.hasNextPage;
         after = pageInfo.endCursor;

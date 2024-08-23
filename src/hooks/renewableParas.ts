@@ -20,9 +20,7 @@ export const useRenewableParachains = () => {
     state: { api, apiState },
   } = useCoretimeApi();
 
-  const [status, setStatus] = useState<ContextStatus>(
-    ContextStatus.UNINITIALIZED
-  );
+  const [status, setStatus] = useState<ContextStatus>(ContextStatus.UNINITIALIZED);
   const [parachains, setParachains] = useState<RenewableParachain[]>([]);
   const { network } = useNetwork();
 
@@ -37,9 +35,7 @@ export const useRenewableParachains = () => {
 
       setStatus(ContextStatus.LOADING);
 
-      const renewals = [NetworkType.ROCOCO, NetworkType.WESTEND].includes(
-        network
-      )
+      const renewals = [NetworkType.ROCOCO, NetworkType.WESTEND].includes(network)
         ? await api.query.broker.potentialRenewals.entries()
         : await api.query.broker.allowedRenewals.entries();
       const chains: RenewableParachain[] = [];

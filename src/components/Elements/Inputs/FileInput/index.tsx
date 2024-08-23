@@ -116,9 +116,7 @@ function InputFile({
             <CloseIcon />
           </IconButton>
           <div className={styles.fileName}>{file.name}</div>
-          <div
-            className={styles.fileSize}
-          >{`(${file.size.toLocaleString()} bytes)`}</div>
+          <div className={styles.fileSize}>{`(${file.size.toLocaleString()} bytes)`}</div>
         </div>
       )}
     </div>

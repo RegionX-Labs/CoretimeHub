@@ -28,12 +28,7 @@ export const Banner = ({ content, severity, link }: BannerProps) => {
     <Alert
       severity={severity}
       action={
-        <IconButton
-          aria-label='close'
-          color='inherit'
-          size='small'
-          onClick={handleClose}
-        >
+        <IconButton aria-label='close' color='inherit' size='small' onClick={handleClose}>
           <CloseIcon fontSize='inherit' />
         </IconButton>
       }

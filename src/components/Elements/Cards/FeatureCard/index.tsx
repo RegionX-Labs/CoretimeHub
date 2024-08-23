@@ -1,11 +1,4 @@
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Button, Card, CardActions, CardContent, Typography, useTheme } from '@mui/material';
 import Image, { StaticImageData } from 'next/image';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -20,13 +13,7 @@ interface FeatureCardProps {
   href: string;
 }
 
-export const FeatureCard = ({
-  title,
-  buttonText,
-  image,
-  enabled,
-  href,
-}: FeatureCardProps) => {
+export const FeatureCard = ({ title, buttonText, image, enabled, href }: FeatureCardProps) => {
   const { push, query } = useRouter();
   const theme = useTheme();
 

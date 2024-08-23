@@ -1,12 +1,4 @@
-import {
-  Backdrop,
-  Box,
-  Card,
-  CircularProgress,
-  Stack,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Backdrop, Box, Card, CircularProgress, Stack, Typography, useTheme } from '@mui/material';
 
 import { useProcessedOrders } from '@/hooks/order';
 
@@ -22,8 +14,7 @@ const OrderProcessor = () => {
     state: { apiState },
   } = useRegionXApi();
 
-  const { data: processedOrderData, loading: loadingProcessedOrders } =
-    useProcessedOrders();
+  const { data: processedOrderData, loading: loadingProcessedOrders } = useProcessedOrders();
 
   return apiState !== ApiState.READY || loadingProcessedOrders ? (
     <Backdrop open>
@@ -34,16 +25,10 @@ const OrderProcessor = () => {
       <Card sx={{ padding: '1.5rem' }} data-cy='purchase-history-table'>
         <Stack direction='column' gap='1rem'>
           <Box>
-            <Typography
-              variant='subtitle1'
-              sx={{ color: theme.palette.common.black }}
-            >
+            <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
               Order Processor UI
             </Typography>
-            <Typography
-              variant='subtitle2'
-              sx={{ color: theme.palette.text.primary }}
-            >
+            <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
               See all the orders that were fulfilled
             </Typography>
           </Box>

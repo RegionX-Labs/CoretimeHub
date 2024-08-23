@@ -23,15 +23,13 @@ export const connectWallet = () => {
         address: ALICE,
         name: 'Alice',
         type: 'sr25519',
-        mnemonic:
-          'bottom drive obey lake curtain smoke basket hold race lonely fit walk',
+        mnemonic: 'bottom drive obey lake curtain smoke basket hold race lonely fit walk',
       },
       {
         address: BOB,
         name: 'Bob',
         type: 'sr25519',
-        mnemonic:
-          'sample split bamboo west visual approve brain fox arch impact relief smile',
+        mnemonic: 'sample split bamboo west visual approve brain fox arch impact relief smile',
       },
     ],
     APP_NAME

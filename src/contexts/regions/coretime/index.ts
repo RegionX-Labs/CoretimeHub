@@ -3,9 +3,7 @@ import { Region } from 'coretime-utils';
 
 import { parseHNString } from '@/utils/functions';
 
-export const fetchRegions = async (
-  coretimeApi: ApiPromise | null
-): Promise<Array<Region>> => {
+export const fetchRegions = async (coretimeApi: ApiPromise | null): Promise<Array<Region>> => {
   if (!coretimeApi) {
     return [];
   }

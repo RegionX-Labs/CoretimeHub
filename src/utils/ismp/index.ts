@@ -13,10 +13,7 @@ export const waitForRegionRecordRequestEvent = async (
       .events((events: any) => {
         events.forEach((record: any) => {
           const { event } = record;
-          if (
-            event.section === 'regions' &&
-            event.method === 'RegionRecordRequested'
-          ) {
+          if (event.section === 'regions' && event.method === 'RegionRecordRequested') {
             const id = event.data.toHuman().regionId;
             if (
               id.begin === regionId.begin.toString() &&
@@ -38,9 +35,7 @@ export const queryRequest = async (
   commitment: string
 ): Promise<IsmpRequest> => {
   const leafIndex = regionxApi.createType('LeafIndexQuery', { commitment });
-  const requests = await (regionxApi as any).rpc.ismp.queryRequests([
-    leafIndex,
-  ]);
+  const requests = await (regionxApi as any).rpc.ismp.queryRequests([leafIndex]);
   // We only requested a single request so we only get one in the response.
   return requests.toJSON()[0] as IsmpRequest;
 };
@@ -56,10 +51,7 @@ export const makeResponse = async (
     const hashAt = (
       await coretimeApi.query.system.blockHash(Number(request.get.height))
     ).toString();
-    const proofData = await coretimeApi.rpc.state.getReadProof(
-      [request.get.keys[0]],
-      hashAt
-    );
+    const proofData = await coretimeApi.rpc.state.getReadProof([request.get.keys[0]], hashAt);
 
     const stateMachineProof = regionxApi.createType('StateMachineProof', {
       hasher: 'Blake2',

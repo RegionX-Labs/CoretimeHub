@@ -3,9 +3,7 @@ import { fetchGraphql } from '@/utils/fetchGraphql';
 import { API_CORETIME_INDEXER } from '@/consts';
 import { ApiResponse, NetworkType } from '@/models';
 
-export const fetchBurnInfo = async (
-  network: NetworkType
-): Promise<ApiResponse> => {
+export const fetchBurnInfo = async (network: NetworkType): Promise<ApiResponse> => {
   const query = `{
     stats {
       nodes {

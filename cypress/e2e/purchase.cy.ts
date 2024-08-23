@@ -9,16 +9,12 @@ describe('E2E tests for the purchase page', () => {
 
     connectWallet();
     // Wallet connection works:
-    cy.get('[data-cy="connect-wallet"]', { timeout: 5 * 1000 }).should(
-      'not.exist'
-    );
+    cy.get('[data-cy="connect-wallet"]', { timeout: 5 * 1000 }).should('not.exist');
     cy.get('[data-cy="address"]').should('exist');
     cy.get('[data-cy="address"]').should('contain.text', '5DfhGy...1EqRzV');
 
     // Fetching complete
-    cy.get('[data-cy="loading-current-price"]', { timeout: 60 * 1000 }).should(
-      'not.exist'
-    );
+    cy.get('[data-cy="loading-current-price"]', { timeout: 60 * 1000 }).should('not.exist');
   });
 
   it('Successfully loads the purchase page and all UI elements are in place.', () => {

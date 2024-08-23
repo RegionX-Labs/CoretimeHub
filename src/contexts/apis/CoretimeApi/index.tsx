@@ -61,8 +61,7 @@ const CoretimeApiContextProvider = (props: any) => {
   const disconnectCoretime = () => disconnect(state);
 
   useEffect(() => {
-    state.apiState === ApiState.ERROR &&
-      toastError(`Failed to connect to Coretime chain`);
+    state.apiState === ApiState.ERROR && toastError(`Failed to connect to Coretime chain`);
   }, [state.apiState, toastError]);
 
   useEffect(() => {

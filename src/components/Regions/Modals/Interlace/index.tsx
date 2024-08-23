@@ -32,11 +32,7 @@ interface InterlaceModalProps extends DialogProps {
   regionMetadata: RegionMetadata;
 }
 
-export const InterlaceModal = ({
-  open,
-  onClose,
-  regionMetadata,
-}: InterlaceModalProps) => {
+export const InterlaceModal = ({ open, onClose, regionMetadata }: InterlaceModalProps) => {
   const theme = useTheme();
   const {
     state: { activeAccount, activeSigner },
@@ -59,47 +55,34 @@ export const InterlaceModal = ({
   const [working, setWorking] = useState(false);
   const [position, setPosition] = useState(oneStart);
 
-  const newMask =
-    oneStart <= position + 1
-      ? maskToBin(maskFromChunk(oneStart, position + 1))
-      : '';
+  const newMask = oneStart <= position + 1 ? maskToBin(maskFromChunk(oneStart, position + 1)) : '';
 
   const onInterlace = async () => {
     if (!api || !activeAccount || !activeSigner) return;
 
     const mask = maskFromBin(newMask);
 
-    const txInterlace = api.tx.broker.interlace(
-      regionMetadata.region.getOnChainRegionId(),
-      mask
-    );
-    submitExtrinsicWithFeeInfo(
-      symbol,
-      decimals,
-      txInterlace,
-      activeAccount.address,
-      activeSigner,
-      {
-        ready: () => {
-          setWorking(true);
-          toastInfo('Transaction was initiated');
-        },
-        inBlock: () => toastInfo('In Block'),
-        finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess('Successfully interlaced the region');
-          onClose();
-          fetchRegions();
-        },
-        fail: () => {
-          toastError('Failed to interlace the region');
-        },
-        error: (e) => {
-          toastError(`Failed to interlace the region ${e}`);
-          setWorking(false);
-        },
-      }
-    );
+    const txInterlace = api.tx.broker.interlace(regionMetadata.region.getOnChainRegionId(), mask);
+    submitExtrinsicWithFeeInfo(symbol, decimals, txInterlace, activeAccount.address, activeSigner, {
+      ready: () => {
+        setWorking(true);
+        toastInfo('Transaction was initiated');
+      },
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Successfully interlaced the region');
+        onClose();
+        fetchRegions();
+      },
+      fail: () => {
+        toastError('Failed to interlace the region');
+      },
+      error: (e) => {
+        toastError(`Failed to interlace the region ${e}`);
+        setWorking(false);
+      },
+    });
   };
 
   useEffect(() => {
@@ -110,10 +93,7 @@ export const InterlaceModal = ({
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent className={styles.container}>
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Region Interlacing
           </Typography>
           <Typography
@@ -124,8 +104,8 @@ export const InterlaceModal = ({
               maxWidth: '35rem',
             }}
           >
-            Interlace your region into two new regions, each of which can be
-            assigned to a different task while both run on the same core.
+            Interlace your region into two new regions, each of which can be assigned to a different
+            task while both run on the same core.
           </Typography>
           <br></br>
           <Typography
@@ -136,9 +116,8 @@ export const InterlaceModal = ({
               maxWidth: '35rem',
             }}
           >
-            Select the percentage of core resources that will be allocated to
-            one of the newly created regions, while the rest will be allocated
-            to the other.
+            Select the percentage of core resources that will be allocated to one of the newly
+            created regions, while the rest will be allocated to the other.
           </Typography>
         </Box>
         <RegionOverview regionMetadata={regionMetadata} />
@@ -156,11 +135,7 @@ export const InterlaceModal = ({
           {activeBits > 1 && (
             <>
               <Box display='flex' justifyContent='center'>
-                <CoremaskCircularProgress
-                  position={position}
-                  oneStart={oneStart}
-                  oneEnd={oneEnd}
-                />
+                <CoremaskCircularProgress position={position} oneStart={oneStart} oneEnd={oneEnd} />
               </Box>
               <Slider
                 min={oneStart}
@@ -170,9 +145,7 @@ export const InterlaceModal = ({
                 onChange={(_e, v) => setPosition(Number(v))}
                 valueLabelDisplay='on'
                 valueLabelFormat={(v) =>
-                  `${(((v - oneStart + 1) / COREMASK_BIT_LEN) * 100).toFixed(
-                    2
-                  )}%`
+                  `${(((v - oneStart + 1) / COREMASK_BIT_LEN) * 100).toFixed(2)}%`
                 }
                 className={styles.slider}
               />
@@ -216,11 +189,7 @@ const CoremaskCircularProgress = ({
   oneStart,
   oneEnd,
 }: CoremaskCircularProgressProps) => {
-  const getCircularProgressValue = (
-    value: number,
-    minValue: number,
-    maxValue: number
-  ) => {
+  const getCircularProgressValue = (value: number, minValue: number, maxValue: number) => {
     return ((value - minValue) / (maxValue - minValue)) * 100;
   };
 

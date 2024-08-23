@@ -24,10 +24,7 @@ const defaultTasksData: TasksData = {
   fetchWorkplan: async (): Promise<Tasks> => {
     return {};
   },
-  fetchRegionWorkload: async (
-    _core: CoreIndex,
-    _mask: string
-  ): Promise<Task> => {
+  fetchRegionWorkload: async (_core: CoreIndex, _mask: string): Promise<Task> => {
     return null;
   },
   loadTasksFromLocalStorage: () => {
@@ -58,8 +55,7 @@ const TaskDataProvider = ({ children }: Props) => {
 
   // The tasks which will run on Polkadot cores in the future.
   const fetchWorkplan = async (): Promise<Tasks> => {
-    if (!coretimeApi || !isCoretimeReady || !coretimeApi.query.broker)
-      return {};
+    if (!coretimeApi || !isCoretimeReady || !coretimeApi.query.broker) return {};
     try {
       const workplan = await coretimeApi.query.broker.workplan.entries();
       const tasks: Record<string, number | null> = {};
@@ -77,11 +73,11 @@ const TaskDataProvider = ({ children }: Props) => {
           };
 
           if (assignment === 'Pool') {
-            tasks[getEncodedRegionId(regionId, coretimeApi).toString()] =
-              POOLING_TASK_ID;
+            tasks[getEncodedRegionId(regionId, coretimeApi).toString()] = POOLING_TASK_ID;
           } else {
-            tasks[getEncodedRegionId(regionId, coretimeApi).toString()] =
-              assignment.Task ? parseHNString(assignment.Task) : null;
+            tasks[getEncodedRegionId(regionId, coretimeApi).toString()] = assignment.Task
+              ? parseHNString(assignment.Task)
+              : null;
           }
         });
       }
@@ -93,16 +89,10 @@ const TaskDataProvider = ({ children }: Props) => {
   };
 
   // The tasks currently running on a Polkadot core.
-  const fetchRegionWorkload = async (
-    core: CoreIndex,
-    regionMask: string
-  ): Promise<Task> => {
-    if (!coretimeApi || !isCoretimeReady || !coretimeApi.query.broker)
-      return null;
+  const fetchRegionWorkload = async (core: CoreIndex, regionMask: string): Promise<Task> => {
+    if (!coretimeApi || !isCoretimeReady || !coretimeApi.query.broker) return null;
     const workload = (
-      (
-        await coretimeApi.query.broker.workload(core)
-      ).toHuman() as ScheduleItem[]
+      (await coretimeApi.query.broker.workload(core)).toHuman() as ScheduleItem[]
     )[0];
 
     if (!workload) return null;

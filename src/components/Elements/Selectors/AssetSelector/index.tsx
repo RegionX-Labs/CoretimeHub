@@ -11,11 +11,7 @@ interface AssetSelectorProps {
   symbol: string;
 }
 
-export default function AssetSelector({
-  asset,
-  setAsset,
-  symbol,
-}: AssetSelectorProps) {
+export default function AssetSelector({ asset, setAsset, symbol }: AssetSelectorProps) {
   const items = [
     {
       value: AssetType.TOKEN,

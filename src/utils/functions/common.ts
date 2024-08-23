@@ -21,9 +21,7 @@ export const isValidAddress = (chainAddress: string, ss58Prefix = 42) => {
 };
 
 export const truncateAddres = (address: string) => {
-  return (
-    address.substring(0, 6) + '...' + address.substring(address.length - 6)
-  );
+  return address.substring(0, 6) + '...' + address.substring(address.length - 6);
 };
 
 export const writeToClipboard = async (value: string) => {

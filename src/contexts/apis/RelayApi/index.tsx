@@ -2,11 +2,7 @@ import React, { useContext, useEffect, useReducer, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
 
-import {
-  WS_KUSAMA_RELAY_CHAIN,
-  WS_ROCOCO_RELAY_CHAIN,
-  WS_WESTEND_RELAY_CHAIN,
-} from '@/consts';
+import { WS_KUSAMA_RELAY_CHAIN, WS_ROCOCO_RELAY_CHAIN, WS_WESTEND_RELAY_CHAIN } from '@/consts';
 import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
@@ -32,8 +28,7 @@ const RelayApiContextProvider = (props: any) => {
   const { network } = useNetwork();
 
   useEffect(() => {
-    state.apiState === ApiState.ERROR &&
-      toastError(`Failed to connect to relay chain`);
+    state.apiState === ApiState.ERROR && toastError(`Failed to connect to relay chain`);
   }, [state.apiState, toastError]);
 
   const disconnectRelay = () => disconnect(state);
@@ -70,9 +65,7 @@ const RelayApiContextProvider = (props: any) => {
     const fetchParaIds = async () => {
       if (!api.query.paras) return;
       const paras = await api.query.registrar.paras.keys();
-      const paraIds = paras.map((key: any) =>
-        parseHNString(key.toHuman().toString())
-      );
+      const paraIds = paras.map((key: any) => parseHNString(key.toHuman().toString()));
       setParaIds(paraIds);
     };
     fetchParaIds();

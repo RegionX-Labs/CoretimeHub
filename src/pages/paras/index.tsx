@@ -15,13 +15,7 @@ import React, { useEffect, useState } from 'react';
 
 import { useParasInfo, useRenewableParachains } from '@/hooks';
 
-import {
-  ActionButton,
-  Order,
-  ParachainTable,
-  RegisterModal,
-  ReserveModal,
-} from '@/components';
+import { ActionButton, Order, ParachainTable, RegisterModal, ReserveModal } from '@/components';
 
 import { leases } from '@/chaindata';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
@@ -143,9 +137,7 @@ const ParachainManagement = () => {
       watching: watchList.includes(para.id),
     }));
     const filtered = parasWithWatchInfo.filter(
-      (para) =>
-        para.id.toString().includes(search) &&
-        (watchAll ? true : para.watching === true)
+      (para) => para.id.toString().includes(search) && (watchAll ? true : para.watching === true)
     );
     if (orderBy === 'id') {
       filtered.sort(compId);
@@ -166,16 +158,10 @@ const ParachainManagement = () => {
         }}
       >
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Parachain Dashboard
           </Typography>
-          <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
-          >
+          <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
             Watch parachains state, register and manage parachains
           </Typography>
         </Box>
@@ -214,10 +200,7 @@ const ParachainManagement = () => {
               },
             }}
           />
-          <ActionButton
-            label='Reserve New Para'
-            onClick={() => openReserveModal(true)}
-          />
+          <ActionButton label='Reserve New Para' onClick={() => openReserveModal(true)} />
         </Box>
       </Box>
       {loading ? (

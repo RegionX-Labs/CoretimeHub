@@ -30,12 +30,7 @@ interface ReserveModalProps extends DialogProps {
   reservationCost: string;
 }
 
-export const ReserveModal = ({
-  open,
-  onClose,
-  paraId,
-  reservationCost,
-}: ReserveModalProps) => {
+export const ReserveModal = ({ open, onClose, paraId, reservationCost }: ReserveModalProps) => {
   const theme = useTheme();
   const {
     state: { activeAccount, activeSigner },
@@ -60,33 +55,26 @@ export const ReserveModal = ({
     }
     const txReserve = api.tx.registrar.reserve();
 
-    submitExtrinsicWithFeeInfo(
-      symbol,
-      decimals,
-      txReserve,
-      activeAccount.address,
-      activeSigner,
-      {
-        ready: () => {
-          setWorking(true);
-          toastInfo('Transaction was initiated');
-        },
-        inBlock: () => toastInfo('In Block'),
-        finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess('Reservation success');
-          fetchParaStates();
-          onClose();
-        },
-        fail: () => {
-          toastError('Failed to reserve a parathread');
-        },
-        error: (e) => {
-          toastError(`Failed to reserve a parathread ${e}`);
-          setWorking(false);
-        },
-      }
-    );
+    submitExtrinsicWithFeeInfo(symbol, decimals, txReserve, activeAccount.address, activeSigner, {
+      ready: () => {
+        setWorking(true);
+        toastInfo('Transaction was initiated');
+      },
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Reservation success');
+        fetchParaStates();
+        onClose();
+      },
+      fail: () => {
+        toastError('Failed to reserve a parathread');
+      },
+      error: (e) => {
+        toastError(`Failed to reserve a parathread ${e}`);
+        setWorking(false);
+      },
+    });
   };
 
   const items = [
@@ -104,16 +92,10 @@ export const ReserveModal = ({
     <Dialog {...{ open, onClose }}>
       <DialogContent className={styles.container}>
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Reserve Para ID
           </Typography>
-          <Typography
-            variant='subtitle2'
-            sx={{ color: theme.palette.text.primary }}
-          >
+          <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
             Reserve your Para ID for the future
           </Typography>
         </Box>
@@ -121,10 +103,7 @@ export const ReserveModal = ({
           {items.map(({ label, value }, index) => (
             <Paper className={styles.infoItem} key={index}>
               <Typography className={styles.itemKey}>{label}</Typography>
-              <Typography
-                sx={{ color: theme.palette.common.black }}
-                className={styles.itemValue}
-              >
+              <Typography sx={{ color: theme.palette.common.black }} className={styles.itemValue}>
                 {value}
               </Typography>
             </Paper>

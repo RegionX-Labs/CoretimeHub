@@ -21,13 +21,7 @@ import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import {
-  DAY,
-  HOUR,
-  MINUTE,
-  RegionMetadata,
-  RELAY_CHAIN_BLOCK_TIME,
-} from '@/models';
+import { DAY, HOUR, MINUTE, RegionMetadata, RELAY_CHAIN_BLOCK_TIME } from '@/models';
 
 import styles from './index.module.scss';
 
@@ -36,11 +30,7 @@ interface PartitionModalProps extends DialogProps {
   regionMetadata: RegionMetadata;
 }
 
-export const PartitionModal = ({
-  open,
-  onClose,
-  regionMetadata,
-}: PartitionModalProps) => {
+export const PartitionModal = ({ open, onClose, regionMetadata }: PartitionModalProps) => {
   const timeUnits = [
     {
       label: 'Minutes',
@@ -84,8 +74,7 @@ export const PartitionModal = ({
   const maxSteps = Math.floor(duration / unit) - 1;
 
   useEffect(() => {
-    const diff =
-      regionMetadata.region.getEnd() - regionMetadata.region.getBegin();
+    const diff = regionMetadata.region.getEnd() - regionMetadata.region.getBegin();
     setDuration(diff * timeslicePeriod * RELAY_CHAIN_BLOCK_TIME);
   }, [timeslicePeriod, regionMetadata.region]);
 
@@ -103,43 +92,33 @@ export const PartitionModal = ({
       pivotInTimeslice
     );
 
-    submitExtrinsicWithFeeInfo(
-      symbol,
-      decimals,
-      txPartition,
-      activeAccount.address,
-      activeSigner,
-      {
-        ready: () => {
-          setWorking(true);
-          toastInfo('Transaction was initiated');
-        },
-        inBlock: () => toastInfo('In Block'),
-        finalized: () => setWorking(false),
-        success: () => {
-          toastSuccess('Successfully partitioned the region');
-          onClose();
-          fetchRegions();
-        },
-        fail: () => {
-          toastError('Failed to partition the region');
-        },
-        error: (e) => {
-          toastError(`Failed to partition the region ${e}`);
-          setWorking(false);
-        },
-      }
-    );
+    submitExtrinsicWithFeeInfo(symbol, decimals, txPartition, activeAccount.address, activeSigner, {
+      ready: () => {
+        setWorking(true);
+        toastInfo('Transaction was initiated');
+      },
+      inBlock: () => toastInfo('In Block'),
+      finalized: () => setWorking(false),
+      success: () => {
+        toastSuccess('Successfully partitioned the region');
+        onClose();
+        fetchRegions();
+      },
+      fail: () => {
+        toastError('Failed to partition the region');
+      },
+      error: (e) => {
+        toastError(`Failed to partition the region ${e}`);
+        setWorking(false);
+      },
+    });
   };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogContent className={styles.container}>
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Region Partitioning
           </Typography>
           <Typography
@@ -150,8 +129,8 @@ export const PartitionModal = ({
               maxWidth: '35rem',
             }}
           >
-            Split your region into two new ones with different start and end
-            points. They will be divided at the selected pivot point.
+            Split your region into two new ones with different start and end points. They will be
+            divided at the selected pivot point.
           </Typography>
         </Box>
         <Box className={styles.content}>
@@ -168,11 +147,7 @@ export const PartitionModal = ({
                 {timeUnits.map(({ label }, index) => (
                   <Typography
                     key={index}
-                    className={
-                      index === unitIdx
-                        ? styles.activeUnitItem
-                        : styles.unitItem
-                    }
+                    className={index === unitIdx ? styles.activeUnitItem : styles.unitItem}
                     onClick={() => setUnitIdx(index)}
                   >
                     {label}
@@ -189,9 +164,7 @@ export const PartitionModal = ({
               onChange={(_e, v) => setPivot(v as number)}
               marks
               valueLabelDisplay='on'
-              valueLabelFormat={(v) =>
-                `${v} ${timeUnits[unitIdx].strUnit}${v > 1 ? 's' : ''}`
-              }
+              valueLabelFormat={(v) => `${v} ${timeUnits[unitIdx].strUnit}${v > 1 ? 's' : ''}`}
               size='medium'
               className={styles.timeSlider}
             />
@@ -202,11 +175,7 @@ export const PartitionModal = ({
         <Button onClick={onClose} variant='outlined'>
           Cancel
         </Button>
-        <ProgressButton
-          onClick={onPartition}
-          loading={working}
-          label='Partition'
-        />
+        <ProgressButton onClick={onPartition} loading={working} label='Partition' />
       </DialogActions>
     </Dialog>
   );

@@ -73,9 +73,7 @@ const ToastProviderWrapper = ({ children }: Props) => {
   );
 
   return (
-    <ToastContext.Provider
-      value={{ toastSuccess, toastError, toastInfo, toastWarning }}
-    >
+    <ToastContext.Provider value={{ toastSuccess, toastError, toastInfo, toastWarning }}>
       {children}
     </ToastContext.Provider>
   );

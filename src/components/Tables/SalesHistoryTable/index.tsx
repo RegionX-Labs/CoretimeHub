@@ -74,19 +74,13 @@ export const SalesHistoryTable = ({ data }: SalesHistoryTableProps) => {
                     {info.saleCycle}
                   </Button>
                 </StyledTableCell>
-                <StyledTableCell align='center'>
-                  {info.regionBegin}
-                </StyledTableCell>
-                <StyledTableCell align='center'>
-                  {info.regionEnd}
-                </StyledTableCell>
+                <StyledTableCell align='center'>{info.regionBegin}</StyledTableCell>
+                <StyledTableCell align='center'>{info.regionEnd}</StyledTableCell>
                 <StyledTableCell align='center'>
                   {getTimeStringLong(info.startTimestamp)}
                 </StyledTableCell>
                 <StyledTableCell align='center'>
-                  {info.endTimestamp
-                    ? getTimeStringLong(info.endTimestamp)
-                    : 'Not yet ended'}
+                  {info.endTimestamp ? getTimeStringLong(info.endTimestamp) : 'Not yet ended'}
                 </StyledTableCell>
               </StyledTableRow>
             ))}

@@ -86,33 +86,26 @@ export const OrderProcessorModal = ({
         mask: regionSelected.region.getMask(),
       });
 
-      submitExtrinsicWithFeeInfo(
-        symbol,
-        decimals,
-        tx,
-        activeAccount.address,
-        activeSigner,
-        {
-          ready: () => {
-            setWorking(true);
-            toastInfo('Transaction was initiated');
-          },
-          inBlock: () => toastInfo('In Block'),
-          finalized: () => setWorking(false),
-          success: () => {
-            toastSuccess('Successfully fulfilled an order');
-            onClose();
-            fetchOrders();
-          },
-          fail: () => {
-            toastError('Failed to fulfill an order');
-          },
-          error: (e) => {
-            toastError(`Failed to fulfill an order ${e}`);
-            setWorking(false);
-          },
-        }
-      );
+      submitExtrinsicWithFeeInfo(symbol, decimals, tx, activeAccount.address, activeSigner, {
+        ready: () => {
+          setWorking(true);
+          toastInfo('Transaction was initiated');
+        },
+        inBlock: () => toastInfo('In Block'),
+        finalized: () => setWorking(false),
+        success: () => {
+          toastSuccess('Successfully fulfilled an order');
+          onClose();
+          fetchOrders();
+        },
+        fail: () => {
+          toastError('Failed to fulfill an order');
+        },
+        error: (e) => {
+          toastError(`Failed to fulfill an order ${e}`);
+          setWorking(false);
+        },
+      });
     } catch (e: any) {
       toastError(`Failed to fulfill the order. ${e.toString()}`);
       setWorking(false);
@@ -132,18 +125,10 @@ export const OrderProcessorModal = ({
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth='md'
-      data-cy='order-processor-modal'
-    >
+    <Dialog open={open} onClose={onClose} maxWidth='md' data-cy='order-processor-modal'>
       <DialogContent className={styles.container}>
         <Box>
-          <Typography
-            variant='subtitle1'
-            sx={{ color: theme.palette.common.black }}
-          >
+          <Typography variant='subtitle1' sx={{ color: theme.palette.common.black }}>
             Order #{order.orderId}
           </Typography>
         </Box>
@@ -151,20 +136,10 @@ export const OrderProcessorModal = ({
           {
             <Stack gap='1rem'>
               <OrderCard order={order} simplified />
-              <Stack
-                direction='row'
-                alignItems='center'
-                justifyContent='space-between'
-              >
+              <Stack direction='row' alignItems='center' justifyContent='space-between'>
                 <Typography>Reward for fulfilling</Typography>
-                <Typography
-                  sx={{ color: theme.palette.common.black, fontWeight: 500 }}
-                >
-                  {getBalanceString(
-                    order.totalContribution.toString(),
-                    relayDecimals,
-                    relaySymbol
-                  )}
+                <Typography sx={{ color: theme.palette.common.black, fontWeight: 500 }}>
+                  {getBalanceString(order.totalContribution.toString(), relayDecimals, relaySymbol)}
                 </Typography>
               </Stack>
               <Typography>Region to sell</Typography>
@@ -189,12 +164,9 @@ export const OrderProcessorModal = ({
               ) : (
                 <>
                   {!checkRequirements(order, regionSelected) && (
-                    <Alert severity='error'>
-                      The selected region does not match requirements
-                    </Alert>
+                    <Alert severity='error'>The selected region does not match requirements</Alert>
                   )}
-                  {regionSelected?.location !==
-                    RegionLocation.REGIONX_CHAIN && (
+                  {regionSelected?.location !== RegionLocation.REGIONX_CHAIN && (
                     <Alert severity='warning'>
                       The selected region must first be transferred to RegionX
                     </Alert>

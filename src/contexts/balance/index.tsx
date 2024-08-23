@@ -59,8 +59,7 @@ const BalanceProvider = ({ children }: Props) => {
         setRxCurrencyBalance(0);
         return;
       }
-      if (!isCoretimeReady || !isRelayReady || !coretimeApi || !relayApi)
-        return;
+      if (!isCoretimeReady || !isRelayReady || !coretimeApi || !relayApi) return;
 
       const { address } = activeAccount;
       const unsubscribeCoretime = await coretimeApi.queryMulti(
