@@ -35,7 +35,7 @@ export const PurchaseModal = ({
     state: { activeAccount, activeSigner },
   } = useAccounts();
   const {
-    state: { api: regionXApi, apiState: regionXApiState, symbol, decimals },
+    state: { api: regionXApi, isApiReady: isRegionXReady, symbol, decimals },
   } = useRegionXApi();
   const { fetchMarket } = useMarket();
   const { fetchRegions } = useRegions();
@@ -50,7 +50,7 @@ export const PurchaseModal = ({
       return;
     }
 
-    if (!regionXApi || regionXApiState !== ApiState.READY) {
+    if (!regionXApi || !isRegionXReady) {
       return;
     }
     if (!activeAccount || !activeSigner) {

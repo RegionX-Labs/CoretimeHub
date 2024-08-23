@@ -29,15 +29,15 @@ export const useTransferHandlers = () => {
   const { originChain, destinationChain, selectedRegion } = useTransferState();
 
   const {
-    state: { api: coretimeApi, apiState: coretimeApiState },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady },
   } = useCoretimeApi();
   const {
-    state: { api: regionXApi, apiState: regionxApiState },
+    state: { api: regionXApi, isApiReady: isRegionXReady },
   } = useRegionXApi();
   const {
     state: {
       api: relayApi,
-      apiState: relayApiState,
+      isApiReady: isRelayReady,
       decimals: relayTokenDecimals,
     },
   } = useRelayApi();
@@ -104,7 +104,7 @@ export const useTransferHandlers = () => {
     receiverKeypair.addFromAddress(newOwner);
 
     if (originChain === destinationChain) {
-      if (!coretimeApi || !(coretimeApiState === ApiState.READY)) return;
+      if (!coretimeApi || !isCoretimeReady) return;
       await transferNativeToken(
         coretimeApi,
         activeSigner,
@@ -153,19 +153,15 @@ export const useTransferHandlers = () => {
       if (
         originChain === ChainType.CORETIME &&
         coretimeApi &&
-        coretimeApiState === ApiState.READY
+        isCoretimeReady
       ) {
         transfer(coretimeApi);
-      } else if (
-        originChain === ChainType.RELAY &&
-        relayApi &&
-        relayApiState === ApiState.READY
-      ) {
+      } else if (originChain === ChainType.RELAY && relayApi && isRelayReady) {
         transfer(relayApi);
       } else if (
         originChain === ChainType.REGIONX &&
         regionXApi &&
-        regionxApiState === ApiState.READY
+        isRegionXReady
       ) {
         transfer(regionXApi);
       }
@@ -187,7 +183,7 @@ export const useTransferHandlers = () => {
     receiverKeypair.addFromAddress(newOwner ? newOwner : activeAccount.address);
 
     if (originChain === destinationChain) {
-      if (!(coretimeApi && coretimeApiState === ApiState.READY)) return;
+      if (!(coretimeApi && isCoretimeReady)) return;
       await transferRegionOnCoretimeChain(
         coretimeApi,
         selectedRegion.region,
@@ -200,7 +196,7 @@ export const useTransferHandlers = () => {
       originChain === ChainType.CORETIME &&
       destinationChain === ChainType.REGIONX
     ) {
-      if (!(coretimeApi && coretimeApiState === ApiState.READY)) return;
+      if (!(coretimeApi && isCoretimeReady)) return;
       await coretimeToRegionXTransfer(
         coretimeApi,
         { address: activeAccount.address, signer: activeSigner },
@@ -212,7 +208,7 @@ export const useTransferHandlers = () => {
       originChain === ChainType.REGIONX &&
       destinationChain === ChainType.CORETIME
     ) {
-      if (!(regionXApi && regionxApiState === ApiState.READY)) return;
+      if (!(regionXApi && isRegionXReady)) return;
       coretimeFromRegionXTransfer(
         regionXApi,
         { address: activeAccount.address, signer: activeSigner },

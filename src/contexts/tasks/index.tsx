@@ -52,18 +52,14 @@ const TaskDataProvider = ({ children }: Props) => {
   const [tasks, setTasks] = useState<TaskMetadata[]>([]);
 
   const {
-    state: { api: coretimeApi, apiState: coretimeApiState },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady },
   } = useCoretimeApi();
 
   const STORAGE_ITEM_KEY = 'tasks';
 
   // The tasks which will run on Polkadot cores in the future.
   const fetchWorkplan = async (): Promise<Tasks> => {
-    if (
-      !coretimeApi ||
-      coretimeApiState !== ApiState.READY ||
-      !coretimeApi.query.broker
-    )
+    if (!coretimeApi || !isCoretimeReady || !coretimeApi.query.broker)
       return {};
     try {
       const workplan = await coretimeApi.query.broker.workplan.entries();
@@ -102,11 +98,7 @@ const TaskDataProvider = ({ children }: Props) => {
     core: CoreIndex,
     regionMask: string
   ): Promise<Task> => {
-    if (
-      !coretimeApi ||
-      coretimeApiState !== ApiState.READY ||
-      !coretimeApi.query.broker
-    )
+    if (!coretimeApi || !isCoretimeReady || !coretimeApi.query.broker)
       return null;
     const workload = (
       (

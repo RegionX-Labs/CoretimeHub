@@ -41,10 +41,10 @@ const Renewal = () => {
   const { saleInfo, saleStatus, status: saleInfoStatus, phase } = useSaleInfo();
 
   const {
-    state: { api: relayApi, apiState: relayApiState },
+    state: { api: relayApi, isApiReady: isRelayReady },
   } = useRelayApi();
   const {
-    state: { api: coretimeApi, apiState: coretimeApiState, decimals, symbol },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady, decimals, symbol },
     timeslicePeriod,
   } = useCoretimeApi();
 
@@ -60,7 +60,7 @@ const Renewal = () => {
   const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
 
   const handleRenew = () => {
-    if (!activeAccount || !coretimeApi || !coretimeApiState || !activeSigner)
+    if (!activeAccount || !coretimeApi || !isCoretimeReady || !activeSigner)
       return;
 
     const { core } = parachains[activeIdx];
@@ -98,9 +98,9 @@ const Renewal = () => {
       setLoading(true);
       if (
         !coretimeApi ||
-        coretimeApiState !== ApiState.READY ||
+        !isCoretimeReady ||
         !relayApi ||
-        relayApiState !== ApiState.READY ||
+        !isRelayReady ||
         !parachains[activeIdx] ||
         saleInfoStatus !== ContextStatus.LOADED
       )
@@ -129,9 +129,9 @@ const Renewal = () => {
     getExpiry();
   }, [
     coretimeApi,
-    coretimeApiState,
+    isCoretimeReady,
     relayApi,
-    relayApiState,
+    isRelayReady,
     activeIdx,
     parachains,
     timeslicePeriod,

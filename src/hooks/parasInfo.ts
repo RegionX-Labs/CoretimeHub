@@ -13,10 +13,10 @@ import { useRenewableParachains } from './renewableParas';
 
 export const useParasInfo = () => {
   const {
-    state: { api: relayApi, apiState: relayApiState },
+    state: { api: relayApi, isApiReady: isRelayReady },
   } = useRelayApi();
   const {
-    state: { api: coretimeApi, apiState: coretimeApiState },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady },
   } = useCoretimeApi();
   const {
     state: { activeAccount },
@@ -32,11 +32,11 @@ export const useParasInfo = () => {
   const [maxCodeSize, setMaxCodeSize] = useState(BigInt(BigInt(0)));
 
   const fetchParaStates = useCallback(async () => {
-    if (relayApiState !== ApiState.READY || !relayApi) return;
+    if (!isRelayReady || !relayApi) return;
     setLoading(true);
 
     const fetchActiveParas = async (): Promise<number[]> => {
-      if (!coretimeApi || coretimeApiState !== ApiState.READY) return [];
+      if (!coretimeApi || !isCoretimeReady) return [];
 
       const workloads = await coretimeApi.query.broker.workload.entries();
       const ids: number[] = [];
@@ -51,7 +51,7 @@ export const useParasInfo = () => {
     };
 
     const fetchWorkplanParas = async (): Promise<number[]> => {
-      if (!coretimeApi || coretimeApiState !== ApiState.READY) return [];
+      if (!coretimeApi || !isCoretimeReady) return [];
 
       const workloads = await coretimeApi.query.broker.workplan.entries();
       const ids: number[] = [];
@@ -66,7 +66,7 @@ export const useParasInfo = () => {
     };
 
     const fetchLeaseHoldingParas = async (): Promise<number[]> => {
-      if (!coretimeApi || coretimeApiState !== ApiState.READY) return [];
+      if (!coretimeApi || !isCoretimeReady) return [];
       const leases = await coretimeApi.query.broker.leases();
       const ids = (
         leases.toJSON() as Array<{ until: number; task: number }>
@@ -75,7 +75,7 @@ export const useParasInfo = () => {
     };
 
     const fetchSystemParas = async (): Promise<number[]> => {
-      if (!coretimeApi || coretimeApiState !== ApiState.READY) return [];
+      if (!coretimeApi || !isCoretimeReady) return [];
       const leases: any = (
         (await coretimeApi.query.broker.reservations()).toJSON() as Array<any>
       ).map((e) => e[0]);
@@ -192,10 +192,10 @@ export const useParasInfo = () => {
     setLoading(false);
   }, [
     relayApi,
-    relayApiState,
+    isRelayReady,
     activeAccount,
     coretimeApi,
-    coretimeApiState,
+    isCoretimeReady,
     network,
     renewableParas,
   ]);

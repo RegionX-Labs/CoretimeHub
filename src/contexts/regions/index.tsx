@@ -52,14 +52,18 @@ interface Props {
 
 const RegionDataProvider = ({ children }: Props) => {
   const {
-    state: { api: coretimeApi, apiState: coretimeApiState },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady },
     timeslicePeriod,
   } = useCoretimeApi();
   const {
-    state: { api: regionxApi, apiState: regionxApiState },
+    state: { api: regionxApi, isApiReady: isRegionXReady },
   } = useRegionXApi();
   const {
-    state: { api: relayApi, apiState: relayApiState, height: relayBlockNumber },
+    state: {
+      api: relayApi,
+      isApiReady: isRelayReady,
+      height: relayBlockNumber,
+    },
   } = useRelayApi();
   const {
     state: { activeAccount },
@@ -81,8 +85,8 @@ const RegionDataProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (network === NetworkType.NONE) return;
-    if (!coretimeApi || coretimeApiState !== ApiState.READY) return;
-    if (!relayApi || relayApiState !== ApiState.READY) return;
+    if (!coretimeApi || !isCoretimeReady) return;
+    if (!relayApi || !isRelayReady) return;
     if (relayBlockNumber === 0) return;
 
     if (!activeAccount) {
@@ -101,11 +105,11 @@ const RegionDataProvider = ({ children }: Props) => {
   }, [
     activeAccount,
     coretimeApi,
-    coretimeApiState,
+    isCoretimeReady,
     relayApi,
-    relayApiState,
+    isRelayReady,
     regionxApi,
-    regionxApiState,
+    isRegionXReady,
     relayBlockNumber,
     timeslicePeriod,
     status,

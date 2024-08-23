@@ -38,14 +38,14 @@ export const IsmpRegionCard = ({
   requestAction,
 }: IsmpRegionProps) => {
   const {
-    state: { api: relayApi, apiState: relayApiState },
+    state: { api: relayApi, isApiReady: isRelayReady },
   } = useRelayApi();
   const {
-    state: { api: coretimeApi, apiState: coretimeApiState },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady },
     timeslicePeriod,
   } = useCoretimeApi();
   const {
-    state: { api: regionxApi, apiState: regionxApiState },
+    state: { api: regionxApi, isApiReady: isRegionXReady },
   } = useRegionXApi();
   const {
     state: { activeAccount, activeSigner },
@@ -62,7 +62,7 @@ export const IsmpRegionCard = ({
   const [working, setWorking] = useState(false);
 
   useEffect(() => {
-    if (!relayApi || relayApiState !== ApiState.READY) {
+    if (!relayApi || !isRelayReady) {
       return;
     }
     const fetchTimestamp = async () => {
@@ -74,14 +74,14 @@ export const IsmpRegionCard = ({
       setBeginTimestamp(timestamp);
     };
     fetchTimestamp();
-  }, [relayApi, relayApiState, timeslicePeriod, region]);
+  }, [relayApi, isRelayReady, timeslicePeriod, region]);
 
   useEffect(() => {
     if (
       !coretimeApi ||
-      coretimeApiState !== ApiState.READY ||
+      !isCoretimeReady ||
       !regionxApi ||
-      regionxApiState !== ApiState.READY ||
+      !isRegionXReady ||
       !activeAccount
     ) {
       return;
@@ -158,15 +158,10 @@ export const IsmpRegionCard = ({
         : onError();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [coretimeApi, regionxApi, coretimeApiState, regionxApiState, status]);
+  }, [coretimeApi, regionxApi, isCoretimeReady, isRegionXReady, status]);
 
   const requestRegionRecord = async () => {
-    if (
-      !regionxApi ||
-      regionxApiState !== ApiState.READY ||
-      !activeAccount ||
-      !activeSigner
-    ) {
+    if (!regionxApi || !isRegionXReady || !activeAccount || !activeSigner) {
       return;
     }
 

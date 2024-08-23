@@ -49,7 +49,7 @@ export const SellModal = ({
     state: { symbol: coretimeSymbol },
   } = useCoretimeApi();
   const {
-    state: { api: regionXApi, apiState: regionXApiState, symbol, decimals },
+    state: { api: regionXApi, isApiReady: isRegionXReady, symbol, decimals },
   } = useRegionXApi();
 
   const { fetchRegions } = useRegions();
@@ -62,12 +62,7 @@ export const SellModal = ({
   const [working, setWorking] = useState(false);
 
   const listOnSale = async () => {
-    if (
-      !activeAccount ||
-      !activeSigner ||
-      !regionXApi ||
-      regionXApiState !== ApiState.READY
-    ) {
+    if (!activeAccount || !activeSigner || !regionXApi || !isRegionXReady) {
       toastWarning(
         'Please connect your wallet and check the network connection.'
       );

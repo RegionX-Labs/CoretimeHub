@@ -18,7 +18,7 @@ export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
   const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
 
   const {
-    state: { api: relayApi, apiState: relayApiState },
+    state: { api: relayApi, isApiReady: isRelayReady },
   } = useRelayApi();
 
   const theme = useTheme();
@@ -30,7 +30,7 @@ export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
   const { timeslicePeriod } = useCoretimeApi();
 
   useEffect(() => {
-    if (!relayApi || relayApiState !== ApiState.READY) {
+    if (!relayApi || !isRelayReady) {
       return;
     }
     const fetchTimestamps = async () => {
@@ -49,7 +49,7 @@ export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
       setEndTimestamp(end);
     };
     fetchTimestamps();
-  }, [relayApi, relayApiState, region, timeslicePeriod]);
+  }, [relayApi, isRelayReady, region, timeslicePeriod]);
   return (
     <Paper className={styles.container}>
       <Box className={styles.regionInfo}>

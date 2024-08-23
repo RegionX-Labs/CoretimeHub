@@ -91,7 +91,7 @@ interface Props {
 const SaleInfoProvider = ({ children }: Props) => {
   const { network } = useNetwork();
   const {
-    state: { api: coretimeApi, apiState: coretimeApiState, height },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady, height },
     timeslicePeriod,
   } = useCoretimeApi();
 
@@ -124,7 +124,7 @@ const SaleInfoProvider = ({ children }: Props) => {
   const fetchSaleInfo = async () => {
     try {
       setStatus(ContextStatus.LOADING);
-      if (!coretimeApi || coretimeApiState !== ApiState.READY) {
+      if (!coretimeApi || !isCoretimeReady) {
         setStatus(ContextStatus.UNINITIALIZED);
         return;
       }
@@ -194,7 +194,7 @@ const SaleInfoProvider = ({ children }: Props) => {
 
   useEffect(() => {
     fetchSaleInfo();
-  }, [network, coretimeApi, coretimeApiState, timeslicePeriod]);
+  }, [network, coretimeApi, isCoretimeReady, timeslicePeriod]);
 
   useEffect(() => {
     if (height === 0) return;

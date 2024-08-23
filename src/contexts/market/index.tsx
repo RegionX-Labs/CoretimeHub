@@ -39,11 +39,15 @@ interface Props {
 
 const MarketProvider = ({ children }: Props) => {
   const {
-    state: { api: regionXApi, apiState: regionXApiState },
+    state: { api: regionXApi, isApiReady: isRegionXReady },
   } = useRegionXApi();
   const { timeslicePeriod } = useCoretimeApi();
   const {
-    state: { api: relayApi, apiState: relayApiState, height: relayBlockNumber },
+    state: {
+      api: relayApi,
+      isApiReady: isRelayReady,
+      height: relayBlockNumber,
+    },
   } = useRelayApi();
   const { network } = useNetwork();
 
@@ -53,9 +57,9 @@ const MarketProvider = ({ children }: Props) => {
   const fetchMarket = useCallback(async () => {
     if (
       !regionXApi ||
-      regionXApiState !== ApiState.READY ||
+      !isRegionXReady ||
       !relayApi ||
-      relayApiState !== ApiState.READY ||
+      !isRelayReady ||
       !relayBlockNumber
     )
       return;
@@ -135,20 +139,12 @@ const MarketProvider = ({ children }: Props) => {
       setStatus(ContextStatus.ERROR);
       setListedRegions([]);
     }
-  }, [regionXApi, regionXApiState, relayApi, relayApiState, relayBlockNumber]);
+  }, [regionXApi, isRegionXReady, relayApi, isRelayReady, relayBlockNumber]);
 
   useEffect(() => {
     if (relayBlockNumber > 0 && status === ContextStatus.UNINITIALIZED)
       fetchMarket();
-  }, [
-    regionXApi,
-    regionXApiState,
-    relayApiState,
-    relayApi,
-    relayBlockNumber,
-    status,
-    fetchMarket,
-  ]);
+  }, [relayBlockNumber, status, fetchMarket]);
 
   useEffect(() => {
     setStatus(ContextStatus.UNINITIALIZED);

@@ -70,7 +70,7 @@ const Marketplace = () => {
   const { fetchMarket, listedRegions, status } = useMarket();
 
   const {
-    state: { api: regionXApi, apiState: regionXApiState, decimals, symbol },
+    state: { api: regionXApi, isApiReady: isRegionXReady, decimals, symbol },
   } = useRegionXApi();
   const { toastError, toastSuccess, toastWarning, toastInfo } = useToast();
   const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
@@ -89,7 +89,7 @@ const Marketplace = () => {
   };
 
   const unlistRegion = async (regionId: OnChainRegionId) => {
-    if (!regionXApi || regionXApiState !== ApiState.READY) {
+    if (!regionXApi || !isRegionXReady) {
       toastWarning('Please check the connection to RegionX Chain');
       return;
     }

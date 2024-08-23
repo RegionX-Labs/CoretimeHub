@@ -13,6 +13,7 @@ export type State = {
   socket: string;
   apiError: any;
   apiState: ApiState;
+  isApiReady: boolean;
   symbol: string;
   name: string;
   decimals: number;
@@ -29,6 +30,7 @@ export const initialState: State = {
   socket: '',
   apiError: null,
   apiState: ApiState.DISCONNECTED,
+  isApiReady: false,
   symbol: '',
   name: '',
   decimals: 0,
