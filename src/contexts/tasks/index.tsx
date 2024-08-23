@@ -6,7 +6,6 @@ import { parseHNString } from '@/utils/functions';
 import { POOLING_TASK_ID, ScheduleItem, TaskMetadata } from '@/models';
 
 import { useCoretimeApi } from '../apis';
-import { ApiState } from '../apis/types';
 
 export type Task = number | null;
 export type Tasks = Record<string, Task>;

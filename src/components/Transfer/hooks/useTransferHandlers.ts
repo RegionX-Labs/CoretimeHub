@@ -16,7 +16,6 @@ import {
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { AssetType, ChainType } from '@/models';

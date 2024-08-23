@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { getRelativeTimeString, timesliceToTimestamp } from '@/utils/functions';
 
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';

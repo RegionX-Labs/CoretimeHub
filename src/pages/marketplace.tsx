@@ -26,7 +26,6 @@ import {
 
 import { useAccounts } from '@/contexts/account';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
-import { ApiState } from '@/contexts/apis/types';
 import { useMarket } from '@/contexts/market';
 import { useToast } from '@/contexts/toast';
 import { ContextStatus, Listing, MarketFilterOptions } from '@/models';

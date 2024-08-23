@@ -23,7 +23,6 @@ import * as RegionXRegions from './regionx';
 import { useAccounts } from '../account';
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { useRegionXApi } from '../apis/RegionXApi';
-import { ApiState } from '../apis/types';
 import { useNetwork } from '../network';
 import { Tasks, useTasks } from '../tasks';
 

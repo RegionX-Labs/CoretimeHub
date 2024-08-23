@@ -24,7 +24,6 @@ import { Balance, Banner, ParaDisplay, ProgressButton } from '@/components';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
-import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';

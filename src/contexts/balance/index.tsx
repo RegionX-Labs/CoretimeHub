@@ -4,7 +4,6 @@ import { enableRegionX } from '@/utils/functions';
 
 import { useAccounts } from '../account';
 import { useCoretimeApi, useRegionXApi, useRelayApi } from '../apis';
-import { ApiState } from '../apis/types';
 import { useNetwork } from '../network';
 
 interface Props {

@@ -15,7 +15,6 @@ import {
 } from '@/models';
 
 import { useCoretimeApi } from '../apis';
-import { ApiState } from '../apis/types';
 import { useNetwork } from '../network';
 
 interface SaleData {

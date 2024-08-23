@@ -21,7 +21,6 @@ import { makeResponse, makeTimeout, queryRequest } from '@/utils/ismp';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
-import { ApiState } from '@/contexts/apis/types';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { ISMPRecordStatus, RegionMetadata } from '@/models';

@@ -14,7 +14,6 @@ import { ContextStatus, Listing, ListingRecord } from '@/models';
 
 import { useCoretimeApi, useRelayApi } from '../apis';
 import { useRegionXApi } from '../apis/RegionXApi';
-import { ApiState } from '../apis/types';
 import { useNetwork } from '../network';
 
 interface MarketData {
