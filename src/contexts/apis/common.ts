@@ -61,6 +61,7 @@ export const reducer = (state: any, action: any) => {
       return {
         ...state,
         apiState: ApiState.READY,
+        isApiReady: true,
         height: 0,
         timestamp: 0,
       };
