@@ -50,10 +50,10 @@ const MenuItem = ({ label, enabled, route, icon }: MenuItemProps) => {
         marginBottom: '0.25rem',
         ...(isActive
           ? {
-            color: theme.palette.common.black,
-            background: theme.palette.primary.contrastText,
-            borderRadius: '1rem',
-          }
+              color: theme.palette.common.black,
+              background: theme.palette.primary.contrastText,
+              borderRadius: '1rem',
+            }
           : {}),
         ':hover': {
           opacity: 0.8,
