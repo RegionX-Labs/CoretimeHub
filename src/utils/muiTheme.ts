@@ -15,27 +15,27 @@ let theme = createTheme({
       default: '#f6f7fa',
     },
     primary: {
-      contrastText: '#ecedef',
-      main: '#3868a9',
+      contrastText: '#f6f7fa',
+      main: '#3758F9',
     },
     success: {
-      main: '#68a938',
+      main: '#13C296',
     },
     grey: {
       100: '#eeeff4',
       200: '#8c8c8c',
     },
     text: {
-      primary: '#7e8591',
-      secondary: '#3868a9',
+      primary: '#637381',
+      secondary: '#8899A8',
     },
     common: {
       white: '#fff',
     },
     warning: {
-      main: '#A93868',
+      main: '#FCD34D',
     },
-    divider: '#efefef',
+    divider: '#F3F4F6',
   },
   typography: {
     subtitle1: {

@@ -50,8 +50,8 @@ export const SalePhaseInfoPanel = () => {
             variant='text'
             className={styles.buttonWrapper}
             sx={{
-              background: '#e8eff7',
-              color: theme.palette.text.secondary,
+              background: theme.palette.grey[100],
+              color: theme.palette.text.primary,
             }}
             onClick={() => openHistoryModal(true)}
             data-cy='btn-purchase-history'

@@ -21,7 +21,7 @@ import { getBalanceString } from '@/utils/functions';
 
 import { PurchaseHistoryTable } from '@/components';
 
-import Chart from '@/assets/chart.png';
+import Chart from '@/assets/chart.svg';
 import Config from '@/assets/config.png';
 import Manage from '@/assets/manage.png';
 import Trade from '@/assets/trade.png';
