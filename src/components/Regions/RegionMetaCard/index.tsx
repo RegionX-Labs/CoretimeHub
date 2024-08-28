@@ -117,12 +117,12 @@ const RegionCardInner = ({
     {
       label: 'Core Occupancy',
       value: coreOccupancy ?? 0,
-      color: 'warning',
+      color: 'success',
     },
     {
       label: 'Consumed',
       value: consumed ?? 0,
-      color: 'success',
+      color: 'warning',
     },
     {
       label: 'Current Usage',

@@ -101,7 +101,7 @@ export const SaleInfoPanel = () => {
               className={styles.buttonWrapper}
               sx={{
                 background: '#e8eff7',
-                color: theme.palette.text.secondary,
+                color: theme.palette.text.primary,
               }}
               data-cy='btn-analyze-price'
             >

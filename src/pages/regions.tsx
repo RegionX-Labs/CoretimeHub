@@ -191,7 +191,7 @@ const Dashboard = () => {
         <Paper
           sx={{
             borderRadius: '.5rem',
-            color: theme.palette.text.secondary,
+            color: theme.palette.text.primary,
             minWidth: '18rem',
             padding: '2rem 3rem',
             maxHeight: '32.5rem',

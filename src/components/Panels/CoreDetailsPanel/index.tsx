@@ -41,7 +41,7 @@ const DetailItem = ({ label, description, value, dataCy }: DetailItemProps) => {
         <Typography
           sx={{
             fontSize: '0.8rem',
-            color: theme.palette.text.secondary,
+            color: theme.palette.text.primary,
             fontWeight: 700,
             lineHeight: 1,
           }}

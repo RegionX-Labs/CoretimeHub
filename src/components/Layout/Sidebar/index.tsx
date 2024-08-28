@@ -181,7 +181,7 @@ export const Sidebar = () => {
             <Box
               key={index}
               sx={{
-                color: theme.palette.text.secondary,
+                color: theme.palette.text.primary,
                 textTransform: 'capitalize',
               }}
             >

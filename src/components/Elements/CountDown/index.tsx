@@ -67,7 +67,7 @@ export const CountDown = ({ remainingTime }: CountDownProps) => {
     <Stack direction='row' gap='0.5rem'>
       <CountdownCircleTimer
         {...timerProps}
-        colors='#64A537'
+        colors={`${theme.palette.success.main}` as any}
         duration={daysDuration}
         initialRemainingTime={remainingTime}
       >
@@ -79,7 +79,7 @@ export const CountDown = ({ remainingTime }: CountDownProps) => {
       </CountdownCircleTimer>
       <CountdownCircleTimer
         {...timerProps}
-        colors='#64A537'
+        colors={`${theme.palette.success.main}` as any}
         duration={daySeconds}
         initialRemainingTime={remainingTime % daySeconds}
         onComplete={(totalElapsedTime) => ({
@@ -94,7 +94,7 @@ export const CountDown = ({ remainingTime }: CountDownProps) => {
       </CountdownCircleTimer>
       <CountdownCircleTimer
         {...timerProps}
-        colors='#64A537'
+        colors={`${theme.palette.success.main}` as any}
         duration={hourSeconds}
         initialRemainingTime={remainingTime % hourSeconds}
         onComplete={(totalElapsedTime) => ({
@@ -109,7 +109,7 @@ export const CountDown = ({ remainingTime }: CountDownProps) => {
       </CountdownCircleTimer>
       <CountdownCircleTimer
         {...timerProps}
-        colors='#64A537'
+        colors={`${theme.palette.success.main}` as any}
         duration={minuteSeconds}
         initialRemainingTime={remainingTime % minuteSeconds}
         onComplete={(totalElapsedTime) => ({
