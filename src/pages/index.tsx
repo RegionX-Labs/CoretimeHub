@@ -22,9 +22,9 @@ import { getBalanceString } from '@/utils/functions';
 import { PurchaseHistoryTable } from '@/components';
 
 import Chart from '@/assets/chart.svg';
-import Config from '@/assets/config.png';
-import Manage from '@/assets/manage.png';
-import Trade from '@/assets/trade.png';
+import Config from '@/assets/config.svg';
+import Manage from '@/assets/manage.svg';
+import Trade from '@/assets/trade.svg';
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
@@ -265,6 +265,7 @@ const Home = () => {
               background: theme.palette.common.white,
               color: theme.palette.common.black,
               borderRadius: '0.75rem',
+              borderColor: theme.palette.grey[200],
               py: '1.25rem',
               flex: '1 0 0',
             }}
