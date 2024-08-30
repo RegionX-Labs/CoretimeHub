@@ -25,7 +25,7 @@ The UI currently supports:
 - Parachain Id reservation
 - Parachain code registration
 
-### `/paras/renewal`
+### `/renew`
 - Core renewal
 
 ### `/marketplace`

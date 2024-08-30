@@ -7,7 +7,7 @@ import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { ContextStatus, NetworkType } from '@/models';
 
-type RenewableParachain = {
+export type RenewableParachain = {
   core: number;
   paraId: number;
   price: number;

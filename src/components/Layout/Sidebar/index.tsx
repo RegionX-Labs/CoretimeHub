@@ -110,7 +110,7 @@ export const Sidebar = () => {
     parachains: [
       {
         label: 'Renew',
-        route: '/paras/renewal',
+        route: '/renew',
         enabled: true,
         icon: <RenewIcon color={theme.palette.text.primary} />,
       },
