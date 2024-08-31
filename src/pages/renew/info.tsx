@@ -25,13 +25,16 @@ export const RenewableParaInfo = ({ parachain }: RenewableParaInfoProps) => {
     state: { api: relayApi, isApiReady: isRelayReady },
   } = useRelayApi();
   const {
-    state: { api: coretimeApi, isApiReady: isCoretimeReady, decimals, symbol },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady },
     timeslicePeriod,
   } = useCoretimeApi();
 
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // No need to keep refreshing
+    if (expiryTimestamp) return;
+
     const getExpiry = async () => {
       setLoading(true);
       if (
@@ -75,7 +78,11 @@ export const RenewableParaInfo = ({ parachain }: RenewableParaInfoProps) => {
   return (
     <>
       <Stack direction='column' gap='1.5rem' margin='1rem 0' width='75%' sx={{ mx: 'auto' }}>
-        <ParachainInfo parachain={parachain} expiryTimestamp={expiryTimestamp} expiryLoading={loading} />
+        <ParachainInfo
+          parachain={parachain}
+          expiryTimestamp={expiryTimestamp}
+          expiryLoading={loading}
+        />
         {/* If all cores are sold warn the user: */}
         {saleInfo.coresSold === saleInfo.coresOffered && (
           <Banner
