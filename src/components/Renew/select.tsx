@@ -34,9 +34,9 @@ export const SelectParachain = ({ parachains, activeIdx, setActiveIdx }: SelectP
           value={activeIdx}
           onChange={(e) => setActiveIdx(Number(e.target.value))}
         >
-          {parachains.map(({ paraId }, index) => (
+          {parachains.map(({ paraId, core }, index) => (
             <MenuItem key={index} value={index}>
-              <ParaDisplay {...{ network, paraId }} />
+              <ParaDisplay {...{ network, paraId, core }} />
             </MenuItem>
           ))}
         </Select>
