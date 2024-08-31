@@ -7,11 +7,12 @@ import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { ContextStatus, NetworkType } from '@/models';
 
-type RenewableParachain = {
+export type RenewableParachain = {
   core: number;
   paraId: number;
   price: number;
   mask: string;
+  // The point in time that the renewable workload on `core` ends and a fresh renewal may begin.
   when: number;
 };
 
