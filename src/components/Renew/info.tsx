@@ -62,6 +62,7 @@ export const RenewableParaInfo = ({ parachain, setRenewalEnabled }: RenewablePar
 
     getExpiry();
   }, [
+    parachain,
     coretimeApi,
     isCoretimeReady,
     relayApi,
