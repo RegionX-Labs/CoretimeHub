@@ -1,14 +1,17 @@
-import { ProgressButton } from "@/components"
-import { useCoretimeApi, useRelayApi } from "@/contexts/apis";
-import { Stack } from "@mui/material"
-import { useState } from "react";
+import { Stack } from '@mui/material';
+import { useState } from 'react';
+
+import { RenewableParachain } from '@/hooks';
+import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
+
+import { ProgressButton } from '@/components';
+
+import { useAccounts } from '@/contexts/account';
+import { useCoretimeApi } from '@/contexts/apis';
 import { useToast } from '@/contexts/toast';
-import { useAccounts } from "@/contexts/account";
-import { RenewableParachain } from "@/hooks";
-import { useSubmitExtrinsic } from "@/hooks/submitExtrinsic";
 
 interface RenewActionProps {
-  parachain: RenewableParachain,
+  parachain: RenewableParachain;
 }
 
 export const RenewAction = ({ parachain }: RenewActionProps) => {
@@ -56,5 +59,5 @@ export const RenewAction = ({ parachain }: RenewActionProps) => {
         <ProgressButton label='Renew' onClick={handleRenew} loading={working} width='200px' />
       </Stack>
     </>
-  )
-}
+  );
+};

@@ -1,13 +1,16 @@
-import { ParaDisplay } from "@/components"
-import { useNetwork } from "@/contexts/network"
-import { RenewableParachain } from "@/hooks"
-import theme from "@/utils/muiTheme"
-import { FormControl, InputLabel, MenuItem, Select, Stack, Typography } from "@mui/material"
+import { FormControl, InputLabel, MenuItem, Select, Stack, Typography } from '@mui/material';
+
+import { RenewableParachain } from '@/hooks';
+import theme from '@/utils/muiTheme';
+
+import { ParaDisplay } from '@/components';
+
+import { useNetwork } from '@/contexts/network';
 
 interface SelectParachainProps {
-  parachains: RenewableParachain[],
-  activeIdx: number,
-  setActiveIdx: (_: number) => void,
+  parachains: RenewableParachain[];
+  activeIdx: number;
+  setActiveIdx: (_: number) => void;
 }
 
 export const SelectParachain = ({ parachains, activeIdx, setActiveIdx }: SelectParachainProps) => {
@@ -38,6 +41,6 @@ export const SelectParachain = ({ parachains, activeIdx, setActiveIdx }: SelectP
           ))}
         </Select>
       </FormControl>
-    </Stack >
-  )
-}
+    </Stack>
+  );
+};

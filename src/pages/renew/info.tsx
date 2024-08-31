@@ -1,16 +1,19 @@
-import theme from "@/utils/muiTheme";
-import { Box, Stack, Tooltip, Typography } from "@mui/material";
-import { RenewableParachain } from "@/hooks";
-import { getBalanceString, timesliceToTimestamp } from "@/utils/functions";
-import { useEffect, useState } from "react";
-import { useCoretimeApi, useRelayApi } from "@/contexts/apis";
-import { useSaleInfo } from "@/contexts/sales";
-import { ContextStatus } from "@/models";
-import { Banner } from "@/components";
-import { humanizer } from "humanize-duration";
+import { Box, Stack, Tooltip, Typography } from '@mui/material';
+import { humanizer } from 'humanize-duration';
+import { useEffect, useState } from 'react';
+
+import { RenewableParachain } from '@/hooks';
+import { getBalanceString, timesliceToTimestamp } from '@/utils/functions';
+import theme from '@/utils/muiTheme';
+
+import { Banner } from '@/components';
+
+import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
+import { useSaleInfo } from '@/contexts/sales';
+import { ContextStatus } from '@/models';
 
 interface RenewableParaInfoProps {
-  parachain: RenewableParachain,
+  parachain: RenewableParachain;
 }
 
 export const RenewableParaInfo = ({ parachain }: RenewableParaInfoProps) => {
@@ -48,11 +51,7 @@ export const RenewableParaInfo = ({ parachain }: RenewableParaInfoProps) => {
         saleStatus.lastCommittedTimeslice,
         timeslicePeriod
       );
-      const expiry = await timesliceToTimestamp(
-        relayApi,
-        parachain.when,
-        timeslicePeriod
-      );
+      const expiry = await timesliceToTimestamp(relayApi, parachain.when, timeslicePeriod);
 
       if (expiry - now < 0) {
         setExpiryTimestamp(phase.endpoints.fixed.end - now);
@@ -131,8 +130,8 @@ export const RenewableParaInfo = ({ parachain }: RenewableParaInfoProps) => {
         </Stack>
       )}
     </>
-  )
-}
+  );
+};
 
 interface PropertyProps {
   property: string;

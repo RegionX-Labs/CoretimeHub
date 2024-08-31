@@ -1,11 +1,4 @@
-import {
-  Backdrop,
-  Box,
-  CircularProgress,
-  Paper,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Backdrop, Box, CircularProgress, Paper, Typography, useTheme } from '@mui/material';
 import { useState } from 'react';
 
 import { useRenewableParachains } from '@/hooks/renewableParas';
@@ -13,9 +6,10 @@ import { useRenewableParachains } from '@/hooks/renewableParas';
 import { Balance } from '@/components';
 
 import { ContextStatus } from '@/models';
-import { SelectParachain } from './select';
-import { RenewableParaInfo } from './info';
+
 import { RenewAction } from './action';
+import { RenewableParaInfo } from './info';
+import { SelectParachain } from './select';
 
 const Renewal = () => {
   const theme = useTheme();
@@ -58,7 +52,11 @@ const Renewal = () => {
             boxShadow: 'none',
           }}
         >
-          <SelectParachain activeIdx={activeIdx} parachains={parachains} setActiveIdx={setActiveIdx} />
+          <SelectParachain
+            activeIdx={activeIdx}
+            parachains={parachains}
+            setActiveIdx={setActiveIdx}
+          />
           <RenewableParaInfo parachain={parachains[activeIdx]} />
           <RenewAction parachain={parachains[activeIdx]} />
         </Paper>

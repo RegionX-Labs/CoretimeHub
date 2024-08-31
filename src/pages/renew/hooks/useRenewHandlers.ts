@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 export const useRenewHandlers = () => {
   const [activeIdx, setActiveIdx] = useState<number>(0);
@@ -6,5 +6,5 @@ export const useRenewHandlers = () => {
   return {
     activeIdx,
     setActiveIdx,
-  }
-}
+  };
+};
