@@ -31,8 +31,6 @@ export const RenewableParaInfo = ({ parachain }: RenewableParaInfoProps) => {
 
   const [loading, setLoading] = useState(false);
 
-  const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
-
   useEffect(() => {
     const getExpiry = async () => {
       setLoading(true);
@@ -76,30 +74,10 @@ export const RenewableParaInfo = ({ parachain }: RenewableParaInfoProps) => {
 
   return (
     <>
-      <Stack direction='column' gap={1} margin='1rem 0' width='75%' sx={{ mx: 'auto' }}>
-        <Stack
-          direction='column'
-          padding='1rem'
-          mt={'2rem'}
-          gap='0.5rem'
-          border='1px solid'
-          borderColor={theme.palette.grey[400]}
-          borderRadius='1rem'
-        >
-          <Property property='Core number:' value={parachain.core} />
-          <Property
-            tooltip='The parachain will stop with block production once it expires.'
-            property='Expiry in:'
-            value={loading ? '...' : formatDuration(expiryTimestamp)}
-          />
-          <Property
-            property='Renewal price: '
-            value={getBalanceString(parachain.price.toString(), decimals, symbol)}
-          />
-        </Stack>
-      </Stack>
-      {saleInfo.coresSold === saleInfo.coresOffered && (
-        <Stack width='75%' margin='0 auto' mt='1rem'>
+      <Stack direction='column' gap='1.5rem' margin='1rem 0' width='75%' sx={{ mx: 'auto' }}>
+        <ParachainInfo parachain={parachain} expiryTimestamp={expiryTimestamp} expiryLoading={loading} />
+        {/* If all cores are sold warn the user: */}
+        {saleInfo.coresSold === saleInfo.coresOffered && (
           <Banner
             content={
               'No more cores are on sale! Attempting to renew will fail. To avoid these kind of \
@@ -111,11 +89,9 @@ export const RenewableParaInfo = ({ parachain }: RenewableParaInfoProps) => {
             }}
             severity='warning'
           />
-        </Stack>
-      )}
-      {/* If not all cores are sold inform the user: */}
-      {saleInfo.coresSold < saleInfo.coresOffered && (
-        <Stack width='75%' margin='0 auto' mt='1rem'>
+        )}
+        {/* If not all cores are sold inform the user to renew: */}
+        {saleInfo.coresSold < saleInfo.coresOffered && (
           <Banner
             content={
               'It is highly recommended to renew during the interlude phase, as doing so guarantees \
@@ -127,15 +103,54 @@ export const RenewableParaInfo = ({ parachain }: RenewableParaInfoProps) => {
             }}
             severity='info'
           />
-        </Stack>
-      )}
+        )}
+      </Stack>
+    </>
+  );
+};
+
+interface ParachainInfoProps {
+  parachain: RenewableParachain;
+  expiryTimestamp: number;
+  expiryLoading: boolean;
+}
+
+const ParachainInfo = ({ parachain, expiryTimestamp, expiryLoading }: ParachainInfoProps) => {
+  const {
+    state: { decimals, symbol },
+  } = useCoretimeApi();
+
+  const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
+
+  return (
+    <>
+      <Stack
+        direction='column'
+        padding='1rem'
+        mt={'1rem'}
+        gap='0.5rem'
+        border='1px solid'
+        borderColor={theme.palette.grey[400]}
+        borderRadius='1rem'
+      >
+        <Property property='Core number:' value={parachain.core.toString()} />
+        <Property
+          tooltip='The parachain will stop with block production once it expires.'
+          property='Expiry in:'
+          value={expiryLoading ? '...' : formatDuration(expiryTimestamp)}
+        />
+        <Property
+          property='Renewal price: '
+          value={getBalanceString(parachain.price.toString(), decimals, symbol)}
+        />
+      </Stack>
     </>
   );
 };
 
 interface PropertyProps {
   property: string;
-  value: any;
+  value: string;
   tooltip?: string;
 }
 
