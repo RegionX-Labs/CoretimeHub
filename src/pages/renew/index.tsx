@@ -15,6 +15,7 @@ const Renewal = () => {
   const theme = useTheme();
 
   const [activeIdx, setActiveIdx] = useState<number>(0);
+  const [renewalEnabled, setRenewalEnabled] = useState<boolean>(true);
   const { status, parachains } = useRenewableParachains();
 
   return status !== ContextStatus.LOADED ? (
@@ -57,8 +58,11 @@ const Renewal = () => {
             parachains={parachains}
             setActiveIdx={setActiveIdx}
           />
-          <RenewableParaInfo parachain={parachains[activeIdx]} />
-          <RenewAction parachain={parachains[activeIdx]} />
+          <RenewableParaInfo
+            parachain={parachains[activeIdx]}
+            setRenewalEnabled={setRenewalEnabled}
+          />
+          <RenewAction parachain={parachains[activeIdx]} enabled={renewalEnabled} />
         </Paper>
       </Box>
     </>

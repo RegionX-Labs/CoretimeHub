@@ -1,6 +1,6 @@
 import { Box, Stack, Tooltip, Typography } from '@mui/material';
 import { humanizer } from 'humanize-duration';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { RenewableParachain } from '@/hooks';
 import { getBalanceString, timesliceToTimestamp } from '@/utils/functions';
@@ -14,9 +14,10 @@ import { ContextStatus } from '@/models';
 
 interface RenewableParaInfoProps {
   parachain: RenewableParachain;
+  setRenewalEnabled: Dispatch<SetStateAction<boolean>>;
 }
 
-export const RenewableParaInfo = ({ parachain }: RenewableParaInfoProps) => {
+export const RenewableParaInfo = ({ parachain, setRenewalEnabled }: RenewableParaInfoProps) => {
   const [expiryTimestamp, setExpiryTimestamp] = useState(0);
 
   const { saleInfo, saleStatus, status: saleInfoStatus, phase } = useSaleInfo();
@@ -32,9 +33,6 @@ export const RenewableParaInfo = ({ parachain }: RenewableParaInfoProps) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // No need to keep refreshing
-    if (expiryTimestamp) return;
-
     const getExpiry = async () => {
       setLoading(true);
       if (
@@ -42,7 +40,6 @@ export const RenewableParaInfo = ({ parachain }: RenewableParaInfoProps) => {
         !isCoretimeReady ||
         !relayApi ||
         !isRelayReady ||
-        !parachain ||
         saleInfoStatus !== ContextStatus.LOADED
       )
         return;
@@ -75,6 +72,11 @@ export const RenewableParaInfo = ({ parachain }: RenewableParaInfoProps) => {
     phase,
   ]);
 
+  useEffect(() => {
+    // if expiry is before the next region begin it should be possible to renew.
+    setRenewalEnabled(parachain.when <= saleInfo.regionBegin);
+  }, [saleInfo.regionBegin, parachain.when]);
+
   return (
     <>
       <Stack direction='column' gap='1.5rem' margin='1rem 0' width='75%' sx={{ mx: 'auto' }}>
@@ -83,33 +85,39 @@ export const RenewableParaInfo = ({ parachain }: RenewableParaInfoProps) => {
           expiryTimestamp={expiryTimestamp}
           expiryLoading={loading}
         />
-        {/* If all cores are sold warn the user: */}
-        {saleInfo.coresSold === saleInfo.coresOffered && (
-          <Banner
-            content={
-              'No more cores are on sale! Attempting to renew will fail. To avoid these kind of \
+        {parachain.when > saleInfo.regionBegin ? (
+          <Banner content={'No need to renew in the current sale'} severity='success' />
+        ) : (
+          <>
+            {/* If all cores are sold warn the user: */}
+            {saleInfo.coresSold === saleInfo.coresOffered && (
+              <Banner
+                content={
+                  'No more cores are on sale! Attempting to renew will fail. To avoid these kind of \
                   issues in the future, please renew during the interlude phase. '
-            }
-            link={{
-              title: 'Renewal FAQ',
-              href: 'https://docs.regionx.tech/docs/faq/renewal-questions',
-            }}
-            severity='warning'
-          />
-        )}
-        {/* If not all cores are sold inform the user to renew: */}
-        {saleInfo.coresSold < saleInfo.coresOffered && (
-          <Banner
-            content={
-              'It is highly recommended to renew during the interlude phase, as doing so guarantees \
+                }
+                link={{
+                  title: 'Renewal FAQ',
+                  href: 'https://docs.regionx.tech/docs/faq/renewal-questions',
+                }}
+                severity='warning'
+              />
+            )}
+            {/* If not all cores are sold inform the user to renew: */}
+            {saleInfo.coresSold < saleInfo.coresOffered && (
+              <Banner
+                content={
+                  'It is highly recommended to renew during the interlude phase, as doing so guarantees \
                   that the core will be available for renewal. '
-            }
-            link={{
-              title: 'Renewal FAQ',
-              href: 'https://docs.regionx.tech/docs/faq/renewal-questions',
-            }}
-            severity='info'
-          />
+                }
+                link={{
+                  title: 'Renewal FAQ',
+                  href: 'https://docs.regionx.tech/docs/faq/renewal-questions',
+                }}
+                severity='info'
+              />
+            )}
+          </>
         )}
       </Stack>
     </>

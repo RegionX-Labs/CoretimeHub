@@ -12,6 +12,7 @@ export type RenewableParachain = {
   paraId: number;
   price: number;
   mask: string;
+  // The point in time that the renewable workload on `core` ends and a fresh renewal may begin.
   when: number;
 };
 

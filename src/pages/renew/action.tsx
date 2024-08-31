@@ -12,9 +12,10 @@ import { useToast } from '@/contexts/toast';
 
 interface RenewActionProps {
   parachain: RenewableParachain;
+  enabled: boolean;
 }
 
-export const RenewAction = ({ parachain }: RenewActionProps) => {
+export const RenewAction = ({ parachain, enabled }: RenewActionProps) => {
   const [working, setWorking] = useState(false);
 
   const {
@@ -56,7 +57,13 @@ export const RenewAction = ({ parachain }: RenewActionProps) => {
   return (
     <>
       <Stack direction='row' gap='1rem' marginTop='2em' justifyContent='center'>
-        <ProgressButton label='Renew' onClick={handleRenew} loading={working} width='200px' />
+        <ProgressButton
+          disabled={!enabled}
+          label='Renew'
+          onClick={handleRenew}
+          loading={working}
+          width='200px'
+        />
       </Stack>
     </>
   );
