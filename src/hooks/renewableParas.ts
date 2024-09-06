@@ -36,9 +36,7 @@ export const useRenewableParachains = () => {
 
       setStatus(ContextStatus.LOADING);
 
-      const renewals = [NetworkType.ROCOCO, NetworkType.WESTEND].includes(network)
-        ? await api.query.broker.potentialRenewals.entries()
-        : await api.query.broker.allowedRenewals.entries();
+      const renewals = await api.query.broker.potentialRenewals.entries();
       const chains: RenewableParachain[] = [];
       for (const [key, value] of renewals) {
         const data: any = key.toHuman();
