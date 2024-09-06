@@ -5,7 +5,7 @@ import { parseHNString } from '@/utils/functions';
 import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
-import { ContextStatus, NetworkType } from '@/models';
+import { ContextStatus } from '@/models';
 
 export type RenewableParachain = {
   core: number;
