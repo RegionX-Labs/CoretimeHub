@@ -1,5 +1,6 @@
 import { NetworkType } from '@/models';
 
+import PolkadotChains from './polkadot';
 import KusamaChains from './kusama';
 import leases from './leases.json';
 import RococoChains from './rococo';
@@ -15,6 +16,7 @@ const transformData = (data: ChainDetails[]): Record<number, BaseChainInfo> => {
 };
 
 const chainData: Record<NetworkType, Record<number, BaseChainInfo>> = {
+  [NetworkType.POLKADOT]: transformData(PolkadotChains),
   [NetworkType.KUSAMA]: transformData(KusamaChains),
   [NetworkType.ROCOCO]: transformData(RococoChains),
   [NetworkType.WESTEND]: transformData(WestendChains),

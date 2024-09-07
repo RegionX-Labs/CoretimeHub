@@ -22,6 +22,8 @@ interface ChainSelectorProps {
 import { enableRegionX } from '@/utils/functions';
 
 import {
+  Polkadot,
+  PolkadotCoretime,
   Kusama,
   KusamaCoretime,
   RegionX,
@@ -33,6 +35,7 @@ import {
 import { useNetwork } from '@/contexts/network';
 
 const coretimeIcons = {
+  [NetworkType.POLKADOT]: PolkadotCoretime,
   [NetworkType.KUSAMA]: KusamaCoretime,
   [NetworkType.ROCOCO]: RococoCoretime,
   [NetworkType.WESTEND]: WestendCoretime,
@@ -40,6 +43,7 @@ const coretimeIcons = {
 };
 
 const relayIcons = {
+  [NetworkType.POLKADOT]: Polkadot,
   [NetworkType.KUSAMA]: Kusama,
   [NetworkType.ROCOCO]: Rococo,
   [NetworkType.WESTEND]: Westend,

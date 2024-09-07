@@ -1,5 +1,6 @@
 import KusamaCoretime from './kusama.png';
+import PolkadotCoretime from './polkadot.png';
 import RococoCoretime from './rococo.png';
 import WestendCoretime from './westend.png';
 
-export { KusamaCoretime, RococoCoretime, WestendCoretime };
+export { KusamaCoretime, PolkadotCoretime, RococoCoretime, WestendCoretime };
