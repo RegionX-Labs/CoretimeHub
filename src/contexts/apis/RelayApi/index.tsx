@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useReducer, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
 
-import { WS_KUSAMA_RELAY_CHAIN, WS_ROCOCO_RELAY_CHAIN, WS_WESTEND_RELAY_CHAIN } from '@/consts';
+import { WS_KUSAMA_RELAY_CHAIN, WS_POLKADOT_RELAY_CHAIN, WS_ROCOCO_RELAY_CHAIN, WS_WESTEND_RELAY_CHAIN } from '@/consts';
 import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
@@ -34,14 +34,17 @@ const RelayApiContextProvider = (props: any) => {
   const disconnectRelay = () => disconnect(state);
 
   const getUrl = (network: any): string | null => {
-    if (network === NetworkType.ROCOCO) {
-      return WS_ROCOCO_RELAY_CHAIN;
-    } else if (network === NetworkType.KUSAMA) {
-      return WS_KUSAMA_RELAY_CHAIN;
-    } else if (network === NetworkType.WESTEND) {
-      return WS_WESTEND_RELAY_CHAIN;
-    } else {
-      return null;
+    switch (network) {
+      case NetworkType.POLKADOT:
+        return WS_POLKADOT_RELAY_CHAIN;
+      case NetworkType.KUSAMA:
+        return WS_KUSAMA_RELAY_CHAIN;
+      case NetworkType.ROCOCO:
+        return WS_ROCOCO_RELAY_CHAIN;
+      case NetworkType.WESTEND:
+        return WS_WESTEND_RELAY_CHAIN;
+      default:
+        return null;
     }
   };
 

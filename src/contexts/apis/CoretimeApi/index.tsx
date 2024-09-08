@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useReducer } from 'react';
 
 import {
   WS_KUSAMA_CORETIME_CHAIN,
+  WS_POLKADOT_CORETIME_CHAIN,
   WS_ROCOCO_CORETIME_CHAIN,
   WS_WESTEND_CORETIME_CHAIN,
 } from '@/consts';
@@ -47,14 +48,17 @@ const CoretimeApiContextProvider = (props: any) => {
   const TIMESLICE_PERIOD = 80;
 
   const getUrl = (network: any): string | null => {
-    if (network === NetworkType.ROCOCO) {
-      return WS_ROCOCO_CORETIME_CHAIN;
-    } else if (network === NetworkType.KUSAMA) {
-      return WS_KUSAMA_CORETIME_CHAIN;
-    } else if (network === NetworkType.WESTEND) {
-      return WS_WESTEND_CORETIME_CHAIN;
-    } else {
-      return null;
+    switch (network) {
+      case NetworkType.POLKADOT:
+        return WS_POLKADOT_CORETIME_CHAIN;
+      case NetworkType.KUSAMA:
+        return WS_KUSAMA_CORETIME_CHAIN;
+      case NetworkType.ROCOCO:
+        return WS_ROCOCO_CORETIME_CHAIN;
+      case NetworkType.WESTEND:
+        return WS_WESTEND_CORETIME_CHAIN;
+      default:
+        return null;
     }
   };
 
