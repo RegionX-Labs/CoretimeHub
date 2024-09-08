@@ -2,7 +2,12 @@ import React, { useContext, useEffect, useReducer, useState } from 'react';
 
 import { parseHNString } from '@/utils/functions';
 
-import { WS_KUSAMA_RELAY_CHAIN, WS_POLKADOT_RELAY_CHAIN, WS_ROCOCO_RELAY_CHAIN, WS_WESTEND_RELAY_CHAIN } from '@/consts';
+import {
+  WS_KUSAMA_RELAY_CHAIN,
+  WS_POLKADOT_RELAY_CHAIN,
+  WS_ROCOCO_RELAY_CHAIN,
+  WS_WESTEND_RELAY_CHAIN,
+} from '@/consts';
 import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';

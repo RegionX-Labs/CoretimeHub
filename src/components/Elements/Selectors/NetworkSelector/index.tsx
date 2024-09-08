@@ -3,8 +3,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 import {
-  Polkadot as PolkadotIcon,
   Kusama as KusamaIcon,
+  Polkadot as PolkadotIcon,
   Rococo as RococoIcon,
 } from '@/assets/networks/relay';
 import { useNetwork } from '@/contexts/network';

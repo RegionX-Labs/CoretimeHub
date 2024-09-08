@@ -22,10 +22,10 @@ interface ChainSelectorProps {
 import { enableRegionX } from '@/utils/functions';
 
 import {
-  Polkadot,
-  PolkadotCoretime,
   Kusama,
   KusamaCoretime,
+  Polkadot,
+  PolkadotCoretime,
   RegionX,
   Rococo,
   RococoCoretime,
