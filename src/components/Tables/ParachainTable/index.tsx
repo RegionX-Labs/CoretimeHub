@@ -158,13 +158,24 @@ export const ParachainTable = ({
               </StyledTableCell>
               <StyledTableCell style={{ width: '25%' }}>
                 <Stack direction='row' alignItems='center' gap='1rem'>
-                  <Image
-                    src={logo || Unknown}
-                    alt=''
-                    width={32}
-                    height={32}
-                    style={{ borderRadius: '100%' }}
-                  />
+                  {/* TODO: support font awesome icons */}
+                  {!logo || logo?.startsWith('fa;') ? (
+                    <Image
+                      src={Unknown}
+                      alt=''
+                      width={32}
+                      height={32}
+                      style={{ borderRadius: '100%' }}
+                    />
+                  ) : (
+                    <img
+                      src={logo}
+                      alt=''
+                      width={32}
+                      height={32}
+                      style={{ borderRadius: '100%' }}
+                    />
+                  )}
                   {name || 'Unknown'}
                   {homepage === undefined ? (
                     <></>
