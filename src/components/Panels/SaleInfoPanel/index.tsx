@@ -9,14 +9,17 @@ import DollarIcon from '@/assets/dollar.png';
 import ListIcon from '@/assets/list.png';
 import ShoppingIcon from '@/assets/shopping.png';
 import { useCoretimeApi } from '@/contexts/apis';
+import { useNetwork } from '@/contexts/network';
 import { useSaleInfo } from '@/contexts/sales';
-import { SalePhase } from '@/models';
+import { NetworkType, SalePhase } from '@/models';
 
 import { DetailCard } from './DetailCard';
 import styles from './index.module.scss';
 
 export const SaleInfoPanel = () => {
   const theme = useTheme();
+
+  const { network } = useNetwork();
 
   const {
     state: { symbol, decimals },
@@ -94,27 +97,33 @@ export const SaleInfoPanel = () => {
             },
           }}
           button={
-            <Button
-              onClick={onAnalyze}
-              size='small'
-              variant='text'
-              className={styles.buttonWrapper}
-              sx={{
-                background: '#e8eff7',
-                color: theme.palette.text.primary,
-              }}
-              data-cy='btn-analyze-price'
-            >
-              Analyze
-            </Button>
+            // https://polkadot.polkassembly.io/referenda/1172
+            network !== NetworkType.POLKADOT && (
+              <Button
+                onClick={onAnalyze}
+                size='small'
+                variant='text'
+                className={styles.buttonWrapper}
+                sx={{
+                  background: '#e8eff7',
+                  color: theme.palette.text.primary,
+                }}
+                data-cy='btn-analyze-price'
+              >
+                Analyze
+              </Button>
+            )
           }
         />
       </Box>
-      <PriceModal
-        open={priceModalOpen}
-        onClose={() => openPriceModal(false)}
-        data-cy='price-modal'
-      />
+      {/* https://polkadot.polkassembly.io/referenda/1172 */}
+      {network !== NetworkType.POLKADOT && (
+        <PriceModal
+          open={priceModalOpen}
+          onClose={() => openPriceModal(false)}
+          data-cy='price-modal'
+        />
+      )}
     </>
   );
 };

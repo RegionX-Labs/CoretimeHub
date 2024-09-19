@@ -88,8 +88,8 @@ export default function MyApp(props: MyAppProps) {
         <meta name='viewport' content='initial-scale=1, width=device-width' />
         <title>Coretime Hub</title>
       </Head>
-      <UtilProviders>
-        <NetworkProvider>
+      <NetworkProvider>
+        <UtilProviders>
           <AccountProvider>
             <ApiProviders>
               <BalanceProvider>
@@ -101,8 +101,8 @@ export default function MyApp(props: MyAppProps) {
               </BalanceProvider>
             </ApiProviders>
           </AccountProvider>
-        </NetworkProvider>
-      </UtilProviders>
+        </UtilProviders>
+      </NetworkProvider>
       <Analytics />
     </CacheProvider>
   );
