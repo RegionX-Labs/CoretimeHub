@@ -187,7 +187,7 @@ const SaleInfoProvider = ({ children }: Props) => {
 
   useEffect(() => {
     fetchSaleInfo();
-  }, [network, coretimeApi, isCoretimeReady, timeslicePeriod]);
+  }, [network, coretimeApi, height, isCoretimeReady, timeslicePeriod]);
 
   useEffect(() => {
     if (height === 0) return;
