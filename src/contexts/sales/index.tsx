@@ -91,7 +91,7 @@ interface Props {
 const SaleInfoProvider = ({ children }: Props) => {
   const { network } = useNetwork();
   const {
-    state: { api: coretimeApi, isApiReady: isCoretimeReady, height, decimals, },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady, height, decimals },
     timeslicePeriod,
   } = useCoretimeApi();
 
