@@ -111,65 +111,45 @@ const Purchase = () => {
         </Box>
         <Balance ctBalance />
       </Box>
-      <Box mt={'.5rem'}>
-        <Banner
-          content={
-            isNewPricing(height, network)
-              ? 'Learn about the new Coretime pricing model: '
-              : 'Learn about the new Coretime pricing model coming to Kusama soon: '
-          }
-          link={{
-            title: 'Agile Coretime Pricing Explained',
-            href: 'https://grillapp.net/12935/agile-coretime-pricing-explained-166522?ref=12935',
-          }}
-          severity='info'
-        />
-      </Box>
       <Box>
-        {status !== ContextStatus.LOADED ? (
-          <Backdrop open data-cy='loading'>
-            <CircularProgress />
-          </Backdrop>
-        ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <SaleInfoPanel />
-            <Box sx={{ display: 'flex', gap: '1rem' }}>
-              <CoreDetailsPanel saleInfo={saleInfo} />
-              <SalePhaseInfoPanel />
-            </Box>
-
-            <Box
-              sx={{
-                display: 'flex',
-                gap: '2rem',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Button
-                size='small'
-                variant='outlined'
-                sx={{
-                  bgcolor: theme.palette.common.white,
-                  padding: '0.5rem 0.75rem',
-                  borderRadius: 100,
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  marginLeft: 'auto',
-                }}
-                onClick={onManage}
-                data-cy='btn-manage-regions'
-              >
-                Manage your regions
-              </Button>
-              <ProgressButton
-                onClick={onPurchase}
-                loading={working}
-                label='Purchase Core'
-                data-cy='btn-purchase-core'
-              />
-            </Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <SaleInfoPanel />
+          <Box sx={{ display: 'flex', gap: '1rem' }}>
+            <CoreDetailsPanel saleInfo={saleInfo} />
+            <SalePhaseInfoPanel />
           </Box>
-        )}
+
+          <Box
+            sx={{
+              display: 'flex',
+              gap: '2rem',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Button
+              size='small'
+              variant='outlined'
+              sx={{
+                bgcolor: theme.palette.common.white,
+                padding: '0.5rem 0.75rem',
+                borderRadius: 100,
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                marginLeft: 'auto',
+              }}
+              onClick={onManage}
+              data-cy='btn-manage-regions'
+            >
+              Manage your regions
+            </Button>
+            <ProgressButton
+              onClick={onPurchase}
+              loading={working}
+              label='Purchase Core'
+              data-cy='btn-purchase-core'
+            />
+          </Box>
+        </Box>
       </Box>
     </Box>
   );

@@ -156,8 +156,7 @@ const Home = () => {
     },
   ];
 
-  return status !== ContextStatus.LOADED ||
-    apiState !== ApiState.READY ||
+  return apiState !== ApiState.READY ||
     loadingBurnInfo ||
     loadingPurchaseHistory ? (
     <Backdrop open>
@@ -278,7 +277,7 @@ const Home = () => {
           </Button>
         ))}
       </Stack>
-      {status === ContextStatus.LOADED && (
+      {(
         <Card sx={{ padding: '1.5rem' }} data-cy='purchase-history-table'>
           <Stack direction='column' gap='1rem'>
             <Box>
