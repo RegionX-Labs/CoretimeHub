@@ -6,6 +6,7 @@ import { getCorePriceAt, getCurrentPhase } from '@/utils/sale';
 import {
   BrokerStatus,
   ContextStatus,
+  NetworkType,
   PhaseEndpoints,
   RELAY_CHAIN_BLOCK_TIME,
   SaleConfig,
@@ -90,7 +91,7 @@ interface Props {
 const SaleInfoProvider = ({ children }: Props) => {
   const { network } = useNetwork();
   const {
-    state: { api: coretimeApi, isApiReady: isCoretimeReady, height },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady, height, decimals, },
     timeslicePeriod,
   } = useCoretimeApi();
 
@@ -109,6 +110,11 @@ const SaleInfoProvider = ({ children }: Props) => {
   }, [saleInfo.saleStart, height, currentPhase]);
 
   useEffect(() => {
+    // https://polkadot.polkassembly.io/referenda/1172
+    if (network === NetworkType.POLKADOT) {
+      setCurrentPrice(100 * Math.pow(10, decimals));
+      return;
+    }
     setCurrentPrice(
       status !== ContextStatus.LOADED || height === 0 ? undefined : getCorePriceAt(at, saleInfo)
     );
@@ -186,7 +192,7 @@ const SaleInfoProvider = ({ children }: Props) => {
   useEffect(() => {
     if (height === 0) return;
     setCurrentPhase(getCurrentPhase(saleInfo, height));
-  }, [saleInfo, height]);
+  }, [network, saleInfo, height]);
 
   return (
     <SaleDataContext.Provider

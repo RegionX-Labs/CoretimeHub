@@ -107,7 +107,7 @@ const Home = () => {
       ],
       bottom: {
         label: 'Total Burn',
-        value: totalBurn ? formatBalance(totalBurn) : '...',
+        value: formatBalance(totalBurn),
         dataCy: 'total-burn',
       },
     },
