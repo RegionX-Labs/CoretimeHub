@@ -1,13 +1,11 @@
-import { Backdrop, Box, Button, CircularProgress, Typography, useTheme } from '@mui/material';
+import { Box, Button, Typography, useTheme } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
-import { isNewPricing } from '@/utils/sale';
 
 import {
   Balance,
-  Banner,
   CoreDetailsPanel,
   ProgressButton,
   SaleInfoPanel,
@@ -21,7 +19,7 @@ import { useNetwork } from '@/contexts/network';
 import { useRegions } from '@/contexts/regions';
 import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
-import { ContextStatus, SalePhase } from '@/models';
+import { SalePhase } from '@/models';
 
 const Purchase = () => {
   const theme = useTheme();
@@ -35,12 +33,11 @@ const Purchase = () => {
 
   const {
     saleInfo,
-    status,
     phase: { currentPhase, currentPrice },
     fetchSaleInfo,
   } = useSaleInfo();
   const {
-    state: { api, apiState, height, symbol, decimals },
+    state: { api, apiState, symbol, decimals },
   } = useCoretimeApi();
   const router = useRouter();
   const { network } = useNetwork();

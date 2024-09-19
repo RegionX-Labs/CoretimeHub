@@ -29,7 +29,7 @@ import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { useSaleInfo } from '@/contexts/sales';
-import { ContextStatus, PurchaseType } from '@/models';
+import { PurchaseType } from '@/models';
 
 const Home = () => {
   const theme = useTheme();
@@ -40,7 +40,6 @@ const Home = () => {
     state: { decimals, symbol, apiState },
   } = useCoretimeApi();
   const {
-    status,
     saleInfo: { regionBegin, coresSold, coresOffered },
     phase: { currentPrice },
   } = useSaleInfo();
@@ -156,9 +155,7 @@ const Home = () => {
     },
   ];
 
-  return apiState !== ApiState.READY ||
-    loadingBurnInfo ||
-    loadingPurchaseHistory ? (
+  return apiState !== ApiState.READY || loadingBurnInfo || loadingPurchaseHistory ? (
     <Backdrop open>
       <CircularProgress data-cy='loading' />
     </Backdrop>
@@ -277,7 +274,7 @@ const Home = () => {
           </Button>
         ))}
       </Stack>
-      {(
+      {
         <Card sx={{ padding: '1.5rem' }} data-cy='purchase-history-table'>
           <Stack direction='column' gap='1rem'>
             <Box>
@@ -291,7 +288,7 @@ const Home = () => {
             <PurchaseHistoryTable data={purchaseHistoryData} />
           </Stack>
         </Card>
-      )}
+      }
     </Stack>
   );
 };
