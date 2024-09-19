@@ -2,7 +2,11 @@ import { Box, FormControl, MenuItem, Select, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
-import { Kusama as KusamaIcon, Rococo as RococoIcon } from '@/assets/networks/relay';
+import {
+  Kusama as KusamaIcon,
+  Polkadot as PolkadotIcon,
+  Rococo as RococoIcon,
+} from '@/assets/networks/relay';
 import { useNetwork } from '@/contexts/network';
 import { NetworkType } from '@/models';
 
@@ -22,6 +26,11 @@ export const NetworkSelector = () => {
   };
 
   const menuItems = [
+    {
+      value: NetworkType.POLKADOT,
+      label: 'Polkadot',
+      icon: PolkadotIcon,
+    },
     {
       value: NetworkType.KUSAMA,
       label: 'Kusama',

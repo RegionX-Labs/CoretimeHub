@@ -19,7 +19,7 @@ export const useBurnInfo = (network: NetworkType) => {
 
       setCurrentBurn(parseInt(data.sales.nodes[0]?.burn || '0'));
       setPrevBurn(parseInt(data.sales.nodes[1]?.burn || '0'));
-      setTotalBurn(parseInt(data.stats.nodes[0].totalBurn));
+      setTotalBurn(parseInt(data.stats.nodes[0]?.totalBurn) || 0);
       setLoading(false);
     };
     asyncFetchData();

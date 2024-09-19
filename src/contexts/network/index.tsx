@@ -29,17 +29,18 @@ const NetworkProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (!router.isReady) return;
-    if (network === 'rococo') setActiveNetwork(NetworkType.ROCOCO);
-    else if (network === 'kusama') setActiveNetwork(NetworkType.KUSAMA);
+    if (network === 'polkadot') setActiveNetwork(NetworkType.POLKADOT);
+    if (network === 'kusama') setActiveNetwork(NetworkType.KUSAMA);
+    else if (network === 'rococo') setActiveNetwork(NetworkType.ROCOCO);
     else if (network === 'westend') setActiveNetwork(NetworkType.WESTEND);
     else {
-      // invalid network param. redirect to the default chain: kusama
+      // invalid network param. redirect to the default chain: polkadot
       router.push(
         {
           pathname: router.pathname,
           query: {
             ...router.query,
-            network: 'kusama',
+            network: 'polkadot',
           },
         },
         undefined,
