@@ -141,6 +141,7 @@ export const useParasInfo = () => {
         if (manager === activeAccount?.address) {
           paras.push({
             id,
+            // Paras in `RESERVED` state can't have a core assigned.
             core: 0,
             state: ParaState.RESERVED,
             name: '',

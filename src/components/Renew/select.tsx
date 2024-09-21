@@ -24,20 +24,19 @@ export const SelectParachain = ({ parachains }: SelectParachainProps) => {
   const { network } = useNetwork();
   const router = useRouter();
 
-  // Get coreId from query params.
+  // Get core and paraId from query params.
   const core = router.query.core ? Number(router.query.core) : null;
   const paraId = router.query.paraId ? Number(router.query.paraId) : null;
 
   const onParaChange = (e: SelectChangeEvent) => {
     const selectedCoreId = core ? parachains[Number(e.target.value)].core : parachains[0].core;
-
     const selectedParaId = paraId
       ? parachains[Number(e.target.value)].paraId
       : parachains[0].paraId;
 
     // Update the URL with the new `core` query param
     router.push({
-      pathname: '/renew',
+      pathname: '',
       query: { network, paraId: selectedParaId, core: selectedCoreId },
     });
   };

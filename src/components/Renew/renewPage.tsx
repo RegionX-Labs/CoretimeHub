@@ -25,7 +25,7 @@ const Renewal = () => {
   useEffect(() => {
     if (parachains.length === 0) return;
 
-    // Intentionally set to -1 so that the user gets rerouted if core is not set.
+    // Intentionally set to -1 so that the user gets rerouted if the core or the paraId is not set.
     const core = router.query.core ? Number(router.query.core) : -1;
     const paraId = router.query.paraId ? Number(router.query.paraId) : -1;
 
@@ -35,7 +35,7 @@ const Renewal = () => {
       setActiveIndex(index);
     } else {
       router.push({
-        pathname: '/renew',
+        pathname: '',
         query: { network, paraId: parachains[0].paraId, core: parachains[0].core },
       });
     }
