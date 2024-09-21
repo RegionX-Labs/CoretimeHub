@@ -43,7 +43,7 @@ interface ParachainTableProps {
     onUpgrade: (_id: number) => void;
     onBuy: () => void;
     onWatch: (_id: number, _watching: boolean) => void;
-    onRenew: (_id: number) => void;
+    onRenew: (_id: number, _core: number) => void;
   };
   orderBy: string;
   direction: Order;
@@ -151,7 +151,7 @@ export const ParachainTable = ({
           {(rowsPerPage > 0
             ? parachains.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : parachains
-          ).map(({ id, name, state, watching, logo, homepage }, index) => (
+          ).map(({ id, core, name, state, watching, logo, homepage }, index) => (
             <StyledTableRow key={index}>
               <StyledTableCell style={{ width: '10%' }} align='center'>
                 <Link href={`${SUSBCAN_RELAY_URL[network]}/parachain/${id}`}>{id}</Link>
@@ -219,7 +219,9 @@ export const ParachainTable = ({
                 ) : state === ParaState.IDLE_PARA ? (
                   <ParaActionButton onClick={onBuy}>Buy Coretime</ParaActionButton>
                 ) : state === ParaState.ACTIVE_RENEWABLE_PARA ? (
-                  <ParaActionButton onClick={() => onRenew(id)}>Renew Coretime</ParaActionButton>
+                  <ParaActionButton onClick={() => onRenew(id, core)}>
+                    Renew Coretime
+                  </ParaActionButton>
                 ) : (
                   <Typography>No action required</Typography>
                 )}

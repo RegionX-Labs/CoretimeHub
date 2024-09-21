@@ -125,7 +125,7 @@ export const useParasInfo = () => {
                       ? ParaState.ONDEMAND_PARACHAIN
                       : ParaState.IDLE_PARA;
 
-        paras.push({ id, state, name, logo, homepage } as ParachainInfo);
+        paras.push({ id, core: isRenewable?.core, state, name, logo, homepage } as ParachainInfo);
       }
       return paras;
     };
@@ -141,6 +141,7 @@ export const useParasInfo = () => {
         if (manager === activeAccount?.address) {
           paras.push({
             id,
+            core: 0,
             state: ParaState.RESERVED,
             name: '',
           });

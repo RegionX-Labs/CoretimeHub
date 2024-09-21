@@ -20,6 +20,7 @@ export enum ParaState {
 }
 export type ParachainInfo = {
   id: number;
+  core: number;
   state: ParaState;
   name: string;
   watching?: boolean;

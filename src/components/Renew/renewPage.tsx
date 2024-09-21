@@ -27,7 +27,9 @@ const Renewal = () => {
 
     // Intentionally set to -1 so that the user gets rerouted if core is not set.
     const core = router.query.core ? Number(router.query.core) : -1;
-    const index = parachains.findIndex((p) => p.core === core);
+    const paraId = router.query.paraId ? Number(router.query.paraId) : -1;
+
+    const index = parachains.findIndex((p) => p.core === core && p.paraId === paraId);
 
     if (index >= 0) {
       setActiveIndex(index);
