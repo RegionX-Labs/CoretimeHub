@@ -36,7 +36,7 @@ const Renewal = () => {
     } else {
       router.push({
         pathname: '/renew',
-        query: { network, core: parachains[0].core },
+        query: { network, paraId: parachains[0].paraId, core: parachains[0].core },
       });
     }
   }, [router.query, parachains]);
