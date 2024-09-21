@@ -1,5 +1,6 @@
 import { Backdrop, Box, CircularProgress, Paper, Typography, useTheme } from '@mui/material';
-import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 import { useRenewableParachains } from '@/hooks/renewableParas';
 
@@ -14,9 +15,29 @@ import { SelectParachain } from './select';
 const Renewal = () => {
   const theme = useTheme();
 
-  const [activeIdx, setActiveIdx] = useState<number>(0);
+  const router = useRouter();
+  const { network } = router.query;
+
+  const [activeIndex, setActiveIndex] = useState(0);
   const [renewalEnabled, setRenewalEnabled] = useState<boolean>(true);
   const { status, parachains } = useRenewableParachains();
+
+  useEffect(() => {
+    if (parachains.length === 0) return;
+
+    // Intentionally set to -1 so that the user gets rerouted if core is not set.
+    const core = router.query.core ? Number(router.query.core) : -1;
+    const index = parachains.findIndex((p) => p.core === core);
+
+    if (index >= 0) {
+      setActiveIndex(index);
+    } else {
+      router.push({
+        pathname: '/renew',
+        query: { network, core: parachains[0].core },
+      });
+    }
+  }, [router.query, parachains]);
 
   return status !== ContextStatus.LOADED ? (
     <Backdrop open>
@@ -53,16 +74,12 @@ const Renewal = () => {
             boxShadow: 'none',
           }}
         >
-          <SelectParachain
-            activeIdx={activeIdx}
-            parachains={parachains}
-            setActiveIdx={setActiveIdx}
-          />
+          <SelectParachain parachains={parachains} />
           <RenewableParaInfo
-            parachain={parachains[activeIdx]}
+            parachain={parachains[activeIndex]}
             setRenewalEnabled={setRenewalEnabled}
           />
-          <RenewAction parachain={parachains[activeIdx]} enabled={renewalEnabled} />
+          <RenewAction parachain={parachains[activeIndex]} enabled={renewalEnabled} />
         </Paper>
       </Box>
     </>
