@@ -17,6 +17,7 @@ import { Address, NetworkSelector, ProgressButton, TxHistoryModal } from '@/comp
 import { KeyringState, useAccounts } from '@/contexts/account';
 
 import styles from './index.module.scss';
+import { WalletModal } from '@/components/Wallet';
 
 export const Header = () => {
   const theme = useTheme();
@@ -29,6 +30,8 @@ export const Header = () => {
 
   const [accountsOpen, openAccounts] = useState(false);
   const [txHistoryModalOpen, openTxHistoryModal] = useState(false);
+
+  const [walletModalOpen, openWalletModal] = useState(false);
 
   const onDisconnect = () => {
     openAccounts(false);
@@ -120,7 +123,7 @@ export const Header = () => {
           ) : (
             <ProgressButton
               data-cy='connect-wallet'
-              onClick={() => connectWallet()}
+              onClick={() => openWalletModal(true)}
               label='Connect Wallet'
               loading={status === KeyringState.LOADING}
             />
@@ -136,6 +139,12 @@ export const Header = () => {
       ) : (
         <></>
       )}
+      {walletModalOpen &&
+        <WalletModal
+          open={walletModalOpen}
+          onClose={() => openWalletModal(false)}
+        />
+      }
     </>
   );
 };
