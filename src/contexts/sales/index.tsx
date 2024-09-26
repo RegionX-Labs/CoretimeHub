@@ -6,7 +6,6 @@ import { getCorePriceAt, getCurrentPhase } from '@/utils/sale';
 import {
   BrokerStatus,
   ContextStatus,
-  NetworkType,
   PhaseEndpoints,
   RELAY_CHAIN_BLOCK_TIME,
   SaleConfig,
@@ -91,7 +90,7 @@ interface Props {
 const SaleInfoProvider = ({ children }: Props) => {
   const { network } = useNetwork();
   const {
-    state: { api: coretimeApi, isApiReady: isCoretimeReady, height, decimals },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady, height },
     timeslicePeriod,
   } = useCoretimeApi();
 
