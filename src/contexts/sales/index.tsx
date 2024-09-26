@@ -110,11 +110,6 @@ const SaleInfoProvider = ({ children }: Props) => {
   }, [saleInfo.saleStart, height, currentPhase]);
 
   useEffect(() => {
-    // https://polkadot.polkassembly.io/referenda/1172
-    if (network === NetworkType.POLKADOT) {
-      setCurrentPrice(100 * Math.pow(10, decimals));
-      return;
-    }
     setCurrentPrice(
       status !== ContextStatus.LOADED || height === 0 ? undefined : getCorePriceAt(at, saleInfo)
     );
@@ -145,10 +140,6 @@ const SaleInfoProvider = ({ children }: Props) => {
       // On Rococo we have `endPrice` while on Kusama we still have `price`.
       saleInfo.price = saleInfo.price || (saleInfo as any).endPrice;
 
-      // https://polkadot.polkassembly.io/referenda/1172
-      if (network === NetworkType.POLKADOT) {
-        saleInfo.price = 10 * Math.pow(10, decimals);
-      }
       setSaleInfo(saleInfo);
 
       const config = configRaw.toJSON() as SaleConfig;

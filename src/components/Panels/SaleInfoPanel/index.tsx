@@ -97,33 +97,27 @@ export const SaleInfoPanel = () => {
             },
           }}
           button={
-            // https://polkadot.polkassembly.io/referenda/1172
-            network !== NetworkType.POLKADOT && (
-              <Button
-                onClick={onAnalyze}
-                size='small'
-                variant='text'
-                className={styles.buttonWrapper}
-                sx={{
-                  background: '#e8eff7',
-                  color: theme.palette.text.primary,
-                }}
-                data-cy='btn-analyze-price'
-              >
-                Analyze
-              </Button>
-            )
+            <Button
+              onClick={onAnalyze}
+              size='small'
+              variant='text'
+              className={styles.buttonWrapper}
+              sx={{
+                background: '#e8eff7',
+                color: theme.palette.text.primary,
+              }}
+              data-cy='btn-analyze-price'
+            >
+              Analyze
+            </Button>
           }
         />
       </Box>
-      {/* https://polkadot.polkassembly.io/referenda/1172 */}
-      {network !== NetworkType.POLKADOT && (
-        <PriceModal
-          open={priceModalOpen}
-          onClose={() => openPriceModal(false)}
-          data-cy='price-modal'
-        />
-      )}
+      <PriceModal
+        open={priceModalOpen}
+        onClose={() => openPriceModal(false)}
+        data-cy='price-modal'
+      />
     </>
   );
 };
