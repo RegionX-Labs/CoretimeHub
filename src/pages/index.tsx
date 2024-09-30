@@ -30,6 +30,7 @@ import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { useSaleInfo } from '@/contexts/sales';
 import { PurchaseType } from '@/models';
+import { Slider, Button as XButton } from '@region-x/components';
 
 const Home = () => {
   const theme = useTheme();
