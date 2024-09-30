@@ -15,7 +15,7 @@ import { useParasInfo } from '@/hooks';
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 import { getBalanceString } from '@/utils/functions';
 
-import { ProgressButton } from '@/components/Elements';
+import { Button as RxButton } from '@region-x/components';
 
 import { useAccounts } from '@/contexts/account';
 import { useRelayApi } from '@/contexts/apis';
@@ -115,7 +115,10 @@ export const ReserveModal = ({ open, onClose, paraId, reservationCost }: Reserve
           Cancel
         </Button>
 
-        <ProgressButton onClick={onReserve} label='Reserve' loading={working} />
+        {/* TODO: something off with alignment */}
+        <RxButton onClick={onReserve} loading={working}>
+          Reserve
+        </RxButton>
       </DialogActions>
     </Dialog>
   );

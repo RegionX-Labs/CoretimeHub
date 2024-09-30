@@ -22,7 +22,7 @@ import { useEffect, useState } from 'react';
 import { useParasInfo } from '@/hooks';
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
-import { ProgressButton } from '@/components/Elements';
+import { Button as RxButton } from '@region-x/components';
 import { ParaDisplay } from '@/components/Paras';
 
 import { useAccounts } from '@/contexts/account';
@@ -258,7 +258,9 @@ export const OrderCreationModal = ({ open, onClose }: OrderCreationModalProps) =
           Cancel
         </Button>
 
-        <ProgressButton onClick={onCreate} label='Create' loading={working} />
+        <RxButton onClick={onCreate} loading={working}>
+          Create
+        </RxButton>
       </DialogActions>
     </Dialog>
   );

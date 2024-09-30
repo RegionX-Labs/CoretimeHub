@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
-import { AmountInput, ProgressButton } from '@/components/Elements';
+import { AmountInput } from '@/components/Elements';
 import { OrderCard } from '@/components/Orders';
 
 import { useAccounts } from '@/contexts/account';
@@ -22,6 +22,7 @@ import { ApiState } from '@/contexts/apis/types';
 import { useOrders } from '@/contexts/orders';
 import { useToast } from '@/contexts/toast';
 import { Order } from '@/models';
+import { Button as RxButton } from '@region-x/components';
 
 import styles from './index.module.scss';
 
@@ -128,7 +129,9 @@ export const ContributionModal = ({ open, onClose, order }: ContributionModalPro
           Cancel
         </Button>
 
-        <ProgressButton onClick={onContribute} label='Contribute' loading={working} />
+        <RxButton onClick={onContribute} loading={working} >
+          Contribute
+        </RxButton>
       </DialogActions>
     </Dialog>
   );

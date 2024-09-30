@@ -4,10 +4,10 @@ import React, { useState } from 'react';
 
 import { Address, NetworkSelector, ProgressButton, TxHistoryModal } from '@/components';
 
-import { KeyringState, useAccounts } from '@/contexts/account';
+import { useAccounts } from '@/contexts/account';
 
 import styles from './index.module.scss';
-import { Select } from '@region-x/components';
+import { Button, Select } from '@region-x/components';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
 export const Header = () => {
@@ -85,12 +85,9 @@ export const Header = () => {
               />
             </Box>
           ) : (
-            <ProgressButton
-              data-cy='connect-wallet'
-              onClick={() => connectWallet()}
-              label='Connect Wallet'
-              loading={status === KeyringState.LOADING}
-            />
+            <Button data-cy='connect-wallet' onClick={() => connectWallet()}>
+              Connect Wallet
+            </Button>
           )}
         </Box>
       </Box>
