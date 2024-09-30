@@ -8,7 +8,7 @@ import { AppProps } from 'next/app';
 import Head from 'next/head';
 import * as React from 'react';
 import '../../styles/global.scss';
-import "@region-x/components/dist/index.css";
+import '@region-x/components/dist/index.css';
 
 import createEmotionCache from '@/utils/createEmotionCache';
 import theme from '@/utils/muiTheme';
