@@ -1,14 +1,14 @@
 import HistoryIcon from '@mui/icons-material/History';
 import { Box, IconButton, Stack, useTheme } from '@mui/material';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { Button, Select } from '@region-x/components';
 import React, { useState } from 'react';
 
-import { Address, NetworkSelector, ProgressButton, TxHistoryModal } from '@/components';
+import { Address, NetworkSelector, TxHistoryModal } from '@/components';
 
 import { useAccounts } from '@/contexts/account';
 
 import styles from './index.module.scss';
-import { Button, Select } from '@region-x/components';
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
 export const Header = () => {
   const theme = useTheme();

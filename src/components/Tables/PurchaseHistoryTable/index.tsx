@@ -1,151 +1,64 @@
-import {
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TablePagination,
-  TableRow,
-  Tooltip,
-  useTheme,
-} from '@mui/material';
-import { useState } from 'react';
+import { Stack } from '@mui/material';
+import { TableComponent } from '@region-x/components';
+import { TableData } from '@region-x/components/dist/types/types';
 
-import { getBalanceString, getRelativeTimeString, getTimeStringLong } from '@/utils/functions';
-
-import { Address, Link } from '@/components/Elements';
+import { getBalanceString, getRelativeTimeString } from '@/utils/functions';
 
 import { SUSBCAN_CORETIME_URL } from '@/consts';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useNetwork } from '@/contexts/network';
 import { PurchaseHistoryItem } from '@/models';
 
-import { StyledTableCell, StyledTableRow } from '../common';
-
 interface PurchaseHistoryTableProps {
   data: PurchaseHistoryItem[];
 }
 
 export const PurchaseHistoryTable = ({ data }: PurchaseHistoryTableProps) => {
-  const theme = useTheme();
-
   const { network } = useNetwork();
   const {
     state: { symbol, decimals },
   } = useCoretimeApi();
 
-  // table pagination
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const formatDataForTable = (data: PurchaseHistoryItem[]): Record<string, TableData>[] => {
+    const formattedData: Array<Record<string, TableData>> = data.map(
+      ({ address, core, extrinsicId, timestamp, price, type }) => {
+        return {
+          ExtrinsicID: {
+            cellType: 'link',
+            data: extrinsicId,
+            link: `${SUSBCAN_CORETIME_URL[network]}/extrinsic/${extrinsicId}`,
+          },
+          Account: {
+            cellType: 'address',
+            data: address,
+          },
+          Core: {
+            cellType: 'text',
+            data: core.toString(),
+          },
+          [`Price (${symbol})`]: {
+            cellType: 'text',
+            data: getBalanceString(price.toString(), decimals, ''),
+          },
+          SalesType: {
+            cellType: 'text',
+            data: type.toString(),
+          },
+          Timestamp: {
+            cellType: 'text',
+            data: getRelativeTimeString(timestamp),
+          },
+        };
+      }
+    );
 
-  const handleChangePage = (
-    _event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    return formattedData;
   };
 
   return (
-    <Stack direction='column' gap='1em'>
-      <TableContainer component={Paper} sx={{ height: '32rem' }}>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>Extrinsic Id</StyledTableCell>
-              <StyledTableCell>Account</StyledTableCell>
-              <StyledTableCell>Core</StyledTableCell>
-              <StyledTableCell>{`Price (${symbol})`}</StyledTableCell>
-              <StyledTableCell>Sales Type</StyledTableCell>
-              <StyledTableCell>Timestamp</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {(rowsPerPage > 0
-              ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              : data
-            ).map(
-              ({ address, core, extrinsicId: extrinsic_index, timestamp, price, type }, index) => (
-                <StyledTableRow key={index}>
-                  <StyledTableCell align='center'>
-                    <Link
-                      href={`${SUSBCAN_CORETIME_URL[network]}/extrinsic/${extrinsic_index}`}
-                      target='_blank'
-                    >
-                      {extrinsic_index}
-                    </Link>
-                  </StyledTableCell>
-                  <StyledTableCell align='center'>
-                    <Stack
-                      justifyContent='center'
-                      direction='row'
-                      sx={{
-                        cursor: 'pointer',
-                        color: theme.palette.primary.main,
-                      }}
-                      onClick={() =>
-                        window.open(`${SUSBCAN_CORETIME_URL[network]}/account/${address}`, '_blank')
-                      }
-                    >
-                      <Address value={address} isCopy isShort size={24} />
-                    </Stack>
-                  </StyledTableCell>
-                  <StyledTableCell align='center'>{core}</StyledTableCell>
-                  <StyledTableCell align='center'>
-                    {getBalanceString(price.toString(), decimals, '')}
-                  </StyledTableCell>
-                  <StyledTableCell align='center'>{type}</StyledTableCell>
-                  <StyledTableCell align='center'>
-                    <Tooltip title={getTimeStringLong(timestamp)}>
-                      <p>{getRelativeTimeString(timestamp)}</p>
-                    </Tooltip>
-                  </StyledTableCell>
-                </StyledTableRow>
-              )
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <Stack>
       <Stack alignItems='center'>
-        <Table>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[10, 25, { label: 'All', value: -1 }]}
-                colSpan={3}
-                count={data.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                slotProps={{
-                  select: {
-                    inputProps: {
-                      'aria-label': 'rows per page',
-                    },
-                    native: true,
-                  },
-                }}
-                sx={{
-                  '.MuiTablePagination-spacer': {
-                    flex: '0 0 0',
-                  },
-                  '.MuiTablePagination-toolbar': {
-                    justifyContent: 'center',
-                  },
-                }}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
+        <TableComponent data={formatDataForTable(data)} pageSize={10} />
       </Stack>
     </Stack>
   );

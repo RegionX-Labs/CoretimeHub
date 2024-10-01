@@ -9,13 +9,12 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { Button as RxButton } from '@region-x/components';
 import { useState } from 'react';
 
 import { useParasInfo } from '@/hooks';
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 import { getBalanceString } from '@/utils/functions';
-
-import { Button as RxButton } from '@region-x/components';
 
 import { useAccounts } from '@/contexts/account';
 import { useRelayApi } from '@/contexts/apis';

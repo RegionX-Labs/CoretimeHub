@@ -17,12 +17,12 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { Button as RxButton } from '@region-x/components';
 import { useEffect, useState } from 'react';
 
 import { useParasInfo } from '@/hooks';
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
-import { Button as RxButton } from '@region-x/components';
 import { ParaDisplay } from '@/components/Paras';
 
 import { useAccounts } from '@/contexts/account';
