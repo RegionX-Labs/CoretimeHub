@@ -33,6 +33,8 @@ import { CoreExpiryCard } from '../../Paras/CoreExpiryCard';
 import { LeaseStateCard } from '../../Paras/LeaseStateCard';
 import { ParaStateCard } from '../../Paras/ParaStateCard';
 import Unknown from '../../../assets/unknown.svg';
+import { TableComponent } from '@region-x/components';
+import { TableData } from '@region-x/components/dist/types/types';
 
 export type Order = 'asc' | 'desc';
 
@@ -45,9 +47,6 @@ interface ParachainTableProps {
     onWatch: (_id: number, _watching: boolean) => void;
     onRenew: (_id: number, _core: number) => void;
   };
-  orderBy: string;
-  direction: Order;
-  handleSort: (_orderBy: string, _direction: Order) => void;
 }
 
 const ParaActionButton = styled(Button)(({ theme }: any) => ({
@@ -62,211 +61,92 @@ const ParaActionButton = styled(Button)(({ theme }: any) => ({
 export const ParachainTable = ({
   parachains,
   handlers,
-  orderBy,
-  direction,
-  handleSort,
 }: ParachainTableProps) => {
   const theme = useTheme();
 
   const { onRegister, onUpgrade, onBuy, onRenew, onWatch } = handlers;
 
-  const {
-    state: { height },
-  } = useRelayApi();
   const { network } = useNetwork();
 
-  // table pagination
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const formatTableData = (data: ParachainInfo[]): Record<string, TableData>[] => {
+    const formattedData: Record<string, TableData>[] = parachains.map(({ id, core, name, state, watching, logo, homepage }, index) => {
+      return {
+        Id: {
+          cellType: 'link',
+          data: id.toString(),
+          link: `${SUSBCAN_RELAY_URL[network]}/parachain/${id}`
+        },
+        Name: {
+          cellType: 'jsx',
+          data: <Stack direction='row' alignItems='center' gap='0.5rem'>
+            {/* TODO: support font awesome icons */}
+            {!logo || logo?.startsWith('fa;') ? (
+              <Image
+                src={Unknown}
+                alt=''
+                width={32}
+                height={32}
+                style={{ borderRadius: '100%' }}
+              />
+            ) : (
+              <img
+                src={logo}
+                alt=''
+                width={32}
+                height={32}
+                style={{ borderRadius: '100%' }}
+              />
+            )}
+            {homepage === undefined ? (
+              <>{name || 'Unknown'}</>
+            ) : (
+              <Link href={homepage} target='_blank'>
+                {name || 'Unknown'}
+              </Link>
+            )}
+          </Stack>,
+        },
+        State: {
+          cellType: 'jsx',
+          data: <p>{state}</p>
+        },
+        Action: {
+          cellType: 'jsx',
+          data: state === ParaState.RESERVED ? (
+            <ParaActionButton onClick={() => onRegister(id)}>Register</ParaActionButton>
+          ) : state === ParaState.ONDEMAND_PARACHAIN ? (
+            <ParaActionButton onClick={() => onUpgrade(id)}>
+              Upgrade(Buy Coretime)
+            </ParaActionButton>
+          ) : state === ParaState.IDLE_PARA ? (
+            <ParaActionButton onClick={onBuy}>Buy Coretime</ParaActionButton>
+          ) : state === ParaState.ACTIVE_RENEWABLE_PARA ? (
+            <ParaActionButton onClick={() => onRenew(id, core)}>
+              Renew Coretime
+            </ParaActionButton>
+          ) : (
+            <Typography>No action required</Typography>
+          )
+        },
+        Watchlist: {
+          cellType: 'jsx',
+          data: <IconButton onClick={() => onWatch(id, watching ? false : true)}>
+            {watching ? (
+              <StarIcon color='success' />
+            ) : (
+              <StarBorderOutlinedIcon color='action' />
+            )}
+          </IconButton>
+        }
+      }
+    });
 
-  const headers = [
-    { name: 'Id', sort: 'id' },
-    { name: 'Para Name' },
-    { name: 'State' },
-    { name: 'Expiry', sort: 'expiry' },
-    { name: 'Action' },
-    { name: 'Watchlist' },
-  ];
-
-  const initialDir: Record<string, Order> = {
-    id: 'asc',
-    expiry: 'asc',
-  };
-
-  const [dir, setDir] = useState(initialDir);
-
-  const handleChangePage = (
-    _event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  useEffect(() => {
-    setPage(0);
-  }, [parachains]);
+    return formattedData;
+  }
 
   return (
-    <TableContainer component={Paper} sx={{ maxHeight: '100%' }}>
-      <Table stickyHeader>
-        <TableHead>
-          <TableRow>
-            {headers.map(({ name, sort }, index) => (
-              <StyledTableCell key={index}>
-                {sort !== undefined && (
-                  <IconButton
-                    sx={{
-                      color:
-                        sort === orderBy ? theme.palette.common.white : theme.palette.grey['200'],
-                    }}
-                    onClick={() => {
-                      let newDir: Order = direction === 'asc' ? 'desc' : 'asc';
-                      if (sort !== orderBy) newDir = dir[sort];
-                      handleSort(sort, newDir);
-                      setDir({ ...dir, [sort]: newDir });
-                      setPage(0);
-                    }}
-                  >
-                    {dir[sort] === 'asc' ? (
-                      <ArrowUpward fontSize='small' />
-                    ) : (
-                      <ArrowDownward fontSize='small' />
-                    )}
-                  </IconButton>
-                )}
-
-                {name}
-              </StyledTableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {(rowsPerPage > 0
-            ? parachains.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : parachains
-          ).map(({ id, core, name, state, watching, logo, homepage }, index) => (
-            <StyledTableRow key={index}>
-              <StyledTableCell style={{ width: '10%' }} align='center'>
-                <Link href={`${SUSBCAN_RELAY_URL[network]}/parachain/${id}`}>{id}</Link>
-              </StyledTableCell>
-              <StyledTableCell style={{ width: '25%' }}>
-                <Stack direction='row' alignItems='center' gap='1rem'>
-                  {/* TODO: support font awesome icons */}
-                  {!logo || logo?.startsWith('fa;') ? (
-                    <Image
-                      src={Unknown}
-                      alt=''
-                      width={32}
-                      height={32}
-                      style={{ borderRadius: '100%' }}
-                    />
-                  ) : (
-                    <img
-                      src={logo}
-                      alt=''
-                      width={32}
-                      height={32}
-                      style={{ borderRadius: '100%' }}
-                    />
-                  )}
-                  {name || 'Unknown'}
-                  {homepage === undefined ? (
-                    <></>
-                  ) : (
-                    <Link href={homepage} target='_blank'>
-                      <OpenInNewIcon
-                        sx={{
-                          color: theme.palette.grey[600],
-                          cursor: 'pointer',
-                          width: '1.2rem',
-                        }}
-                      ></OpenInNewIcon>
-                    </Link>
-                  )}
-                </Stack>
-              </StyledTableCell>
-              <StyledTableCell
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                }}
-              >
-                <ParaStateCard state={state} />
-              </StyledTableCell>
-              <StyledTableCell style={{ width: '25%' }}>
-                {/* System paras have reserved coretime */}
-                {state != ParaState.SYSTEM && (
-                  <Stack>
-                    <LeaseStateCard paraId={id} height={height} />
-                    <CoreExpiryCard paraId={id} height={height} />
-                  </Stack>
-                )}
-              </StyledTableCell>
-              <StyledTableCell style={{ width: '20%' }}>
-                {state === ParaState.RESERVED ? (
-                  <ParaActionButton onClick={() => onRegister(id)}>Register</ParaActionButton>
-                ) : state === ParaState.ONDEMAND_PARACHAIN ? (
-                  <ParaActionButton onClick={() => onUpgrade(id)}>
-                    Upgrade(Buy Coretime)
-                  </ParaActionButton>
-                ) : state === ParaState.IDLE_PARA ? (
-                  <ParaActionButton onClick={onBuy}>Buy Coretime</ParaActionButton>
-                ) : state === ParaState.ACTIVE_RENEWABLE_PARA ? (
-                  <ParaActionButton onClick={() => onRenew(id, core)}>
-                    Renew Coretime
-                  </ParaActionButton>
-                ) : (
-                  <Typography>No action required</Typography>
-                )}
-              </StyledTableCell>
-              <StyledTableCell style={{ width: '5%' }}>
-                <IconButton onClick={() => onWatch(id, watching ? false : true)}>
-                  {watching ? (
-                    <StarIcon color='success' />
-                  ) : (
-                    <StarBorderOutlinedIcon color='action' />
-                  )}
-                </IconButton>
-              </StyledTableCell>
-            </StyledTableRow>
-          ))}
-        </TableBody>
-        <TableFooter
-          sx={{
-            position: 'fixed',
-            bottom: '0.3rem',
-            left: '50%',
-            transform: 'translateX(-50%)',
-          }}
-        >
-          <TableRow>
-            <TablePagination
-              rowsPerPageOptions={[10, 25, { label: 'All', value: -1 }]}
-              colSpan={3}
-              count={parachains.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              slotProps={{
-                select: {
-                  inputProps: {
-                    'aria-label': 'rows per page',
-                  },
-                  native: true,
-                },
-              }}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </TableRow>
-        </TableFooter>
-      </Table>
-    </TableContainer>
+    <Paper>
+      <TableComponent data={formatTableData(parachains)} pageSize={10} />
+    </Paper>
   );
 };

@@ -15,7 +15,8 @@ import React, { useEffect, useState } from 'react';
 
 import { useParasInfo, useRenewableParachains } from '@/hooks';
 
-import { ActionButton, Order, ParachainTable, RegisterModal, ReserveModal } from '@/components';
+import { Order, ParachainTable, RegisterModal, ReserveModal } from '@/components';
+import { Button } from '@region-x/components';
 
 import { leases } from '@/chaindata';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
@@ -49,16 +50,8 @@ const ParachainManagement = () => {
   const [reserveModalOpen, openReserveModal] = useState(false);
   const [registerModalOpen, openRegisterModal] = useState(false);
 
-  const [orderBy, setOrderBy] = useState('id');
-  const [direction, setDirection] = useState<Order>('asc');
-
   const chainLeases: LeaseState[] =
     (leases as Record<string, LeaseState[]>)[network.toString()] ?? [];
-
-  const handleSort = (_orderBy: string, _direction: Order) => {
-    setOrderBy(_orderBy);
-    setDirection(_direction);
-  };
 
   // Register a parathread
   const onRegister = (paraId: number) => {
@@ -114,24 +107,6 @@ const ParachainManagement = () => {
   };
 
   useEffect(() => {
-    const compId = (a: ParachainInfo, b: ParachainInfo) => {
-      let result = a.id - b.id;
-      if (direction === 'desc') result = -result;
-      return result;
-    };
-
-    const compExpiry = (a: ParachainInfo, b: ParachainInfo) => {
-      const value1 = getExpiry(a.id);
-      const value2 = getExpiry(b.id);
-
-      if (value1 === undefined && value2 === undefined) return 0;
-
-      if (value1 === undefined) return 1;
-      if (value2 === undefined) return -1;
-
-      if (direction === 'asc') return value1 - value2;
-      else return value2 - value1;
-    };
     const parasWithWatchInfo = parachains.map((para) => ({
       ...para,
       watching: watchList.includes(para.id),
@@ -139,14 +114,10 @@ const ParachainManagement = () => {
     const filtered = parasWithWatchInfo.filter(
       (para) => para.id.toString().includes(search) && (watchAll ? true : para.watching === true)
     );
-    if (orderBy === 'id') {
-      filtered.sort(compId);
-    } else if (orderBy === 'expiry') {
-      filtered.sort(compExpiry);
-    }
+
     setParas2Show(filtered);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parachains, watchList, watchAll, search, orderBy, direction, network]);
+  }, [parachains, watchList, watchAll, search, network]);
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -181,26 +152,9 @@ const ParachainManagement = () => {
               padding: '0.25rem',
             }}
           />
-          <TextField
-            placeholder='Search by para id'
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <SearchOutlinedIcon />
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              '.MuiInputBase-root': { borderRadius: '5rem', margin: 'auto 0' },
-              '.MuiInputBase-input': {
-                paddingTop: '0.75rem',
-                paddingBottom: '0.75rem',
-              },
-            }}
-          />
-          <ActionButton label='Reserve New Para' onClick={() => openReserveModal(true)} />
+          <Button onClick={() => openReserveModal(true)}>
+            Reserve New Para
+          </Button>
         </Box>
       </Box>
       {loading ? (
@@ -212,9 +166,6 @@ const ParachainManagement = () => {
           <ParachainTable
             parachains={paras2Show}
             handlers={{ onBuy, onRenew, onRegister, onUpgrade, onWatch }}
-            orderBy={orderBy}
-            direction={direction}
-            handleSort={handleSort}
           />
           <ReserveModal
             open={reserveModalOpen}
