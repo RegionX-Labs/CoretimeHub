@@ -5,7 +5,6 @@ import WhatshotIcon from '@mui/icons-material/Whatshot';
 import {
   Backdrop,
   Box,
-  Button,
   Card,
   CircularProgress,
   Paper,
@@ -13,6 +12,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { Button } from '@region-x/components';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
@@ -249,27 +249,21 @@ const Home = () => {
           ))}
         </Stack>
       </Card>
-      <Stack direction='row' gap='1rem'>
+      <Stack
+        direction='row'
+        gap='1rem'
+        style={{ display: 'flex', justifyContent: 'space-between' }}
+      >
         {buttons.map(({ label, image, url, dataCy }, index) => (
           <Button
             key={index}
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: '0.5rem',
-              background: theme.palette.common.white,
-              color: theme.palette.common.black,
-              borderRadius: '0.75rem',
-              borderColor: theme.palette.grey[200],
-              py: '1.25rem',
-              flex: '1 0 0',
-            }}
-            variant='outlined'
-            onClick={() => push({ pathname: url, query })}
+            fullWidth
             data-cy={dataCy}
+            rightIcon={<Image src={image} alt={label} width={32} />}
+            onClick={() => {
+              push({ pathname: url, query });
+            }}
           >
-            <Image src={image} width={32} height={32} alt='' />
             {label}
           </Button>
         ))}
