@@ -77,12 +77,14 @@ export const Header = () => {
                   <HistoryIcon />
                 </IconButton>
               </Stack>
-              <Select
-                options={availableAccounts()}
-                searchable={true}
-                onChange={(acc: InjectedAccountWithMeta | null) => onAccountChange(acc)}
-                selectedValue={activeAccount as any}
-              />
+              <Box width='300px'>
+                <Select
+                  options={availableAccounts()}
+                  searchable={true}
+                  onChange={(acc: InjectedAccountWithMeta | null) => onAccountChange(acc)}
+                  selectedValue={activeAccount as any}
+                />
+              </Box>
             </Box>
           ) : (
             <Button data-cy='connect-wallet' onClick={() => connectWallet()}>

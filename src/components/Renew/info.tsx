@@ -146,7 +146,7 @@ const ParachainInfo = ({ parachain, expiryTimestamp, expiryLoading }: ParachainI
         mt={'1rem'}
         gap='0.5rem'
         border='1px solid'
-        borderColor={theme.palette.grey[400]}
+        borderColor={theme.palette.grey[100]}
         borderRadius='1rem'
       >
         <Property property='Core number:' value={parachain.core.toString()} />

@@ -22,7 +22,7 @@ let theme = createTheme({
       main: '#13C296',
     },
     grey: {
-      100: '#eeeff4',
+      100: '#E5E7EB',
       200: '#8c8c8c',
     },
     text: {
