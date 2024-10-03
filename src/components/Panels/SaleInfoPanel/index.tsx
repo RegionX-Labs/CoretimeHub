@@ -5,9 +5,9 @@ import { getBalanceString, getTimeStringShort } from '@/utils/functions';
 
 import { PriceModal, SalePhaseCard } from '@/components';
 
-import DollarIcon from '@/assets/dollar.png';
-import ListIcon from '@/assets/list.png';
-import ShoppingIcon from '@/assets/shopping.png';
+import Chart from '@/assets/chart.svg';
+import Config from '@/assets/config.svg';
+import Trade from '@/assets/trade.svg';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
@@ -48,7 +48,7 @@ export const SaleInfoPanel = () => {
     <>
       <Box className={styles.grid} data-cy='sale-info'>
         <DetailCard
-          icon={ShoppingIcon}
+          icon={Chart}
           title='Sale details'
           items={{
             left: {
@@ -61,7 +61,7 @@ export const SaleInfoPanel = () => {
             },
           }}
         />
-        <DetailCard icon={ListIcon} title='Phase details'>
+        <DetailCard icon={Config} title='Phase details'>
           <SalePhaseCard
             label='Current phase'
             value={currentPhase}
@@ -76,7 +76,7 @@ export const SaleInfoPanel = () => {
           />
         </DetailCard>
         <DetailCard
-          icon={DollarIcon}
+          icon={Trade}
           title='Price details'
           items={{
             left: {

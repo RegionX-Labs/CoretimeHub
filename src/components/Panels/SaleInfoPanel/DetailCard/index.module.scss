@@ -1,3 +1,6 @@
+@import '../../../../../styles/mixins';
+@import '../../../../../styles/variables';
+
 .container {
   display: flex;
   flex-direction: column;
@@ -22,6 +25,9 @@
   margin-left: 0;
   width: 2rem;
   height: 2rem;
+  background-color: $greenPrimary;
+  border-radius: .5rem;
+  padding: 0.2rem;
 }
 
 .infoSection {
