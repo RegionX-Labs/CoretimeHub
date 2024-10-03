@@ -1,5 +1,3 @@
-import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
-import OpenInNewIcon from '@mui/icons-material/OpenInNewRounded';
 import StarBorderOutlinedIcon from '@mui/icons-material/StarBorderRounded';
 import StarIcon from '@mui/icons-material/StarRounded';
 import {
@@ -8,33 +6,21 @@ import {
   Paper,
   Stack,
   styled,
-  Table,
-  TableBody,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TablePagination,
-  TableRow,
   Typography,
-  useTheme,
 } from '@mui/material';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { Link } from '@/components/Elements';
 
 import { SUSBCAN_RELAY_URL } from '@/consts';
-import { useRelayApi } from '@/contexts/apis';
 import { useNetwork } from '@/contexts/network';
 import { ParachainInfo, ParaState } from '@/models';
 
-import { StyledTableCell, StyledTableRow } from '../common';
-import { CoreExpiryCard } from '../../Paras/CoreExpiryCard';
-import { LeaseStateCard } from '../../Paras/LeaseStateCard';
-import { ParaStateCard } from '../../Paras/ParaStateCard';
 import Unknown from '../../../assets/unknown.svg';
-import { TableComponent } from '@region-x/components';
+import { LabelCard, TableComponent } from '@region-x/components';
 import { TableData } from '@region-x/components/dist/types/types';
+import { ParaStateCard } from '@/components/Paras';
 
 export type Order = 'asc' | 'desc';
 
@@ -62,14 +48,13 @@ export const ParachainTable = ({
   parachains,
   handlers,
 }: ParachainTableProps) => {
-  const theme = useTheme();
 
   const { onRegister, onUpgrade, onBuy, onRenew, onWatch } = handlers;
 
   const { network } = useNetwork();
 
   const formatTableData = (data: ParachainInfo[]): Record<string, TableData>[] => {
-    const formattedData: Record<string, TableData>[] = parachains.map(({ id, core, name, state, watching, logo, homepage }, index) => {
+    const formattedData: Record<string, TableData>[] = data.map(({ id, core, name, state, watching, logo, homepage }, index) => {
       return {
         Id: {
           cellType: 'link',
@@ -105,11 +90,14 @@ export const ParachainTable = ({
               </Link>
             )}
           </Stack>,
+          searchKey: name || 'Unknown'
         },
         State: {
           cellType: 'jsx',
-          data: <p>{state}</p>
+          data: <ParaStateCard state={state} />,
+          searchKey: state.toString() // TODO: state name
         },
+        // TODO: Expiry
         Action: {
           cellType: 'jsx',
           data: state === ParaState.RESERVED ? (
@@ -126,7 +114,7 @@ export const ParachainTable = ({
             </ParaActionButton>
           ) : (
             <Typography>No action required</Typography>
-          )
+          ),
         },
         Watchlist: {
           cellType: 'jsx',

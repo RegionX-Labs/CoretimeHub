@@ -1,84 +1,62 @@
 import { Tooltip, Typography } from '@mui/material';
 
 import { ParaState } from '@/models';
+import { LabelCard } from '@region-x/components';
 
 export const ParaStateCard = ({ state }: { state: ParaState }) => {
   const properties = {
     [ParaState.RESERVED]: {
       title: 'Reserved',
-      color: '#008000',
-      background: 'rgba(0, 128, 0, 0.1)',
+      background: 'orangeDark',
       tooltip: 'A parachain with a reserved para ID that is not yet registered.',
     },
     [ParaState.ONBOARDING]: {
       title: 'Onboarding',
-      color: '#7472D8',
-      background: 'rgba(116, 114, 216, 0.1)',
+      background: 'pinkDark',
       tooltip: 'A parachain awaiting code validation.',
     },
     [ParaState.ONDEMAND_PARACHAIN]: {
       title: 'On-Demand Parachain',
-      color: '#2D57C3',
-      background: 'rgba(45, 87, 195, 0.1)',
+      background: 'blueDark',
       tooltip: 'Parachain that utilizes on-demand coretime.',
     },
     [ParaState.IDLE_PARA]: {
       title: 'Idle Parachain',
-      color: '#008000',
-      background: 'rgba(0, 128, 0, 0.1)',
+      background: 'greenPrimary',
       tooltip: 'A parachain currently not producing blocks.',
     },
     [ParaState.ACTIVE_PARA]: {
       title: 'Active Parachain',
-      color: '#9F53FF',
-      background: '#EDDFFF',
+      background: 'greenDark',
       tooltip: 'An active parachain that is able to produce blocks.',
     },
     [ParaState.ACTIVE_RENEWABLE_PARA]: {
       title: 'Active Parachain',
-      color: '#9F53FF',
-      background: '#EDDFFF',
+      background: 'greenDark',
       tooltip: 'An active parachain that can be renewed and is able to produce blocks.',
     },
     [ParaState.IN_WORKPLAN]: {
       title: 'Idle(In workplan)',
-      color: '#5e73ff',
-      background: '#e1e7ff',
+      background: 'cyanDark',
       tooltip: 'Parachain scheduled for execution',
     },
     [ParaState.LEASE_HOLDING]: {
       title: 'Lease Holding',
-      color: '#5e9b53',
-      background: '#f1ffe1',
+      background: 'purpleDark',
       tooltip: 'Parachain that secured coretime through the legacy slot auction model.',
     },
     [ParaState.SYSTEM]: {
       title: 'System Parachain',
-      color: '#ff7f53',
-      background: '#ffe9df',
+      background: 'yellowDark',
       tooltip: 'Parachain responsible for core Polkadot protocol features.',
     },
   };
 
-  const { tooltip, color, background, title } = properties[state];
+  const { tooltip, background, title } = properties[state];
 
   return (
     <Tooltip title={tooltip} arrow>
-      <Typography
-        sx={{
-          color,
-          bgcolor: background,
-          padding: '0.5rem 1rem',
-          borderRadius: '1rem',
-          border: `1px solid ${color}`,
-          width: '12.5rem',
-          textAlign: 'center',
-          height: 'fit-content',
-          cursor: 'default',
-        }}
-      >
-        {title}
-      </Typography>
+      <LabelCard label={title} color={background as any} />
     </Tooltip>
   );
 };
