@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -9,7 +8,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { Button as RxButton } from '@region-x/components';
+import { Button } from '@region-x/components';
 import { useState } from 'react';
 
 import { useParasInfo } from '@/hooks';
@@ -110,14 +109,13 @@ export const ReserveModal = ({ open, onClose, paraId, reservationCost }: Reserve
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant='outlined'>
+        <Button onClick={onClose} color='dark'>
           Cancel
         </Button>
 
-        {/* TODO: something off with alignment */}
-        <RxButton onClick={onReserve} loading={working}>
+        <Button onClick={onReserve} loading={working}>
           Reserve
-        </RxButton>
+        </Button>
       </DialogActions>
     </Dialog>
   );

@@ -1,24 +1,15 @@
-import {
-  Backdrop,
-  Box,
-  CircularProgress,
-  FormControlLabel,
-  Switch,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Backdrop, Box, CircularProgress, Typography, useTheme } from '@mui/material';
+import { Button } from '@region-x/components';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 import { useParasInfo } from '@/hooks';
 
 import { ParachainTable, RegisterModal, ReserveModal } from '@/components';
-import { Button } from '@region-x/components';
 
-import { leases } from '@/chaindata';
 import { useNetwork } from '@/contexts/network';
 import { useSettings } from '@/contexts/settings';
-import { LeaseState, ParachainInfo } from '@/models';
+import { ParachainInfo } from '@/models';
 
 const ParachainManagement = () => {
   const theme = useTheme();
@@ -39,9 +30,6 @@ const ParachainManagement = () => {
 
   const [reserveModalOpen, openReserveModal] = useState(false);
   const [registerModalOpen, openRegisterModal] = useState(false);
-
-  const chainLeases: LeaseState[] =
-    (leases as Record<string, LeaseState[]>)[network.toString()] ?? [];
 
   // Register a parathread
   const onRegister = (paraId: number) => {
@@ -84,8 +72,8 @@ const ParachainManagement = () => {
       ...para,
       watching: watchList.includes(para.id),
     }));
-    const filtered = parasWithWatchInfo.filter(
-      (para) => watchAll ? true : para.watching === true
+    const filtered = parasWithWatchInfo.filter((para) =>
+      watchAll ? true : para.watching === true
     );
 
     setParas2Show(filtered);
@@ -110,12 +98,10 @@ const ParachainManagement = () => {
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1.5rem', height: '2.75rem' }}>
-          <Button color='yellowDark' onClick={() => watchAllParas(prev => !prev)}>
+          <Button color='yellowDark' onClick={() => watchAllParas((prev) => !prev)}>
             Watchlist Only
           </Button>
-          <Button onClick={() => openReserveModal(true)}>
-            Reserve New Para
-          </Button>
+          <Button onClick={() => openReserveModal(true)}>Reserve New Para</Button>
         </Box>
       </Box>
       {loading ? (

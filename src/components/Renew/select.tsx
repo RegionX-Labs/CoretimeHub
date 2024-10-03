@@ -1,15 +1,14 @@
 import { Stack } from '@mui/material';
+import { Select } from '@region-x/components';
+import { SelectOption } from '@region-x/components/dist/types/types';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 import { RenewableParachain } from '@/hooks';
 
-import { useNetwork } from '@/contexts/network';
-import { Select } from '@region-x/components';
-import { SelectOption } from '@region-x/components/dist/types/types';
-import { chainData } from '@/chaindata';
-import Image from 'next/image';
-
 import Unknown from '@/assets/unknown.svg';
+import { chainData } from '@/chaindata';
+import { useNetwork } from '@/contexts/network';
 
 interface SelectParachainProps {
   parachains: RenewableParachain[];

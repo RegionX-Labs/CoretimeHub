@@ -13,7 +13,7 @@ import styles from './index.module.scss';
 export const Header = () => {
   const theme = useTheme();
   const {
-    state: { accounts, activeAccount, status },
+    state: { accounts, activeAccount },
     setActiveAccount,
     disconnectWallet,
     connectWallet,

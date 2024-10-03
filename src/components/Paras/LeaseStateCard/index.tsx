@@ -1,4 +1,3 @@
-import { Stack, Typography } from '@mui/material';
 import { humanizer } from 'humanize-duration';
 
 import { leases } from '@/chaindata';
@@ -29,10 +28,8 @@ export const LeaseStateCard = ({ paraId, height }: LeaseStateProps) => {
   if (height > until) return <></>;
 
   return (
-    <Stack direction='column' gap='0.5rem' alignItems='start'>
-      <Typography>
-        {`Lease expires in ${formatDuration((until - height) * RELAY_CHAIN_BLOCK_TIME)}`}
-      </Typography>
-    </Stack>
+    <p style={{ fontSize: '14px', padding: '0 1rem' }}>
+      {`Lease expires in ${formatDuration((until - height) * RELAY_CHAIN_BLOCK_TIME)}`}
+    </p>
   );
 };

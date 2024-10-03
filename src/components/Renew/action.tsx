@@ -1,15 +1,13 @@
 import { Stack } from '@mui/material';
+import { Button } from '@region-x/components';
 import { useState } from 'react';
 
 import { RenewableParachain } from '@/hooks';
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
-import { ProgressButton } from '@/components';
-
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useToast } from '@/contexts/toast';
-import { Button } from '@region-x/components';
 
 interface RenewActionProps {
   parachain: RenewableParachain;

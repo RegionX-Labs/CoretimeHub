@@ -1,7 +1,7 @@
-import { Tooltip, Typography } from '@mui/material';
+import { Tooltip } from '@mui/material';
+import { LabelCard } from '@region-x/components';
 
 import { ParaState } from '@/models';
-import { LabelCard } from '@region-x/components';
 
 export const ParaStateCard = ({ state }: { state: ParaState }) => {
   const properties = {
