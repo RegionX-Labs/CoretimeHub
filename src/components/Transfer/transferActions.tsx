@@ -1,5 +1,5 @@
 import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
-import { Box, Paper, Stack } from '@mui/material';
+import { Box, Paper, Stack, Typography } from '@mui/material';
 import { AmountInput, Button } from '@region-x/components';
 import { useRouter } from 'next/router';
 
@@ -90,9 +90,10 @@ const TransferActions = () => {
         {assetType(originChain, destinationChain) === AssetType.TOKEN &&
           originChain !== ChainType.NONE &&
           destinationChain !== ChainType.NONE && (
-            <Stack margin='2em 0' direction='column' gap={1}>
+            <Box margin='1em 0' gap={1} display='flex' width='100%' justifyContent='flex-start' alignItems='center'>
+              <Typography width='20ch'>Transfer Amount: </Typography>
               <AmountInput
-                // setAmount={setTransferAmount}
+                onAmountChange={(a) => setTransferAmount(Number(a))}
                 currencyOptions={[
                   {
                     value: symbol,
@@ -100,9 +101,9 @@ const TransferActions = () => {
                     icon: <img src={getIcon(network)?.src} style={{ width: '28px' }} />,
                   },
                 ]}
-                label='Transfer amount'
+                label=''
               />
-            </Stack>
+            </Box>
           )}
       </Paper>
       <Box
