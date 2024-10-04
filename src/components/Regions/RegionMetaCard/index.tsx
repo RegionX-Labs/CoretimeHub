@@ -9,7 +9,6 @@ import { ApiState } from '@/contexts/apis/types';
 import { useTasks } from '@/contexts/tasks';
 import { POOLING_TASK_ID, RegionLocation, RegionMetadata } from '@/models';
 
-
 interface RegionMetaCardProps {
   regionMetadata: RegionMetadata;
   active?: boolean;

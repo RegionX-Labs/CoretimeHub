@@ -13,6 +13,7 @@ import { assetType } from './common';
 import { useTransferState } from './contexts/transferState';
 import { useTransferHandlers } from './hooks/useTransferHandlers';
 import { AddressInput } from '../Elements';
+import { getIcon } from '@/assets/networks';
 
 const TransferActions = () => {
   const { transferAmount, handleTransfer, working, newOwner, setNewOwner, setTransferAmount } =
@@ -92,7 +93,13 @@ const TransferActions = () => {
             <Stack margin='2em 0' direction='column' gap={1}>
               <AmountInput
                 // setAmount={setTransferAmount}
-                currencyOptions={[{ value: symbol, label: symbol, icon: <img /> }]}
+                currencyOptions={[
+                  {
+                    value: symbol,
+                    label: symbol,
+                    icon: <img src={getIcon(network)?.src} style={{ width: '28px' }} />,
+                  },
+                ]}
                 label='Transfer amount'
               />
             </Stack>
