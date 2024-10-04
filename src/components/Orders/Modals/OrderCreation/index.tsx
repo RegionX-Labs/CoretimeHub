@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -17,7 +16,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { Button as RxButton } from '@region-x/components';
+import { Button } from '@region-x/components';
 import { useEffect, useState } from 'react';
 
 import { useParasInfo } from '@/hooks';
@@ -254,13 +253,13 @@ export const OrderCreationModal = ({ open, onClose }: OrderCreationModalProps) =
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant='outlined'>
+        <Button onClick={onClose} color='dark'>
           Cancel
         </Button>
 
-        <RxButton onClick={onCreate} loading={working}>
+        <Button onClick={onCreate} loading={working}>
           Create
-        </RxButton>
+        </Button>
       </DialogActions>
     </Dialog>
   );

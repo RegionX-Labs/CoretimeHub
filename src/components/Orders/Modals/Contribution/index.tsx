@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -9,7 +8,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { Button as RxButton } from '@region-x/components';
+import { Button } from '@region-x/components';
 import { useEffect, useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
@@ -125,13 +124,13 @@ export const ContributionModal = ({ open, onClose, order }: ContributionModalPro
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant='outlined'>
+        <Button onClick={onClose} color='dark'>
           Cancel
         </Button>
 
-        <RxButton onClick={onContribute} loading={working}>
+        <Button onClick={onContribute} loading={working}>
           Contribute
-        </RxButton>
+        </Button>
       </DialogActions>
     </Dialog>
   );
