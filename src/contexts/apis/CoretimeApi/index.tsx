@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useReducer } from 'react';
 
 import {
   WS_KUSAMA_CORETIME_CHAIN,
+  WS_PASEO_CORETIME_CHAIN,
   WS_POLKADOT_CORETIME_CHAIN,
   WS_ROCOCO_CORETIME_CHAIN,
   WS_WESTEND_CORETIME_CHAIN,
@@ -53,6 +54,8 @@ const CoretimeApiContextProvider = (props: any) => {
         return WS_POLKADOT_CORETIME_CHAIN;
       case NetworkType.KUSAMA:
         return WS_KUSAMA_CORETIME_CHAIN;
+      case NetworkType.PASEO:
+        return WS_PASEO_CORETIME_CHAIN;
       case NetworkType.ROCOCO:
         return WS_ROCOCO_CORETIME_CHAIN;
       case NetworkType.WESTEND:

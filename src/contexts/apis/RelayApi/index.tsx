@@ -4,6 +4,7 @@ import { parseHNString } from '@/utils/functions';
 
 import {
   WS_KUSAMA_RELAY_CHAIN,
+  WS_PASEO_RELAY_CHAIN,
   WS_POLKADOT_RELAY_CHAIN,
   WS_ROCOCO_RELAY_CHAIN,
   WS_WESTEND_RELAY_CHAIN,
@@ -44,6 +45,8 @@ const RelayApiContextProvider = (props: any) => {
         return WS_POLKADOT_RELAY_CHAIN;
       case NetworkType.KUSAMA:
         return WS_KUSAMA_RELAY_CHAIN;
+      case NetworkType.PASEO:
+        return WS_PASEO_RELAY_CHAIN;
       case NetworkType.ROCOCO:
         return WS_ROCOCO_RELAY_CHAIN;
       case NetworkType.WESTEND:
