@@ -79,23 +79,23 @@ export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
     },
     ...(enableRegionX(network)
       ? [
-        {
-          icon: (
-            <Image
-              src={RegionX}
-              alt=''
-              style={{
-                width: '28px',
-                height: '28px',
-                marginRight: '0.5rem',
-                borderRadius: '100%',
-              }}
-            />
-          ),
-          label: regionXChain,
-          value: ChainType.REGIONX,
-        },
-      ]
+          {
+            icon: (
+              <Image
+                src={RegionX}
+                alt=''
+                style={{
+                  width: '28px',
+                  height: '28px',
+                  marginRight: '0.5rem',
+                  borderRadius: '100%',
+                }}
+              />
+            ),
+            label: regionXChain,
+            value: ChainType.REGIONX,
+          },
+        ]
       : []),
   ];
   return (

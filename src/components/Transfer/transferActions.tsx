@@ -1,5 +1,6 @@
 import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
 import { Box, Paper, Stack } from '@mui/material';
+import { AmountInput, Button } from '@region-x/components';
 import { useRouter } from 'next/router';
 
 import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
@@ -11,8 +12,6 @@ import { AssetType, ChainType } from '@/models';
 import { assetType } from './common';
 import { useTransferState } from './contexts/transferState';
 import { useTransferHandlers } from './hooks/useTransferHandlers';
-
-import { AmountInput, Button } from '@region-x/components';
 import { AddressInput } from '../Elements';
 
 const TransferActions = () => {
@@ -108,10 +107,7 @@ const TransferActions = () => {
           pb: '1rem',
         }}
       >
-        <Button
-          color='dark'
-          onClick={onHome}
-        >
+        <Button color='dark' onClick={onHome}>
           Home
         </Button>
         <Button onClick={onTransfer} loading={working}>

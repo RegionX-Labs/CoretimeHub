@@ -1,23 +1,20 @@
 import {
   Alert,
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogProps,
-  Input,
-  InputAdornment,
   Paper,
   Typography,
   useTheme,
 } from '@mui/material';
+import { Button } from '@region-x/components';
 import { useEffect, useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
-import { isValidAddress } from '@/utils/functions';
 
-import { FinalitySelector, ProgressButton } from '@/components/Elements';
+import { AddressInput, FinalitySelector } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
@@ -124,35 +121,18 @@ export const PoolingModal = ({ open, onClose, regionMetadata }: PoolingModalProp
           </Alert>
           <Box className={styles.optionItem}>
             <Typography className={styles.optionKey}>Payee:</Typography>
-            <Input
-              value={payee}
-              onChange={(e) => setPayee(e.target.value)}
-              fullWidth
-              type='text'
-              placeholder='Address of the payee'
-              endAdornment={
-                <InputAdornment position='end'>
-                  <Button
-                    variant='text'
-                    color='info'
-                    onClick={() => activeAccount && setPayee(activeAccount.address)}
-                  >
-                    Me
-                  </Button>
-                </InputAdornment>
-              }
-              sx={{ height: '3rem' }}
-              error={payee.length > 0 && !isValidAddress(payee)}
-            />
+            <AddressInput address={payee} label='' onChange={setPayee} />
           </Box>
         </Paper>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant='outlined'>
+        <Button onClick={onClose} color='dark'>
           Cancel
         </Button>
 
-        <ProgressButton onClick={onPool} label='Pool' loading={working} />
+        <Button onClick={onPool} loading={working}>
+          Pool
+        </Button>
       </DialogActions>
     </Dialog>
   );

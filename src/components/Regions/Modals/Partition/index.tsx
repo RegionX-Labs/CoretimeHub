@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -10,18 +9,18 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { Button } from '@region-x/components';
 import { useEffect, useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
-import { ProgressButton } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
-import { DAY, HOUR, MINUTE, RegionMetadata, RELAY_CHAIN_BLOCK_TIME } from '@/models';
+import { DAY, HOUR, RegionMetadata, RELAY_CHAIN_BLOCK_TIME } from '@/models';
 
 import styles from './index.module.scss';
 
@@ -32,11 +31,6 @@ interface PartitionModalProps extends DialogProps {
 
 export const PartitionModal = ({ open, onClose, regionMetadata }: PartitionModalProps) => {
   const timeUnits = [
-    {
-      label: 'Minutes',
-      unit: MINUTE,
-      strUnit: 'minute',
-    },
     {
       label: 'Hours',
       unit: HOUR,
@@ -166,16 +160,19 @@ export const PartitionModal = ({ open, onClose, regionMetadata }: PartitionModal
               valueLabelDisplay='on'
               valueLabelFormat={(v) => `${v} ${timeUnits[unitIdx].strUnit}${v > 1 ? 's' : ''}`}
               size='medium'
+              style={{ color: 'var(--greenPrimary)' }}
               className={styles.timeSlider}
             />
           </Paper>
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant='outlined'>
+        <Button onClick={onClose} color='dark'>
           Cancel
         </Button>
-        <ProgressButton onClick={onPartition} loading={working} label='Partition' />
+        <Button onClick={onPartition} loading={working}>
+          Partition
+        </Button>
       </DialogActions>
     </Dialog>
   );

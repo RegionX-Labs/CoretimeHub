@@ -1,53 +1,21 @@
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
-import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
-import {
-  Box,
-  Divider,
-  IconButton,
-  Input,
-  LinearProgress,
-  Link,
-  Paper,
-  Typography,
-  useTheme,
-} from '@mui/material';
-import { clsx } from 'clsx';
+import { RegionCard } from '@region-x/components';
 import { humanizer } from 'humanize-duration';
 import React, { useEffect, useState } from 'react';
 
 import { getRelativeTimeString, timesliceToTimestamp } from '@/utils/functions';
 
-import { SUSBCAN_RELAY_URL } from '@/consts';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
-import { useNetwork } from '@/contexts/network';
 import { useTasks } from '@/contexts/tasks';
 import { POOLING_TASK_ID, RegionLocation, RegionMetadata } from '@/models';
 
-import { Label } from '../..';
-import { RegionCard } from '@region-x/components';
 
 interface RegionMetaCardProps {
   regionMetadata: RegionMetadata;
-  editable?: boolean;
   active?: boolean;
-  bordered?: boolean;
-  updateName?: (_newName: string) => void;
 }
 
-interface RegionCardInnerProps {
-  regionMetadata: RegionMetadata;
-  editable?: boolean;
-  updateName?: (_newName: string) => void;
-}
-
-export const RegionMetaCard = ({
-  regionMetadata,
-  editable = false,
-  updateName,
-}: RegionCardInnerProps) => {
+export const RegionMetaCard = ({ active, regionMetadata }: RegionMetaCardProps) => {
   const { tasks } = useTasks();
 
   const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
@@ -98,7 +66,7 @@ export const RegionMetaCard = ({
   };
 
   return (
-    <div>
+    <div style={{ width: '450px' }}>
       <RegionCard
         regionData={{
           name: regionMetadata.name || `Region ${regionMetadata.region.getCore()}`,
@@ -112,6 +80,8 @@ export const RegionMetaCard = ({
           duration: formatDuration(endTimestamp - beginTimestamp),
           currentUsage: regionMetadata.currentUsage * 100,
         }}
+        task={`${getTask(taskId)}`}
+        selected={active}
       />
     </div>
   );
