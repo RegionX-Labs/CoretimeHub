@@ -1,7 +1,10 @@
+@import '../../../../styles/mixins';
+@import '../../../../styles/variables';
+
 .container {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
   padding: 1.5rem;
   flex-grow: 1;
   box-shadow: 2px 2px 55px rgba(0, 0, 0, 0.08);
@@ -13,9 +16,12 @@
 }
 
 .iconWrapper {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 2rem;
+  height: 2rem;
   margin: 0.5rem;
+  background-color: $greenPrimary;
+  border-radius: .5rem;
+  padding: 0.2rem;
 }
 
 .infoWrapper {

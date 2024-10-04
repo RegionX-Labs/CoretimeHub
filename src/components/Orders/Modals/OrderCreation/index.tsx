@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -17,12 +16,12 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { Button } from '@region-x/components';
 import { useEffect, useState } from 'react';
 
 import { useParasInfo } from '@/hooks';
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
-import { ProgressButton } from '@/components/Elements';
 import { ParaDisplay } from '@/components/Paras';
 
 import { useAccounts } from '@/contexts/account';
@@ -254,11 +253,13 @@ export const OrderCreationModal = ({ open, onClose }: OrderCreationModalProps) =
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant='outlined'>
+        <Button onClick={onClose} color='dark'>
           Cancel
         </Button>
 
-        <ProgressButton onClick={onCreate} label='Create' loading={working} />
+        <Button onClick={onCreate} loading={working}>
+          Create
+        </Button>
       </DialogActions>
     </Dialog>
   );

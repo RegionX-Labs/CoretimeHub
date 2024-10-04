@@ -1,38 +1,50 @@
-import { ExpandMore } from '@mui/icons-material';
 import HistoryIcon from '@mui/icons-material/History';
-import {
-  Box,
-  Collapse,
-  Divider,
-  IconButton,
-  List,
-  ListItemButton,
-  Stack,
-  useTheme,
-} from '@mui/material';
+import { Box, IconButton, Stack, useTheme } from '@mui/material';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { Button, Select } from '@region-x/components';
 import React, { useState } from 'react';
 
-import { Address, NetworkSelector, ProgressButton, TxHistoryModal } from '@/components';
+import { Address, NetworkSelector, TxHistoryModal } from '@/components';
 
-import { KeyringState, useAccounts } from '@/contexts/account';
+import { useAccounts } from '@/contexts/account';
 
 import styles from './index.module.scss';
 
 export const Header = () => {
   const theme = useTheme();
   const {
-    state: { accounts, activeAccount, status },
+    state: { accounts, activeAccount },
     setActiveAccount,
     disconnectWallet,
     connectWallet,
   } = useAccounts();
 
-  const [accountsOpen, openAccounts] = useState(false);
   const [txHistoryModalOpen, openTxHistoryModal] = useState(false);
 
   const onDisconnect = () => {
-    openAccounts(false);
     disconnectWallet();
+  };
+
+  const onAccountChange = (acc: InjectedAccountWithMeta | null) => {
+    if (!acc) {
+      onDisconnect();
+      return;
+    }
+
+    setActiveAccount(acc);
+  };
+
+  const availableAccounts = () => {
+    const filteredAccounts: Array<InjectedAccountWithMeta | null> = accounts.filter(
+      (acc) => acc.type === 'sr25519'
+    );
+    // This will represent the disconnect option.
+    filteredAccounts.push(null);
+
+    return filteredAccounts.map((acc) => {
+      if (!acc) return { value: null, label: 'Disconnect' };
+      else return { value: acc, label: `${acc.meta.name}(${acc.meta.source})` };
+    });
   };
 
   return (
@@ -50,80 +62,34 @@ export const Header = () => {
             <NetworkSelector />
           </div>
           {activeAccount ? (
-            <Box sx={{ display: 'flex', gap: '1rem' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1rem',
+                width: '100%',
+                justifyContent: 'right',
+              }}
+            >
               <Stack direction='row' gap='0.25rem' alignItems='center'>
                 <Address value={activeAccount.address} isCopy isShort />
                 <IconButton onClick={() => openTxHistoryModal(true)}>
                   <HistoryIcon />
                 </IconButton>
               </Stack>
-              <List component='div' className={styles.listWrapper}>
-                {!accountsOpen && (
-                  <ListItemButton
-                    data-cy='accounts-open'
-                    onClick={() => openAccounts(true)}
-                    sx={{
-                      justifyContent: 'space-between',
-                      background: theme.palette.background.default,
-                      borderRadius: 4,
-                    }}
-                  >
-                    {`${activeAccount.meta.name}(${activeAccount.meta.source})`}
-                    <ExpandMore />
-                  </ListItemButton>
-                )}
-
-                <Collapse
-                  in={accountsOpen}
-                  sx={{
-                    position: 'absolute',
-                    borderRadius: '0.5rem',
-                    top: 0,
-                    width: '100%',
-                  }}
-                >
-                  <List component='div' className={styles.accountsList}>
-                    {accounts?.map(
-                      (account, index) =>
-                        account.type == 'sr25519' && (
-                          <ListItemButton
-                            data-cy={`account-${index}`}
-                            key={index}
-                            onClick={() => {
-                              setActiveAccount(account);
-                              openAccounts(false);
-                            }}
-                            sx={{
-                              borderRadius: '0.5rem',
-                              background: theme.palette.grey['100'],
-                            }}
-                          >
-                            {`${account.meta.name}(${account.meta.source})`}
-                          </ListItemButton>
-                        )
-                    )}
-                  </List>
-                  <Divider sx={{ borderColor: theme.palette.common.white }} />
-                  <ListItemButton
-                    data-cy='disconnect-wallet'
-                    onClick={onDisconnect}
-                    sx={{
-                      borderRadius: '0.5rem',
-                      background: theme.palette.grey['100'],
-                    }}
-                  >
-                    Disconnect
-                  </ListItemButton>
-                </Collapse>
-              </List>
+              <Box width='300px'>
+                <Select
+                  options={availableAccounts()}
+                  searchable={true}
+                  onChange={(acc: InjectedAccountWithMeta | null) => onAccountChange(acc)}
+                  selectedValue={activeAccount as any}
+                />
+              </Box>
             </Box>
           ) : (
-            <ProgressButton
-              data-cy='connect-wallet'
-              onClick={() => connectWallet()}
-              label='Connect Wallet'
-              loading={status === KeyringState.LOADING}
-            />
+            <Button data-cy='connect-wallet' onClick={() => connectWallet()}>
+              Connect Wallet
+            </Button>
           )}
         </Box>
       </Box>

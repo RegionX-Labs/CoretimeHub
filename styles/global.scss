@@ -1,14 +1,24 @@
-body,
-html {
-  height: 100vh;
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import './variables';
+
+:root {
+  --yellowDark: #{$yellowDark};
+  --greenDark: #{$greenDark};
+  --orangeDark: #{$orangeDark};
+  --pinkDark: #{$pinkDark};
+  --cyan: #{$cyan};
+  --redDark: #{$redDark};
+  --purpleDark: #{$purpleDark};
+  --teal: #{$teal};
+  --blueDark: #{$blueDark};
+  --dark: #{$dark};
+  --dark5: #{$dark5};
+  --gray5: #{$gray5};
+  --gray3: #{$gray3};
+  --lightGray: #{$lightGray};
+  --greenPrimary: #{$greenPrimary};
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  font-family: 'Montserrat';
-  font-weight: 600;
+a {
+  color: $greenPrimary;
 }

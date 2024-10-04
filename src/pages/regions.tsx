@@ -35,7 +35,7 @@ const Dashboard = () => {
   const {
     state: { activeAccount },
   } = useAccounts();
-  const { regions, status, updateRegionName } = useRegions();
+  const { regions, status } = useRegions();
   const { listedRegions } = useMarket();
 
   const [regionsToShow, setRegionsToShow] = useState<RegionMetadata[]>([]);
@@ -147,12 +147,10 @@ const Dashboard = () => {
       >
         <Box
           sx={{
-            maxWidth: '50rem',
-            flexGrow: 1,
-            overflowY: 'auto',
+            width: '100%',
             display: 'flex',
-            flexDirection: 'column',
-            gap: '0.75rem',
+            justifyContent: 'flex-start',
+            gap: '2rem',
             '::-webkit-scrollbar': {
               display: 'none',
             },
@@ -174,12 +172,7 @@ const Dashboard = () => {
               {regionsToShow.map((region, index) => (
                 <Box key={index} onClick={() => setCurrentRegionIndex(index)}>
                   {region.status === ISMPRecordStatus.AVAILABLE ? (
-                    <RegionMetaCard
-                      regionMetadata={region}
-                      active={index === currentRegionIndex}
-                      editable
-                      updateName={(name) => updateRegionName(index, name)}
-                    />
+                    <RegionMetaCard regionMetadata={region} active={index === currentRegionIndex} />
                   ) : (
                     <IsmpRegionCard requestAction regionMetadata={region} />
                   )}

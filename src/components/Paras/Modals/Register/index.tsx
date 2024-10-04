@@ -2,7 +2,6 @@ import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import CodeOutlinedIcon from '@mui/icons-material/CodeOutlined';
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -11,13 +10,14 @@ import {
   useTheme,
 } from '@mui/material';
 import { compactAddLength } from '@polkadot/util';
+import { Button } from '@region-x/components';
 import { useEffect, useState } from 'react';
 
 import { useParasInfo } from '@/hooks';
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 import { getBalanceString } from '@/utils/functions';
 
-import { FileInput, ProgressButton } from '@/components/Elements';
+import { FileInput } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useRelayApi } from '@/contexts/apis';
@@ -152,11 +152,13 @@ export const RegisterModal = ({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant='outlined'>
+        <Button onClick={onClose} color='dark'>
           Cancel
         </Button>
 
-        <ProgressButton onClick={onRegister} label='Register' loading={working} />
+        <Button onClick={onRegister} loading={working}>
+          Register
+        </Button>
       </DialogActions>
     </Dialog>
   );

@@ -3,7 +3,6 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import {
   Alert,
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -17,11 +16,12 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { Button } from '@region-x/components';
 import { useEffect, useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
-import { FinalitySelector, ProgressButton } from '@/components/Elements';
+import { FinalitySelector } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
@@ -183,15 +183,7 @@ export const TaskAssignModal = ({ open, onClose, regionMetadata }: TaskAssignMod
                 <Typography sx={{ fontWeight: 700, color: theme.palette.common.black }}>
                   Tasks
                 </Typography>
-                <Button
-                  sx={{
-                    color: theme.palette.common.black,
-                    background: '#dcdcdc',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '2rem',
-                  }}
-                  onClick={() => openTaskModal(true)}
-                >
+                <Button color='blueDark' onClick={() => openTaskModal(true)}>
                   Add Task
                 </Button>
               </Stack>
@@ -227,11 +219,13 @@ export const TaskAssignModal = ({ open, onClose, regionMetadata }: TaskAssignMod
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={onClose} variant='outlined'>
+          <Button onClick={onClose} color='dark'>
             Cancel
           </Button>
 
-          <ProgressButton onClick={onAssign} label='Assign' loading={working} />
+          <Button onClick={onAssign} loading={working}>
+            Assign
+          </Button>
         </DialogActions>
       </Dialog>
       {taskModalOpen && <AddTaskModal open onClose={() => openTaskModal(false)} />}

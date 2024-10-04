@@ -15,7 +15,7 @@ export const CountDown = ({ remainingTime }: CountDownProps) => {
   const timerProps = {
     isPlaying: true,
     size: 96,
-    strokeWidth: 2,
+    strokeWidth: 6,
   };
 
   const theme = useTheme();

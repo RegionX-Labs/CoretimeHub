@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -9,6 +8,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { Button } from '@region-x/components';
 import { Region } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
@@ -17,7 +17,7 @@ import {
   transferRegionOnRegionXChain,
 } from '@/utils/transfers/native';
 
-import { AddressInput, ProgressButton } from '@/components/Elements';
+import { AddressInput } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
@@ -155,11 +155,13 @@ export const TransferModal = ({ open, onClose, regionMetadata }: TransferModalPr
         </Box>
       </DialogContent>
       <DialogActions className={styles.buttons}>
-        <Button onClick={onClose} variant='outlined'>
+        <Button onClick={onClose} color='dark'>
           Cancel
         </Button>
 
-        <ProgressButton onClick={onTransfer} loading={working} label='Transfer' />
+        <Button onClick={onTransfer} loading={working}>
+          Transfer
+        </Button>
       </DialogActions>
     </Dialog>
   );

@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -9,13 +8,12 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { Button } from '@region-x/components';
 import { useState } from 'react';
 
 import { useParasInfo } from '@/hooks';
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 import { getBalanceString } from '@/utils/functions';
-
-import { ProgressButton } from '@/components/Elements';
 
 import { useAccounts } from '@/contexts/account';
 import { useRelayApi } from '@/contexts/apis';
@@ -111,11 +109,13 @@ export const ReserveModal = ({ open, onClose, paraId, reservationCost }: Reserve
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant='outlined'>
+        <Button onClick={onClose} color='dark'>
           Cancel
         </Button>
 
-        <ProgressButton onClick={onReserve} label='Reserve' loading={working} />
+        <Button onClick={onReserve} loading={working}>
+          Reserve
+        </Button>
       </DialogActions>
     </Dialog>
   );

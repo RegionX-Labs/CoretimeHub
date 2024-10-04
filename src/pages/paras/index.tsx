@@ -1,27 +1,15 @@
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import {
-  Backdrop,
-  Box,
-  CircularProgress,
-  FormControlLabel,
-  InputAdornment,
-  Switch,
-  TextField,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Backdrop, Box, CircularProgress, Typography, useTheme } from '@mui/material';
+import { Button } from '@region-x/components';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-import { useParasInfo, useRenewableParachains } from '@/hooks';
+import { useParasInfo } from '@/hooks';
 
-import { ActionButton, Order, ParachainTable, RegisterModal, ReserveModal } from '@/components';
+import { ParachainTable, RegisterModal, ReserveModal } from '@/components';
 
-import { leases } from '@/chaindata';
-import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { useNetwork } from '@/contexts/network';
 import { useSettings } from '@/contexts/settings';
-import { LeaseState, ParachainInfo } from '@/models';
+import { ParachainInfo } from '@/models';
 
 const ParachainManagement = () => {
   const theme = useTheme();
@@ -35,30 +23,13 @@ const ParachainManagement = () => {
     parachains,
     config: { nextParaId, reservationCost, dataDepositPerByte, maxCodeSize },
   } = useParasInfo();
-  const { parachains: renewableChains } = useRenewableParachains();
-  const {
-    state: { height: relayHeight },
-  } = useRelayApi();
-  const { timeslicePeriod } = useCoretimeApi();
 
   const [watchAll, watchAllParas] = useState(true);
   const [paras2Show, setParas2Show] = useState<ParachainInfo[]>([]);
   const [paraId2Reg, setParaId2Reg] = useState(0);
-  const [search, setSearch] = useState('');
 
   const [reserveModalOpen, openReserveModal] = useState(false);
   const [registerModalOpen, openRegisterModal] = useState(false);
-
-  const [orderBy, setOrderBy] = useState('id');
-  const [direction, setDirection] = useState<Order>('asc');
-
-  const chainLeases: LeaseState[] =
-    (leases as Record<string, LeaseState[]>)[network.toString()] ?? [];
-
-  const handleSort = (_orderBy: string, _direction: Order) => {
-    setOrderBy(_orderBy);
-    setDirection(_direction);
-  };
 
   // Register a parathread
   const onRegister = (paraId: number) => {
@@ -96,57 +67,18 @@ const ParachainManagement = () => {
     setWatchList(newList);
   };
 
-  const getExpiry = (id: number): number | undefined => {
-    const leaseExpiry = chainLeases.find((x) => x.paraId === id);
-    const coretimeExpiry = renewableChains.find((x) => x.paraId === id);
-    let result = undefined;
-    if (coretimeExpiry !== undefined) {
-      const until = coretimeExpiry.when * timeslicePeriod;
-      if (relayHeight <= until) {
-        result = until;
-      }
-    }
-    if (result === undefined && leaseExpiry !== undefined) {
-      const { until } = leaseExpiry;
-      if (relayHeight <= until) result = until;
-    }
-    return result;
-  };
-
   useEffect(() => {
-    const compId = (a: ParachainInfo, b: ParachainInfo) => {
-      let result = a.id - b.id;
-      if (direction === 'desc') result = -result;
-      return result;
-    };
-
-    const compExpiry = (a: ParachainInfo, b: ParachainInfo) => {
-      const value1 = getExpiry(a.id);
-      const value2 = getExpiry(b.id);
-
-      if (value1 === undefined && value2 === undefined) return 0;
-
-      if (value1 === undefined) return 1;
-      if (value2 === undefined) return -1;
-
-      if (direction === 'asc') return value1 - value2;
-      else return value2 - value1;
-    };
     const parasWithWatchInfo = parachains.map((para) => ({
       ...para,
       watching: watchList.includes(para.id),
     }));
-    const filtered = parasWithWatchInfo.filter(
-      (para) => para.id.toString().includes(search) && (watchAll ? true : para.watching === true)
+    const filtered = parasWithWatchInfo.filter((para) =>
+      watchAll ? true : para.watching === true
     );
-    if (orderBy === 'id') {
-      filtered.sort(compId);
-    } else if (orderBy === 'expiry') {
-      filtered.sort(compExpiry);
-    }
+
     setParas2Show(filtered);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parachains, watchList, watchAll, search, orderBy, direction, network]);
+  }, [parachains, watchList, watchAll, network]);
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -166,41 +98,10 @@ const ParachainManagement = () => {
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1.5rem', height: '2.75rem' }}>
-          <FormControlLabel
-            control={
-              <Switch
-                color='success'
-                checked={!watchAll}
-                onChange={(e) => watchAllParas(!e.target.checked)}
-              />
-            }
-            label='Watchlist Only'
-            labelPlacement='start'
-            sx={{
-              color: theme.palette.common.black,
-              padding: '0.25rem',
-            }}
-          />
-          <TextField
-            placeholder='Search by para id'
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <SearchOutlinedIcon />
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              '.MuiInputBase-root': { borderRadius: '5rem', margin: 'auto 0' },
-              '.MuiInputBase-input': {
-                paddingTop: '0.75rem',
-                paddingBottom: '0.75rem',
-              },
-            }}
-          />
-          <ActionButton label='Reserve New Para' onClick={() => openReserveModal(true)} />
+          <Button color='yellowDark' onClick={() => watchAllParas((prev) => !prev)}>
+            Watchlist Only
+          </Button>
+          <Button onClick={() => openReserveModal(true)}>Reserve New Para</Button>
         </Box>
       </Box>
       {loading ? (
@@ -212,9 +113,6 @@ const ParachainManagement = () => {
           <ParachainTable
             parachains={paras2Show}
             handlers={{ onBuy, onRenew, onRegister, onUpgrade, onWatch }}
-            orderBy={orderBy}
-            direction={direction}
-            handleSort={handleSort}
           />
           <ReserveModal
             open={reserveModalOpen}

@@ -1,96 +1,27 @@
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
-import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
-import {
-  Box,
-  Divider,
-  IconButton,
-  Input,
-  LinearProgress,
-  Link,
-  Paper,
-  Typography,
-  useTheme,
-} from '@mui/material';
-import { clsx } from 'clsx';
+import { RegionCard } from '@region-x/components';
 import { humanizer } from 'humanize-duration';
 import React, { useEffect, useState } from 'react';
 
 import { getRelativeTimeString, timesliceToTimestamp } from '@/utils/functions';
 
-import { SUSBCAN_RELAY_URL } from '@/consts';
 import { useCoretimeApi, useRelayApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
-import { useNetwork } from '@/contexts/network';
 import { useTasks } from '@/contexts/tasks';
 import { POOLING_TASK_ID, RegionLocation, RegionMetadata } from '@/models';
 
-import styles from './index.module.scss';
-import { Label } from '../..';
-
 interface RegionMetaCardProps {
   regionMetadata: RegionMetadata;
-  editable?: boolean;
   active?: boolean;
-  bordered?: boolean;
-  updateName?: (_newName: string) => void;
 }
 
-export const RegionMetaCard = ({
-  regionMetadata,
-  active = false,
-  editable = false,
-  bordered = true,
-  updateName,
-}: RegionMetaCardProps) => {
-  return (
-    <>
-      {bordered ? (
-        <Paper className={clsx(styles.container, active ? styles.active : '')}>
-          <RegionCardInner
-            regionMetadata={regionMetadata}
-            editable={editable}
-            updateName={updateName}
-          />
-        </Paper>
-      ) : (
-        <div className={clsx(styles.container, active ? styles.active : '')}>
-          <RegionCardInner
-            regionMetadata={regionMetadata}
-            editable={editable}
-            updateName={updateName}
-          />
-        </div>
-      )}
-    </>
-  );
-};
-
-interface RegionCardInnerProps {
-  regionMetadata: RegionMetadata;
-  editable?: boolean;
-  updateName?: (_newName: string) => void;
-}
-
-const RegionCardInner = ({
-  regionMetadata,
-  editable = false,
-  updateName,
-}: RegionCardInnerProps) => {
+export const RegionMetaCard = ({ active, regionMetadata }: RegionMetaCardProps) => {
   const { tasks } = useTasks();
 
   const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
-  const { region, taskId, location, currentUsage, consumed, coreOccupancy } = regionMetadata;
-  const theme = useTheme();
-
-  const [isEdit, setEdit] = useState(false);
-  const [name, setName] = useState('');
+  const { region, taskId, location } = regionMetadata;
 
   const [beginTimestamp, setBeginTimestamp] = useState(0);
   const [endTimestamp, setEndTimestamp] = useState(0);
-
-  const { network } = useNetwork();
 
   const {
     state: { api, apiState },
@@ -113,40 +44,6 @@ const RegionCardInner = ({
     fetchTimestamps();
   }, [api, apiState, region, timeslicePeriod]);
 
-  const progress = [
-    {
-      label: 'Core Occupancy',
-      value: coreOccupancy ?? 0,
-      color: 'success',
-    },
-    {
-      label: 'Consumed',
-      value: consumed ?? 0,
-      color: 'warning',
-    },
-    {
-      label: 'Current Usage',
-      value: currentUsage,
-      color: 'primary',
-    },
-  ];
-
-  const onEdit = () => {
-    setEdit(true);
-    setName(regionMetadata.name ?? '');
-  };
-
-  const onSave = () => {
-    setEdit(false);
-    setName('');
-    updateName && updateName(name);
-  };
-
-  const onCancel = () => {
-    setEdit(false);
-    setName('');
-  };
-
   const locationToLabel = (location: RegionLocation): string => {
     if (location === RegionLocation.REGIONX_CHAIN) {
       return 'RegionX Chain';
@@ -168,121 +65,23 @@ const RegionCardInner = ({
   };
 
   return (
-    <>
-      <div className={styles.regionInfo}>
-        <div
-          className={styles.duration}
-          style={{
-            borderColor: theme.palette.grey[200],
-            color: theme.palette.grey[200],
-          }}
-        >
-          <AccessTimeIcon sx={{ fontSize: '1.25em' }} />
-          {`Duration: ${formatDuration(endTimestamp - beginTimestamp)}`}
-        </div>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            height: '2rem',
-          }}
-        >
-          {editable && isEdit ? (
-            <Input value={name} onChange={(e) => setName(e.target.value)} size='small' />
-          ) : (
-            <Typography variant='subtitle2'>{regionMetadata.name}</Typography>
-          )}
-          {isEdit ? (
-            <Box style={{ display: 'flex', gap: '0.5rem' }}>
-              <IconButton onClick={onSave} sx={{ px: 0, py: '4px' }}>
-                <CheckOutlinedIcon sx={{ fontSize: '0.7em' }} />
-              </IconButton>
-              <IconButton onClick={onCancel} sx={{ px: 0, py: '4px' }}>
-                <CloseOutlinedIcon sx={{ fontSize: '0.7em' }} />
-              </IconButton>
-            </Box>
-          ) : editable ? (
-            <Box>
-              <IconButton onClick={onEdit}>
-                <ModeOutlinedIcon sx={{ fontSize: '0.7em' }} />
-              </IconButton>
-            </Box>
-          ) : (
-            <></>
-          )}
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
-            color: theme.palette.grey[200],
-          }}
-        >
-          <Typography variant='h2'>{`Core Index: #${region.getCore()}`}</Typography>
-          <Typography variant='h2'>Begin: {getRelativeTimeString(beginTimestamp)}</Typography>
-          <Typography variant='h2'>End: {getRelativeTimeString(endTimestamp)}</Typography>
-        </Box>
-        <Box sx={{ display: 'flex', gap: '1rem' }}>
-          <Label
-            text={region.getPaid() ? 'Renewable' : 'Non-Renewable'}
-            color='primary'
-            width='9rem'
-          />
-          <Label text={locationToLabel(location)} color='success' width='9rem' />
-        </Box>
-      </div>
-      <Divider orientation='vertical' flexItem />
-      <Box sx={{ color: theme.palette.grey[200] }}>
-        <Link
-          sx={{ textDecoration: 'none' }}
-          rel='noopener noreferrer'
-          target='_blank'
-          onClick={(e) => !taskId && e.preventDefault()}
-          href={`${SUSBCAN_RELAY_URL[network]}/parachain/${taskId}`}
-        >
-          <Typography variant='subtitle2'>
-            {`Task: ${getTask(taskId)} ${taskId ? '#' + taskId : ''}`}
-          </Typography>
-        </Link>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1.5rem',
-            mt: '2rem',
-          }}
-        >
-          {progress.map(({ label, value, color }, index) => (
-            <Box key={index} sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <LinearProgress
-                value={value * 100}
-                valueBuffer={100}
-                sx={{
-                  width: '8rem',
-                  height: '0.8em',
-                }}
-                variant='buffer'
-                color={color as 'warning' | 'success' | 'info'}
-              />
-              <Typography
-                variant='h2'
-                sx={{
-                  color: theme.palette.text.primary,
-                  width: '3rem',
-                  fontWeight: 400,
-                }}
-              >
-                {`${(value * 100).toFixed(2)}%`}
-              </Typography>
-              <Typography variant='h2' sx={{ fontWeight: 400 }}>
-                {label}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
-      </Box>
-    </>
+    <div style={{ width: '450px' }}>
+      <RegionCard
+        regionData={{
+          name: regionMetadata.name || `Region ${regionMetadata.region.getCore()}`,
+          regionStart: getRelativeTimeString(beginTimestamp),
+          regionEnd: getRelativeTimeString(endTimestamp),
+          coreIndex: region.getCore(),
+          consumed: regionMetadata.consumed,
+          chainLabel: locationToLabel(location),
+          chainColor: location === RegionLocation.CORETIME_CHAIN ? 'purpleDark' : 'blueDark',
+          coreOcupaccy: regionMetadata.coreOccupancy * 100,
+          duration: formatDuration(endTimestamp - beginTimestamp),
+          currentUsage: regionMetadata.currentUsage * 100,
+        }}
+        task={`${getTask(taskId)}`}
+        selected={active}
+      />
+    </div>
   );
 };

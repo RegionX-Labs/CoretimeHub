@@ -1,7 +1,7 @@
 import { Box, Paper, Typography, useTheme } from '@mui/material';
 import Image from 'next/image';
 
-import GraphIcon from '@/assets/graph.png';
+import Manage from '@/assets/manage.svg';
 import { SaleInfo } from '@/models';
 
 import styles from './index.module.scss';
@@ -63,7 +63,7 @@ export const CoreDetailsPanel = ({ saleInfo }: CoreDetailsPanelProps) => {
   return (
     <Paper className={styles.container} data-cy='core-details'>
       <Box className={styles.titleWrapper}>
-        <Image src={GraphIcon} alt='graph' className={styles.iconWrapper} />
+        <Image src={Manage} alt='graph' className={styles.iconWrapper} />
         <Typography
           sx={{
             color: theme.palette.common.black,
