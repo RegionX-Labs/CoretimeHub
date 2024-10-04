@@ -105,7 +105,12 @@ const TransferActions = () => {
                   {
                     value: symbol,
                     label: symbol,
-                    icon: <img src={getIcon(network)?.src} style={{ width: '28px' }} />,
+                    icon: (
+                      <img
+                        src={getIcon(network)?.src}
+                        style={{ width: '28px', height: '28px', padding: '4px' }}
+                      />
+                    ),
                   },
                 ]}
                 label=''
