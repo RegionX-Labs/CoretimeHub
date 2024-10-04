@@ -15,6 +15,8 @@ import { enableRegionX } from '@/utils/functions';
 import {
   Kusama,
   KusamaCoretime,
+  Paseo,
+  PaseoCoretime,
   Polkadot,
   PolkadotCoretime,
   RegionX,
@@ -28,6 +30,7 @@ import { useNetwork } from '@/contexts/network';
 const coretimeIcons = {
   [NetworkType.POLKADOT]: PolkadotCoretime,
   [NetworkType.KUSAMA]: KusamaCoretime,
+  [NetworkType.PASEO]: PaseoCoretime,
   [NetworkType.ROCOCO]: RococoCoretime,
   [NetworkType.WESTEND]: WestendCoretime,
   [NetworkType.NONE]: '',
@@ -36,6 +39,7 @@ const coretimeIcons = {
 const relayIcons = {
   [NetworkType.POLKADOT]: Polkadot,
   [NetworkType.KUSAMA]: Kusama,
+  [NetworkType.PASEO]: Paseo,
   [NetworkType.ROCOCO]: Rococo,
   [NetworkType.WESTEND]: Westend,
   [NetworkType.NONE]: '',
