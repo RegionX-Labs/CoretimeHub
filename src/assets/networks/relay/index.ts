@@ -1,4 +1,5 @@
 import { NetworkType } from '@/models';
+
 import Kusama from './kusama.png';
 import Polkadot from './polkadot.png';
 import Rococo from './rococo.png';
@@ -19,4 +20,4 @@ const getIcon = (network: NetworkType) => {
   }
 };
 
-export { Kusama, Polkadot, Rococo, Westend, getIcon };
+export { getIcon, Kusama, Polkadot, Rococo, Westend };

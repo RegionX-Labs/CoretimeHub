@@ -3,6 +3,7 @@ import { Box, Paper, Stack, Typography } from '@mui/material';
 import { AmountInput, Button } from '@region-x/components';
 import { useRouter } from 'next/router';
 
+import { getIcon } from '@/assets/networks';
 import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
 import { useBalances } from '@/contexts/balance';
 import { useNetwork } from '@/contexts/network';
@@ -13,7 +14,6 @@ import { assetType } from './common';
 import { useTransferState } from './contexts/transferState';
 import { useTransferHandlers } from './hooks/useTransferHandlers';
 import { AddressInput } from '../Elements';
-import { getIcon } from '@/assets/networks';
 
 const TransferActions = () => {
   const { transferAmount, handleTransfer, working, newOwner, setNewOwner, setTransferAmount } =
@@ -90,7 +90,14 @@ const TransferActions = () => {
         {assetType(originChain, destinationChain) === AssetType.TOKEN &&
           originChain !== ChainType.NONE &&
           destinationChain !== ChainType.NONE && (
-            <Box margin='1em 0' gap={1} display='flex' width='100%' justifyContent='flex-start' alignItems='center'>
+            <Box
+              margin='1em 0'
+              gap={1}
+              display='flex'
+              width='100%'
+              justifyContent='flex-start'
+              alignItems='center'
+            >
               <Typography width='20ch'>Transfer Amount: </Typography>
               <AmountInput
                 onAmountChange={(a) => setTransferAmount(Number(a))}

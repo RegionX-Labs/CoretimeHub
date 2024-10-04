@@ -23,15 +23,11 @@ import { Tasks, useTasks } from '../tasks';
 interface RegionsData {
   regions: Array<RegionMetadata>;
   status: ContextStatus;
-  updateRegionName: (_index: number, _name: string) => void;
   fetchRegions: () => Promise<void>;
 }
 const defaultRegionData: RegionsData = {
   regions: [],
   status: ContextStatus.UNINITIALIZED,
-  updateRegionName: () => {
-    /** */
-  },
   fetchRegions: async () => {
     /** */
   },
@@ -196,19 +192,11 @@ const RegionDataProvider = ({ children }: Props) => {
     [fetchRegionWorkload]
   );
 
-  const updateRegionName = (index: number, name: string) => {
-    const _regions = [...regions];
-    _regions[index].name = name;
-    setRegions(_regions);
-    localStorage.setItem(`region-${_regions[index].rawId}`, name);
-  };
-
   return (
     <RegionDataContext.Provider
       value={{
         regions,
         status,
-        updateRegionName,
         fetchRegions,
       }}
     >

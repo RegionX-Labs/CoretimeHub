@@ -35,7 +35,7 @@ const Dashboard = () => {
   const {
     state: { activeAccount },
   } = useAccounts();
-  const { regions, status, updateRegionName } = useRegions();
+  const { regions, status } = useRegions();
   const { listedRegions } = useMarket();
 
   const [regionsToShow, setRegionsToShow] = useState<RegionMetadata[]>([]);
@@ -120,8 +120,6 @@ const Dashboard = () => {
       )
     );
   }, [regions, listedRegions]);
-
-  console.log(regions);
 
   return (
     <Box
