@@ -72,7 +72,7 @@ export const RegionMetaCard = ({ active, regionMetadata }: RegionMetaCardProps) 
           regionStart: getRelativeTimeString(beginTimestamp),
           regionEnd: getRelativeTimeString(endTimestamp),
           coreIndex: region.getCore(),
-          consumed: regionMetadata.consumed,
+          consumed: Number(parseFloat((regionMetadata.consumed * 100).toString()).toFixed(2)),
           chainLabel: locationToLabel(location),
           chainColor: location === RegionLocation.CORETIME_CHAIN ? 'purpleDark' : 'blueDark',
           coreOcupaccy: regionMetadata.coreOccupancy * 100,

@@ -147,13 +147,14 @@ const Dashboard = () => {
       >
         <Box
           sx={{
-            width: '100%',
             display: 'flex',
             justifyContent: 'flex-start',
             gap: '2rem',
             '::-webkit-scrollbar': {
               display: 'none',
             },
+            maxWidth: '70vw',
+            flexWrap: 'wrap',
           }}
         >
           {status !== ContextStatus.LOADED && (
