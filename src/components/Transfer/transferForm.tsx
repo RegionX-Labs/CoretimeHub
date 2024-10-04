@@ -33,7 +33,7 @@ const TransferForm = () => {
       <Paper
         sx={{
           padding: '2rem',
-          borderRadius: '2rem',
+          borderRadius: '0.5rem',
           mb: '2rem',
           boxShadow: 'none',
         }}

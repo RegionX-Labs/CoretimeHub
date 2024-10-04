@@ -1,18 +1,9 @@
-import {
-  Box,
-  CircularProgress,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-} from '@mui/material';
+import { FormControl } from '@mui/material';
+import { Select } from '@region-x/components';
 import Image from 'next/image';
 
 import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
 import { ChainType, NetworkType } from '@/models';
-
-import styles from './index.module.scss';
 
 interface ChainSelectorProps {
   chain: ChainType;
@@ -52,65 +43,68 @@ const relayIcons = {
 
 export const ChainSelector = ({ chain, setChain }: ChainSelectorProps) => {
   const { network } = useNetwork();
-  const {
-    state: { name: coretimeChain, isApiReady: isCoretimeReady },
-  } = useCoretimeApi();
-  const {
-    state: { name: relayChain, isApiReady: isRelayReady },
-  } = useRelayApi();
 
   const {
-    state: { name: regionXChain, isApiReady: isRegionXReady },
+    state: { name: coretimeChain },
+  } = useCoretimeApi();
+  const {
+    state: { name: relayChain },
+  } = useRelayApi();
+  const {
+    state: { name: regionXChain },
   } = useRegionXApi();
 
   const menuItems = [
     {
-      icon: relayIcons[network],
+      icon: (
+        <Image
+          src={relayIcons[network]}
+          alt=''
+          style={{ width: '28px', height: '28px', marginRight: '0.5rem', borderRadius: '100%' }}
+        />
+      ),
       label: relayChain,
       value: ChainType.RELAY,
-      loading: !isRelayReady,
     },
     {
-      icon: coretimeIcons[network],
+      icon: (
+        <Image
+          src={coretimeIcons[network]}
+          alt=''
+          style={{ width: '28px', height: '28px', marginRight: '0.5rem', borderRadius: '100%' }}
+        />
+      ),
       label: coretimeChain,
       value: ChainType.CORETIME,
-      loading: !isCoretimeReady,
     },
     ...(enableRegionX(network)
       ? [
-          {
-            icon: RegionX,
-            label: regionXChain,
-            value: ChainType.REGIONX,
-            loading: isRegionXReady,
-          },
-        ]
+        {
+          icon: (
+            <Image
+              src={RegionX}
+              alt=''
+              style={{
+                width: '28px',
+                height: '28px',
+                marginRight: '0.5rem',
+                borderRadius: '100%',
+              }}
+            />
+          ),
+          label: regionXChain,
+          value: ChainType.REGIONX,
+        },
+      ]
       : []),
   ];
   return (
     <FormControl fullWidth>
-      <InputLabel id='origin-selector-label'>Chain</InputLabel>
       <Select
-        labelId='origin-selector-label'
-        id='origin-selector'
-        value={chain}
-        label='Origin'
-        sx={{ borderRadius: '1rem' }}
-        onChange={(e) => setChain(e.target.value as ChainType)}
-      >
-        {menuItems.map(({ icon, label, value, loading }, index) => (
-          <MenuItem value={value} key={index}>
-            <Box className={styles.chainItem}>
-              <Image src={icon} alt='icon' className={styles.icon} />
-              {loading ? (
-                <CircularProgress size='1.5rem' />
-              ) : (
-                <Typography className={styles.label}>{label}</Typography>
-              )}
-            </Box>
-          </MenuItem>
-        ))}
-      </Select>
+        options={menuItems}
+        selectedValue={chain}
+        onChange={(c) => setChain(c || ChainType.RELAY)}
+      />
     </FormControl>
   );
 };

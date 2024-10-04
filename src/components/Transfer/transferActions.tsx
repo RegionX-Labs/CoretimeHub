@@ -1,12 +1,6 @@
 import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
-import { Box, Button, Paper, Stack } from '@mui/material';
+import { Box, Paper, Stack } from '@mui/material';
 import { useRouter } from 'next/router';
-
-import theme from '@/utils/muiTheme';
-
-import { ProgressButton } from '@/components/Elements/Buttons/ProgressButton';
-import { AddressInput } from '@/components/Elements/Inputs/AddressInput';
-import { AmountInput } from '@/components/Elements/Inputs/AmountInput';
 
 import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
 import { useBalances } from '@/contexts/balance';
@@ -17,6 +11,9 @@ import { AssetType, ChainType } from '@/models';
 import { assetType } from './common';
 import { useTransferState } from './contexts/transferState';
 import { useTransferHandlers } from './hooks/useTransferHandlers';
+
+import { AmountInput, Button } from '@region-x/components';
+import { AddressInput } from '../Elements';
 
 const TransferActions = () => {
   const { transferAmount, handleTransfer, working, newOwner, setNewOwner, setTransferAmount } =
@@ -82,7 +79,7 @@ const TransferActions = () => {
       <Paper
         sx={{
           padding: '2rem',
-          borderRadius: '2rem',
+          borderRadius: '0.5rem',
           mt: '2rem',
           boxShadow: 'none',
         }}
@@ -95,9 +92,9 @@ const TransferActions = () => {
           destinationChain !== ChainType.NONE && (
             <Stack margin='2em 0' direction='column' gap={1}>
               <AmountInput
-                setAmount={setTransferAmount}
-                currency={symbol}
-                caption='Transfer amount'
+                // setAmount={setTransferAmount}
+                currencyOptions={[{ value: symbol, label: symbol, icon: <img /> }]}
+                label='Transfer amount'
               />
             </Stack>
           )}
@@ -112,17 +109,14 @@ const TransferActions = () => {
         }}
       >
         <Button
-          variant='outlined'
-          sx={{
-            borderRadius: 100,
-            bgcolor: theme.palette.common.white,
-            textTransform: 'capitalize',
-          }}
+          color='dark'
           onClick={onHome}
         >
-          &lt; Home
+          Home
         </Button>
-        <ProgressButton label='Transfer' onClick={onTransfer} loading={working} />
+        <Button onClick={onTransfer} loading={working}>
+          Transfer
+        </Button>
       </Box>
     </Box>
   );
