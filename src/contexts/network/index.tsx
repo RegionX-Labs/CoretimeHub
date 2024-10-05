@@ -31,6 +31,7 @@ const NetworkProvider = ({ children }: Props) => {
     if (!router.isReady) return;
     if (network === 'polkadot') setActiveNetwork(NetworkType.POLKADOT);
     else if (network === 'kusama') setActiveNetwork(NetworkType.KUSAMA);
+    else if (network === 'paseo') setActiveNetwork(NetworkType.PASEO);
     else if (network === 'rococo') setActiveNetwork(NetworkType.ROCOCO);
     else if (network === 'westend') setActiveNetwork(NetworkType.WESTEND);
     else {

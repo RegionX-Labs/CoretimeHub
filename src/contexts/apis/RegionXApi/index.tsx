@@ -115,16 +115,14 @@ const RegionXApiContextProvider = (props: any) => {
     }
     const url = getUrl(network);
     if (!url || state.socket === url) return;
+    if (state.socket !== url) disconnect(state);
 
-    if (state.socket !== url) {
-      try {
-        disconnect(state);
-      } catch {
-        /** empty error handler */
-      }
+    try {
       connect(state, url, dispatch, true, types, customRpc);
+    } catch (_err) {
+      /** empty error handler */
     }
-  }, [network, state.socket]);
+  }, [network]);
 
   useEffect(() => {
     dispatch({ type: 'DISCONNECTED' });
