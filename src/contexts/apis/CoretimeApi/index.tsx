@@ -77,7 +77,7 @@ const CoretimeApiContextProvider = (props: any) => {
     if (state.socket !== url) disconnect(state);
 
     try {
-      connect(state, url, dispatch, true);
+      connect(state, url, dispatch, true, types);
     } catch (_err) {
       /** empty error handler */
     }

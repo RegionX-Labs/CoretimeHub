@@ -24,6 +24,7 @@ import {
   nodesRexSVG,
   nodesZeitgeistPNG,
 } from '@/assets/logos';
+
 import { ChainDetails } from './types';
 
 const testParasPaseo: ChainDetails[] = [

@@ -2,8 +2,8 @@ import { NetworkType } from '@/models';
 
 import KusamaChains from './kusama';
 import leases from './leases.json';
-import PolkadotChains from './polkadot';
 import PaseoChains from './paseo';
+import PolkadotChains from './polkadot';
 import RococoChains from './rococo';
 import { BaseChainInfo, ChainDetails } from './types';
 import WestendChains from './westend';
