@@ -48,6 +48,11 @@ const Purchase = () => {
       return;
     }
 
+    if (saleInfo.coresOffered === saleInfo.coresSold) {
+      toastWarning('All cores have been sold out');
+      return;
+    }
+
     if (currentPrice === undefined) {
       toastWarning('Wait for the price to be fetched');
       return;
