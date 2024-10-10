@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -14,8 +13,9 @@ import { useState } from 'react';
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 import theme from '@/utils/muiTheme';
 
-import { AddressInput, AmountInput, ProgressButton } from '@/components/Elements';
+import { AddressInput } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
+import { Button, AmountInput } from '@region-x/components';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
@@ -26,6 +26,8 @@ import { useToast } from '@/contexts/toast';
 import { RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
+import { getIcon } from '@/assets/networks';
+import { useNetwork } from '@/contexts/network';
 
 interface SellModalProps extends DialogProps {
   onClose: () => void;
@@ -37,11 +39,10 @@ export const SellModal = ({ open, onClose, regionMetadata }: SellModalProps) => 
     state: { activeAccount, activeSigner },
   } = useAccounts();
   const {
-    state: { symbol: coretimeSymbol },
-  } = useCoretimeApi();
-  const {
     state: { api: regionXApi, isApiReady: isRegionXReady, symbol, decimals },
   } = useRegionXApi();
+
+  const { network } = useNetwork();
 
   const { fetchRegions } = useRegions();
   const { fetchMarket } = useMarket();
@@ -102,8 +103,7 @@ export const SellModal = ({ open, onClose, regionMetadata }: SellModalProps) => 
         },
         error: (e) => {
           toastError(
-            `Failed to list the region. Error: ${
-              e.errorMessage === 'Error' ? 'Please check your balance' : e.errorMessage
+            `Failed to list the region. Error: ${e.errorMessage === 'Error' ? 'Please check your balance' : e.errorMessage
             }`
           );
           setWorking(false);
@@ -135,9 +135,20 @@ export const SellModal = ({ open, onClose, regionMetadata }: SellModalProps) => 
           <Paper className={styles.wrapper}>
             <Stack direction='column' gap={2}>
               <AmountInput
-                caption='Total price of the region'
-                currency={coretimeSymbol}
-                setAmount={setPrice}
+                onAmountChange={(a) => setPrice(Number(a))}
+                currencyOptions={[
+                  {
+                    value: symbol,
+                    label: symbol,
+                    icon: (
+                      <img
+                        src={getIcon(network)?.src}
+                        style={{ width: '28px', height: '28px', padding: '4px' }}
+                      />
+                    ),
+                  },
+                ]}
+                label=''
               />
             </Stack>
             <Stack direction='column' gap={2}>
@@ -147,10 +158,12 @@ export const SellModal = ({ open, onClose, regionMetadata }: SellModalProps) => 
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant='outlined'>
+        <Button onClick={onClose} color='dark'>
           Cancel
         </Button>
-        <ProgressButton onClick={listOnSale} label='List on sale' loading={working} />
+        <Button onClick={listOnSale} loading={working}>
+          List on sale
+        </Button>
       </DialogActions>
     </Dialog>
   );

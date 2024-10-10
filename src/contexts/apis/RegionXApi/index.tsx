@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useReducer } from 'react';
 
 import { enableRegionX } from '@/utils/functions';
 
-import { WS_REGIONX_COCOS_CHAIN } from '@/consts';
+import { WS_REGIONX_COCOS_CHAIN, WS_REGIONX_PASEO_CHAIN } from '@/consts';
 import { useNetwork } from '@/contexts/network';
 import { useToast } from '@/contexts/toast';
 import { NetworkType } from '@/models';
@@ -103,6 +103,8 @@ const RegionXApiContextProvider = (props: any) => {
   const getUrl = (network: any): string | null => {
     if (network === NetworkType.ROCOCO) {
       return WS_REGIONX_COCOS_CHAIN;
+    } else if (network === NetworkType.PASEO) {
+      return WS_REGIONX_PASEO_CHAIN;
     } else {
       // We only support Rococo as of now.
       return null;
