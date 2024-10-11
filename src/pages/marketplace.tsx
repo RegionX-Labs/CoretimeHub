@@ -1,16 +1,14 @@
 import {
   Backdrop,
   Box,
-  Button,
   CircularProgress,
   MenuItem,
-  Paper,
   Select,
   Stack,
   Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { OnChainRegionId, Region } from 'coretime-utils';
+import { OnChainRegionId } from 'coretime-utils';
 import { useConfirm } from 'material-ui-confirm';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
@@ -72,7 +70,6 @@ const Marketplace = () => {
   const [purchaseModalOpen, openPurhcaseModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [filteredListings, setFilteredListings] = useState<Listing[]>([]);
-  const [working, setWorking] = useState(false);
 
   const [filterOptions, setFilterOptions] = useState<MarketFilterOptions>({});
   const [orderBy, setOrderBy] = useState<SortOption>(SortOption.CheapestFirst);
@@ -96,11 +93,10 @@ const Marketplace = () => {
 
     submitExtrinsicWithFeeInfo(symbol, decimals, txUnlist, activeAccount.address, activeSigner, {
       ready: () => {
-        setWorking(true);
         toastInfo('Transaction was initiated');
       },
       inBlock: () => toastInfo('In Block'),
-      finalized: () => setWorking(false),
+      finalized: () => { /** */ },
       success: () => {
         toastSuccess('Transaction successful');
         fetchMarket();
@@ -110,19 +106,17 @@ const Marketplace = () => {
       },
       error: (e) => {
         toastError(
-          `Failed to unlist the region. Error: ${
-            e.errorMessage === 'Error' ? 'Please check your balance.' : e.errorMessage
+          `Failed to unlist the region. Error: ${e.errorMessage === 'Error' ? 'Please check your balance.' : e.errorMessage
           }`
         );
-        setWorking(false);
       },
     });
   };
 
-  const onUnlist = (region: Region) => {
+  const onUnlist = (listing: Listing) => {
     confirm({
-      description: 'Are you sure that you are going to unlist the selected region from the market?',
-    }).then(() => unlistRegion(region.getOnChainRegionId()));
+      description: 'Do you want to unlist the region from the marketplace?',
+    }).then(() => unlistRegion(listing.region.getOnChainRegionId()));
   };
 
   useEffect(() => {
@@ -223,33 +217,12 @@ const Marketplace = () => {
       {filteredListings.length > 0 && (
         <Box marginTop='2rem' display='flex' flexWrap='wrap' justifyContent='space-around'>
           {filteredListings.map((listing, index) => (
-            <Paper key={index}>
-              <Stack direction='column' paddingBottom='1rem'>
-                <MarketRegion listing={listing} />
-                {activeAccount ? (
-                  <Button
-                    sx={{
-                      background: theme.palette.primary.contrastText,
-                      color: theme.palette.primary.main,
-                      fontSize: '0.75rem',
-                      borderRadius: '2rem',
-                      height: '2.5rem',
-                      margin: '0 1.5rem',
-                    }}
-                    onClick={() =>
-                      activeAccount.address === listing.seller
-                        ? onUnlist(listing.region)
-                        : onPurchase(listing)
-                    }
-                    disabled={working}
-                  >
-                    {listing.seller === activeAccount.address ? 'Unlist' : 'Purchase'}
-                  </Button>
-                ) : (
-                  <></>
-                )}
-              </Stack>
-            </Paper>
+            <MarketRegion
+              listing={listing}
+              onPurchase={onPurchase}
+              onUnlist={onUnlist}
+              key={index}
+            />
           ))}
         </Box>
       )}

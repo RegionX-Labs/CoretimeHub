@@ -8,6 +8,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { AmountInput,Button } from '@region-x/components';
 import { useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
@@ -15,19 +16,18 @@ import theme from '@/utils/muiTheme';
 
 import { AddressInput } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
-import { Button, AmountInput } from '@region-x/components';
 
+import { getIcon } from '@/assets/networks';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { useMarket } from '@/contexts/market';
+import { useNetwork } from '@/contexts/network';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { RegionMetadata } from '@/models';
 
 import styles from './index.module.scss';
-import { getIcon } from '@/assets/networks';
-import { useNetwork } from '@/contexts/network';
 
 interface SellModalProps extends DialogProps {
   onClose: () => void;
@@ -39,8 +39,12 @@ export const SellModal = ({ open, onClose, regionMetadata }: SellModalProps) => 
     state: { activeAccount, activeSigner },
   } = useAccounts();
   const {
-    state: { api: regionXApi, isApiReady: isRegionXReady, symbol, decimals },
+    state: { api: regionXApi, isApiReady: isRegionXReady, symbol },
   } = useRegionXApi();
+
+  const {
+    state: { decimals },
+  } = useCoretimeApi();
 
   const { network } = useNetwork();
 
@@ -103,7 +107,8 @@ export const SellModal = ({ open, onClose, regionMetadata }: SellModalProps) => 
         },
         error: (e) => {
           toastError(
-            `Failed to list the region. Error: ${e.errorMessage === 'Error' ? 'Please check your balance' : e.errorMessage
+            `Failed to list the region. Error: ${
+              e.errorMessage === 'Error' ? 'Please check your balance' : e.errorMessage
             }`
           );
           setWorking(false);
