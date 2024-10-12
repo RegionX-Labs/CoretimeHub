@@ -5,9 +5,6 @@ import {
   DialogContent,
   DialogProps,
   FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Slider,
   Stack,
   TextField,
@@ -16,14 +13,14 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { Button } from '@region-x/components';
+import { Button, Select } from '@region-x/components';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 import { useParasInfo } from '@/hooks';
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
-import { ParaDisplay } from '@/components/Paras';
-
+import { chainData } from '@/chaindata';
 import { useAccounts } from '@/contexts/account';
 import { useRegionXApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
@@ -33,6 +30,7 @@ import { useSaleInfo } from '@/contexts/sales';
 import { useToast } from '@/contexts/toast';
 
 import styles from './index.module.scss';
+import Unknown from '../../../../assets/unknown.svg';
 
 interface OrderCreationModalProps extends DialogProps {
   onClose: () => void;
@@ -167,27 +165,31 @@ export const OrderCreationModal = ({ open, onClose }: OrderCreationModalProps) =
           </Typography>
         </Box>
         <Stack>
-          <Typography>Select a para ID</Typography>
           <FormControl fullWidth sx={{ mt: '1rem' }}>
-            <InputLabel id='label-parachain-select'>Para ID</InputLabel>
             <Select
-              sx={{ borderRadius: '1rem' }}
-              labelId='label-parachain-select'
-              label='Parachain'
-              value={paraId || ''}
-              onChange={(e) => setParaId(Number(e.target.value))}
-              disabled={working}
-            >
-              {parachains.map((para) => (
-                <MenuItem key={para.id} value={para.id}>
-                  <ParaDisplay network={network} paraId={Number(para.id)} />
-                </MenuItem>
-              ))}
-            </Select>
+              label='Select a parachain'
+              options={parachains.map((p) => {
+                return {
+                  label: `${p.name} | Parachain #${p.id}`,
+                  value: p.id,
+                  icon: (
+                    <Image
+                      src={chainData[network][p.id]?.logo || Unknown}
+                      width={28}
+                      height={28}
+                      style={{ borderRadius: '100%', marginRight: '1rem' }}
+                      alt=''
+                    />
+                  ),
+                };
+              })}
+              searchable={true}
+              onChange={(id) => setParaId(id || parachains[0].id)}
+            />
           </FormControl>
         </Stack>
         <Typography>Region duration:</Typography>
-        <Stack padding='1rem' bgcolor='#EFF0F3' gap='1rem'>
+        <Stack padding='1rem' gap='1rem'>
           <FormControl>
             <ToggleButtonGroup
               value={durationType}

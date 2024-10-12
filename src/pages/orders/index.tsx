@@ -1,21 +1,8 @@
-import {
-  Backdrop,
-  Box,
-  Button,
-  CircularProgress,
-  Paper,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Backdrop, Box, CircularProgress, Paper, Typography, useTheme } from '@mui/material';
+import { Button } from '@region-x/components';
 import { useEffect, useState } from 'react';
 
-import {
-  ActionButton,
-  Balance,
-  ContributionModal,
-  OrderCard,
-  OrderCreationModal,
-} from '@/components';
+import { Balance, ContributionModal, OrderCard, OrderCreationModal } from '@/components';
 import { OrderProcessorModal } from '@/components/Orders/Modals/OrderProcessor';
 
 import { useAccounts } from '@/contexts/account';
@@ -71,7 +58,7 @@ const OrderDashboard = () => {
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1.5rem', height: '2.75rem' }}>
-          <ActionButton label='Create New Order' onClick={() => openOrderCreationModal(true)} />
+          <Button onClick={() => openOrderCreationModal(true)}>Create New Order</Button>
         </Box>
       </Box>
       {orderStatus === ContextStatus.ERROR ? (
@@ -93,10 +80,6 @@ const OrderDashboard = () => {
                     openProcessorModal(true);
                     selectOrder(order);
                   }}
-                  variant='outlined'
-                  sx={{
-                    borderRadius: '1rem',
-                  }}
                   fullWidth
                   disabled={activeAccount === null}
                 >
@@ -104,10 +87,6 @@ const OrderDashboard = () => {
                 </Button>
                 <Button
                   fullWidth
-                  variant='contained'
-                  sx={{
-                    borderRadius: '1rem',
-                  }}
                   onClick={() => {
                     openContributionModal(true);
                     selectOrder(order);
