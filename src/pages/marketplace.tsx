@@ -96,7 +96,9 @@ const Marketplace = () => {
         toastInfo('Transaction was initiated');
       },
       inBlock: () => toastInfo('In Block'),
-      finalized: () => { /** */ },
+      finalized: () => {
+        /** */
+      },
       success: () => {
         toastSuccess('Transaction successful');
         fetchMarket();
@@ -106,7 +108,8 @@ const Marketplace = () => {
       },
       error: (e) => {
         toastError(
-          `Failed to unlist the region. Error: ${e.errorMessage === 'Error' ? 'Please check your balance.' : e.errorMessage
+          `Failed to unlist the region. Error: ${
+            e.errorMessage === 'Error' ? 'Please check your balance.' : e.errorMessage
           }`
         );
       },

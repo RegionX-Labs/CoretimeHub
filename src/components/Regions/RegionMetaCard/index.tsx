@@ -68,6 +68,7 @@ export const RegionMetaCard = ({ active, regionMetadata }: RegionMetaCardProps) 
     <div style={{ width: '450px' }}>
       <RegionCard
         regionData={{
+          rawId: regionMetadata.rawId.toString(),
           name: regionMetadata.name || `Region ${regionMetadata.region.getCore()}`,
           regionStart: getRelativeTimeString(beginTimestamp),
           regionEnd: getRelativeTimeString(endTimestamp),

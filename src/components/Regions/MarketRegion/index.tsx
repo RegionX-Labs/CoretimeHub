@@ -10,8 +10,8 @@ import { Listing } from '@/models';
 
 interface MarketRegionProps {
   listing: Listing;
-  onPurchase: (listing: Listing) => void;
-  onUnlist: (listing: Listing) => void;
+  onPurchase: (_listing: Listing) => void;
+  onUnlist: (_listing: Listing) => void;
 }
 
 export const MarketRegion = ({ listing, onUnlist, onPurchase }: MarketRegionProps) => {
@@ -32,6 +32,7 @@ export const MarketRegion = ({ listing, onUnlist, onPurchase }: MarketRegionProp
     <RegionCard
       typeMarketplace={true}
       regionData={{
+        rawId: `${region.getRegionId()}`, // TODO: not the same as rawId
         name: `Region ${region.getCore()}`,
         regionStart: getTimeStringShort(beginTimestamp),
         regionEnd: getTimeStringShort(endTimestamp),
