@@ -3,7 +3,7 @@
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc';
-import { Codec, DefinitionRpcExt } from '@polkadot/types/types';
+import { DefinitionRpcExt } from '@polkadot/types/types';
 
 import { ApiState } from './types';
 
@@ -118,8 +118,6 @@ export const connect = (
   });
   dispatch({ type: 'CONNECT_INIT', socket });
 
-  let unsubHeight: any, unsubTimestamp: any;
-
   // Set listeners for disconnection and reconnection event.
   _api.on('connected', () => {
     dispatch({ type: 'CONNECT', payload: _api, socket });
@@ -154,18 +152,16 @@ export const connect = (
         payload: name,
       });
 
-      unsubHeight = await _api.query.system.number((height: Codec) =>
-        dispatch({
-          type: 'SET_HEIGHT',
-          payload: height.toJSON() as number,
-        })
-      );
-      unsubTimestamp = await _api.query.timestamp.now((moment: Codec) =>
-        dispatch({
-          type: 'SET_TIMESTAMP',
-          payload: moment.toJSON() as number,
-        })
-      );
+      const height = await _api.query.system.number();
+      dispatch({
+        type: 'SET_HEIGHT',
+        payload: height.toJSON() as number,
+      });
+      const timestamp = await _api.query.timestamp.now();
+      dispatch({
+        type: 'SET_TIMESTAMP',
+        payload: timestamp.toJSON() as number,
+      });
     } catch {
       /** empty error handler */
     }
@@ -174,13 +170,7 @@ export const connect = (
     dispatch({ type: 'CONNECT_ERROR', payload: err });
   });
   _api.on('disconnected', () => {
-    try {
-      if (unsubHeight) unsubHeight();
-      if (unsubTimestamp) unsubTimestamp();
-      dispatch({ type: 'DISCONNECTED' });
-    } catch {
-      /** empty error handler */
-    }
+    /** */
   });
 };
 
