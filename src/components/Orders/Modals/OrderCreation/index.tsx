@@ -221,7 +221,7 @@ export const OrderCreationModal = ({ open, onClose }: OrderCreationModalProps) =
                   value={regionBegin?.toString() || ''}
                   type='number'
                   onChange={(e) => setRegionBegin(parseInt(e.target.value))}
-                  InputProps={{ style: { borderRadius: '1rem' } }}
+                  InputProps={{ style: { borderRadius: '0.5rem', height: '3rem' } }}
                   disabled={working}
                 />
               </Stack>
@@ -231,7 +231,7 @@ export const OrderCreationModal = ({ open, onClose }: OrderCreationModalProps) =
                   value={regionEnd?.toString() || ''}
                   type='number'
                   onChange={(e) => setRegionEnd(parseInt(e.target.value))}
-                  InputProps={{ style: { borderRadius: '1rem' } }}
+                  InputProps={{ style: { borderRadius: '0.5rem', height: '3rem' } }}
                   disabled={working}
                 />
               </Stack>
