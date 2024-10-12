@@ -90,6 +90,7 @@ export const PurchaseModal = ({ open, onClose, listing }: PurchaseModalProps) =>
     <Dialog open={open} onClose={onClose}>
       <DialogContent>
         <RegionCardHeader
+          rawId={`${region.getRegionId()}`}
           coreIndex={region.getCore()}
           duration={formatDuration(listing.endTimestamp - listing.beginTimestamp)}
           name={`Region ${region.getCore()}`}

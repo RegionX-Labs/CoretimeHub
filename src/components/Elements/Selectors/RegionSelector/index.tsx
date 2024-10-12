@@ -32,7 +32,6 @@ export const RegionSelector = ({
             name={selectedRegion.name || ''}
             regionStart={'Timeslice: ' + selectedRegion.region.getBegin().toString()}
             regionEnd={'Timeslice: ' + selectedRegion.region.getEnd().toString()}
-            // TODO: make ident icons deterministic
           />
         </div>
       )}
