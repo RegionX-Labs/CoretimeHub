@@ -147,9 +147,6 @@ export const TransferModal = ({ open, onClose, regionMetadata }: TransferModalPr
         <Box className={styles.content}>
           <RegionOverview regionMetadata={regionMetadata} />
           <Paper className={styles.addressContainer} sx={{ color: theme.palette.common.black }}>
-            <Typography sx={{ fontWeight: 500 }}>Transfer to</Typography>
-            <Typography></Typography>
-
             <AddressInput label='New owner:' address={newOwner} onChange={(e) => setNewOwner(e)} />
           </Paper>
         </Box>
