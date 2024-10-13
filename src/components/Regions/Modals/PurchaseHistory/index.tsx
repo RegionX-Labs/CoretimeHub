@@ -10,11 +10,11 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { Button } from '@region-x/components';
 import React from 'react';
 
 import { usePurchaseHistory } from '@/hooks';
 
-import { ActionButton } from '@/components/Elements';
 import { PurchaseHistoryTable } from '@/components/Tables';
 
 import { useNetwork } from '@/contexts/network';
@@ -64,12 +64,9 @@ export const PurchaseHistoryModal = ({ open, onClose }: PurchaseHistoryModalProp
       </DialogContent>
       <DialogActions>
         <Box>
-          <ActionButton
-            label='Close'
-            onClick={onClose}
-            disabled={loading}
-            data-cy='btn-close-purchase-history-modal'
-          />
+          <Button onClick={onClose} disabled={loading} data-cy='btn-close-purchase-history-modal'>
+            Close
+          </Button>
         </Box>
       </DialogActions>
     </Dialog>

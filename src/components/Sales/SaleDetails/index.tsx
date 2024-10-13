@@ -13,12 +13,13 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { Button } from '@region-x/components';
 import React from 'react';
 
 import { useSaleDetails } from '@/hooks';
 import { getBalanceString, getTimeStringShort } from '@/utils/functions';
 
-import { ActionButton, InfoItem } from '@/components/Elements';
+import { InfoItem } from '@/components/Elements';
 import { PurchaseHistoryTable } from '@/components/Tables';
 
 import { useCoretimeApi } from '@/contexts/apis';
@@ -117,12 +118,9 @@ export const SaleDetailsModal = ({ open, onClose, info }: SaleDetailsModalProps)
       </DialogContent>
       <DialogActions>
         <Box>
-          <ActionButton
-            label='Close'
-            onClick={onClose}
-            disabled={loading}
-            data-cy='btn-close-sale-details-modal'
-          />
+          <Button onClick={onClose} disabled={loading} data-cy='btn-close-sale-details-modal'>
+            Close
+          </Button>
         </Box>
       </DialogActions>
     </Dialog>

@@ -53,4 +53,5 @@ export const WS_ROCOCO_CORETIME_CHAIN = process.env.WS_ROCOCO_CORETIME_CHAIN ?? 
 export const WS_WESTEND_CORETIME_CHAIN = process.env.WS_WESTEND_CORETIME_CHAIN ?? '';
 
 export const WS_REGIONX_COCOS_CHAIN = process.env.WS_REGIONX_COCOS_CHAIN ?? '';
+export const WS_REGIONX_PASEO_CHAIN = process.env.WS_REGIONX_PASEO_CHAIN ?? '';
 export const EXPERIMENTAL = process.env.EXPERIMENTAL == 'true' ? true : false;

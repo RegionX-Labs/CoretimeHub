@@ -16,7 +16,7 @@ let theme = createTheme({
     },
     primary: {
       contrastText: '#f6f7fa',
-      main: '#3758F9',
+      main: '#13C296',
     },
     success: {
       main: '#13C296',
