@@ -8,8 +8,9 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { Button } from '@region-x/components';
 
-import { ActionButton, CountDown, SalePriceChart } from '@/components';
+import { CountDown, SalePriceChart } from '@/components';
 
 import { useSaleInfo } from '@/contexts/sales';
 import { SalePhase } from '@/models';
@@ -52,7 +53,9 @@ export const PriceModal = ({ open, onClose }: PriceModalProps) => {
       </DialogContent>
       <DialogActions>
         <Box>
-          <ActionButton label='Close' onClick={onClose} data-cy='btn-close-price-modal' />
+          <Button onClick={onClose} data-cy='btn-close-price-modal'>
+            Close
+          </Button>
         </Box>
       </DialogActions>
     </Dialog>

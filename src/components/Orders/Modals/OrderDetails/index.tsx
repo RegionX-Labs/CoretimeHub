@@ -7,8 +7,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-
-import { ActionButton } from '@/components/Elements';
+import { Button } from '@region-x/components';
 
 import { useOrders } from '@/contexts/orders';
 
@@ -44,7 +43,9 @@ export const OrderDetailsModal = ({ open, onClose, orderId }: OrderDetailsModalP
       </DialogContent>
       <DialogActions>
         <Box>
-          <ActionButton label='Close' onClick={onClose} data-cy='btn-close-order-details-modal' />
+          <Button onClick={onClose} data-cy='btn-close-order-details-modal'>
+            Close
+          </Button>
         </Box>
       </DialogActions>
     </Dialog>
