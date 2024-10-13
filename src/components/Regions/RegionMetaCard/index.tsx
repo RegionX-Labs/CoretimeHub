@@ -70,8 +70,8 @@ export const RegionMetaCard = ({ active, regionMetadata }: RegionMetaCardProps) 
         regionData={{
           rawId: regionMetadata.rawId.toString(),
           name: regionMetadata.name || `Region ${regionMetadata.region.getCore()}`,
-          regionStart: getRelativeTimeString(beginTimestamp),
-          regionEnd: getRelativeTimeString(endTimestamp),
+          regionStart: `Begin: ${getRelativeTimeString(beginTimestamp)}`,
+          regionEnd: `End: ${getRelativeTimeString(endTimestamp)}`,
           coreIndex: region.getCore(),
           consumed: Number(parseFloat((regionMetadata.consumed * 100).toString()).toFixed(2)),
           chainLabel: locationToLabel(location),

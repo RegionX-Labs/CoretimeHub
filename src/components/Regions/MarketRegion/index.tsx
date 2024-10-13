@@ -34,8 +34,8 @@ export const MarketRegion = ({ listing, onUnlist, onPurchase }: MarketRegionProp
       regionData={{
         rawId: `${region.getRegionId()}`, // TODO: not the same as rawId
         name: `Region ${region.getCore()}`,
-        regionStart: getTimeStringShort(beginTimestamp),
-        regionEnd: getTimeStringShort(endTimestamp),
+        regionStart: `Begin: ${getTimeStringShort(beginTimestamp)}`,
+        regionEnd: `End: ${getTimeStringShort(endTimestamp)}`,
         coreIndex: region.getCore(),
         chainColor: 'blueDark',
         chainLabel: 'RegionX',
