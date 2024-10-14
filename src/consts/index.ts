@@ -21,6 +21,7 @@ export const API_CORETIME_DICT = {
 };
 
 export const API_COCOS_INDEXER = process.env.COCOS_INDEXER ?? '';
+export const API_REGIONX_PASEO_INDEXER = process.env.REGIONX_PASEO_INDEXER ?? '';
 
 export const SUSBCAN_CORETIME_URL = {
   [NetworkType.POLKADOT]: 'https://coretime-polkadot.subscan.io',

@@ -1,6 +1,6 @@
 import { fetchGraphql } from '@/utils/fetchGraphql';
 
-import { API_COCOS_INDEXER } from '@/consts';
+import { API_REGIONX_PASEO_INDEXER } from '@/consts';
 import { Address, ApiResponse } from '@/models';
 
 export const fetchUserContribution = async (
@@ -22,7 +22,8 @@ export const fetchUserContribution = async (
       }
     }
   }`;
-  return fetchGraphql(API_COCOS_INDEXER, query);
+  // TODO: don't hardcode the regionx paseo indexer.
+  return fetchGraphql(API_REGIONX_PASEO_INDEXER, query);
 };
 
 export const fetchOrders = async (after: string | null): Promise<ApiResponse> => {
@@ -45,7 +46,7 @@ export const fetchOrders = async (after: string | null): Promise<ApiResponse> =>
       }
     }
   }`;
-  return fetchGraphql(API_COCOS_INDEXER, query);
+  return fetchGraphql(API_REGIONX_PASEO_INDEXER, query);
 };
 
 export const fetchCocosRegions = async (
@@ -70,7 +71,7 @@ export const fetchCocosRegions = async (
       }
     }
   }`;
-  return fetchGraphql(API_COCOS_INDEXER, query, { filter, after });
+  return fetchGraphql(API_REGIONX_PASEO_INDEXER, query, { filter, after });
 };
 
 export const fetchProcessedOrders = async (
@@ -96,5 +97,5 @@ export const fetchProcessedOrders = async (
       }
     }
   }`;
-  return fetchGraphql(API_COCOS_INDEXER, query);
+  return fetchGraphql(API_REGIONX_PASEO_INDEXER, query);
 };
