@@ -221,6 +221,7 @@ const Home = () => {
                       width: '44px',
                       height: '44px',
                       padding: '10px',
+                      color: theme.palette.primary.main,
                     }}
                   >
                     {icon}
