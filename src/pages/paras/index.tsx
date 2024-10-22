@@ -98,7 +98,10 @@ const ParachainManagement = () => {
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1.5rem', height: '2.75rem' }}>
-          <Button color='yellowDark' onClick={() => watchAllParas((prev) => !prev)}>
+          <Button
+            color={watchAll ? 'yellowDark' : 'greenPrimary'}
+            onClick={() => watchAllParas((prev) => !prev)}
+          >
             Watchlist Only
           </Button>
           <Button onClick={() => openReserveModal(true)}>Reserve New Para</Button>
