@@ -1,6 +1,7 @@
 import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import { AmountInput, Button } from '@region-x/components';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 import { getIcon } from '@/assets/networks';
@@ -105,12 +106,7 @@ const TransferActions = () => {
                   {
                     value: symbol,
                     label: symbol,
-                    icon: (
-                      <img
-                        src={getIcon(network)?.src}
-                        style={{ width: '28px', height: '28px', padding: '4px' }}
-                      />
-                    ),
+                    icon: <Image src={getIcon(network)} alt='' width={28} height={28} />,
                   },
                 ]}
                 label=''
