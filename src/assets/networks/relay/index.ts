@@ -19,7 +19,7 @@ const getIcon = (network: NetworkType) => {
     case NetworkType.WESTEND:
       return Westend;
     default:
-      Polkadot;
+      return Polkadot;
   }
 };
 
