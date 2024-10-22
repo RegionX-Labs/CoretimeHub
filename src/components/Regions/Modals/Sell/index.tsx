@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -9,18 +8,21 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { AmountInput, Button } from '@region-x/components';
 import { useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 import theme from '@/utils/muiTheme';
 
-import { AddressInput, AmountInput, ProgressButton } from '@/components/Elements';
+import { AddressInput } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
 
+import { getIcon } from '@/assets/networks';
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
 import { useMarket } from '@/contexts/market';
+import { useNetwork } from '@/contexts/network';
 import { useRegions } from '@/contexts/regions';
 import { useToast } from '@/contexts/toast';
 import { RegionMetadata } from '@/models';
@@ -37,11 +39,14 @@ export const SellModal = ({ open, onClose, regionMetadata }: SellModalProps) => 
     state: { activeAccount, activeSigner },
   } = useAccounts();
   const {
-    state: { symbol: coretimeSymbol },
-  } = useCoretimeApi();
-  const {
-    state: { api: regionXApi, isApiReady: isRegionXReady, symbol, decimals },
+    state: { api: regionXApi, isApiReady: isRegionXReady, symbol },
   } = useRegionXApi();
+
+  const {
+    state: { decimals },
+  } = useCoretimeApi();
+
+  const { network } = useNetwork();
 
   const { fetchRegions } = useRegions();
   const { fetchMarket } = useMarket();
@@ -135,9 +140,20 @@ export const SellModal = ({ open, onClose, regionMetadata }: SellModalProps) => 
           <Paper className={styles.wrapper}>
             <Stack direction='column' gap={2}>
               <AmountInput
-                caption='Total price of the region'
-                currency={coretimeSymbol}
-                setAmount={setPrice}
+                onAmountChange={(a) => setPrice(Number(a))}
+                currencyOptions={[
+                  {
+                    value: symbol,
+                    label: symbol,
+                    icon: (
+                      <img
+                        src={getIcon(network)?.src}
+                        style={{ width: '28px', height: '28px', padding: '4px' }}
+                      />
+                    ),
+                  },
+                ]}
+                label=''
               />
             </Stack>
             <Stack direction='column' gap={2}>
@@ -147,10 +163,12 @@ export const SellModal = ({ open, onClose, regionMetadata }: SellModalProps) => 
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant='outlined'>
+        <Button onClick={onClose} color='dark'>
           Cancel
         </Button>
-        <ProgressButton onClick={listOnSale} label='List on sale' loading={working} />
+        <Button onClick={listOnSale} loading={working}>
+          List on sale
+        </Button>
       </DialogActions>
     </Dialog>
   );

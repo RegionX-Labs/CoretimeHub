@@ -1,5 +1,4 @@
 import {
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -10,9 +9,8 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { Button } from '@region-x/components';
 import { useState } from 'react';
-
-import { ActionButton } from '@/components/Elements';
 
 import { useRelayApi } from '@/contexts/apis';
 import { useTasks } from '@/contexts/tasks';
@@ -90,10 +88,10 @@ export const AddTaskModal = ({ onClose, ...props }: AddTaskModalProps) => {
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant='outlined'>
+        <Button onClick={onClose} color='dark'>
           Cancel
         </Button>
-        <ActionButton label='Add Task' onClick={onAdd} />
+        <Button onClick={onAdd}>Add Task</Button>
       </DialogActions>
     </Dialog>
   );

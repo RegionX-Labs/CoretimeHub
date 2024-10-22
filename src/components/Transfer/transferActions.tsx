@@ -1,13 +1,9 @@
 import ArrowDownward from '@mui/icons-material/ArrowDownwardOutlined';
-import { Box, Button, Paper, Stack } from '@mui/material';
+import { Box, Paper, Stack, Typography } from '@mui/material';
+import { AmountInput, Button } from '@region-x/components';
 import { useRouter } from 'next/router';
 
-import theme from '@/utils/muiTheme';
-
-import { ProgressButton } from '@/components/Elements/Buttons/ProgressButton';
-import { AddressInput } from '@/components/Elements/Inputs/AddressInput';
-import { AmountInput } from '@/components/Elements/Inputs/AmountInput';
-
+import { getIcon } from '@/assets/networks';
 import { useCoretimeApi, useRegionXApi, useRelayApi } from '@/contexts/apis';
 import { useBalances } from '@/contexts/balance';
 import { useNetwork } from '@/contexts/network';
@@ -17,6 +13,7 @@ import { AssetType, ChainType } from '@/models';
 import { assetType } from './common';
 import { useTransferState } from './contexts/transferState';
 import { useTransferHandlers } from './hooks/useTransferHandlers';
+import { AddressInput } from '../Elements';
 
 const TransferActions = () => {
   const { transferAmount, handleTransfer, working, newOwner, setNewOwner, setTransferAmount } =
@@ -82,7 +79,7 @@ const TransferActions = () => {
       <Paper
         sx={{
           padding: '2rem',
-          borderRadius: '2rem',
+          borderRadius: '0.5rem',
           mt: '2rem',
           boxShadow: 'none',
         }}
@@ -93,13 +90,32 @@ const TransferActions = () => {
         {assetType(originChain, destinationChain) === AssetType.TOKEN &&
           originChain !== ChainType.NONE &&
           destinationChain !== ChainType.NONE && (
-            <Stack margin='2em 0' direction='column' gap={1}>
+            <Box
+              margin='1em 0'
+              gap={1}
+              display='flex'
+              width='100%'
+              justifyContent='flex-start'
+              alignItems='center'
+            >
+              <Typography width='20ch'>Transfer Amount: </Typography>
               <AmountInput
-                setAmount={setTransferAmount}
-                currency={symbol}
-                caption='Transfer amount'
+                onAmountChange={(a) => setTransferAmount(Number(a))}
+                currencyOptions={[
+                  {
+                    value: symbol,
+                    label: symbol,
+                    icon: (
+                      <img
+                        src={getIcon(network)?.src}
+                        style={{ width: '28px', height: '28px', padding: '4px' }}
+                      />
+                    ),
+                  },
+                ]}
+                label=''
               />
-            </Stack>
+            </Box>
           )}
       </Paper>
       <Box
@@ -111,18 +127,12 @@ const TransferActions = () => {
           pb: '1rem',
         }}
       >
-        <Button
-          variant='outlined'
-          sx={{
-            borderRadius: 100,
-            bgcolor: theme.palette.common.white,
-            textTransform: 'capitalize',
-          }}
-          onClick={onHome}
-        >
-          &lt; Home
+        <Button color='dark' onClick={onHome}>
+          Home
         </Button>
-        <ProgressButton label='Transfer' onClick={onTransfer} loading={working} />
+        <Button onClick={onTransfer} loading={working}>
+          Transfer
+        </Button>
       </Box>
     </Box>
   );

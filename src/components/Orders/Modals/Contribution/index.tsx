@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -9,11 +8,12 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { Button } from '@region-x/components';
 import { useEffect, useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
-import { AmountInput, ProgressButton } from '@/components/Elements';
+import { AmountInput } from '@/components/Elements';
 import { OrderCard } from '@/components/Orders';
 
 import { useAccounts } from '@/contexts/account';
@@ -124,11 +124,13 @@ export const ContributionModal = ({ open, onClose, order }: ContributionModalPro
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant='outlined'>
+        <Button onClick={onClose} color='dark'>
           Cancel
         </Button>
 
-        <ProgressButton onClick={onContribute} label='Contribute' loading={working} />
+        <Button onClick={onContribute} loading={working}>
+          Contribute
+        </Button>
       </DialogActions>
     </Dialog>
   );

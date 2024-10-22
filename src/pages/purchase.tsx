@@ -1,16 +1,11 @@
-import { Box, Button, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
+import { Button } from '@region-x/components';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
-import {
-  Balance,
-  CoreDetailsPanel,
-  ProgressButton,
-  SaleInfoPanel,
-  SalePhaseInfoPanel,
-} from '@/components';
+import { Balance, CoreDetailsPanel, SaleInfoPanel, SalePhaseInfoPanel } from '@/components';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
@@ -50,6 +45,11 @@ const Purchase = () => {
 
     if (currentPhase === SalePhase.Interlude) {
       toastWarning('Sales start after the interlude period ends. Purchases can then be made.');
+      return;
+    }
+
+    if (saleInfo.coresOffered === saleInfo.coresSold) {
+      toastWarning('All cores have been sold out');
       return;
     }
 
@@ -120,31 +120,15 @@ const Purchase = () => {
             sx={{
               display: 'flex',
               gap: '2rem',
-              justifyContent: 'space-between',
+              justifyContent: 'flex-end',
             }}
           >
-            <Button
-              size='small'
-              variant='outlined'
-              sx={{
-                bgcolor: theme.palette.common.white,
-                padding: '0.5rem 0.75rem',
-                borderRadius: 100,
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                marginLeft: 'auto',
-              }}
-              onClick={onManage}
-              data-cy='btn-manage-regions'
-            >
+            <Button color='dark' onClick={onManage} data-cy='btn-manage-regions'>
               Manage your regions
             </Button>
-            <ProgressButton
-              onClick={onPurchase}
-              loading={working}
-              label='Purchase Core'
-              data-cy='btn-purchase-core'
-            />
+            <Button onClick={onPurchase} loading={working} data-cy='btn-purchase-core'>
+              Purchase a core
+            </Button>
           </Box>
         </Box>
       </Box>

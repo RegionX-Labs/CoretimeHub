@@ -145,13 +145,15 @@ export const Sidebar = () => {
       {
         label: 'Orders',
         route: '/orders',
-        enabled: enableRegionX(network),
+        // enabled: enableRegionX(network),
+        enabled: false,
         icon: <ListOutlinedIcon />,
       },
       {
         label: 'Order Processor',
         route: '/orders/processor',
-        enabled: enableRegionX(network),
+        // enabled: enableRegionX(network),
+        enabled: false,
         icon: <RepeatOutlinedIcon />,
       },
     ],

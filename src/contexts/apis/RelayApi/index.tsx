@@ -4,6 +4,7 @@ import { parseHNString } from '@/utils/functions';
 
 import {
   WS_KUSAMA_RELAY_CHAIN,
+  WS_PASEO_RELAY_CHAIN,
   WS_POLKADOT_RELAY_CHAIN,
   WS_ROCOCO_RELAY_CHAIN,
   WS_WESTEND_RELAY_CHAIN,
@@ -44,6 +45,8 @@ const RelayApiContextProvider = (props: any) => {
         return WS_POLKADOT_RELAY_CHAIN;
       case NetworkType.KUSAMA:
         return WS_KUSAMA_RELAY_CHAIN;
+      case NetworkType.PASEO:
+        return WS_PASEO_RELAY_CHAIN;
       case NetworkType.ROCOCO:
         return WS_ROCOCO_RELAY_CHAIN;
       case NetworkType.WESTEND:
@@ -56,16 +59,14 @@ const RelayApiContextProvider = (props: any) => {
   useEffect(() => {
     const url = getUrl(network);
     if (!url || state.socket === url) return;
+    if (state.socket !== url) disconnect(state);
 
-    if (state.socket !== url) {
-      try {
-        disconnect(state);
-      } catch {
-        /** empty error handler */
-      }
+    try {
       connect(state, url, dispatch, true);
+    } catch (_err) {
+      /** empty error handler */
     }
-  }, [network, state.socket]);
+  }, [network]);
 
   useEffect(() => {
     const { api, apiState } = state;

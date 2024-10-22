@@ -4,8 +4,8 @@ import { useRouter } from 'next/router';
 
 import {
   Kusama as KusamaIcon,
+  Paseo as PaseoIcon,
   Polkadot as PolkadotIcon,
-  Rococo as RococoIcon,
 } from '@/assets/networks/relay';
 import { useNetwork } from '@/contexts/network';
 import { NetworkType } from '@/models';
@@ -37,10 +37,15 @@ export const NetworkSelector = () => {
       icon: KusamaIcon,
     },
     {
-      value: NetworkType.ROCOCO,
-      label: 'Rococo',
-      icon: RococoIcon,
+      value: NetworkType.PASEO,
+      label: 'Paseo',
+      icon: PaseoIcon,
     },
+    // {
+    //   value: NetworkType.ROCOCO,
+    //   label: 'Rococo',
+    //   icon: RococoIcon,
+    // },
     // {
     //   value: NetworkType.WESTEND,
     //   label: 'Westend',

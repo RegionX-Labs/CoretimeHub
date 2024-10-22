@@ -61,5 +61,5 @@ export const sendUnsignedTx = async (
 };
 
 export const enableRegionX = (network: NetworkType): boolean => {
-  return network === NetworkType.ROCOCO || EXPERIMENTAL;
+  return network === NetworkType.ROCOCO || network === NetworkType.PASEO || EXPERIMENTAL;
 };

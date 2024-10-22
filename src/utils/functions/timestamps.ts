@@ -57,6 +57,8 @@ export const getBlockTime = (network: NetworkType): number => {
       return 12 * 1000;
     case NetworkType.POLKADOT:
       return 12 * 1000;
+    case NetworkType.PASEO:
+      return 12 * 1000;
     default:
       return 0;
   }

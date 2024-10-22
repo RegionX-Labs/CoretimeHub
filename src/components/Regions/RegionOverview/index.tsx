@@ -1,4 +1,5 @@
-import { Box, Paper, Stack, Typography, useTheme } from '@mui/material';
+import { Paper } from '@mui/material';
+import { RegionCardHeader } from '@region-x/components';
 import { humanizer } from 'humanize-duration';
 import { useEffect, useState } from 'react';
 
@@ -19,8 +20,6 @@ export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
   const {
     state: { api: relayApi, isApiReady: isRelayReady },
   } = useRelayApi();
-
-  const theme = useTheme();
 
   const [beginTimestamp, setBeginTimestamp] = useState(0);
   const [endTimestamp, setEndTimestamp] = useState(0);
@@ -43,41 +42,14 @@ export const RegionOverview = ({ regionMetadata }: RegionOverviewProps) => {
   }, [relayApi, isRelayReady, region, timeslicePeriod]);
   return (
     <Paper className={styles.container}>
-      <Box className={styles.regionInfo}>
-        <Box>
-          <Typography
-            sx={{
-              color: theme.palette.common.black,
-              fontSize: '1.25rem',
-              fontWeight: 500,
-            }}
-          >
-            {regionMetadata.name}
-          </Typography>
-          <Typography variant='subtitle2' sx={{ color: theme.palette.text.primary }}>
-            {`Duration: ${formatDuration(endTimestamp - beginTimestamp)}`}
-          </Typography>
-        </Box>
-        <Box>
-          <Typography
-            sx={{ color: theme.palette.common.black }}
-          >{`Core Index: #${region.getCore()}`}</Typography>
-        </Box>
-      </Box>
-      <Box className={styles.timeInfo}>
-        <Stack direction='column'>
-          <Typography>Begin:</Typography>
-          <Typography sx={{ color: theme.palette.common.black }}>
-            {getRelativeTimeString(beginTimestamp)}
-          </Typography>
-        </Stack>
-        <Stack direction='column'>
-          <Typography>End:</Typography>
-          <Typography sx={{ color: theme.palette.common.black }}>
-            {getRelativeTimeString(endTimestamp)}
-          </Typography>
-        </Stack>
-      </Box>
+      <RegionCardHeader
+        rawId={regionMetadata.rawId.toString()}
+        name={`Region ${region.getCore()}`}
+        coreIndex={region.getCore()}
+        duration={formatDuration(endTimestamp - beginTimestamp)}
+        regionStart={getRelativeTimeString(beginTimestamp)}
+        regionEnd={getRelativeTimeString(endTimestamp)}
+      />
     </Paper>
   );
 };

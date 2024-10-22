@@ -16,7 +16,7 @@ export const WEEK_IN_TIMESLICES = DAY_IN_TIMESLICES * 7;
 export const REGION_COLLECTION_ID = 42;
 
 export const CORETIME_PARA_ID = 1005;
-export const REGIONX_PARA_ID = 4479;
+export const REGIONX_PARA_ID = 4509;
 
 export const SAFE_XCM_VERSION = 3;
 

@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   CircularProgress,
   Dialog,
   DialogActions,
@@ -11,12 +10,12 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { Button } from '@region-x/components';
 import { maskFromBin, maskFromChunk, maskToBin } from 'coretime-utils';
 import { useEffect, useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
 
-import { ProgressButton } from '@/components/Elements';
 import { RegionOverview } from '@/components/Regions';
 
 import { useAccounts } from '@/contexts/account';
@@ -164,15 +163,12 @@ export const InterlaceModal = ({ open, onClose, regionMetadata }: InterlaceModal
         </Paper>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant='outlined'>
+        <Button onClick={onClose} color='dark'>
           Cancel
         </Button>
-        <ProgressButton
-          onClick={onInterlace}
-          loading={working}
-          disabled={activeBits === 1}
-          label='Interlace'
-        />
+        <Button onClick={onInterlace} loading={working} disabled={activeBits === 1}>
+          Interlace
+        </Button>
       </DialogActions>
     </Dialog>
   );

@@ -1,4 +1,5 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl } from '@mui/material';
+import { RegionMinimal, Select } from '@region-x/components';
 
 import { RegionMetadata } from '@/models';
 
@@ -15,21 +16,25 @@ export const RegionSelector = ({
 }: RegionSelectorProps) => {
   return (
     <FormControl fullWidth>
-      <InputLabel id='destination-selector-label'>Region Name</InputLabel>
       <Select
-        labelId='destination-selector-label'
-        id='destination-selector'
-        value={selectedRegion?.name}
-        label='Destination'
-        sx={{ borderRadius: '1rem' }}
-        onChange={(e) => handleRegionChange(Number(e.target.value))}
-      >
-        {regions.map((region, indx) => (
-          <MenuItem key={indx} value={indx}>
-            {region.name}
-          </MenuItem>
-        ))}
-      </Select>
+        options={regions.map((r) => {
+          return {
+            label: r.name || '',
+            value: r.rawId,
+          };
+        })}
+        onChange={(v) => handleRegionChange(regions.findIndex((r) => r.rawId === v))}
+      />
+      {selectedRegion && (
+        <div style={{ marginTop: '1rem' }}>
+          <RegionMinimal
+            rawId={selectedRegion.rawId.toString()}
+            name={selectedRegion.name || ''}
+            regionStart={'Timeslice: ' + selectedRegion.region.getBegin().toString()}
+            regionEnd={'Timeslice: ' + selectedRegion.region.getEnd().toString()}
+          />
+        </div>
+      )}
     </FormControl>
   );
 };

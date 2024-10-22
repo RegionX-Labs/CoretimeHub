@@ -1,11 +1,11 @@
-import { LoadingButton } from '@mui/lab';
-import { Button, Dialog, DialogActions, DialogContent, DialogProps } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogProps } from '@mui/material';
 import { BN } from '@polkadot/util';
+import { Button, RegionCardHeader } from '@region-x/components';
+import { humanizer } from 'humanize-duration';
 import { useState } from 'react';
 
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
-
-import { MarketRegion } from '@/components/Regions';
+import { getTimeStringShort } from '@/utils/functions';
 
 import { useAccounts } from '@/contexts/account';
 import { useRegionXApi } from '@/contexts/apis/RegionXApi';
@@ -20,6 +20,8 @@ interface PurchaseModalProps extends DialogProps {
 }
 
 export const PurchaseModal = ({ open, onClose, listing }: PurchaseModalProps) => {
+  const formatDuration = humanizer({ units: ['w', 'd', 'h'], round: true });
+
   const {
     state: { activeAccount, activeSigner },
   } = useAccounts();
@@ -33,6 +35,8 @@ export const PurchaseModal = ({ open, onClose, listing }: PurchaseModalProps) =>
   const { submitExtrinsicWithFeeInfo } = useSubmitExtrinsic();
 
   const [working, setWorking] = useState(false);
+
+  const { region } = listing;
 
   const purchaseRegion = async () => {
     if (!activeAccount) {
@@ -83,9 +87,16 @@ export const PurchaseModal = ({ open, onClose, listing }: PurchaseModalProps) =>
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth='md'>
+    <Dialog open={open} onClose={onClose}>
       <DialogContent>
-        <MarketRegion listing={listing} />
+        <RegionCardHeader
+          rawId={`${region.getRegionId()}`}
+          coreIndex={region.getCore()}
+          duration={formatDuration(listing.endTimestamp - listing.beginTimestamp)}
+          name={`Region ${region.getCore()}`}
+          regionStart={getTimeStringShort(listing.beginTimestamp)}
+          regionEnd={getTimeStringShort(listing.endTimestamp)}
+        />
       </DialogContent>
       <DialogActions
         sx={{
@@ -94,14 +105,15 @@ export const PurchaseModal = ({ open, onClose, listing }: PurchaseModalProps) =>
           },
           mt: '1rem',
           pb: '1rem',
+          width: '400px',
         }}
       >
-        <Button onClick={onClose} variant='outlined'>
+        <Button onClick={onClose} color='dark'>
           Cancel
         </Button>
-        <LoadingButton onClick={() => purchaseRegion()} variant='contained' loading={working}>
+        <Button onClick={() => purchaseRegion()} loading={working}>
           Purchase
-        </LoadingButton>
+        </Button>
       </DialogActions>
     </Dialog>
   );

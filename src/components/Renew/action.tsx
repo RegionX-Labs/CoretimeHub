@@ -1,10 +1,9 @@
 import { Stack } from '@mui/material';
+import { Button } from '@region-x/components';
 import { useState } from 'react';
 
 import { RenewableParachain } from '@/hooks';
 import { useSubmitExtrinsic } from '@/hooks/submitExtrinsic';
-
-import { ProgressButton } from '@/components';
 
 import { useAccounts } from '@/contexts/account';
 import { useCoretimeApi } from '@/contexts/apis';
@@ -56,14 +55,17 @@ export const RenewAction = ({ parachain, enabled }: RenewActionProps) => {
 
   return (
     <>
-      <Stack direction='row' gap='1rem' marginTop='2em' justifyContent='center'>
-        <ProgressButton
-          disabled={!enabled}
-          label='Renew'
-          onClick={handleRenew}
-          loading={working}
-          width='200px'
-        />
+      <Stack
+        direction='row'
+        gap='1rem'
+        marginTop='2em'
+        justifyContent='center'
+        width='200px'
+        margin='0 auto'
+      >
+        <Button disabled={!enabled} onClick={handleRenew} loading={working} fullWidth>
+          Renew
+        </Button>
       </Stack>
     </>
   );

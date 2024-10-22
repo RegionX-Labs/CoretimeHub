@@ -46,6 +46,7 @@ export { chainsMangataPNG } from './mangataPNG';
 export { chainsMangataxPNG } from './mangataxPNG';
 export { chainsMoonsamaPNG } from './moonsamaPNG';
 export { chainsMyriadPNG } from './myriadPNG';
+export { chainsMyxcavPNG } from './myxcavPNG';
 export { chainsNeurowebTestnetPNG } from './neuroweb-testnetPNG';
 export { chainsNeurowebPNG } from './neurowebPNG';
 export { chainsOakPNG } from './oakPNG';
