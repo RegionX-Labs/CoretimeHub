@@ -18,64 +18,76 @@ export const SalePriceChart = () => {
     state: { timestamp: currentTimestamp, height, decimals, symbol },
   } = useCoretimeApi();
 
-  const {
-    saleInfo,
-    phase: { currentPhase, currentPrice, endpoints },
-  } = useSaleInfo();
+  const { saleInfo, phase } = useSaleInfo();
 
   const { saleStart } = saleInfo;
   const { network } = useNetwork();
 
-  const startPrice =
-    saleInfo.leadinLength === 0
+  const floorPrice = planckBnToUnit(saleInfo.price.toString(), decimals);
+  const selloutPrice = saleInfo.selloutPrice ? saleInfo.selloutPrice : 0;
+
+  const getStartPrice = (): number => {
+    return saleInfo.leadinLength === 0
       ? 0
       : planckBnToUnit(getCorePriceAt(saleStart, saleInfo).toString(), decimals);
-  const curPrice =
-    currentPrice === undefined ? 0 : planckBnToUnit(currentPrice.toString(), decimals);
-  const floorPrice = planckBnToUnit(saleInfo.price.toString(), decimals);
+  };
+
+  const getCurrentPrice = (): number => {
+    if (phase.currentPhase === SalePhase.Interlude) {
+      return planckBnToUnit(selloutPrice.toString(), decimals);
+    } else {
+      const { currentPrice } = phase;
+      return currentPrice === undefined ? 0 : planckBnToUnit(currentPrice.toString(), decimals);
+    }
+  };
 
   const data = [
     {
-      timestamp: endpoints.interlude.start,
-      value: startPrice,
+      timestamp: phase.endpoints.interlude.start,
+      value: planckBnToUnit(selloutPrice.toString(), decimals),
       phase: SalePhase.Interlude,
     },
     {
-      timestamp: endpoints.interlude.end,
-      value: startPrice,
+      timestamp: phase.endpoints.interlude.end,
+      value: planckBnToUnit(selloutPrice.toString(), decimals),
       phase: SalePhase.Interlude,
     },
     {
-      timestamp: endpoints.leadin.start,
-      value: startPrice,
+      timestamp: phase.endpoints.interlude.end,
+      value: planckBnToUnit(selloutPrice.toString(), decimals),
       phase: SalePhase.Leadin,
     },
     {
-      timestamp: endpoints.leadin.end,
+      timestamp: phase.endpoints.leadin.start,
+      value: getStartPrice(),
+      phase: SalePhase.Leadin,
+    },
+    {
+      timestamp: phase.endpoints.leadin.end,
       value: floorPrice,
       phase: SalePhase.Leadin,
     },
     {
-      timestamp: endpoints.fixed.start,
+      timestamp: phase.endpoints.fixed.start,
       value: floorPrice,
       phase: SalePhase.Regular,
     },
     {
-      timestamp: endpoints.fixed.end,
+      timestamp: phase.endpoints.fixed.end,
       value: floorPrice,
       phase: SalePhase.Regular,
     },
     {
       timestamp: currentTimestamp,
-      value: curPrice,
-      phase: currentPhase,
+      value: getCurrentPrice(),
+      phase: phase.currentPhase,
     },
   ];
 
-  const leadinDuration = endpoints.leadin.end - endpoints.leadin.start;
+  const leadinDuration = phase.endpoints.leadin.end - phase.endpoints.leadin.start;
   if (isNewPricing(height, network))
     data.push({
-      timestamp: endpoints.leadin.start + leadinDuration / 2,
+      timestamp: phase.endpoints.leadin.start + leadinDuration / 2,
       value: floorPrice * 10,
       phase: SalePhase.Leadin,
     });
@@ -159,7 +171,7 @@ export const SalePriceChart = () => {
     },
   ];
 
-  return currentPrice === undefined ? (
+  return phase.currentPrice === undefined ? (
     <Stack minHeight='20rem' alignItems='center' justifyContent='center'>
       <CircularProgress />
     </Stack>
