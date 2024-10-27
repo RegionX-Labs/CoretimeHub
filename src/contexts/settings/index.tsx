@@ -1,16 +1,23 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
+import { NetworkType } from '@/models';
+
 const KEY_SETTINGS = 'settings';
+
+type Parachain = {
+  network: NetworkType;
+  paraId: number;
+};
 
 // Stores and manages settings in and from the local storage
 interface SettingsData {
-  watchList: number[];
-  setWatchList: (_watchList: number[]) => void;
+  watchList: Parachain[];
+  setWatchList: (_watchList: Parachain[]) => void;
 }
 
 const defaultSettingsData: SettingsData = {
   watchList: [],
-  setWatchList: (_watchList: number[]) => {
+  setWatchList: (_watchList: Parachain[]) => {
     /** */
   },
 };
@@ -22,7 +29,7 @@ interface Props {
 }
 
 const SettingsProvider = ({ children }: Props) => {
-  const [watchList, setWatchList] = useState<number[]>([]);
+  const [watchList, setWatchList] = useState<Parachain[]>([]);
 
   useEffect(() => {
     const strItem = localStorage.getItem(KEY_SETTINGS);
@@ -30,11 +37,11 @@ const SettingsProvider = ({ children }: Props) => {
       setWatchList([]);
       return;
     }
-    const watchList = JSON.parse(strItem) as number[];
+    const watchList = JSON.parse(strItem) as Parachain[];
     setWatchList(watchList);
   }, []);
 
-  const updateWatchList = (watchList: number[]) => {
+  const updateWatchList = (watchList: Parachain[]) => {
     setWatchList(watchList);
     localStorage.setItem(KEY_SETTINGS, JSON.stringify(watchList));
   };

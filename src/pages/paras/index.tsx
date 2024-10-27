@@ -62,15 +62,20 @@ const ParachainManagement = () => {
   };
 
   const onWatch = (id: number, watching: boolean) => {
-    const newList = watchList.filter((value) => value !== id);
-    if (watching) newList.push(id);
+    const newList = watchList.filter(
+      (value) => JSON.stringify(value) !== JSON.stringify({ network, paraId: id })
+    );
+    if (watching) newList.push({ network, paraId: id });
     setWatchList(newList);
   };
 
   useEffect(() => {
     const parasWithWatchInfo = parachains.map((para) => ({
       ...para,
-      watching: watchList.includes(para.id),
+      watching:
+        watchList.findIndex(
+          (w) => JSON.stringify(w) === JSON.stringify({ network, paraId: para.id })
+        ) >= 0,
     }));
     const filtered = parasWithWatchInfo.filter((para) =>
       watchAll ? true : para.watching === true
