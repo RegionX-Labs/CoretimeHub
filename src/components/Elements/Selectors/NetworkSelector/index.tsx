@@ -6,6 +6,7 @@ import {
   Kusama as KusamaIcon,
   Paseo as PaseoIcon,
   Polkadot as PolkadotIcon,
+  Westend as WestendIcon,
 } from '@/assets/networks/relay';
 import { useNetwork } from '@/contexts/network';
 import { NetworkType } from '@/models';
@@ -41,16 +42,11 @@ export const NetworkSelector = () => {
       label: 'Paseo',
       icon: PaseoIcon,
     },
-    // {
-    //   value: NetworkType.ROCOCO,
-    //   label: 'Rococo',
-    //   icon: RococoIcon,
-    // },
-    // {
-    //   value: NetworkType.WESTEND,
-    //   label: 'Westend',
-    //   icon: WestendIcon,
-    // },
+    {
+      value: NetworkType.WESTEND,
+      label: 'Westend',
+      icon: WestendIcon,
+    },
   ];
 
   return (
