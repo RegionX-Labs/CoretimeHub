@@ -59,6 +59,8 @@ export const getBlockTime = (network: NetworkType): number => {
       return 12 * 1000;
     case NetworkType.PASEO:
       return 12 * 1000;
+    case NetworkType.WESTEND:
+      return 6 * 1000;
     default:
       return 0;
   }

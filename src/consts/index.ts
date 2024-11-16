@@ -6,8 +6,8 @@ export const API_CORETIME_INDEXER = {
   [NetworkType.POLKADOT]: process.env.POLKADOT_CORETIME_INDEXER ?? '',
   [NetworkType.KUSAMA]: process.env.KUSAMA_CORETIME_INDEXER ?? '',
   [NetworkType.PASEO]: process.env.PASEO_CORETIME_INDEXER ?? '',
+  [NetworkType.WESTEND]: process.env.WESTEND_CORETIME_INDEXER ?? '',
   [NetworkType.ROCOCO]: process.env.ROCOCO_CORETIME_INDEXER ?? '',
-  [NetworkType.WESTEND]: process.env.SUBSCAN_CORETIME_WESTEND_INDEXER ?? '',
   [NetworkType.NONE]: '',
 };
 
@@ -15,8 +15,8 @@ export const API_CORETIME_DICT = {
   [NetworkType.POLKADOT]: process.env.POLKADOT_CORETIME_DICT ?? '',
   [NetworkType.KUSAMA]: process.env.KUSAMA_CORETIME_DICT ?? '',
   [NetworkType.PASEO]: process.env.PASEO_CORETIME_DICT ?? '',
+  [NetworkType.WESTEND]: process.env.WESTEND_CORETIME_DICT ?? '',
   [NetworkType.ROCOCO]: process.env.ROCOCO_CORETIME_DICT ?? '',
-  [NetworkType.WESTEND]: process.env.SUBSCAN_CORETIME_WESTEND_DICT ?? '',
   [NetworkType.NONE]: '',
 };
 
