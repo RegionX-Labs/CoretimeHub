@@ -33,6 +33,7 @@ export const isNewPricing = (now: number, network: NetworkType): boolean => {
     (network == NetworkType.KUSAMA && now >= 485639) ||
     (network == NetworkType.ROCOCO && now >= 1796462) ||
     network === NetworkType.POLKADOT ||
-    network === NetworkType.PASEO
+    network === NetworkType.PASEO ||
+    network === NetworkType.WESTEND
   );
 };
