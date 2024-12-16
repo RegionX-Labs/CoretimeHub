@@ -6,6 +6,7 @@ import { useCoretimeApi } from '@/contexts/apis';
 import { ApiState } from '@/contexts/apis/types';
 import { useNetwork } from '@/contexts/network';
 import { ContextStatus } from '@/models';
+import { useSaleInfo } from '@/contexts/sales';
 
 export type RenewableParachain = {
   core: number;
@@ -23,6 +24,7 @@ export const useRenewableParachains = () => {
 
   const [status, setStatus] = useState<ContextStatus>(ContextStatus.UNINITIALIZED);
   const [parachains, setParachains] = useState<RenewableParachain[]>([]);
+  const { saleStatus, status: saleInfoStatus } = useSaleInfo();
   const { network } = useNetwork();
 
   useEffect(() => {
@@ -31,8 +33,8 @@ export const useRenewableParachains = () => {
       setParachains([]);
     }
 
-    const asyncFetchParaIds = async () => {
-      if (!api || apiState !== ApiState.READY) return;
+    const asyncFetchRenewableParachains = async () => {
+      if (!api || apiState !== ApiState.READY || saleInfoStatus !== ContextStatus.LOADED) return;
 
       setStatus(ContextStatus.LOADING);
 
@@ -50,6 +52,9 @@ export const useRenewableParachains = () => {
         } = record;
         if (Complete === undefined) continue;
         if (Complete.length !== 1) continue;
+
+        if (when < saleStatus.lastTimeslice) continue;
+
         const [
           {
             mask,
@@ -73,8 +78,8 @@ export const useRenewableParachains = () => {
       setStatus(ContextStatus.LOADED);
     };
 
-    asyncFetchParaIds();
-  }, [api, apiState, network]);
+    asyncFetchRenewableParachains();
+  }, [api, apiState, network, saleInfoStatus]);
 
   return { status, parachains };
 };
