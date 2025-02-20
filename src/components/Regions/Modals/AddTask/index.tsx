@@ -27,7 +27,7 @@ export const AddTaskModal = ({ onClose, ...props }: AddTaskModalProps) => {
   const theme = useTheme();
 
   const { paraIds } = useRelayApi();
-  const { toastError } = useToast();
+  const { toastError, toastWarning } = useToast();
   const { tasks, addTask } = useTasks();
 
   const [taskId, setTaskId] = useState<number>();
@@ -45,12 +45,12 @@ export const AddTaskModal = ({ onClose, ...props }: AddTaskModalProps) => {
     const existing = tasks.find((task) => task.id === taskId);
     if (existing) {
       toastError('Failed to add task. Duplicated ID');
-    } else if (!paraIds.includes(taskId)) {
-      toastError(`Para ID ${taskId} doesn't exist.`);
     } else {
+      if (!paraIds.includes(taskId)) toastWarning(`Para ID ${taskId} not found in the registrar.`);
       addTask({ id: taskId, usage: 0, name: taskName } as TaskMetadata);
       setTaskId(undefined);
       setTaskName('');
+      onClose();
     }
   };
 
