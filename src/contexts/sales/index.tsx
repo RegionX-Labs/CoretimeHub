@@ -6,6 +6,7 @@ import { getCorePriceAt, getCurrentPhase } from '@/utils/sale';
 import {
   BrokerStatus,
   ContextStatus,
+  NetworkType,
   PhaseEndpoints,
   RELAY_CHAIN_BLOCK_TIME,
   SaleConfig,
@@ -14,7 +15,7 @@ import {
   SalePhaseInfo,
 } from '@/models';
 
-import { useCoretimeApi } from '../apis';
+import { useCoretimeApi, useRelayApi } from '../apis';
 import { useNetwork } from '../network';
 
 interface SaleData {
@@ -90,9 +91,11 @@ interface Props {
 const SaleInfoProvider = ({ children }: Props) => {
   const { network } = useNetwork();
   const {
-    state: { api: coretimeApi, isApiReady: isCoretimeReady, height },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady },
     timeslicePeriod,
   } = useCoretimeApi();
+
+  const { state: { api: relayApi, isApiReady: isRelayReady, height } } = useRelayApi();
 
   const [saleInfo, setSaleInfo] = useState<SaleInfo>(defaultSaleData.saleInfo);
   const [saleStatus, setSaleStatus] = useState<BrokerStatus>(defaultSaleData.saleStatus);
@@ -117,7 +120,7 @@ const SaleInfoProvider = ({ children }: Props) => {
   const fetchSaleInfo = async () => {
     try {
       setStatus(ContextStatus.LOADING);
-      if (!coretimeApi || !isCoretimeReady) {
+      if (!coretimeApi || !isCoretimeReady || !relayApi || !isRelayReady) {
         setStatus(ContextStatus.UNINITIALIZED);
         return;
       }
@@ -149,10 +152,15 @@ const SaleInfoProvider = ({ children }: Props) => {
 
       const saleStart = saleInfo.saleStart;
       // Sale start != bulk phase start. sale_start = bulk_phase_start + interlude_length.
-      const saleStartTimestamp = await getBlockTimestamp(coretimeApi, saleStart, network);
+      let saleStartTimestamp;
+      if (network === NetworkType.WESTEND) {
+        saleStartTimestamp = await getBlockTimestamp(relayApi, saleStart, network);
+      } else {
+        saleStartTimestamp = await getBlockTimestamp(coretimeApi, saleStart, network);
+      }
 
       const regionDuration = saleInfo.regionEnd - saleInfo.regionBegin;
-      const blockTime = getBlockTime(network); // Block time on the coretime chain
+      const blockTime = network === NetworkType.WESTEND ? RELAY_CHAIN_BLOCK_TIME : getBlockTime(network);
 
       const saleEndTimestamp =
         saleStartTimestamp -
