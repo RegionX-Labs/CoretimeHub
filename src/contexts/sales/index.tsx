@@ -91,11 +91,13 @@ interface Props {
 const SaleInfoProvider = ({ children }: Props) => {
   const { network } = useNetwork();
   const {
-    state: { api: coretimeApi, isApiReady: isCoretimeReady },
+    state: { api: coretimeApi, isApiReady: isCoretimeReady, height: coretimeHeight },
     timeslicePeriod,
   } = useCoretimeApi();
 
-  const { state: { api: relayApi, isApiReady: isRelayReady, height } } = useRelayApi();
+  const {
+    state: { api: relayApi, isApiReady: isRelayReady, height: relayHeight },
+  } = useRelayApi();
 
   const [saleInfo, setSaleInfo] = useState<SaleInfo>(defaultSaleData.saleInfo);
   const [saleStatus, setSaleStatus] = useState<BrokerStatus>(defaultSaleData.saleStatus);
@@ -108,14 +110,22 @@ const SaleInfoProvider = ({ children }: Props) => {
   const [endpoints, setEndpoints] = useState<PhaseEndpoints>(defaultEndpoints);
 
   useEffect(() => {
-    setAt(currentPhase === SalePhase.Interlude ? saleInfo.saleStart : height);
-  }, [saleInfo.saleStart, height, currentPhase]);
+    setAt(
+      currentPhase === SalePhase.Interlude
+        ? saleInfo.saleStart
+        : network === NetworkType.WESTEND
+          ? relayHeight
+          : coretimeHeight
+    );
+  }, [saleInfo.saleStart, coretimeHeight, relayHeight, currentPhase]);
 
   useEffect(() => {
     setCurrentPrice(
-      status !== ContextStatus.LOADED || height === 0 ? undefined : getCorePriceAt(at, saleInfo)
+      status !== ContextStatus.LOADED || coretimeHeight === 0 || relayHeight === 0
+        ? undefined
+        : getCorePriceAt(at, saleInfo)
     );
-  }, [status, at, height, network, saleInfo]);
+  }, [status, at, coretimeHeight, relayHeight, network, saleInfo]);
 
   const fetchSaleInfo = async () => {
     try {
@@ -160,7 +170,8 @@ const SaleInfoProvider = ({ children }: Props) => {
       }
 
       const regionDuration = saleInfo.regionEnd - saleInfo.regionBegin;
-      const blockTime = network === NetworkType.WESTEND ? RELAY_CHAIN_BLOCK_TIME : getBlockTime(network);
+      const blockTime =
+        network === NetworkType.WESTEND ? RELAY_CHAIN_BLOCK_TIME : getBlockTime(network);
 
       const saleEndTimestamp =
         saleStartTimestamp -
@@ -190,12 +201,14 @@ const SaleInfoProvider = ({ children }: Props) => {
 
   useEffect(() => {
     fetchSaleInfo();
-  }, [network, coretimeApi, height, isCoretimeReady, timeslicePeriod]);
+  }, [network, coretimeApi, coretimeHeight, relayHeight, isCoretimeReady, timeslicePeriod]);
 
   useEffect(() => {
-    if (height === 0) return;
-    setCurrentPhase(getCurrentPhase(saleInfo, height));
-  }, [network, saleInfo, height]);
+    if (coretimeHeight === 0 || relayHeight === 0 || network === NetworkType.NONE) return;
+    setCurrentPhase(
+      getCurrentPhase(saleInfo, network === NetworkType.WESTEND ? relayHeight : coretimeHeight)
+    );
+  }, [network, saleInfo, coretimeHeight, relayHeight]);
 
   return (
     <SaleDataContext.Provider
