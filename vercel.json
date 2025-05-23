@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://hub.regionx.tech/:1",
+      "permanent": true
+    }
+  ]
+}
